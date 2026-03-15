@@ -6,6 +6,7 @@
 # Manually list source files for CMake stability
 add_library(IO_Obj OBJECT 
     src/GrpdReader.cpp
+    src/Outputer.cpp
     src/Writer.cpp
     src/VtkWriter.cpp
 )
@@ -13,6 +14,7 @@ add_library(IO_Obj OBJECT
 # 2. Add header files to target
 target_sources(IO_Obj PRIVATE
     include/GrpdReader.h
+    include/Outputer.h
     include/Writer.h
     include/VtkWriter.h
     # Other headers...
@@ -23,4 +25,4 @@ target_sources(IO_Obj PRIVATE
 target_include_directories(IO_Obj PUBLIC include)
 
 # 4. Link dependencies: yaml-cpp, OpenMP, Model_Obj, Utils_Obj, Core_Obj, BC_Obj, Initial_Obj
-target_link_libraries(IO_Obj PUBLIC yaml-cpp OpenMP::OpenMP_CXX Model_Obj Utils_Obj Core_Obj BC_Obj Initial_Obj)
+target_link_libraries(IO_Obj PUBLIC yaml-cpp OpenMP::OpenMP_CXX Model_Obj Field_Obj Utils_Obj Core_Obj BC_Obj Initial_Obj)

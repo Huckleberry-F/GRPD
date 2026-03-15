@@ -1,18 +1,17 @@
 // ============================================================================
 // SE_Output.cpp - Output module
-// Responsibility: Extract the correct ParticleManager context and export
-//                 simulation data to files (e.g. VTK).
+// Responsibility: Read output settings from YAML and export data through the
+//                 IO layer.
 // ============================================================================
+
 #include "FieldManager.h"
 #include "Logger.h"
+#include "Outputer.h"
 #include "PDSimulater.h"
 #include "SolverEngine.h"
-#include "TypedField.h"
-#include "VtkWriter.h"
 #include <string>
 #include <vector>
 #include <yaml-cpp/yaml.h>
-
 
 namespace GRPD::Engine {
 
@@ -20,23 +19,16 @@ void SolverEngine::OutputPD() {
   const auto &currentModel = this->pdContext_;
   LOG_INFO("Starting data export process...");
 
-  // =================================================================
-  // 1. Parse YAML to find the current model context name
-  // =================================================================
   std::string yamlPath = "../../Input/PD.yaml";
-  std::string grpdPath = "";
   std::string currentModelName = currentModel.getName();
-  GRPD::IO::fileFormat format = GRPD::IO::ascii; // default to ascii
-  std::string customWriterName = "";
-  std::vector<std::pair<std::string, int>>
-      variablesToOutput; // {Name, Dimension}
+  bool binaryRequested = false;
+  std::string customWriterName;
+  std::vector<std::pair<std::string, int>> variablesToOutput;
 
   try {
     YAML::Node config = YAML::LoadFile(yamlPath);
 
-    if (config["Assembly"] && config["Assembly"]["OutputGrpd"]) {
-      // We already have the model name from the passed object
-    } else {
+    if (!(config["Assembly"] && config["Assembly"]["OutputGrpd"])) {
       LOG_ERROR("Key [Assembly][OutputGrpd] not found in YAML file!");
       return;
     }
@@ -48,16 +40,16 @@ void SolverEngine::OutputPD() {
       if (config["Writer"]["Type"]) {
         std::string typeStr = config["Writer"]["Type"].as<std::string>();
         if (typeStr == "BINARY" || typeStr == "binary") {
-          format = GRPD::IO::binary;
+          binaryRequested = true;
         } else if (typeStr == "ASCII" || typeStr == "ascii") {
-          format = GRPD::IO::ascii;
+          binaryRequested = false;
         } else {
           LOG_INFO("Unknown Writer Type: " + typeStr +
                    ". Using default ASCII.");
         }
       }
       if (config["Writer"]["Variables"]) {
-        for (auto it : config["Writer"]["Variables"]) {
+        for (const auto &it : config["Writer"]["Variables"]) {
           std::string varName = it["Name"].as<std::string>();
           int varDim = it["Dimension"] ? it["Dimension"].as<int>() : 1;
           variablesToOutput.push_back({varName, varDim});
@@ -73,109 +65,77 @@ void SolverEngine::OutputPD() {
     return;
   }
 
-  // =================================================================
-  // 2. Fetch the corresponding ParticleManager from model context
-  // =================================================================
   LOG_INFO("Fetching model context for export: " + currentModelName);
 
   try {
-    const auto &manager = currentModel.getParticleManager();
     const auto &fieldManager = currentModel.getFieldManager();
+    const auto *coordsField = fieldManager.getFieldAs<double>("Coords");
+    if (!coordsField) {
+      LOG_ERROR("Field 'Coords' not found. Aborting write.");
+      return;
+    }
+    if (coordsField->getDim() != 3) {
+      LOG_ERROR("Field 'Coords' must have dimension 3. Aborting write.");
+      return;
+    }
 
-    // =================================================================
-    // 3. Export data using VtkWriter
-    // =================================================================
     std::string finalOutputName =
         customWriterName.empty() ? currentModelName : customWriterName;
     std::string vtkOutputPath =
         "../../Output/" + finalOutputName + "_output.vtk";
     LOG_INFO("Exporting to VTK format: " + vtkOutputPath);
 
-    int numParticles = static_cast<int>(manager.getTotalParticles());
-
+    const size_t numParticles = coordsField->size();
     if (numParticles == 0) {
       LOG_INFO("No particles to export for model: " + currentModelName);
       return;
     }
 
-    GRPD::IO::VtkWriter writer(vtkOutputPath, numParticles, format);
-
-    // Set points geometry
-    double *coordsPtr = manager.getGeomDataPtr(GRPD::Model::ModelVar::Coords);
-    if (coordsPtr) {
-      writer.setPointsInfo(GRPD::IO::Float64, coordsPtr, "Coordinates", 3);
-    } else {
-      LOG_ERROR("Failed to extract Coordinates. Aborting write.");
-      return;
+    if (binaryRequested) {
+      LOG_WARNING("Outputer only supports VTK Legacy ASCII. Binary output is "
+                  "downgraded to ASCII.");
     }
 
-    // Set physical variables dynamically based on user config
+    GRPD::IO::Outputer outputer;
     for (const auto &[varName, yamlDim] : variablesToOutput) {
       if (varName == "Coords") {
-        continue; // Coordinates are handled separately above
-      }
-
-      // ---------------------------------------------------------------
-      // 优先从 FieldManager 查询物理场变量
-      // FieldManager 统一存储所有物理场（Temperature, HeatFlux 等）
-      // ---------------------------------------------------------------
-      if (fieldManager.hasField(varName)) {
-        const auto *field = fieldManager.getField(varName);
-        if (field && field->rawPtr()) {
-          writer.setPointsVariable(GRPD::IO::Float64,
-                                   const_cast<double *>(field->rawPtr()),
-                                   varName.c_str(), yamlDim);
-          LOG_INFO("Exported field '" + varName + "' from FieldManager.");
-        } else {
-          LOG_WARNING("Field '" + varName +
-                      "' data pointer is null. Skipping.");
-        }
         continue;
       }
 
-      // ---------------------------------------------------------------
-      // 通用路由：来自 ParticleManager 的几何/拓扑变量
-      // ---------------------------------------------------------------
-      GRPD::Model::ModelVar enumName;
-      GRPD::Model::ParticleManager::VarDataType dataType;
-      int managerDim = 1;
-
-      if (GRPD::Model::ParticleManager::getModelVarInfo(varName, enumName,
-                                                        dataType, managerDim)) {
-        void *dataPtr = nullptr;
-        GRPD::IO::dataType vtkType = GRPD::IO::Float64;
-
-        // Fetch the corresponding data pointer based on its specific type
-        if (dataType == GRPD::Model::ParticleManager::VarDataType::Double) {
-          dataPtr = manager.getGeomDataPtr(enumName);
-          vtkType = GRPD::IO::Float64;
-        } else if (dataType == GRPD::Model::ParticleManager::VarDataType::Int) {
-          dataPtr = manager.getIntDataPtr(enumName);
-          vtkType = GRPD::IO::Int32;
-        }
-
-        // Use the dimension specified in YAML configuration
-        int finalDim = yamlDim;
-
-        // If pointer extraction was successful, pass it to VTK Writer
-        if (dataPtr) {
-          writer.setPointsVariable(vtkType, dataPtr, varName.c_str(), finalDim);
-        } else {
-          LOG_WARNING("Data array for " + varName +
-                      " is empty or null. Skipping.");
-        }
-      } else {
+      if (!fieldManager.hasField(varName)) {
         LOG_WARNING("Unknown output variable requested: " + varName +
                     ". Skipping.");
+        continue;
+      }
+
+      if (varName == "ID" || varName == "PartID" || varName == "MatID") {
+        outputer.addIntField(varName);
+        continue;
+      }
+
+      const auto *field = fieldManager.getField(varName);
+      if (!field) {
+        LOG_WARNING("Field '" + varName + "' is null. Skipping.");
+        continue;
+      }
+
+      const int fieldDim = field->getDim();
+      if (fieldDim == 3 || yamlDim == 3) {
+        outputer.addVectorField(varName);
+      } else if (fieldDim == 1) {
+        outputer.addScalarField(varName);
+      } else {
+        LOG_WARNING("Field '" + varName + "' has unsupported dimension " +
+                    std::to_string(fieldDim) + ". Skipping.");
       }
     }
-    // =================================================================
-    // 4. Execute writing
-    // =================================================================
-    writer.write();
+
+    if (!outputer.writeVTK(vtkOutputPath, fieldManager, numParticles)) {
+      LOG_ERROR("VTK export failed for model: " + currentModelName);
+      return;
+    }
 
     LOG_INFO("Successfully exported data for model: " + currentModelName);
-
   } catch (const std::exception &e) {
     LOG_ERROR("Write process aborted: " + std::string(e.what()));
   }

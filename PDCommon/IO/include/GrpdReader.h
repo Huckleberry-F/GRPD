@@ -18,6 +18,10 @@ class ParticleManager;
 class ThermalField;
 } // namespace GRPD::Model
 
+namespace GRPD::Field {
+class FieldManager;
+}
+
 namespace GRPD::Core {
 class PDSimulater;
 } // namespace GRPD::Core
@@ -34,6 +38,13 @@ public:
   // -----------------------------------------------------------------------
   static bool read(const std::string &filepath,
                    GRPD::Model::ParticleManager &manager);
+
+  /// @brief 注册粒子几何与标识字段到 FieldManager
+  static void ensureParticleFields(GRPD::Field::FieldManager &fm);
+
+  /// @brief 将 ParticleManager 中的粒子几何与标识数据回填到 FieldManager
+  static bool populateParticleFields(const GRPD::Model::ParticleManager &pm,
+                                     GRPD::Field::FieldManager &fm);
 
   // -----------------------------------------------------------------------
   // 读取 .grpd 文件的 *LOAD 段，将温度型载荷施加到 ThermalField

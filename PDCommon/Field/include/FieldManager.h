@@ -54,6 +54,8 @@ public:
     /// @tparam T 数据类型
     template <typename T = double>
     TypedField<T> *getFieldAs(const std::string &name);
+    template <typename T = double>
+    const TypedField<T> *getFieldAs(const std::string &name) const;
 
     /// @brief 检查某个物理场是否已注册
     bool hasField(const std::string &name) const;
@@ -113,6 +115,15 @@ TypedField<T> *FieldManager::getFieldAs(const std::string &name) {
         return nullptr;
     }
     return dynamic_cast<TypedField<T> *>(it->second.get());
+}
+
+template <typename T>
+const TypedField<T> *FieldManager::getFieldAs(const std::string &name) const {
+    auto it = fields_.find(name);
+    if (it == fields_.end()) {
+        return nullptr;
+    }
+    return dynamic_cast<const TypedField<T> *>(it->second.get());
 }
 
 } // namespace GRPD::Field

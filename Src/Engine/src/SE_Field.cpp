@@ -6,6 +6,7 @@
 // 3. 统一为所有场分配内存
 // ============================================================================
 
+#include "GrpdReader.h"
 #include "Logger.h"
 #include "PhysicsFieldRegistry.h"
 #include "SolverEngine.h"
@@ -94,11 +95,20 @@ void SolverEngine::InitFieldsPD() {
     }
   }
 
+  GRPD::IO::GrpdReader::ensureParticleFields(fieldManager);
+
   // =================================================================
   // 5. 统一为所有已注册场分配内存
   // =================================================================
   size_t numParticles = ctx.getParticleManager().getTotalParticles();
   fieldManager.resizeAll(numParticles);
+
+  if (!GRPD::IO::GrpdReader::populateParticleFields(ctx.getParticleManager(),
+                                                    fieldManager)) {
+    LOG_ERROR("[InitFields] Failed to populate particle fields from "
+              "ParticleManager.");
+    exit(EXIT_FAILURE);
+  }
 
   LOG_INFO("[InitFields] All fields allocated for " +
            std::to_string(numParticles) + " particles. Total fields: " +
