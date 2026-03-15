@@ -3,7 +3,7 @@
 # ==============================================================================
 
 # 1. Define object library (produces .obj, not .lib)
-# Manually list source files for CMake 4.0+ stability
+# Manually list source files for CMake stability
 add_library(IO_Obj OBJECT 
     src/GrpdReader.cpp
     src/Writer.cpp

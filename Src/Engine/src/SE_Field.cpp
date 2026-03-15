@@ -10,7 +10,6 @@
 #include "PhysicsFieldRegistry.h"
 #include "SolverEngine.h"
 #include <cstdlib>
-#include <sstream>
 #include <string>
 #include <yaml-cpp/yaml.h>
 
@@ -69,10 +68,26 @@ void SolverEngine::InitFieldsPD() {
   }
 
   // =================================================================
-  // 3. 遍历所有材料，让每个材料子类注册其私有的状态变量场
-  //    （材料驱动，完全解耦，对标 ABAQUS SDV 机制）
+  // 3. 状态变量池 (SDV Pool) 初始化
+  //    扫描所有材料，确定最大状态变量需求数，分配统一池
   // =================================================================
   auto &matManager = ctx.getMaterialManager();
+  size_t maxSDVs = 0;
+  for (const auto &[matName, matPtr] : matManager.getMaterials()) {
+    if (matPtr) {
+      maxSDVs = std::max(maxSDVs, matPtr->getNumStateVariables());
+    }
+  }
+
+  if (maxSDVs > 0) {
+    fieldManager.registerField("SDV", static_cast<int>(maxSDVs));
+    LOG_INFO("[InitFields] SDV Pool registered with dimension: " +
+             std::to_string(maxSDVs));
+  }
+
+  // =================================================================
+  // 4. 遍历所有材料，执行辅助场注册 (用于非池化特殊需求)
+  // =================================================================
   for (const auto &[matName, matPtr] : matManager.getMaterials()) {
     if (matPtr) {
       matPtr->allocateStateVariables(fieldManager);
@@ -80,7 +95,7 @@ void SolverEngine::InitFieldsPD() {
   }
 
   // =================================================================
-  // 4. 统一为所有已注册场分配内存
+  // 5. 统一为所有已注册场分配内存
   // =================================================================
   size_t numParticles = ctx.getParticleManager().getTotalParticles();
   fieldManager.resizeAll(numParticles);

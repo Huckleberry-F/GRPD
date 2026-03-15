@@ -45,9 +45,14 @@ public:
 
   /// @brief 分配材料私有的状态变量场
   /// 子类覆盖此方法，向 FieldManager 注册材料所需的状态变量
-  /// 例如：ThermalMat 注册 HeatFlux，ElasticMat 注册 Stress/Strain
+  /// 注意：如果使用通用 SDV 池化机制，此方法可能为空，主要用于注册特殊命名的场
   /// @param fm 物理场管理器引用
   virtual void allocateStateVariables(GRPD::Field::FieldManager &fm);
+
+  /// @brief 获取该材料需要的状态变量(SDV)数量
+  /// 引擎将根据所有材料的最大需求分配统一的 SDV 场
+  /// @return 状态变量数量
+  virtual size_t getNumStateVariables() const;
 
   /// @brief 计算力态或更新本构关系 (子类需具体实现)
   /// 注意：后续应结合Particle对象的属性（如状态变量state_vars等）传入进行计算

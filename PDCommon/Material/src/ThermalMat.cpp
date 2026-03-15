@@ -48,10 +48,12 @@ void ThermalMat::initialize(const YAML::Node &matNode) {
 // 分配材料状态变量场
 // ---------------------------------------------------------------------------
 void ThermalMat::allocateStateVariables(GRPD::Field::FieldManager &fm) {
-  // 热传导材料需要一个热流密度场来记录每个粒子的热流贡献
-  fm.createField("ScalarField", "HeatFlux");
-  LOG_INFO("[ThermalMat] State variable 'HeatFlux' registered by material '" +
-           name_ + "'.");
+  // 注意：HeatFlux 已在 ThermalFields 中作为核心场注册，此处无需重复
+}
+
+size_t ThermalMat::getNumStateVariables() const {
+  // 目前默认为 0，如需烧蚀等状态变量可在此扩充
+  return 0;
 }
 
 // ---------------------------------------------------------------------------

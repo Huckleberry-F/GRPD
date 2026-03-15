@@ -4,14 +4,15 @@
 //                 simulation data to files (e.g. VTK).
 // ============================================================================
 #include "FieldManager.h"
-#include "TypedField.h"
 #include "Logger.h"
 #include "PDSimulater.h"
 #include "SolverEngine.h"
+#include "TypedField.h"
 #include "VtkWriter.h"
 #include <string>
 #include <vector>
 #include <yaml-cpp/yaml.h>
+
 
 namespace GRPD::Engine {
 
@@ -126,7 +127,8 @@ void SolverEngine::OutputPD() {
                                    varName.c_str(), yamlDim);
           LOG_INFO("Exported field '" + varName + "' from FieldManager.");
         } else {
-          LOG_WARNING("Field '" + varName + "' data pointer is null. Skipping.");
+          LOG_WARNING("Field '" + varName +
+                      "' data pointer is null. Skipping.");
         }
         continue;
       }

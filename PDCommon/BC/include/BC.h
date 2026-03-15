@@ -21,39 +21,39 @@ namespace GRPD::BC {
 
 class BC {
 public:
-    /// @brief 构造函数
-    /// @param name 边界条件实例的唯一名称
-    explicit BC(const std::string &name = "");
+  /// @brief 构造函数
+  /// @param name 边界条件实例的唯一名称
+  explicit BC(const std::string &name = "");
 
-    virtual ~BC() = default;
+  virtual ~BC() = default;
 
-    // 禁用拷贝
-    BC(const BC &) = delete;
-    BC &operator=(const BC &) = delete;
+  // 禁用拷贝
+  BC(const BC &) = delete;
+  BC &operator=(const BC &) = delete;
 
-    /// @brief 获取边界条件名称
-    const std::string &getName() const;
+  /// @brief 获取边界条件名称
+  const std::string &getName() const;
 
-    /// @brief 设置名称
-    void setName(const std::string &name);
+  /// @brief 设置名称
+  void setName(const std::string &name);
 
-    /// @brief 初始化接口：注入物理场管理器、粒子 ID 和参数值
-    /// @param fieldManager 物理场管理器引用（通过它获取各物理场）
-    /// @param particleId   粒子 ID
-    /// @param values       参数值列表
-    virtual void initialize(GRPD::Field::FieldManager &fieldManager,
-                            int particleId,
-                            const std::vector<double> &values) = 0;
+  /// @brief 初始化接口：注入物理场管理器、粒子 ID 和参数值
+  /// @param fieldManager 物理场管理器引用（通过它获取各物理场）
+  /// @param particleId   粒子 ID
+  /// @param values       参数值列表
+  virtual void initialize(GRPD::Field::FieldManager &fieldManager,
+                          int particleId,
+                          const std::vector<double> &values) = 0;
 
-    /// @brief 施加边界条件的核心虚函数
-    /// 每个具体的派生类将实现自己的施加逻辑
-    virtual void apply() = 0;
+  /// @brief 施加边界条件的核心虚函数
+  /// 每个具体的派生类将实现自己的施加逻辑
+  virtual void apply() = 0;
 
-    /// @brief 标识是否为约束型边界（如固定温度），用于在时间积分后重新施加
-    virtual bool isConstraint() const { return false; }
+  /// @brief 标识是否为约束型边界（如固定温度），用于在时间积分后重新施加
+  virtual bool isConstraint() const { return false; }
 
 protected:
-    std::string name_; // 边界条件实例名称
+  std::string name_; // 边界条件实例名称
 };
 
 } // namespace GRPD::BC

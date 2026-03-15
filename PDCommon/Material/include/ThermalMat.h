@@ -32,7 +32,11 @@ public:
   void initialize(const YAML::Node &matNode) override;
 
   /// @brief 分配热传导材料的状态变量场 (HeatFlux)
+  /// 如果物理量是唯一的或需要特殊命名场，则在此分配
   void allocateStateVariables(GRPD::Field::FieldManager &fm) override;
+
+  /// @brief 获取热点导材料需要的 SDV 数量 (HeatFlux = 1)
+  size_t getNumStateVariables() const override;
 
   /// @brief 计算力态或更新本构关系
   /// 这里热传导只提供物理参数，计算逻辑将在专门的 solver(Engine计算核心)中处理

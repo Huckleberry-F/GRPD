@@ -22,8 +22,12 @@ void Material::initialize(const YAML::Node &matNode) {
 }
 
 void Material::allocateStateVariables(GRPD::Field::FieldManager &fm) {
-  // 默认空实现，子类覆盖以注册材料私有的状态变量场
-  // 例如：ThermalMat 注册 HeatFlux, ElasticMat 注册 Stress/Strain
+  // 默认空实现，子类覆盖以注册材料私有的特定场（非 SDV 池模式）
+}
+
+size_t Material::getNumStateVariables() const {
+  // 默认返回 0，不需要池化状态变量
+  return 0;
 }
 
 } // namespace GRPD::Material

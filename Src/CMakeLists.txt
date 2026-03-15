@@ -26,6 +26,7 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
     Model_Obj 
     Initial_Obj
     Core_Obj
+    Field_Obj
 )
 
 
