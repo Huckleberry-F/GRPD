@@ -1,0 +1,266 @@
+\doxysection{GRPD\+::BC\+::Temperature\+BC Class Reference}
+\hypertarget{class_g_r_p_d_1_1_b_c_1_1_temperature_b_c}{}\label{class_g_r_p_d_1_1_b_c_1_1_temperature_b_c}\index{GRPD::BC::TemperatureBC@{GRPD::BC::TemperatureBC}}
+
+
+温度边界条件 (Dirichlet) T(x, t) = T\+\_\+fixed  
+
+
+
+
+{\ttfamily \#include $<$Thermal\+BC.\+h$>$}
+
+
+
+Inheritance diagram for GRPD\+::BC\+::Temperature\+BC\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=220pt]{class_g_r_p_d_1_1_b_c_1_1_temperature_b_c__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for GRPD\+::BC\+::Temperature\+BC\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{class_g_r_p_d_1_1_b_c_1_1_temperature_b_c__coll__graph}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{class_g_r_p_d_1_1_b_c_1_1_temperature_b_c_a7e546096323b076724a10ee3d18b89e3}{Temperature\+BC}} (const std\+::string \&name)
+\begin{DoxyCompactList}\small\item\em 工厂构造函数：仅传入名称 \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_g_r_p_d_1_1_b_c_1_1_temperature_b_c_a3c926ac863815571b7779d3f7c507059}{initialize}} (\mbox{\hyperlink{class_g_r_p_d_1_1_field_1_1_field_manager}{GRPD\+::\+Field\+::\+Field\+Manager}} \&field\+Manager, int particle\+Id, const std\+::vector$<$ double $>$ \&values) override
+\begin{DoxyCompactList}\small\item\em 初始化：从 Field\+Manager 获取场指针，设置粒子 ID 和温度值 \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_g_r_p_d_1_1_b_c_1_1_temperature_b_c_a37b692b1d56c3bc0ab87f26a2ac464d6}{apply}} () override
+\begin{DoxyCompactList}\small\item\em 施加边界条件的核心虚函数 每个具体的派生类将实现自己的施加逻辑 \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{class_g_r_p_d_1_1_b_c_1_1_temperature_b_c_af755cc9df5301a4faa65764763ad5845}{is\+Constraint}} () const override
+\begin{DoxyCompactList}\small\item\em 标识是否为约束型边界（如固定温度），用于在时间积分后重新施加 \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Public Member Functions inherited from \mbox{\hyperlink{class_g_r_p_d_1_1_b_c_1_1_thermal_b_c}{GRPD\+::\+BC\+::\+Thermal\+BC}}}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{class_g_r_p_d_1_1_b_c_1_1_thermal_b_c_af847070b8c53b98adaafbc6b4caa1dcb}{Thermal\+BC}} (const std\+::string \&name)
+\begin{DoxyCompactList}\small\item\em 工厂构造：仅传入名称，field 指针在 \doxylink{class_g_r_p_d_1_1_b_c_1_1_b_c_a562a32e73850ba744b9cf1030e12cf6c}{initialize()} 中注入 \end{DoxyCompactList}\item 
+virtual \mbox{\hyperlink{class_g_r_p_d_1_1_b_c_1_1_thermal_b_c_a88ef9491992444a72c8238271e6423fb}{\texorpdfstring{$\sim$}{\string~}\+Thermal\+BC}} ()=default
+\end{DoxyCompactItemize}
+\doxysubsection*{Public Member Functions inherited from \mbox{\hyperlink{class_g_r_p_d_1_1_b_c_1_1_b_c}{GRPD\+::\+BC\+::\+BC}}}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{class_g_r_p_d_1_1_b_c_1_1_b_c_aa0211101f7efeec45e2029a3cd02b848}{BC}} (const std\+::string \&name="{}"{})
+\begin{DoxyCompactList}\small\item\em 构造函数 \end{DoxyCompactList}\item 
+virtual \mbox{\hyperlink{class_g_r_p_d_1_1_b_c_1_1_b_c_aee8c6fca374076d157d192e03f307c21}{\texorpdfstring{$\sim$}{\string~}\+BC}} ()=default
+\item 
+\mbox{\hyperlink{class_g_r_p_d_1_1_b_c_1_1_b_c_a014b060ebacaa88da1aa273597e4c86e}{BC}} (const \mbox{\hyperlink{class_g_r_p_d_1_1_b_c_1_1_b_c}{BC}} \&)=delete
+\item 
+\mbox{\hyperlink{class_g_r_p_d_1_1_b_c_1_1_b_c}{BC}} \& \mbox{\hyperlink{class_g_r_p_d_1_1_b_c_1_1_b_c_ae9b9aaf85e30432a17bf1213a1ccafa9}{operator=}} (const \mbox{\hyperlink{class_g_r_p_d_1_1_b_c_1_1_b_c}{BC}} \&)=delete
+\item 
+const std\+::string \& \mbox{\hyperlink{class_g_r_p_d_1_1_b_c_1_1_b_c_a797ea90661c012eb7b0a0feb236d1cda}{get\+Name}} () const
+\begin{DoxyCompactList}\small\item\em 获取边界条件名称 \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_g_r_p_d_1_1_b_c_1_1_b_c_ab641d5881e7db3342c0509daaaa475c3}{set\+Name}} (const std\+::string \&name)
+\begin{DoxyCompactList}\small\item\em 设置名称 \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+int \mbox{\hyperlink{class_g_r_p_d_1_1_b_c_1_1_temperature_b_c_a15af534e8f6b456f28b8a2fc492e69b4}{particle\+Id\+\_\+}}
+\item 
+double \mbox{\hyperlink{class_g_r_p_d_1_1_b_c_1_1_temperature_b_c_a02f1f3acb829fc422d40d9548bcfea29}{temperature\+Val\+\_\+}}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Additional Inherited Members}
+\doxysubsection*{Protected Attributes inherited from \mbox{\hyperlink{class_g_r_p_d_1_1_b_c_1_1_thermal_b_c}{GRPD\+::\+BC\+::\+Thermal\+BC}}}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{class_g_r_p_d_1_1_field_1_1_typed_field}{GRPD\+::\+Field\+::\+Typed\+Field}}$<$ double $>$ \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{class_g_r_p_d_1_1_b_c_1_1_thermal_b_c_a896445f3dd01623df3c1f7906de07f17}{temperature\+\_\+}}
+\item 
+\mbox{\hyperlink{class_g_r_p_d_1_1_field_1_1_typed_field}{GRPD\+::\+Field\+::\+Typed\+Field}}$<$ double $>$ \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{class_g_r_p_d_1_1_b_c_1_1_thermal_b_c_a7ec8de73eb856ac47930f7ddd9103379}{temp\+Rate\+\_\+}}
+\item 
+\mbox{\hyperlink{class_g_r_p_d_1_1_field_1_1_typed_field}{GRPD\+::\+Field\+::\+Typed\+Field}}$<$ double $>$ \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{class_g_r_p_d_1_1_b_c_1_1_thermal_b_c_adf711cdd691cdf6391807e01daf476a4}{heat\+Flux\+\_\+}}
+\end{DoxyCompactItemize}
+\doxysubsection*{Protected Attributes inherited from \mbox{\hyperlink{class_g_r_p_d_1_1_b_c_1_1_b_c}{GRPD\+::\+BC\+::\+BC}}}
+\begin{DoxyCompactItemize}
+\item 
+std\+::string \mbox{\hyperlink{class_g_r_p_d_1_1_b_c_1_1_b_c_a95248c3cf003f55beccb286d589ff76c}{name\+\_\+}}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+温度边界条件 (Dirichlet) T(x, t) = T\+\_\+fixed 
+
+Definition at line \mbox{\hyperlink{_thermal_b_c_8h_source_l00043}{43}} of file \mbox{\hyperlink{_thermal_b_c_8h_source}{Thermal\+BC.\+h}}.
+
+
+
+\label{doc-constructors}
+\Hypertarget{class_g_r_p_d_1_1_b_c_1_1_temperature_b_c_doc-constructors}
+\doxysubsection{Constructor \& Destructor Documentation}
+\Hypertarget{class_g_r_p_d_1_1_b_c_1_1_temperature_b_c_a7e546096323b076724a10ee3d18b89e3}\index{GRPD::BC::TemperatureBC@{GRPD::BC::TemperatureBC}!TemperatureBC@{TemperatureBC}}
+\index{TemperatureBC@{TemperatureBC}!GRPD::BC::TemperatureBC@{GRPD::BC::TemperatureBC}}
+\doxysubsubsection{\texorpdfstring{TemperatureBC()}{TemperatureBC()}}
+{\footnotesize\ttfamily \label{class_g_r_p_d_1_1_b_c_1_1_temperature_b_c_a7e546096323b076724a10ee3d18b89e3} 
+GRPD\+::\+BC\+::\+Temperature\+BC\+::\+Temperature\+BC (\begin{DoxyParamCaption}\item[{const std\+::string \&}]{name}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [explicit]}}
+
+
+
+工厂构造函数：仅传入名称 
+
+
+
+Definition at line \mbox{\hyperlink{_thermal_b_c_8h_source_l00046}{46}} of file \mbox{\hyperlink{_thermal_b_c_8h_source}{Thermal\+BC.\+h}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00047\ \ \ \ \ \ \ \ \ :\ \mbox{\hyperlink{class_g_r_p_d_1_1_b_c_1_1_thermal_b_c_af847070b8c53b98adaafbc6b4caa1dcb}{ThermalBC}}(name),\ \mbox{\hyperlink{class_g_r_p_d_1_1_b_c_1_1_temperature_b_c_a15af534e8f6b456f28b8a2fc492e69b4}{particleId\_}}(-\/1),\ \mbox{\hyperlink{class_g_r_p_d_1_1_b_c_1_1_temperature_b_c_a02f1f3acb829fc422d40d9548bcfea29}{temperatureVal\_}}(0.0)\ \{\}}
+
+\end{DoxyCode}
+
+
+References \mbox{\hyperlink{_thermal_b_c_8h_source_l00058}{particle\+Id\+\_\+}}, \mbox{\hyperlink{_thermal_b_c_8h_source_l00059}{temperature\+Val\+\_\+}}, and \mbox{\hyperlink{_thermal_b_c_8h_source_l00027}{GRPD\+::\+BC\+::\+Thermal\+BC\+::\+Thermal\+BC()}}.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{class_g_r_p_d_1_1_b_c_1_1_temperature_b_c_a7e546096323b076724a10ee3d18b89e3_cgraph}
+\end{center}
+\end{figure}
+
+
+\label{doc-func-members}
+\Hypertarget{class_g_r_p_d_1_1_b_c_1_1_temperature_b_c_doc-func-members}
+\doxysubsection{Member Function Documentation}
+\Hypertarget{class_g_r_p_d_1_1_b_c_1_1_temperature_b_c_a37b692b1d56c3bc0ab87f26a2ac464d6}\index{GRPD::BC::TemperatureBC@{GRPD::BC::TemperatureBC}!apply@{apply}}
+\index{apply@{apply}!GRPD::BC::TemperatureBC@{GRPD::BC::TemperatureBC}}
+\doxysubsubsection{\texorpdfstring{apply()}{apply()}}
+{\footnotesize\ttfamily \label{class_g_r_p_d_1_1_b_c_1_1_temperature_b_c_a37b692b1d56c3bc0ab87f26a2ac464d6} 
+void GRPD\+::\+BC\+::\+Temperature\+BC\+::apply (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+施加边界条件的核心虚函数 每个具体的派生类将实现自己的施加逻辑 
+
+
+
+Implements \mbox{\hyperlink{class_g_r_p_d_1_1_b_c_1_1_b_c_abe10a4d3335b873cb4ace3936c08a2c8}{GRPD\+::\+BC\+::\+BC}}.
+
+
+
+Definition at line \mbox{\hyperlink{_thermal_b_c_8cpp_source_l00025}{25}} of file \mbox{\hyperlink{_thermal_b_c_8cpp_source}{Thermal\+BC.\+cpp}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00025\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00026\ \ \ \ \ \mbox{\hyperlink{class_g_r_p_d_1_1_b_c_1_1_thermal_b_c_a896445f3dd01623df3c1f7906de07f17}{temperature\_}}-\/>set(\mbox{\hyperlink{class_g_r_p_d_1_1_b_c_1_1_temperature_b_c_a15af534e8f6b456f28b8a2fc492e69b4}{particleId\_}},\ \mbox{\hyperlink{class_g_r_p_d_1_1_b_c_1_1_temperature_b_c_a02f1f3acb829fc422d40d9548bcfea29}{temperatureVal\_}});}
+\DoxyCodeLine{00027\ \}}
+
+\end{DoxyCode}
+
+
+References \mbox{\hyperlink{_thermal_b_c_8h_source_l00058}{particle\+Id\+\_\+}}, \mbox{\hyperlink{_thermal_b_c_8h_source_l00034}{GRPD\+::\+BC\+::\+Thermal\+BC\+::temperature\+\_\+}}, and \mbox{\hyperlink{_thermal_b_c_8h_source_l00059}{temperature\+Val\+\_\+}}.
+
+\Hypertarget{class_g_r_p_d_1_1_b_c_1_1_temperature_b_c_a3c926ac863815571b7779d3f7c507059}\index{GRPD::BC::TemperatureBC@{GRPD::BC::TemperatureBC}!initialize@{initialize}}
+\index{initialize@{initialize}!GRPD::BC::TemperatureBC@{GRPD::BC::TemperatureBC}}
+\doxysubsubsection{\texorpdfstring{initialize()}{initialize()}}
+{\footnotesize\ttfamily \label{class_g_r_p_d_1_1_b_c_1_1_temperature_b_c_a3c926ac863815571b7779d3f7c507059} 
+void GRPD\+::\+BC\+::\+Temperature\+BC\+::initialize (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{class_g_r_p_d_1_1_field_1_1_field_manager}{GRPD\+::\+Field\+::\+Field\+Manager}} \&}]{field\+Manager}{, }\item[{int}]{particle\+Id}{, }\item[{const std\+::vector$<$ double $>$ \&}]{values}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+初始化：从 Field\+Manager 获取场指针，设置粒子 ID 和温度值 
+
+
+
+Implements \mbox{\hyperlink{class_g_r_p_d_1_1_b_c_1_1_b_c_a562a32e73850ba744b9cf1030e12cf6c}{GRPD\+::\+BC\+::\+BC}}.
+
+
+
+Definition at line \mbox{\hyperlink{_thermal_b_c_8cpp_source_l00014}{14}} of file \mbox{\hyperlink{_thermal_b_c_8cpp_source}{Thermal\+BC.\+cpp}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00016\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00017\ \ \ \ \ \textcolor{comment}{//\ 从\ FieldManager\ 获取各物理场指针}}
+\DoxyCodeLine{00018\ \ \ \ \ \mbox{\hyperlink{class_g_r_p_d_1_1_b_c_1_1_thermal_b_c_a896445f3dd01623df3c1f7906de07f17}{temperature\_}}\ =\ fieldManager.\mbox{\hyperlink{class_g_r_p_d_1_1_field_1_1_field_manager_ac8aeec83b40283031970fdeaa8552a84}{getFieldAs}}<\textcolor{keywordtype}{double}>(\textcolor{stringliteral}{"{}Temperature"{}});}
+\DoxyCodeLine{00019\ \ \ \ \ \mbox{\hyperlink{class_g_r_p_d_1_1_b_c_1_1_thermal_b_c_a7ec8de73eb856ac47930f7ddd9103379}{tempRate\_}}\ =\ fieldManager.\mbox{\hyperlink{class_g_r_p_d_1_1_field_1_1_field_manager_ac8aeec83b40283031970fdeaa8552a84}{getFieldAs}}<\textcolor{keywordtype}{double}>(\textcolor{stringliteral}{"{}TempRate"{}});}
+\DoxyCodeLine{00020\ \ \ \ \ \mbox{\hyperlink{class_g_r_p_d_1_1_b_c_1_1_thermal_b_c_adf711cdd691cdf6391807e01daf476a4}{heatFlux\_}}\ =\ fieldManager.\mbox{\hyperlink{class_g_r_p_d_1_1_field_1_1_field_manager_ac8aeec83b40283031970fdeaa8552a84}{getFieldAs}}<\textcolor{keywordtype}{double}>(\textcolor{stringliteral}{"{}HeatFlux"{}});}
+\DoxyCodeLine{00021\ \ \ \ \ \mbox{\hyperlink{class_g_r_p_d_1_1_b_c_1_1_temperature_b_c_a15af534e8f6b456f28b8a2fc492e69b4}{particleId\_}}\ =\ particleId;}
+\DoxyCodeLine{00022\ \ \ \ \ \mbox{\hyperlink{class_g_r_p_d_1_1_b_c_1_1_temperature_b_c_a02f1f3acb829fc422d40d9548bcfea29}{temperatureVal\_}}\ =\ values[0];}
+\DoxyCodeLine{00023\ \}}
+
+\end{DoxyCode}
+
+
+References \mbox{\hyperlink{_field_manager_8h_source_l00110}{GRPD\+::\+Field\+::\+Field\+Manager\+::get\+Field\+As()}}, \mbox{\hyperlink{_thermal_b_c_8h_source_l00036}{GRPD\+::\+BC\+::\+Thermal\+BC\+::heat\+Flux\+\_\+}}, \mbox{\hyperlink{_thermal_b_c_8h_source_l00058}{particle\+Id\+\_\+}}, \mbox{\hyperlink{_thermal_b_c_8h_source_l00034}{GRPD\+::\+BC\+::\+Thermal\+BC\+::temperature\+\_\+}}, \mbox{\hyperlink{_thermal_b_c_8h_source_l00059}{temperature\+Val\+\_\+}}, and \mbox{\hyperlink{_thermal_b_c_8h_source_l00035}{GRPD\+::\+BC\+::\+Thermal\+BC\+::temp\+Rate\+\_\+}}.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{class_g_r_p_d_1_1_b_c_1_1_temperature_b_c_a3c926ac863815571b7779d3f7c507059_cgraph}
+\end{center}
+\end{figure}
+\Hypertarget{class_g_r_p_d_1_1_b_c_1_1_temperature_b_c_af755cc9df5301a4faa65764763ad5845}\index{GRPD::BC::TemperatureBC@{GRPD::BC::TemperatureBC}!isConstraint@{isConstraint}}
+\index{isConstraint@{isConstraint}!GRPD::BC::TemperatureBC@{GRPD::BC::TemperatureBC}}
+\doxysubsubsection{\texorpdfstring{isConstraint()}{isConstraint()}}
+{\footnotesize\ttfamily \label{class_g_r_p_d_1_1_b_c_1_1_temperature_b_c_af755cc9df5301a4faa65764763ad5845} 
+bool GRPD\+::\+BC\+::\+Temperature\+BC\+::is\+Constraint (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+标识是否为约束型边界（如固定温度），用于在时间积分后重新施加 
+
+
+
+Reimplemented from \mbox{\hyperlink{class_g_r_p_d_1_1_b_c_1_1_b_c_ad7088d2e4754f9c911b7a19c2b419795}{GRPD\+::\+BC\+::\+BC}}.
+
+
+
+Definition at line \mbox{\hyperlink{_thermal_b_c_8h_source_l00055}{55}} of file \mbox{\hyperlink{_thermal_b_c_8h_source}{Thermal\+BC.\+h}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00055\ \{\ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};\ \}}
+
+\end{DoxyCode}
+
+
+\label{doc-variable-members}
+\Hypertarget{class_g_r_p_d_1_1_b_c_1_1_temperature_b_c_doc-variable-members}
+\doxysubsection{Member Data Documentation}
+\Hypertarget{class_g_r_p_d_1_1_b_c_1_1_temperature_b_c_a15af534e8f6b456f28b8a2fc492e69b4}\index{GRPD::BC::TemperatureBC@{GRPD::BC::TemperatureBC}!particleId\_@{particleId\_}}
+\index{particleId\_@{particleId\_}!GRPD::BC::TemperatureBC@{GRPD::BC::TemperatureBC}}
+\doxysubsubsection{\texorpdfstring{particleId\_}{particleId\_}}
+{\footnotesize\ttfamily \label{class_g_r_p_d_1_1_b_c_1_1_temperature_b_c_a15af534e8f6b456f28b8a2fc492e69b4} 
+int GRPD\+::\+BC\+::\+Temperature\+BC\+::particle\+Id\+\_\+\hspace{0.3cm}{\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_thermal_b_c_8h_source_l00058}{58}} of file \mbox{\hyperlink{_thermal_b_c_8h_source}{Thermal\+BC.\+h}}.
+
+
+
+Referenced by \mbox{\hyperlink{_thermal_b_c_8cpp_source_l00025}{apply()}}, \mbox{\hyperlink{_thermal_b_c_8cpp_source_l00014}{initialize()}}, and \mbox{\hyperlink{_thermal_b_c_8h_source_l00046}{Temperature\+BC()}}.
+
+\Hypertarget{class_g_r_p_d_1_1_b_c_1_1_temperature_b_c_a02f1f3acb829fc422d40d9548bcfea29}\index{GRPD::BC::TemperatureBC@{GRPD::BC::TemperatureBC}!temperatureVal\_@{temperatureVal\_}}
+\index{temperatureVal\_@{temperatureVal\_}!GRPD::BC::TemperatureBC@{GRPD::BC::TemperatureBC}}
+\doxysubsubsection{\texorpdfstring{temperatureVal\_}{temperatureVal\_}}
+{\footnotesize\ttfamily \label{class_g_r_p_d_1_1_b_c_1_1_temperature_b_c_a02f1f3acb829fc422d40d9548bcfea29} 
+double GRPD\+::\+BC\+::\+Temperature\+BC\+::temperature\+Val\+\_\+\hspace{0.3cm}{\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_thermal_b_c_8h_source_l00059}{59}} of file \mbox{\hyperlink{_thermal_b_c_8h_source}{Thermal\+BC.\+h}}.
+
+
+
+Referenced by \mbox{\hyperlink{_thermal_b_c_8cpp_source_l00025}{apply()}}, \mbox{\hyperlink{_thermal_b_c_8cpp_source_l00014}{initialize()}}, and \mbox{\hyperlink{_thermal_b_c_8h_source_l00046}{Temperature\+BC()}}.
+
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+PDCommon/\+BC/include/\mbox{\hyperlink{_thermal_b_c_8h}{Thermal\+BC.\+h}}\item 
+PDCommon/\+BC/src/\mbox{\hyperlink{_thermal_b_c_8cpp}{Thermal\+BC.\+cpp}}\end{DoxyCompactItemize}

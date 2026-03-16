@@ -6,7 +6,7 @@
 #include "VtkWriter.h"
 #include <algorithm>
 
-namespace GRPD::IO {
+namespace PDCommon::IO {
 
 namespace {
 
@@ -48,8 +48,10 @@ void Outputer::clear() {
   intFields_.clear();
 }
 
+void Outputer::setFormat(fileFormat fmt) { format_ = fmt; }
+
 bool Outputer::writeVTK(const std::string &filename,
-                        const GRPD::Field::FieldManager &fm,
+                        const PDCommon::Field::FieldManager &fm,
                         size_t numParticles) const {
   if (numParticles == 0) {
     LOG_WARNING("[Outputer] No particles available for VTK export.");
@@ -69,7 +71,7 @@ bool Outputer::writeVTK(const std::string &filename,
     return false;
   }
 
-  VtkWriter writer(filename, static_cast<int>(numParticles), ascii);
+  VtkWriter writer(filename, static_cast<int>(numParticles), format_);
   writer.setPointsInfo(Float64,
                        const_cast<double *>(coordsField->dataPtr()),
                        "Coords",
@@ -145,4 +147,4 @@ bool Outputer::writeVTK(const std::string &filename,
   return true;
 }
 
-} // namespace GRPD::IO
+} // namespace PDCommon::IO

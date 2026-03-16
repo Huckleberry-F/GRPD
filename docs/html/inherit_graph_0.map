@@ -1,0 +1,11 @@
+<map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
+<area shape="rect" id="Node000000" href="$class_g_r_p_d_1_1_b_c_1_1_b_c.html" title=" " alt="" coords="5,56,120,83"/>
+<area shape="rect" id="Node000001" href="$class_g_r_p_d_1_1_b_c_1_1_thermal_b_c.html" title="热边界条件抽象中间类 持有三个 TypedField&lt;double&gt; 指针（温度、温度变化率、热流密度）， 所有热相关 BC 均从此类派生。 使用指针而非引用以支持工厂模式的两阶段构造。" alt="" coords="168,56,329,83"/>
+<area shape="poly" id="edge1_Node000000_Node000001" title=" " alt="" coords="135,67,167,67,167,72,135,72"/>
+<area shape="rect" id="Node000002" href="$class_g_r_p_d_1_1_b_c_1_1_convection_b_c.html" title="对流边界条件 (Robin) q = h * (T_inf &#45; T)" alt="" coords="380,5,560,32"/>
+<area shape="poly" id="edge2_Node000001_Node000002" title=" " alt="" coords="324,49,408,30,409,35,326,55"/>
+<area shape="rect" id="Node000003" href="$class_g_r_p_d_1_1_b_c_1_1_heat_flux_b_c.html" title="热流边界条件 (Neumann) q = q_fixed" alt="" coords="386,56,554,83"/>
+<area shape="poly" id="edge3_Node000001_Node000003" title=" " alt="" coords="344,67,386,67,386,72,344,72"/>
+<area shape="rect" id="Node000004" href="$class_g_r_p_d_1_1_b_c_1_1_temperature_b_c.html" title="温度边界条件 (Dirichlet) T(x, t) = T_fixed" alt="" coords="377,107,563,133"/>
+<area shape="poly" id="edge4_Node000001_Node000004" title=" " alt="" coords="326,84,409,103,408,109,324,89"/>
+</map>

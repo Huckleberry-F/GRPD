@@ -1,0 +1,9 @@
+<map id="GRPD::Field::PhysicsFieldRegistry::getInstance" name="GRPD::Field::PhysicsFieldRegistry::getInstance">
+<area shape="rect" id="Node000001" title="获取单例" alt="" coords="721,5,1026,32"/>
+<area shape="rect" id="Node000002" href="$class_g_r_p_d_1_1_engine_1_1_solver_engine.html#ac2c98ee81cbbe31eba2bee2039ce6d8a" title=" " alt="" coords="400,5,673,32"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="706,21,674,21,674,16,706,16"/>
+<area shape="rect" id="Node000003" href="$class_g_r_p_d_1_1_engine_1_1_solver_engine.html#ae2358165487a99020cc545ce52f06db2" title="初始化整个仿真工程（解析参数、生成网格、分配材料等）" alt="" coords="103,5,352,32"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="384,21,352,21,352,16,384,16"/>
+<area shape="rect" id="Node000004" href="$main_8cpp.html#a0ddf1224851353fc92bfbff6f499fa97" title=" " alt="" coords="5,5,55,32"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="87,21,55,21,55,16,87,16"/>
+</map>

@@ -1,15 +1,16 @@
-#ifndef GRPD_IO_OUTPUTER_H
-#define GRPD_IO_OUTPUTER_H
+#ifndef PDCOMMON_IO_OUTPUTER_H
+#define PDCOMMON_IO_OUTPUTER_H
 
+#include "Writer.h"
 #include <cstddef>
 #include <string>
 #include <vector>
 
-namespace GRPD::Field {
+namespace PDCommon::Field {
 class FieldManager;
 }
 
-namespace GRPD::IO {
+namespace PDCommon::IO {
 
 class Outputer {
 public:
@@ -18,16 +19,20 @@ public:
   void addIntField(const std::string &fieldName);
   void clear();
 
+  /// @brief 设置输出格式 (ascii 或 binary)，默认为 ascii
+  void setFormat(fileFormat fmt);
+
   bool writeVTK(const std::string &filename,
-                const GRPD::Field::FieldManager &fm,
+                const PDCommon::Field::FieldManager &fm,
                 size_t numParticles) const;
 
 private:
+  fileFormat format_ = ascii;  // 输出格式，默认 ASCII
   std::vector<std::string> scalarFields_;
   std::vector<std::string> vectorFields_;
   std::vector<std::string> intFields_;
 };
 
-} // namespace GRPD::IO
+} // namespace PDCommon::IO
 
-#endif // GRPD_IO_OUTPUTER_H
+#endif // PDCOMMON_IO_OUTPUTER_H

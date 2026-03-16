@@ -1,0 +1,5 @@
+<map id="GRPD::BC::ThermalBC::ThermalBC" name="GRPD::BC::ThermalBC::ThermalBC">
+<area shape="rect" id="Node000001" title="工厂构造：仅传入名称，field 指针在 initialize() 中注入" alt="" coords="5,5,241,32"/>
+<area shape="rect" id="Node000002" href="$class_g_r_p_d_1_1_b_c_1_1_b_c.html#aa0211101f7efeec45e2029a3cd02b848" title="构造函数" alt="" coords="289,5,430,32"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="241,16,273,16,273,21,241,21"/>
+</map>

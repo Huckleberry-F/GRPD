@@ -1,18 +1,10 @@
-# 1. Expose current directory (contains AbstractSolver.h and SolverManager.h)
-target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
+# ==============================================================================
+# Src/Solve/CMakeLists.txt - 求解器实现层
+# ==============================================================================
 
-# 2. Include subdirectory headers (so SolverManager can see concrete implementations)
-target_include_directories(${PROJECT_NAME} PRIVATE 
-    ${CMAKE_CURRENT_SOURCE_DIR}/Mechanical
-    ${CMAKE_CURRENT_SOURCE_DIR}/Thermal
-    ${CMAKE_CURRENT_SOURCE_DIR}/Coupled
-)
+# PD 求解器
+add_subdirectory(PD)
 
-# 3. Recursively collect all physics solver source files
-file(GLOB_RECURSE SOLVER_SOURCES 
-    "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/*.h"
-)
-
-# 4. Inject into main executable target
-target_sources(${PROJECT_NAME} PRIVATE ${SOLVER_SOURCES})
+# 未来扩展:
+# add_subdirectory(FEM)
+# add_subdirectory(Coupled)

@@ -4,7 +4,7 @@
 
 #include "BCManager.h"
 
-namespace GRPD::BC {
+namespace PDCommon::BC {
 
 void BCManager::addBC(std::unique_ptr<BC> bc) {
     bcs_.push_back(std::move(bc));
@@ -36,4 +36,4 @@ size_t BCManager::size() const { return bcs_.size(); }
 
 void BCManager::clear() { bcs_.clear(); }
 
-} // namespace GRPD::BC
+} // namespace PDCommon::BC

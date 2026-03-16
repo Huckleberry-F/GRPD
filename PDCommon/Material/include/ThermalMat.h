@@ -1,5 +1,5 @@
-#ifndef THERMAL_MAT_H
-#define THERMAL_MAT_H
+#ifndef PDCOMMON_MATERIAL_THERMAL_MAT_H
+#define PDCOMMON_MATERIAL_THERMAL_MAT_H
 
 // ============================================================================
 // ThermalMat.h - 近场动力学热传导微导率材料模型
@@ -13,7 +13,7 @@
 #include <string>
 #include <yaml-cpp/yaml.h>
 
-namespace GRPD::Material {
+namespace PDCommon::Material {
 
 class ThermalMat : public Material {
 public:
@@ -33,7 +33,7 @@ public:
 
   /// @brief 分配热传导材料的状态变量场 (HeatFlux)
   /// 如果物理量是唯一的或需要特殊命名场，则在此分配
-  void allocateStateVariables(GRPD::Field::FieldManager &fm) override;
+  void allocateStateVariables(PDCommon::Field::FieldManager &fm) override;
 
   /// @brief 获取热点导材料需要的 SDV 数量 (HeatFlux = 1)
   size_t getNumStateVariables() const override;
@@ -65,6 +65,6 @@ private:
   double density_{-1.0};      // 密度
 };
 
-} // namespace GRPD::Material
+} // namespace PDCommon::Material
 
-#endif // THERMAL_MAT_H
+#endif // PDCOMMON_MATERIAL_THERMAL_MAT_H

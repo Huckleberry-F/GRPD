@@ -7,7 +7,7 @@
 #include "Logger.h"
 #include "PhysicsFieldRegistry.h"
 
-namespace GRPD::Field {
+namespace PDCommon::Field {
 
 void MechanicalFields::registerFields(FieldManager &fm) {
     // 力学核心场：位移、速度、加速度（均为三维矢量场）
@@ -19,6 +19,6 @@ void MechanicalFields::registerFields(FieldManager &fm) {
 }
 
 // 静态注册到 PhysicsFieldRegistry
-REGISTER_PHYSICS_FIELDS(Mechanical, GRPD::Field::MechanicalFields)
+REGISTER_PHYSICS_FIELDS(Mechanical, PDCommon::Field::MechanicalFields)
 
-} // namespace GRPD::Field
+} // namespace PDCommon::Field

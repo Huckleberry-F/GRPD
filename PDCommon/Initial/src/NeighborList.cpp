@@ -5,9 +5,9 @@
 #include <string>
 #include <omp.h>
 
-namespace GRPD::Initial {
+namespace PDCommon::Initial {
 
-void NeighborList::buildNeighbors(const GRPD::Model::ParticleManager& mgr, double horizon) {
+void NeighborList::buildNeighbors(const PDCommon::Model::ParticleManager& mgr, double horizon) {
     this->horizon_ = horizon;
     size_t numParticles = mgr.getTotalParticles();
     LOG_INFO("[NeighborList] Starting neighbor search for " + std::to_string(numParticles) + 
@@ -74,4 +74,4 @@ double NeighborList::getHorizon() const {
     return horizon_;
 }
 
-} // namespace GRPD::Initial
+} // namespace PDCommon::Initial

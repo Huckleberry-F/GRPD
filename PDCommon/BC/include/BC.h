@@ -1,5 +1,5 @@
-#ifndef GRPD_BC_BC_H
-#define GRPD_BC_BC_H
+#ifndef PDCOMMON_BC_BC_H
+#define PDCOMMON_BC_BC_H
 
 // ============================================================================
 // BC.h - 边界条件 (Boundary Condition) 基类
@@ -13,11 +13,11 @@
 #include <vector>
 
 // 前置声明，避免在基类头文件引入具体物理场依赖
-namespace GRPD::Field {
+namespace PDCommon::Field {
 class FieldManager;
 }
 
-namespace GRPD::BC {
+namespace PDCommon::BC {
 
 class BC {
 public:
@@ -41,7 +41,7 @@ public:
   /// @param fieldManager 物理场管理器引用（通过它获取各物理场）
   /// @param particleId   粒子 ID
   /// @param values       参数值列表
-  virtual void initialize(GRPD::Field::FieldManager &fieldManager,
+  virtual void initialize(PDCommon::Field::FieldManager &fieldManager,
                           int particleId,
                           const std::vector<double> &values) = 0;
 
@@ -56,6 +56,6 @@ protected:
   std::string name_; // 边界条件实例名称
 };
 
-} // namespace GRPD::BC
+} // namespace PDCommon::BC
 
-#endif // GRPD_BC_BC_H
+#endif // PDCOMMON_BC_BC_H

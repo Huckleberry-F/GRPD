@@ -1,0 +1,483 @@
+\doxysection{GRPD\+::Material\+::Thermal\+Mat Class Reference}
+\hypertarget{class_g_r_p_d_1_1_material_1_1_thermal_mat}{}\label{class_g_r_p_d_1_1_material_1_1_thermal_mat}\index{GRPD::Material::ThermalMat@{GRPD::Material::ThermalMat}}
+
+
+{\ttfamily \#include $<$Thermal\+Mat.\+h$>$}
+
+
+
+Inheritance diagram for GRPD\+::Material\+::Thermal\+Mat\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=224pt]{class_g_r_p_d_1_1_material_1_1_thermal_mat__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for GRPD\+::Material\+::Thermal\+Mat\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=224pt]{class_g_r_p_d_1_1_material_1_1_thermal_mat__coll__graph}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{class_g_r_p_d_1_1_material_1_1_thermal_mat_a90468a0e56fa121528db8ae4e6125310}{Thermal\+Mat}} (const std\+::string \&name="{}"{})
+\begin{DoxyCompactList}\small\item\em 构造函数 \end{DoxyCompactList}\item 
+virtual \mbox{\hyperlink{class_g_r_p_d_1_1_material_1_1_thermal_mat_aebc00edc3739d674b5d6fcda09613fdf}{\texorpdfstring{$\sim$}{\string~}\+Thermal\+Mat}} ()=default
+\item 
+void \mbox{\hyperlink{class_g_r_p_d_1_1_material_1_1_thermal_mat_a532dd2387e182898e79911c3eb1c7bc5}{initialize}} (const YAML\+::\+Node \&mat\+Node) override
+\begin{DoxyCompactList}\small\item\em 初始化材料参数或状态变量（若有特别参数需初始化则在此进行） \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_g_r_p_d_1_1_material_1_1_thermal_mat_a494385c6fb349d4c3b00e5b833ab611d}{allocate\+State\+Variables}} (\mbox{\hyperlink{class_g_r_p_d_1_1_field_1_1_field_manager}{GRPD\+::\+Field\+::\+Field\+Manager}} \&fm) override
+\begin{DoxyCompactList}\small\item\em 分配热传导材料的状态变量场 (Heat\+Flux) \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_g_r_p_d_1_1_material_1_1_thermal_mat_a9a742ad010610af6574b62d0a8233d22}{evaluate}} () override
+\begin{DoxyCompactList}\small\item\em 计算力态或更新本构关系 这里热传导只提供物理参数，计算逻辑将在专门的 solver(Engine计算核心)中处理 \end{DoxyCompactList}\item 
+double \mbox{\hyperlink{class_g_r_p_d_1_1_material_1_1_thermal_mat_a507448c96505babc0153e5d15c693de1}{get\+Conductivity}} () const
+\begin{DoxyCompactList}\small\item\em 获取微导率 (Micro-\/conductivity) \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_g_r_p_d_1_1_material_1_1_thermal_mat_a2b3865b1967fbd905bb27c3873d4a6c3}{set\+Conductivity}} (double Con)
+\begin{DoxyCompactList}\small\item\em 设置微导率 \end{DoxyCompactList}\item 
+double \mbox{\hyperlink{class_g_r_p_d_1_1_material_1_1_thermal_mat_abd9059c1dda55e3db81b38d6a5df7d29}{get\+Heat\+Capacity}} () const
+\item 
+void \mbox{\hyperlink{class_g_r_p_d_1_1_material_1_1_thermal_mat_ad0fb0c38cb92519687299dfda0673544}{set\+Heat\+Capacity}} (double Cap)
+\item 
+double \mbox{\hyperlink{class_g_r_p_d_1_1_material_1_1_thermal_mat_a98256740ba8528e397014c32852856ff}{get\+Density}} () const
+\item 
+void \mbox{\hyperlink{class_g_r_p_d_1_1_material_1_1_thermal_mat_af1031c40bccf46fedeae8069e5545ed0}{set\+Density}} (double rho)
+\end{DoxyCompactItemize}
+\doxysubsection*{Public Member Functions inherited from \mbox{\hyperlink{class_g_r_p_d_1_1_material_1_1_material}{GRPD\+::\+Material\+::\+Material}}}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{class_g_r_p_d_1_1_material_1_1_material_a6f1a7c0cbc3fa288802a5412814be0ec}{Material}} (const std\+::string \&name="{}"{})
+\begin{DoxyCompactList}\small\item\em 构造函数 \end{DoxyCompactList}\item 
+virtual \mbox{\hyperlink{class_g_r_p_d_1_1_material_1_1_material_ae385849dbd3f293828dcb77fc01111f2}{\texorpdfstring{$\sim$}{\string~}\+Material}} ()=default
+\item 
+\mbox{\hyperlink{class_g_r_p_d_1_1_material_1_1_material_ab95de222fcce0aa2bdc2d647b2ae066b}{Material}} (const \mbox{\hyperlink{class_g_r_p_d_1_1_material_1_1_material}{Material}} \&)=delete
+\item 
+\mbox{\hyperlink{class_g_r_p_d_1_1_material_1_1_material}{Material}} \& \mbox{\hyperlink{class_g_r_p_d_1_1_material_1_1_material_aa96ea9bdc523091556a42cd5c2e3841b}{operator=}} (const \mbox{\hyperlink{class_g_r_p_d_1_1_material_1_1_material}{Material}} \&)=delete
+\item 
+const std\+::string \& \mbox{\hyperlink{class_g_r_p_d_1_1_material_1_1_material_a406898f3ac641b01004450b2d6051a75}{get\+Name}} () const
+\begin{DoxyCompactList}\small\item\em 获取当前材料实例名称 \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_g_r_p_d_1_1_material_1_1_material_a57380218ea24360349919fe4e050c231}{set\+Name}} (const std\+::string \&name)
+\begin{DoxyCompactList}\small\item\em 设置名字 \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{class_g_r_p_d_1_1_material_1_1_material_a908d6a605081e1151c29348fbc9a6875}{get\+Mat\+Id}} () const
+\begin{DoxyCompactList}\small\item\em 获取/设置 Mat\+ID \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_g_r_p_d_1_1_material_1_1_material_a19a346d5596bd295d26cd1236749ef13}{set\+Mat\+Id}} (int id)
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+double \mbox{\hyperlink{class_g_r_p_d_1_1_material_1_1_thermal_mat_a42a6df13a395041bb42b1139406ea50d}{conductivity\+\_\+}} \{-\/1.\+0\}
+\item 
+double \mbox{\hyperlink{class_g_r_p_d_1_1_material_1_1_thermal_mat_af4c0c824291a3cadb08077f070a4fb42}{heat\+Capacity\+\_\+}} \{-\/1.\+0\}
+\item 
+double \mbox{\hyperlink{class_g_r_p_d_1_1_material_1_1_thermal_mat_a7a1987e9787445e4222eb570d767817d}{density\+\_\+}} \{-\/1.\+0\}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Additional Inherited Members}
+\doxysubsection*{Protected Attributes inherited from \mbox{\hyperlink{class_g_r_p_d_1_1_material_1_1_material}{GRPD\+::\+Material\+::\+Material}}}
+\begin{DoxyCompactItemize}
+\item 
+std\+::string \mbox{\hyperlink{class_g_r_p_d_1_1_material_1_1_material_a11f52edc973b6230c5b4e20bac098211}{name\+\_\+}}
+\item 
+int \mbox{\hyperlink{class_g_r_p_d_1_1_material_1_1_material_a51e6ee6eb7a0bc971544ff0256ac1e7a}{mat\+Id\+\_\+}}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+
+
+Definition at line \mbox{\hyperlink{_thermal_mat_8h_source_l00018}{18}} of file \mbox{\hyperlink{_thermal_mat_8h_source}{Thermal\+Mat.\+h}}.
+
+
+
+\label{doc-constructors}
+\Hypertarget{class_g_r_p_d_1_1_material_1_1_thermal_mat_doc-constructors}
+\doxysubsection{Constructor \& Destructor Documentation}
+\Hypertarget{class_g_r_p_d_1_1_material_1_1_thermal_mat_a90468a0e56fa121528db8ae4e6125310}\index{GRPD::Material::ThermalMat@{GRPD::Material::ThermalMat}!ThermalMat@{ThermalMat}}
+\index{ThermalMat@{ThermalMat}!GRPD::Material::ThermalMat@{GRPD::Material::ThermalMat}}
+\doxysubsubsection{\texorpdfstring{ThermalMat()}{ThermalMat()}}
+{\footnotesize\ttfamily \label{class_g_r_p_d_1_1_material_1_1_thermal_mat_a90468a0e56fa121528db8ae4e6125310} 
+GRPD\+::\+Material\+::\+Thermal\+Mat\+::\+Thermal\+Mat (\begin{DoxyParamCaption}\item[{const std\+::string \&}]{name}{ = {\ttfamily "{}"{}}}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [explicit]}}
+
+
+
+构造函数 
+
+
+\begin{DoxyParams}{Parameters}
+{\em name} & 材料实例的具体名称（例如 YAML 中定义的别名） \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line \mbox{\hyperlink{_thermal_mat_8cpp_source_l00015}{15}} of file \mbox{\hyperlink{_thermal_mat_8cpp_source}{Thermal\+Mat.\+cpp}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00015\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ :\ \mbox{\hyperlink{class_g_r_p_d_1_1_material_1_1_material_a6f1a7c0cbc3fa288802a5412814be0ec}{Material}}(name)\ \{}
+\DoxyCodeLine{00016\ \ \ \textcolor{comment}{//\ 物理参数已在头文件中初始化为\ -\/1.0，具体数值将由外部(如\ YAML)读取后赋值}}
+\DoxyCodeLine{00017\ \}}
+
+\end{DoxyCode}
+
+
+References \mbox{\hyperlink{_material_8cpp_source_l00010}{GRPD\+::\+Material\+::\+Material\+::\+Material()}}.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{class_g_r_p_d_1_1_material_1_1_thermal_mat_a90468a0e56fa121528db8ae4e6125310_cgraph}
+\end{center}
+\end{figure}
+\Hypertarget{class_g_r_p_d_1_1_material_1_1_thermal_mat_aebc00edc3739d674b5d6fcda09613fdf}\index{GRPD::Material::ThermalMat@{GRPD::Material::ThermalMat}!````~ThermalMat@{\texorpdfstring{$\sim$}{\string~}ThermalMat}}
+\index{````~ThermalMat@{\texorpdfstring{$\sim$}{\string~}ThermalMat}!GRPD::Material::ThermalMat@{GRPD::Material::ThermalMat}}
+\doxysubsubsection{\texorpdfstring{\texorpdfstring{$\sim$}{\string~}ThermalMat()}{\string~ThermalMat()}}
+{\footnotesize\ttfamily \label{class_g_r_p_d_1_1_material_1_1_thermal_mat_aebc00edc3739d674b5d6fcda09613fdf} 
+virtual GRPD\+::\+Material\+::\+Thermal\+Mat\+::\texorpdfstring{$\sim$}{\string~}\+Thermal\+Mat (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [virtual]}, {\ttfamily [default]}}
+
+
+
+\label{doc-func-members}
+\Hypertarget{class_g_r_p_d_1_1_material_1_1_thermal_mat_doc-func-members}
+\doxysubsection{Member Function Documentation}
+\Hypertarget{class_g_r_p_d_1_1_material_1_1_thermal_mat_a494385c6fb349d4c3b00e5b833ab611d}\index{GRPD::Material::ThermalMat@{GRPD::Material::ThermalMat}!allocateStateVariables@{allocateStateVariables}}
+\index{allocateStateVariables@{allocateStateVariables}!GRPD::Material::ThermalMat@{GRPD::Material::ThermalMat}}
+\doxysubsubsection{\texorpdfstring{allocateStateVariables()}{allocateStateVariables()}}
+{\footnotesize\ttfamily \label{class_g_r_p_d_1_1_material_1_1_thermal_mat_a494385c6fb349d4c3b00e5b833ab611d} 
+void GRPD\+::\+Material\+::\+Thermal\+Mat\+::allocate\+State\+Variables (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{class_g_r_p_d_1_1_field_1_1_field_manager}{GRPD\+::\+Field\+::\+Field\+Manager}} \&}]{fm}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+分配热传导材料的状态变量场 (Heat\+Flux) 
+
+
+
+Reimplemented from \mbox{\hyperlink{class_g_r_p_d_1_1_material_1_1_material_a176c19b145ad0da0b06323a34f44f644}{GRPD\+::\+Material\+::\+Material}}.
+
+
+
+Definition at line \mbox{\hyperlink{_thermal_mat_8cpp_source_l00050}{50}} of file \mbox{\hyperlink{_thermal_mat_8cpp_source}{Thermal\+Mat.\+cpp}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00050\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00051\ \ \ \textcolor{comment}{//\ 热传导材料需要一个热流密度场来记录每个粒子的热流贡献}}
+\DoxyCodeLine{00052\ \ \ fm.\mbox{\hyperlink{class_g_r_p_d_1_1_field_1_1_field_manager_ad1a29ba7fb39f56384e210d515fc96da}{createField}}(\textcolor{stringliteral}{"{}ScalarField"{}},\ \textcolor{stringliteral}{"{}HeatFlux"{}});}
+\DoxyCodeLine{00053\ \ \ \mbox{\hyperlink{_logger_8h_ac8e803773221119947b55f6ae85a9c63}{LOG\_INFO}}(\textcolor{stringliteral}{"{}[ThermalMat]\ State\ variable\ 'HeatFlux'\ registered\ by\ material\ '"{}}\ +}
+\DoxyCodeLine{00054\ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_g_r_p_d_1_1_material_1_1_material_a11f52edc973b6230c5b4e20bac098211}{name\_}}\ +\ \textcolor{stringliteral}{"{}'."{}});}
+\DoxyCodeLine{00055\ \}}
+
+\end{DoxyCode}
+
+
+References \mbox{\hyperlink{_field_manager_8cpp_source_l00042}{GRPD\+::\+Field\+::\+Field\+Manager\+::create\+Field()}}, \mbox{\hyperlink{_logger_8h_source_l00060}{LOG\+\_\+\+INFO}}, and \mbox{\hyperlink{_material_8h_source_l00057}{GRPD\+::\+Material\+::\+Material\+::name\+\_\+}}.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{class_g_r_p_d_1_1_material_1_1_thermal_mat_a494385c6fb349d4c3b00e5b833ab611d_cgraph}
+\end{center}
+\end{figure}
+\Hypertarget{class_g_r_p_d_1_1_material_1_1_thermal_mat_a9a742ad010610af6574b62d0a8233d22}\index{GRPD::Material::ThermalMat@{GRPD::Material::ThermalMat}!evaluate@{evaluate}}
+\index{evaluate@{evaluate}!GRPD::Material::ThermalMat@{GRPD::Material::ThermalMat}}
+\doxysubsubsection{\texorpdfstring{evaluate()}{evaluate()}}
+{\footnotesize\ttfamily \label{class_g_r_p_d_1_1_material_1_1_thermal_mat_a9a742ad010610af6574b62d0a8233d22} 
+void GRPD\+::\+Material\+::\+Thermal\+Mat\+::evaluate (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+计算力态或更新本构关系 这里热传导只提供物理参数，计算逻辑将在专门的 solver(Engine计算核心)中处理 
+
+
+
+Implements \mbox{\hyperlink{class_g_r_p_d_1_1_material_1_1_material_adf7c109c7d4413a366d3c1297d661ddf}{GRPD\+::\+Material\+::\+Material}}.
+
+
+
+Definition at line \mbox{\hyperlink{_thermal_mat_8cpp_source_l00060}{60}} of file \mbox{\hyperlink{_thermal_mat_8cpp_source}{Thermal\+Mat.\+cpp}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00060\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00061\ \ \ \textcolor{comment}{//\ 热传导本构由于物理上被简化为线性常数(即微导率系数)，其核心的微分方程求解}}
+\DoxyCodeLine{00062\ \ \ \textcolor{comment}{//\ 往往是由\ solver/力态积分函数(如\ ThermalEngine\ 或相应的积分器)执行的。}}
+\DoxyCodeLine{00063\ \ \ \textcolor{comment}{//\ 因此这里的\ evaluate}}
+\DoxyCodeLine{00064\ \ \ \textcolor{comment}{//\ 可能暂时为空，或者处理更复杂的非线性热材料逻辑（如与温度相关的热导率）。}}
+\DoxyCodeLine{00065\ \}}
+
+\end{DoxyCode}
+\Hypertarget{class_g_r_p_d_1_1_material_1_1_thermal_mat_a507448c96505babc0153e5d15c693de1}\index{GRPD::Material::ThermalMat@{GRPD::Material::ThermalMat}!getConductivity@{getConductivity}}
+\index{getConductivity@{getConductivity}!GRPD::Material::ThermalMat@{GRPD::Material::ThermalMat}}
+\doxysubsubsection{\texorpdfstring{getConductivity()}{getConductivity()}}
+{\footnotesize\ttfamily \label{class_g_r_p_d_1_1_material_1_1_thermal_mat_a507448c96505babc0153e5d15c693de1} 
+double GRPD\+::\+Material\+::\+Thermal\+Mat\+::get\+Conductivity (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const}
+
+
+
+获取微导率 (Micro-\/conductivity) 
+
+
+
+Definition at line \mbox{\hyperlink{_thermal_mat_8cpp_source_l00078}{78}} of file \mbox{\hyperlink{_thermal_mat_8cpp_source}{Thermal\+Mat.\+cpp}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00078\ \{\ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{class_g_r_p_d_1_1_material_1_1_thermal_mat_a42a6df13a395041bb42b1139406ea50d}{conductivity\_}};\ \}}
+
+\end{DoxyCode}
+
+
+References \mbox{\hyperlink{_thermal_mat_8h_source_l00059}{conductivity\+\_\+}}.
+
+
+
+Referenced by \mbox{\hyperlink{_s_e___solve_8cpp_source_l00017}{GRPD\+::\+Engine\+::\+Solver\+Engine\+::\+Solve\+PD()}}.
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{class_g_r_p_d_1_1_material_1_1_thermal_mat_a507448c96505babc0153e5d15c693de1_icgraph}
+\end{center}
+\end{figure}
+\Hypertarget{class_g_r_p_d_1_1_material_1_1_thermal_mat_a98256740ba8528e397014c32852856ff}\index{GRPD::Material::ThermalMat@{GRPD::Material::ThermalMat}!getDensity@{getDensity}}
+\index{getDensity@{getDensity}!GRPD::Material::ThermalMat@{GRPD::Material::ThermalMat}}
+\doxysubsubsection{\texorpdfstring{getDensity()}{getDensity()}}
+{\footnotesize\ttfamily \label{class_g_r_p_d_1_1_material_1_1_thermal_mat_a98256740ba8528e397014c32852856ff} 
+double GRPD\+::\+Material\+::\+Thermal\+Mat\+::get\+Density (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const}
+
+
+
+Definition at line \mbox{\hyperlink{_thermal_mat_8cpp_source_l00082}{82}} of file \mbox{\hyperlink{_thermal_mat_8cpp_source}{Thermal\+Mat.\+cpp}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00082\ \{\ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{class_g_r_p_d_1_1_material_1_1_thermal_mat_a7a1987e9787445e4222eb570d767817d}{density\_}};\ \}}
+
+\end{DoxyCode}
+
+
+References \mbox{\hyperlink{_thermal_mat_8h_source_l00061}{density\+\_\+}}.
+
+
+
+Referenced by \mbox{\hyperlink{_s_e___solve_8cpp_source_l00017}{GRPD\+::\+Engine\+::\+Solver\+Engine\+::\+Solve\+PD()}}.
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{class_g_r_p_d_1_1_material_1_1_thermal_mat_a98256740ba8528e397014c32852856ff_icgraph}
+\end{center}
+\end{figure}
+\Hypertarget{class_g_r_p_d_1_1_material_1_1_thermal_mat_abd9059c1dda55e3db81b38d6a5df7d29}\index{GRPD::Material::ThermalMat@{GRPD::Material::ThermalMat}!getHeatCapacity@{getHeatCapacity}}
+\index{getHeatCapacity@{getHeatCapacity}!GRPD::Material::ThermalMat@{GRPD::Material::ThermalMat}}
+\doxysubsubsection{\texorpdfstring{getHeatCapacity()}{getHeatCapacity()}}
+{\footnotesize\ttfamily \label{class_g_r_p_d_1_1_material_1_1_thermal_mat_abd9059c1dda55e3db81b38d6a5df7d29} 
+double GRPD\+::\+Material\+::\+Thermal\+Mat\+::get\+Heat\+Capacity (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const}
+
+
+
+Definition at line \mbox{\hyperlink{_thermal_mat_8cpp_source_l00080}{80}} of file \mbox{\hyperlink{_thermal_mat_8cpp_source}{Thermal\+Mat.\+cpp}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00080\ \{\ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{class_g_r_p_d_1_1_material_1_1_thermal_mat_af4c0c824291a3cadb08077f070a4fb42}{heatCapacity\_}};\ \}}
+
+\end{DoxyCode}
+
+
+References \mbox{\hyperlink{_thermal_mat_8h_source_l00060}{heat\+Capacity\+\_\+}}.
+
+\Hypertarget{class_g_r_p_d_1_1_material_1_1_thermal_mat_a532dd2387e182898e79911c3eb1c7bc5}\index{GRPD::Material::ThermalMat@{GRPD::Material::ThermalMat}!initialize@{initialize}}
+\index{initialize@{initialize}!GRPD::Material::ThermalMat@{GRPD::Material::ThermalMat}}
+\doxysubsubsection{\texorpdfstring{initialize()}{initialize()}}
+{\footnotesize\ttfamily \label{class_g_r_p_d_1_1_material_1_1_thermal_mat_a532dd2387e182898e79911c3eb1c7bc5} 
+void GRPD\+::\+Material\+::\+Thermal\+Mat\+::initialize (\begin{DoxyParamCaption}\item[{const YAML\+::\+Node \&}]{mat\+Node}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+初始化材料参数或状态变量（若有特别参数需初始化则在此进行） 
+
+
+\begin{DoxyParams}{Parameters}
+{\em mat\+Node} & 属于此材料实体的 YAML 子节点 \\
+\hline
+\end{DoxyParams}
+
+
+Reimplemented from \mbox{\hyperlink{class_g_r_p_d_1_1_material_1_1_material_a9f28c04341d8cdf35f18653f321ffa1a}{GRPD\+::\+Material\+::\+Material}}.
+
+
+
+Definition at line \mbox{\hyperlink{_thermal_mat_8cpp_source_l00022}{22}} of file \mbox{\hyperlink{_thermal_mat_8cpp_source}{Thermal\+Mat.\+cpp}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00022\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00023\ \ \ \textcolor{keywordflow}{if}\ (matNode[\textcolor{stringliteral}{"{}Conductivity"{}}])\ \{}
+\DoxyCodeLine{00024\ \ \ \ \ \mbox{\hyperlink{class_g_r_p_d_1_1_material_1_1_thermal_mat_a42a6df13a395041bb42b1139406ea50d}{conductivity\_}}\ =\ matNode[\textcolor{stringliteral}{"{}Conductivity"{}}].as<\textcolor{keywordtype}{double}>();}
+\DoxyCodeLine{00025\ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
+\DoxyCodeLine{00026\ \ \ \ \ \mbox{\hyperlink{_logger_8h_a0c53e5566a3b790db039421523dd4637}{LOG\_WARNING}}(\textcolor{stringliteral}{"{}[ThermalMat]\ 'Conductivity'\ not\ found,\ using\ default."{}});}
+\DoxyCodeLine{00027\ \ \ \}}
+\DoxyCodeLine{00028\ }
+\DoxyCodeLine{00029\ \ \ \textcolor{keywordflow}{if}\ (matNode[\textcolor{stringliteral}{"{}HeatCapacity"{}}])\ \{}
+\DoxyCodeLine{00030\ \ \ \ \ \mbox{\hyperlink{class_g_r_p_d_1_1_material_1_1_thermal_mat_af4c0c824291a3cadb08077f070a4fb42}{heatCapacity\_}}\ =\ matNode[\textcolor{stringliteral}{"{}HeatCapacity"{}}].as<\textcolor{keywordtype}{double}>();}
+\DoxyCodeLine{00031\ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
+\DoxyCodeLine{00032\ \ \ \ \ \mbox{\hyperlink{_logger_8h_a0c53e5566a3b790db039421523dd4637}{LOG\_WARNING}}(\textcolor{stringliteral}{"{}[ThermalMat]\ 'HeatCapacity'\ not\ found,\ using\ default."{}});}
+\DoxyCodeLine{00033\ \ \ \}}
+\DoxyCodeLine{00034\ }
+\DoxyCodeLine{00035\ \ \ \textcolor{keywordflow}{if}\ (matNode[\textcolor{stringliteral}{"{}Density"{}}])\ \{}
+\DoxyCodeLine{00036\ \ \ \ \ \mbox{\hyperlink{class_g_r_p_d_1_1_material_1_1_thermal_mat_a7a1987e9787445e4222eb570d767817d}{density\_}}\ =\ matNode[\textcolor{stringliteral}{"{}Density"{}}].as<\textcolor{keywordtype}{double}>();}
+\DoxyCodeLine{00037\ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
+\DoxyCodeLine{00038\ \ \ \ \ \mbox{\hyperlink{_logger_8h_a0c53e5566a3b790db039421523dd4637}{LOG\_WARNING}}(\textcolor{stringliteral}{"{}[ThermalMat]\ 'Density'\ not\ found,\ using\ default."{}});}
+\DoxyCodeLine{00039\ \ \ \}}
+\DoxyCodeLine{00040\ }
+\DoxyCodeLine{00041\ \ \ \mbox{\hyperlink{_logger_8h_ac8e803773221119947b55f6ae85a9c63}{LOG\_INFO}}(\textcolor{stringliteral}{"{}[ThermalMat]\ Material\ '"{}}\ +\ \mbox{\hyperlink{class_g_r_p_d_1_1_material_1_1_material_a11f52edc973b6230c5b4e20bac098211}{name\_}}\ +}
+\DoxyCodeLine{00042\ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}'\ is\ initialized.\ Conductivity\ =\ "{}}\ +\ std::to\_string(\mbox{\hyperlink{class_g_r_p_d_1_1_material_1_1_thermal_mat_a42a6df13a395041bb42b1139406ea50d}{conductivity\_}})\ +}
+\DoxyCodeLine{00043\ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{},\ HeatCapacity\ =\ "{}}\ +\ std::to\_string(\mbox{\hyperlink{class_g_r_p_d_1_1_material_1_1_thermal_mat_af4c0c824291a3cadb08077f070a4fb42}{heatCapacity\_}})\ +}
+\DoxyCodeLine{00044\ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{},\ Density\ =\ "{}}\ +\ std::to\_string(\mbox{\hyperlink{class_g_r_p_d_1_1_material_1_1_thermal_mat_a7a1987e9787445e4222eb570d767817d}{density\_}}));}
+\DoxyCodeLine{00045\ \}}
+
+\end{DoxyCode}
+
+
+References \mbox{\hyperlink{_thermal_mat_8h_source_l00059}{conductivity\+\_\+}}, \mbox{\hyperlink{_thermal_mat_8h_source_l00061}{density\+\_\+}}, \mbox{\hyperlink{_thermal_mat_8h_source_l00060}{heat\+Capacity\+\_\+}}, \mbox{\hyperlink{_logger_8h_source_l00060}{LOG\+\_\+\+INFO}}, \mbox{\hyperlink{_logger_8h_source_l00061}{LOG\+\_\+\+WARNING}}, and \mbox{\hyperlink{_material_8h_source_l00057}{GRPD\+::\+Material\+::\+Material\+::name\+\_\+}}.
+
+\Hypertarget{class_g_r_p_d_1_1_material_1_1_thermal_mat_a2b3865b1967fbd905bb27c3873d4a6c3}\index{GRPD::Material::ThermalMat@{GRPD::Material::ThermalMat}!setConductivity@{setConductivity}}
+\index{setConductivity@{setConductivity}!GRPD::Material::ThermalMat@{GRPD::Material::ThermalMat}}
+\doxysubsubsection{\texorpdfstring{setConductivity()}{setConductivity()}}
+{\footnotesize\ttfamily \label{class_g_r_p_d_1_1_material_1_1_thermal_mat_a2b3865b1967fbd905bb27c3873d4a6c3} 
+void GRPD\+::\+Material\+::\+Thermal\+Mat\+::set\+Conductivity (\begin{DoxyParamCaption}\item[{double}]{Con}{}\end{DoxyParamCaption})}
+
+
+
+设置微导率 
+
+
+
+Definition at line \mbox{\hyperlink{_thermal_mat_8cpp_source_l00079}{79}} of file \mbox{\hyperlink{_thermal_mat_8cpp_source}{Thermal\+Mat.\+cpp}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00079\ \{\ \mbox{\hyperlink{class_g_r_p_d_1_1_material_1_1_thermal_mat_a42a6df13a395041bb42b1139406ea50d}{conductivity\_}}\ =\ Con;\ \}}
+
+\end{DoxyCode}
+
+
+References \mbox{\hyperlink{_thermal_mat_8h_source_l00059}{conductivity\+\_\+}}.
+
+\Hypertarget{class_g_r_p_d_1_1_material_1_1_thermal_mat_af1031c40bccf46fedeae8069e5545ed0}\index{GRPD::Material::ThermalMat@{GRPD::Material::ThermalMat}!setDensity@{setDensity}}
+\index{setDensity@{setDensity}!GRPD::Material::ThermalMat@{GRPD::Material::ThermalMat}}
+\doxysubsubsection{\texorpdfstring{setDensity()}{setDensity()}}
+{\footnotesize\ttfamily \label{class_g_r_p_d_1_1_material_1_1_thermal_mat_af1031c40bccf46fedeae8069e5545ed0} 
+void GRPD\+::\+Material\+::\+Thermal\+Mat\+::set\+Density (\begin{DoxyParamCaption}\item[{double}]{rho}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \mbox{\hyperlink{_thermal_mat_8cpp_source_l00083}{83}} of file \mbox{\hyperlink{_thermal_mat_8cpp_source}{Thermal\+Mat.\+cpp}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00083\ \{\ \mbox{\hyperlink{class_g_r_p_d_1_1_material_1_1_thermal_mat_a7a1987e9787445e4222eb570d767817d}{density\_}}\ =\ rho;\ \}}
+
+\end{DoxyCode}
+
+
+References \mbox{\hyperlink{_thermal_mat_8h_source_l00061}{density\+\_\+}}.
+
+\Hypertarget{class_g_r_p_d_1_1_material_1_1_thermal_mat_ad0fb0c38cb92519687299dfda0673544}\index{GRPD::Material::ThermalMat@{GRPD::Material::ThermalMat}!setHeatCapacity@{setHeatCapacity}}
+\index{setHeatCapacity@{setHeatCapacity}!GRPD::Material::ThermalMat@{GRPD::Material::ThermalMat}}
+\doxysubsubsection{\texorpdfstring{setHeatCapacity()}{setHeatCapacity()}}
+{\footnotesize\ttfamily \label{class_g_r_p_d_1_1_material_1_1_thermal_mat_ad0fb0c38cb92519687299dfda0673544} 
+void GRPD\+::\+Material\+::\+Thermal\+Mat\+::set\+Heat\+Capacity (\begin{DoxyParamCaption}\item[{double}]{Cap}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \mbox{\hyperlink{_thermal_mat_8cpp_source_l00081}{81}} of file \mbox{\hyperlink{_thermal_mat_8cpp_source}{Thermal\+Mat.\+cpp}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00081\ \{\ \mbox{\hyperlink{class_g_r_p_d_1_1_material_1_1_thermal_mat_af4c0c824291a3cadb08077f070a4fb42}{heatCapacity\_}}\ =\ Cap;\ \}}
+
+\end{DoxyCode}
+
+
+References \mbox{\hyperlink{_thermal_mat_8h_source_l00060}{heat\+Capacity\+\_\+}}.
+
+
+
+\label{doc-variable-members}
+\Hypertarget{class_g_r_p_d_1_1_material_1_1_thermal_mat_doc-variable-members}
+\doxysubsection{Member Data Documentation}
+\Hypertarget{class_g_r_p_d_1_1_material_1_1_thermal_mat_a42a6df13a395041bb42b1139406ea50d}\index{GRPD::Material::ThermalMat@{GRPD::Material::ThermalMat}!conductivity\_@{conductivity\_}}
+\index{conductivity\_@{conductivity\_}!GRPD::Material::ThermalMat@{GRPD::Material::ThermalMat}}
+\doxysubsubsection{\texorpdfstring{conductivity\_}{conductivity\_}}
+{\footnotesize\ttfamily \label{class_g_r_p_d_1_1_material_1_1_thermal_mat_a42a6df13a395041bb42b1139406ea50d} 
+double GRPD\+::\+Material\+::\+Thermal\+Mat\+::conductivity\+\_\+ \{-\/1.\+0\}\hspace{0.3cm}{\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_thermal_mat_8h_source_l00059}{59}} of file \mbox{\hyperlink{_thermal_mat_8h_source}{Thermal\+Mat.\+h}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00059\ \{-\/1.0\};\ \textcolor{comment}{//\ 热传导常数}}
+
+\end{DoxyCode}
+
+
+Referenced by \mbox{\hyperlink{_thermal_mat_8cpp_source_l00078}{get\+Conductivity()}}, \mbox{\hyperlink{_thermal_mat_8cpp_source_l00022}{initialize()}}, and \mbox{\hyperlink{_thermal_mat_8cpp_source_l00079}{set\+Conductivity()}}.
+
+\Hypertarget{class_g_r_p_d_1_1_material_1_1_thermal_mat_a7a1987e9787445e4222eb570d767817d}\index{GRPD::Material::ThermalMat@{GRPD::Material::ThermalMat}!density\_@{density\_}}
+\index{density\_@{density\_}!GRPD::Material::ThermalMat@{GRPD::Material::ThermalMat}}
+\doxysubsubsection{\texorpdfstring{density\_}{density\_}}
+{\footnotesize\ttfamily \label{class_g_r_p_d_1_1_material_1_1_thermal_mat_a7a1987e9787445e4222eb570d767817d} 
+double GRPD\+::\+Material\+::\+Thermal\+Mat\+::density\+\_\+ \{-\/1.\+0\}\hspace{0.3cm}{\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_thermal_mat_8h_source_l00061}{61}} of file \mbox{\hyperlink{_thermal_mat_8h_source}{Thermal\+Mat.\+h}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00061\ \{-\/1.0\};\ \ \ \ \ \ \textcolor{comment}{//\ 密度}}
+
+\end{DoxyCode}
+
+
+Referenced by \mbox{\hyperlink{_thermal_mat_8cpp_source_l00082}{get\+Density()}}, \mbox{\hyperlink{_thermal_mat_8cpp_source_l00022}{initialize()}}, and \mbox{\hyperlink{_thermal_mat_8cpp_source_l00083}{set\+Density()}}.
+
+\Hypertarget{class_g_r_p_d_1_1_material_1_1_thermal_mat_af4c0c824291a3cadb08077f070a4fb42}\index{GRPD::Material::ThermalMat@{GRPD::Material::ThermalMat}!heatCapacity\_@{heatCapacity\_}}
+\index{heatCapacity\_@{heatCapacity\_}!GRPD::Material::ThermalMat@{GRPD::Material::ThermalMat}}
+\doxysubsubsection{\texorpdfstring{heatCapacity\_}{heatCapacity\_}}
+{\footnotesize\ttfamily \label{class_g_r_p_d_1_1_material_1_1_thermal_mat_af4c0c824291a3cadb08077f070a4fb42} 
+double GRPD\+::\+Material\+::\+Thermal\+Mat\+::heat\+Capacity\+\_\+ \{-\/1.\+0\}\hspace{0.3cm}{\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_thermal_mat_8h_source_l00060}{60}} of file \mbox{\hyperlink{_thermal_mat_8h_source}{Thermal\+Mat.\+h}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00060\ \{-\/1.0\};\ \textcolor{comment}{//\ 比热容常数}}
+
+\end{DoxyCode}
+
+
+Referenced by \mbox{\hyperlink{_thermal_mat_8cpp_source_l00080}{get\+Heat\+Capacity()}}, \mbox{\hyperlink{_thermal_mat_8cpp_source_l00022}{initialize()}}, and \mbox{\hyperlink{_thermal_mat_8cpp_source_l00081}{set\+Heat\+Capacity()}}.
+
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+PDCommon/\+Material/include/\mbox{\hyperlink{_thermal_mat_8h}{Thermal\+Mat.\+h}}\item 
+PDCommon/\+Material/src/\mbox{\hyperlink{_thermal_mat_8cpp}{Thermal\+Mat.\+cpp}}\end{DoxyCompactItemize}

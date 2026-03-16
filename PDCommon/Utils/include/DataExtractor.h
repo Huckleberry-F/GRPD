@@ -1,10 +1,10 @@
-#ifndef GRPD_UTILS_DATAEXTRACTOR_H
-#define GRPD_UTILS_DATAEXTRACTOR_H
+#ifndef PDCOMMON_UTILS_DATAEXTRACTOR_H
+#define PDCOMMON_UTILS_DATAEXTRACTOR_H
 
 #include <array>
 #include <vector>
 
-namespace GRPD::Utils {
+namespace PDCommon::Utils {
 
 class DataExtractor {
 public:
@@ -37,6 +37,6 @@ public:
   }
 };
 
-} // namespace GRPD::Utils
+} // namespace PDCommon::Utils
 
-#endif // GRPD_UTILS_DATAEXTRACTOR_H
+#endif // PDCOMMON_UTILS_DATAEXTRACTOR_H

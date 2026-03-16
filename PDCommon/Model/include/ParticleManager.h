@@ -1,5 +1,5 @@
-#ifndef GRPD_MODEL_PARTICLE_MANAGER_H
-#define GRPD_MODEL_PARTICLE_MANAGER_H
+#ifndef PDCOMMON_MODEL_PARTICLE_MANAGER_H
+#define PDCOMMON_MODEL_PARTICLE_MANAGER_H
 
 // ============================================================================
 // ParticleManager.h - Global particle manager
@@ -14,7 +14,7 @@
 #include <string>
 #include <vector>
 
-namespace GRPD::Model {
+namespace PDCommon::Model {
 
 enum class ModelVar { ID, Coords, Volume, PartID, MatID };
 
@@ -70,6 +70,6 @@ private:
   std::vector<Particle> globalParticles_; // The single global particle array
 };
 
-} // namespace GRPD::Model
+} // namespace PDCommon::Model
 
-#endif // GRPD_MODEL_PARTICLE_MANAGER_H
+#endif // PDCOMMON_MODEL_PARTICLE_MANAGER_H

@@ -1,0 +1,74 @@
+\doxysection{BCRegistry.\+h}
+\hypertarget{_b_c_registry_8h_source}{}\label{_b_c_registry_8h_source}\index{PDCommon/BC/include/BCRegistry.h@{PDCommon/BC/include/BCRegistry.h}}
+\mbox{\hyperlink{_b_c_registry_8h}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\Hypertarget{_b_c_registry_8h_source_l00001}00001\ \textcolor{preprocessor}{\#ifndef\ GRPD\_BC\_BC\_REGISTRY\_H}}
+\DoxyCodeLine{\Hypertarget{_b_c_registry_8h_source_l00002}00002\ \textcolor{preprocessor}{\#define\ GRPD\_BC\_BC\_REGISTRY\_H}}
+\DoxyCodeLine{\Hypertarget{_b_c_registry_8h_source_l00003}00003\ }
+\DoxyCodeLine{\Hypertarget{_b_c_registry_8h_source_l00004}00004\ \textcolor{comment}{//\ ============================================================================}}
+\DoxyCodeLine{\Hypertarget{_b_c_registry_8h_source_l00005}00005\ \textcolor{comment}{//\ BCRegistry.h\ -\/\ 边界条件全局注册中心\ (单例)}}
+\DoxyCodeLine{\Hypertarget{_b_c_registry_8h_source_l00006}00006\ \textcolor{comment}{//\ 责任：}}
+\DoxyCodeLine{\Hypertarget{_b_c_registry_8h_source_l00007}00007\ \textcolor{comment}{//\ 1.\ 保存所有编译期静态注入的边界条件工厂函数}}
+\DoxyCodeLine{\Hypertarget{_b_c_registry_8h_source_l00008}00008\ \textcolor{comment}{//\ 2.\ 提供统一的接口用于创建具体的边界条件对象}}
+\DoxyCodeLine{\Hypertarget{_b_c_registry_8h_source_l00009}00009\ \textcolor{comment}{//\ 架构对标：完全对称于\ MaterialRegistry\ 的工厂注册模式}}
+\DoxyCodeLine{\Hypertarget{_b_c_registry_8h_source_l00010}00010\ \textcolor{comment}{//\ ============================================================================}}
+\DoxyCodeLine{\Hypertarget{_b_c_registry_8h_source_l00011}00011\ }
+\DoxyCodeLine{\Hypertarget{_b_c_registry_8h_source_l00012}00012\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{_b_c_8h}{BC.h}}"{}}}
+\DoxyCodeLine{\Hypertarget{_b_c_registry_8h_source_l00013}00013\ \textcolor{preprocessor}{\#include\ <functional>}}
+\DoxyCodeLine{\Hypertarget{_b_c_registry_8h_source_l00014}00014\ \textcolor{preprocessor}{\#include\ <map>}}
+\DoxyCodeLine{\Hypertarget{_b_c_registry_8h_source_l00015}00015\ \textcolor{preprocessor}{\#include\ <memory>}}
+\DoxyCodeLine{\Hypertarget{_b_c_registry_8h_source_l00016}00016\ \textcolor{preprocessor}{\#include\ <string>}}
+\DoxyCodeLine{\Hypertarget{_b_c_registry_8h_source_l00017}00017\ }
+\DoxyCodeLine{\Hypertarget{_b_c_registry_8h_source_l00018}00018\ \textcolor{keyword}{namespace\ }\mbox{\hyperlink{namespace_g_r_p_d_1_1_b_c}{GRPD::BC}}\ \{}
+\DoxyCodeLine{\Hypertarget{_b_c_registry_8h_source_l00019}00019\ }
+\DoxyCodeLine{\Hypertarget{_b_c_registry_8h_source_l00020}00020\ \textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{\Hypertarget{_b_c_registry_8h_source_l00021}00021\ \textcolor{comment}{//\ 工厂函数定义：根据名称返回一个具体\ BC\ 的\ unique\_ptr}}
+\DoxyCodeLine{\Hypertarget{_b_c_registry_8h_source_l00022}00022\ \textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{\Hypertarget{_b_c_registry_8h_source_l00023}\mbox{\hyperlink{namespace_g_r_p_d_1_1_b_c_a9642af366a197eb9734f8b4223a6c619}{00023}}\ \textcolor{keyword}{typedef}\ std::function<std::unique\_ptr<BC>(\textcolor{keyword}{const}\ std::string\ \&)>\ \mbox{\hyperlink{namespace_g_r_p_d_1_1_b_c_a9642af366a197eb9734f8b4223a6c619}{BCCreatorFunc}};}
+\DoxyCodeLine{\Hypertarget{_b_c_registry_8h_source_l00024}00024\ }
+\DoxyCodeLine{\Hypertarget{_b_c_registry_8h_source_l00025}\mbox{\hyperlink{class_g_r_p_d_1_1_b_c_1_1_b_c_registry}{00025}}\ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_g_r_p_d_1_1_b_c_1_1_b_c_registry_a439b4293713a062dc0a4f467e423e15d}{BCRegistry}}\ \{}
+\DoxyCodeLine{\Hypertarget{_b_c_registry_8h_source_l00026}00026\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{\Hypertarget{_b_c_registry_8h_source_l00027}00027\ \ \ \ \ \textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{\Hypertarget{_b_c_registry_8h_source_l00028}00028\ \ \ \ \ \textcolor{comment}{//\ 单例模式访问接口}}
+\DoxyCodeLine{\Hypertarget{_b_c_registry_8h_source_l00029}00029\ \ \ \ \ \textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{\Hypertarget{_b_c_registry_8h_source_l00030}00030\ \ \ \ \ \textcolor{keyword}{static}\ \mbox{\hyperlink{class_g_r_p_d_1_1_b_c_1_1_b_c_registry_a439b4293713a062dc0a4f467e423e15d}{BCRegistry}}\ \&\mbox{\hyperlink{class_g_r_p_d_1_1_b_c_1_1_b_c_registry_a6cfc2f64f5427ff15db172217c81c5a6}{getInstance}}();}
+\DoxyCodeLine{\Hypertarget{_b_c_registry_8h_source_l00031}00031\ }
+\DoxyCodeLine{\Hypertarget{_b_c_registry_8h_source_l00032}00032\ \ \ \ \ \textcolor{comment}{//\ 禁用拷贝}}
+\DoxyCodeLine{\Hypertarget{_b_c_registry_8h_source_l00033}\mbox{\hyperlink{class_g_r_p_d_1_1_b_c_1_1_b_c_registry_a439b4293713a062dc0a4f467e423e15d}{00033}}\ \ \ \ \ \mbox{\hyperlink{class_g_r_p_d_1_1_b_c_1_1_b_c_registry_a439b4293713a062dc0a4f467e423e15d}{BCRegistry}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{class_g_r_p_d_1_1_b_c_1_1_b_c_registry_a439b4293713a062dc0a4f467e423e15d}{BCRegistry}}\ \&)\ =\ \textcolor{keyword}{delete};}
+\DoxyCodeLine{\Hypertarget{_b_c_registry_8h_source_l00034}\mbox{\hyperlink{class_g_r_p_d_1_1_b_c_1_1_b_c_registry_affea610569f193882f2fe374f4c8e956}{00034}}\ \ \ \ \ \mbox{\hyperlink{class_g_r_p_d_1_1_b_c_1_1_b_c_registry_a439b4293713a062dc0a4f467e423e15d}{BCRegistry}}\ \&\mbox{\hyperlink{class_g_r_p_d_1_1_b_c_1_1_b_c_registry_affea610569f193882f2fe374f4c8e956}{operator=}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{class_g_r_p_d_1_1_b_c_1_1_b_c_registry_a439b4293713a062dc0a4f467e423e15d}{BCRegistry}}\ \&)\ =\ \textcolor{keyword}{delete};}
+\DoxyCodeLine{\Hypertarget{_b_c_registry_8h_source_l00035}00035\ }
+\DoxyCodeLine{\Hypertarget{_b_c_registry_8h_source_l00036}00036\ \ \ \ \ \textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{\Hypertarget{_b_c_registry_8h_source_l00037}00037\ \ \ \ \ \textcolor{comment}{//\ 工厂注册机制\ (Registry)}}
+\DoxyCodeLine{\Hypertarget{_b_c_registry_8h_source_l00038}00038\ \ \ \ \ \textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{\Hypertarget{_b_c_registry_8h_source_l00039}00039\ }
+\DoxyCodeLine{\Hypertarget{_b_c_registry_8h_source_l00043}00043\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_g_r_p_d_1_1_b_c_1_1_b_c_registry_a21e78ff12fc67d56a1547e4f90b94c67}{registerBCType}}(\textcolor{keyword}{const}\ std::string\ \&type,\ \mbox{\hyperlink{namespace_g_r_p_d_1_1_b_c_a9642af366a197eb9734f8b4223a6c619}{BCCreatorFunc}}\ creator);}
+\DoxyCodeLine{\Hypertarget{_b_c_registry_8h_source_l00044}00044\ }
+\DoxyCodeLine{\Hypertarget{_b_c_registry_8h_source_l00049}00049\ \ \ \ \ std::unique\_ptr<BC>\ \mbox{\hyperlink{class_g_r_p_d_1_1_b_c_1_1_b_c_registry_a3a54e461fc4431c434b746ec1d233f1a}{createBC}}(\textcolor{keyword}{const}\ std::string\ \&type,}
+\DoxyCodeLine{\Hypertarget{_b_c_registry_8h_source_l00050}00050\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ std::string\ \&name);}
+\DoxyCodeLine{\Hypertarget{_b_c_registry_8h_source_l00051}00051\ }
+\DoxyCodeLine{\Hypertarget{_b_c_registry_8h_source_l00052}00052\ \textcolor{keyword}{private}:}
+\DoxyCodeLine{\Hypertarget{_b_c_registry_8h_source_l00053}\mbox{\hyperlink{class_g_r_p_d_1_1_b_c_1_1_b_c_registry_a5ff9f0bf40782693d17967d51ffe0f5c}{00053}}\ \ \ \ \ \mbox{\hyperlink{class_g_r_p_d_1_1_b_c_1_1_b_c_registry_a5ff9f0bf40782693d17967d51ffe0f5c}{BCRegistry}}()\ =\ \textcolor{keywordflow}{default};}
+\DoxyCodeLine{\Hypertarget{_b_c_registry_8h_source_l00054}\mbox{\hyperlink{class_g_r_p_d_1_1_b_c_1_1_b_c_registry_ac517c01a7a7db760ca8926d27ead99ff}{00054}}\ \ \ \ \ \mbox{\hyperlink{class_g_r_p_d_1_1_b_c_1_1_b_c_registry_ac517c01a7a7db760ca8926d27ead99ff}{\string~BCRegistry}}()\ =\ \textcolor{keywordflow}{default};}
+\DoxyCodeLine{\Hypertarget{_b_c_registry_8h_source_l00055}00055\ }
+\DoxyCodeLine{\Hypertarget{_b_c_registry_8h_source_l00056}00056\ \ \ \ \ \textcolor{comment}{//\ 类型注册表：类型名\ -\/>\ 工厂函数}}
+\DoxyCodeLine{\Hypertarget{_b_c_registry_8h_source_l00057}\mbox{\hyperlink{class_g_r_p_d_1_1_b_c_1_1_b_c_registry_a80c436c0c59e0416abc8c10510dab688}{00057}}\ \ \ \ \ std::map<std::string,\ BCCreatorFunc>\ \mbox{\hyperlink{class_g_r_p_d_1_1_b_c_1_1_b_c_registry_a80c436c0c59e0416abc8c10510dab688}{registryMap\_}};}
+\DoxyCodeLine{\Hypertarget{_b_c_registry_8h_source_l00058}00058\ \};}
+\DoxyCodeLine{\Hypertarget{_b_c_registry_8h_source_l00059}00059\ }
+\DoxyCodeLine{\Hypertarget{_b_c_registry_8h_source_l00060}00060\ \textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{\Hypertarget{_b_c_registry_8h_source_l00061}00061\ \textcolor{comment}{//\ 自动注册宏：在派生类\ .cpp\ 文件中使用此宏进行编译期静态注册}}
+\DoxyCodeLine{\Hypertarget{_b_c_registry_8h_source_l00062}00062\ \textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{\Hypertarget{_b_c_registry_8h_source_l00063}\mbox{\hyperlink{_b_c_registry_8h_aa8a1cd8461b51e023e0fc6ca80f52a80}{00063}}\ \textcolor{preprocessor}{\#define\ REGISTER\_BC\_TYPE(Type,\ Creator)\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{\Hypertarget{_b_c_registry_8h_source_l00064}00064\ \textcolor{preprocessor}{\ \ \ \ namespace\ \{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{\Hypertarget{_b_c_registry_8h_source_l00065}00065\ \textcolor{preprocessor}{\ \ \ \ struct\ BCRegistrar\_\#\#Type\ \{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{\Hypertarget{_b_c_registry_8h_source_l00066}00066\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ BCRegistrar\_\#\#Type()\ \{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{\Hypertarget{_b_c_registry_8h_source_l00067}00067\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ GRPD::BC::BCRegistry::getInstance().registerBCType(\#Type,\ Creator);\(\backslash\)}}
+\DoxyCodeLine{\Hypertarget{_b_c_registry_8h_source_l00068}00068\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{\Hypertarget{_b_c_registry_8h_source_l00069}00069\ \textcolor{preprocessor}{\ \ \ \ \};\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{\Hypertarget{_b_c_registry_8h_source_l00070}00070\ \textcolor{preprocessor}{\ \ \ \ static\ BCRegistrar\_\#\#Type\ global\_BCRegistrar\_\#\#Type;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{\Hypertarget{_b_c_registry_8h_source_l00071}00071\ \textcolor{preprocessor}{\ \ \ \ \}}}
+\DoxyCodeLine{\Hypertarget{_b_c_registry_8h_source_l00072}00072\ }
+\DoxyCodeLine{\Hypertarget{_b_c_registry_8h_source_l00073}00073\ \}\ \textcolor{comment}{//\ namespace\ GRPD::BC}}
+\DoxyCodeLine{\Hypertarget{_b_c_registry_8h_source_l00074}00074\ }
+\DoxyCodeLine{\Hypertarget{_b_c_registry_8h_source_l00075}00075\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{//\ GRPD\_BC\_BC\_REGISTRY\_H}}
+
+\end{DoxyCode}

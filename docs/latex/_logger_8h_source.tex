@@ -1,0 +1,67 @@
+\doxysection{Logger.\+h}
+\hypertarget{_logger_8h_source}{}\label{_logger_8h_source}\index{PDCommon/Utils/include/Logger.h@{PDCommon/Utils/include/Logger.h}}
+\mbox{\hyperlink{_logger_8h}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\Hypertarget{_logger_8h_source_l00001}00001\ \textcolor{comment}{/********************************************************************************}}
+\DoxyCodeLine{\Hypertarget{_logger_8h_source_l00002}00002\ \textcolor{comment}{\ *\ *}}
+\DoxyCodeLine{\Hypertarget{_logger_8h_source_l00003}00003\ \textcolor{comment}{\ *\ Logger.h\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ *}}
+\DoxyCodeLine{\Hypertarget{_logger_8h_source_l00004}00004\ \textcolor{comment}{\ *\ By\ Huckelberry\ Zhang\ \ 2026-\/03-\/3\ \ \ \ \ zhanghanbo@inspur.com\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ *}}
+\DoxyCodeLine{\Hypertarget{_logger_8h_source_l00005}00005\ \textcolor{comment}{\ *\ *}}
+\DoxyCodeLine{\Hypertarget{_logger_8h_source_l00006}00006\ \textcolor{comment}{\ ********************************************************************************/}}
+\DoxyCodeLine{\Hypertarget{_logger_8h_source_l00007}00007\ \textcolor{preprocessor}{\#pragma\ once\ }\textcolor{comment}{//\ Replaces\ \#ifndef\ ...\ \#define\ ...}}
+\DoxyCodeLine{\Hypertarget{_logger_8h_source_l00008}00008\ }
+\DoxyCodeLine{\Hypertarget{_logger_8h_source_l00009}00009\ \textcolor{preprocessor}{\#include\ <fstream>}}
+\DoxyCodeLine{\Hypertarget{_logger_8h_source_l00010}00010\ \textcolor{preprocessor}{\#include\ <mutex>}}
+\DoxyCodeLine{\Hypertarget{_logger_8h_source_l00011}00011\ \textcolor{preprocessor}{\#include\ <string>}}
+\DoxyCodeLine{\Hypertarget{_logger_8h_source_l00012}00012\ \textcolor{preprocessor}{\#include\ <vector>}}
+\DoxyCodeLine{\Hypertarget{_logger_8h_source_l00013}00013\ }
+\DoxyCodeLine{\Hypertarget{_logger_8h_source_l00014}\mbox{\hyperlink{namespace_p_d_common}{00014}}\ \textcolor{keyword}{namespace\ }\mbox{\hyperlink{namespace_p_d_common}{PDCommon}}\ \{}
+\DoxyCodeLine{\Hypertarget{_logger_8h_source_l00015}\mbox{\hyperlink{namespace_p_d_common_1_1_utils}{00015}}\ \textcolor{keyword}{namespace\ }\mbox{\hyperlink{namespace_p_d_common_1_1_utils}{Utils}}\ \{}
+\DoxyCodeLine{\Hypertarget{_logger_8h_source_l00016}00016\ }
+\DoxyCodeLine{\Hypertarget{_logger_8h_source_l00022}\mbox{\hyperlink{class_p_d_common_1_1_utils_1_1_logger}{00022}}\ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_p_d_common_1_1_utils_1_1_logger_a1e6439606282074a4597c048b8b36da6}{Logger}}\ \{}
+\DoxyCodeLine{\Hypertarget{_logger_8h_source_l00023}00023\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{\Hypertarget{_logger_8h_source_l00024}00024\ \ \ \textcolor{comment}{//\ Get\ the\ global\ singleton\ instance\ (C++11\ static\ local\ guarantees}}
+\DoxyCodeLine{\Hypertarget{_logger_8h_source_l00025}00025\ \ \ \textcolor{comment}{//\ thread-\/safe\ init)}}
+\DoxyCodeLine{\Hypertarget{_logger_8h_source_l00026}00026\ \ \ \textcolor{keyword}{static}\ \mbox{\hyperlink{class_p_d_common_1_1_utils_1_1_logger_a1e6439606282074a4597c048b8b36da6}{Logger}}\ \&\mbox{\hyperlink{class_p_d_common_1_1_utils_1_1_logger_a362e6b0979c03ccb63779852adf1f71d}{getInstance}}();}
+\DoxyCodeLine{\Hypertarget{_logger_8h_source_l00027}00027\ }
+\DoxyCodeLine{\Hypertarget{_logger_8h_source_l00028}00028\ \ \ \textcolor{comment}{//\ Disable\ copy\ and\ assignment}}
+\DoxyCodeLine{\Hypertarget{_logger_8h_source_l00029}\mbox{\hyperlink{class_p_d_common_1_1_utils_1_1_logger_a1e6439606282074a4597c048b8b36da6}{00029}}\ \ \ \mbox{\hyperlink{class_p_d_common_1_1_utils_1_1_logger_a1e6439606282074a4597c048b8b36da6}{Logger}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{class_p_d_common_1_1_utils_1_1_logger_a1e6439606282074a4597c048b8b36da6}{Logger}}\ \&)\ =\ \textcolor{keyword}{delete};}
+\DoxyCodeLine{\Hypertarget{_logger_8h_source_l00030}\mbox{\hyperlink{class_p_d_common_1_1_utils_1_1_logger_a356627757e780b4b4003d5706e6531b4}{00030}}\ \ \ \mbox{\hyperlink{class_p_d_common_1_1_utils_1_1_logger_a1e6439606282074a4597c048b8b36da6}{Logger}}\ \&\mbox{\hyperlink{class_p_d_common_1_1_utils_1_1_logger_a356627757e780b4b4003d5706e6531b4}{operator=}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{class_p_d_common_1_1_utils_1_1_logger_a1e6439606282074a4597c048b8b36da6}{Logger}}\ \&)\ =\ \textcolor{keyword}{delete};}
+\DoxyCodeLine{\Hypertarget{_logger_8h_source_l00031}00031\ }
+\DoxyCodeLine{\Hypertarget{_logger_8h_source_l00032}00032\ \ \ \textcolor{comment}{//\ Set\ and\ open\ the\ global\ log\ file\ (console-\/only\ if\ not\ set)}}
+\DoxyCodeLine{\Hypertarget{_logger_8h_source_l00033}00033\ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_p_d_common_1_1_utils_1_1_logger_aaa653d814aa70e62baeef561bf5f33f8}{setLogFile}}(\textcolor{keyword}{const}\ std::string\ \&logFilePath);}
+\DoxyCodeLine{\Hypertarget{_logger_8h_source_l00034}00034\ }
+\DoxyCodeLine{\Hypertarget{_logger_8h_source_l00035}00035\ \ \ \textcolor{comment}{//\ Display\ the\ software\ Logo}}
+\DoxyCodeLine{\Hypertarget{_logger_8h_source_l00036}00036\ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_p_d_common_1_1_utils_1_1_logger_a44be40494bdfc342d7a80e863f67903b}{showLogo}}();}
+\DoxyCodeLine{\Hypertarget{_logger_8h_source_l00037}00037\ }
+\DoxyCodeLine{\Hypertarget{_logger_8h_source_l00038}00038\ \ \ \textcolor{comment}{//\ Basic\ logging\ interface}}
+\DoxyCodeLine{\Hypertarget{_logger_8h_source_l00039}00039\ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_p_d_common_1_1_utils_1_1_logger_a175bb3b5ecb468051e512f5a316476df}{info}}(\textcolor{keyword}{const}\ std::string\ \&message);}
+\DoxyCodeLine{\Hypertarget{_logger_8h_source_l00040}00040\ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_p_d_common_1_1_utils_1_1_logger_a78e935c1ebb36b6e2f2c4b9b38cf250f}{warning}}(\textcolor{keyword}{const}\ std::string\ \&message);}
+\DoxyCodeLine{\Hypertarget{_logger_8h_source_l00041}00041\ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_p_d_common_1_1_utils_1_1_logger_a507d61719d50d609a87edad6f25295e1}{error}}(\textcolor{keyword}{const}\ std::string\ \&message);}
+\DoxyCodeLine{\Hypertarget{_logger_8h_source_l00042}00042\ }
+\DoxyCodeLine{\Hypertarget{_logger_8h_source_l00043}00043\ \textcolor{keyword}{private}:}
+\DoxyCodeLine{\Hypertarget{_logger_8h_source_l00044}\mbox{\hyperlink{class_p_d_common_1_1_utils_1_1_logger_abf761e024c32429f8b3a51da50fc2a4a}{00044}}\ \ \ \mbox{\hyperlink{class_p_d_common_1_1_utils_1_1_logger_abf761e024c32429f8b3a51da50fc2a4a}{Logger}}()\ =\ \textcolor{keywordflow}{default};}
+\DoxyCodeLine{\Hypertarget{_logger_8h_source_l00045}00045\ \ \ \mbox{\hyperlink{class_p_d_common_1_1_utils_1_1_logger_a62b2f45b2273c1d62a5205bb84291818}{\string~Logger}}();}
+\DoxyCodeLine{\Hypertarget{_logger_8h_source_l00046}00046\ }
+\DoxyCodeLine{\Hypertarget{_logger_8h_source_l00047}00047\ \ \ \textcolor{comment}{//\ Internal:\ build\ all\ Logo\ text\ lines}}
+\DoxyCodeLine{\Hypertarget{_logger_8h_source_l00048}00048\ \ \ std::vector<std::string>\ \mbox{\hyperlink{class_p_d_common_1_1_utils_1_1_logger_ae6ec4ee56e3a14183b8e40ebacdab467}{buildLogoLines}}();}
+\DoxyCodeLine{\Hypertarget{_logger_8h_source_l00049}00049\ }
+\DoxyCodeLine{\Hypertarget{_logger_8h_source_l00050}00050\ \ \ \textcolor{comment}{//\ Internal:\ safely\ write\ block\ text\ to\ all\ active\ streams}}
+\DoxyCodeLine{\Hypertarget{_logger_8h_source_l00051}00051\ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_p_d_common_1_1_utils_1_1_logger_a7978311a773d3600408454213959a1d7}{printToStreams}}(\textcolor{keyword}{const}\ std::vector<std::string>\ \&lines);}
+\DoxyCodeLine{\Hypertarget{_logger_8h_source_l00052}00052\ }
+\DoxyCodeLine{\Hypertarget{_logger_8h_source_l00053}\mbox{\hyperlink{class_p_d_common_1_1_utils_1_1_logger_a12606564b141fd4798cf02ae7d7785de}{00053}}\ \ \ std::mutex\ \mbox{\hyperlink{class_p_d_common_1_1_utils_1_1_logger_a12606564b141fd4798cf02ae7d7785de}{logMutex\_}};\ \ \ \textcolor{comment}{//\ Output\ synchronization\ lock}}
+\DoxyCodeLine{\Hypertarget{_logger_8h_source_l00054}\mbox{\hyperlink{class_p_d_common_1_1_utils_1_1_logger_ae332c4cf7569606f7af88e90078e5541}{00054}}\ \ \ std::ofstream\ \mbox{\hyperlink{class_p_d_common_1_1_utils_1_1_logger_ae332c4cf7569606f7af88e90078e5541}{logFile\_}};\ \textcolor{comment}{//\ Global\ file\ stream\ instance}}
+\DoxyCodeLine{\Hypertarget{_logger_8h_source_l00055}00055\ \};}
+\DoxyCodeLine{\Hypertarget{_logger_8h_source_l00056}00056\ }
+\DoxyCodeLine{\Hypertarget{_logger_8h_source_l00057}00057\ \textcolor{comment}{//\ Utility\ macros\ for\ cleaner\ call-\/site\ syntax}}
+\DoxyCodeLine{\Hypertarget{_logger_8h_source_l00058}\mbox{\hyperlink{_logger_8h_a8ede51cfc8c7ec6b65c131aefa5df6be}{00058}}\ \textcolor{preprocessor}{\#define\ LOG\_SET\_FILE(path)\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{\Hypertarget{_logger_8h_source_l00059}00059\ \textcolor{preprocessor}{\ \ PDCommon::Utils::Logger::getInstance().setLogFile(path)}}
+\DoxyCodeLine{\Hypertarget{_logger_8h_source_l00060}\mbox{\hyperlink{_logger_8h_ac8e803773221119947b55f6ae85a9c63}{00060}}\ \textcolor{preprocessor}{\#define\ LOG\_INFO(msg)\ PDCommon::Utils::Logger::getInstance().info(msg)}}
+\DoxyCodeLine{\Hypertarget{_logger_8h_source_l00061}\mbox{\hyperlink{_logger_8h_a0c53e5566a3b790db039421523dd4637}{00061}}\ \textcolor{preprocessor}{\#define\ LOG\_WARNING(msg)\ PDCommon::Utils::Logger::getInstance().warning(msg)}}
+\DoxyCodeLine{\Hypertarget{_logger_8h_source_l00062}\mbox{\hyperlink{_logger_8h_a7ebf4c3b4fb05d6f9094089ded75cbdd}{00062}}\ \textcolor{preprocessor}{\#define\ LOG\_ERROR(msg)\ PDCommon::Utils::Logger::getInstance().error(msg)}}
+\DoxyCodeLine{\Hypertarget{_logger_8h_source_l00063}\mbox{\hyperlink{_logger_8h_ae45adfe78bd01f5651c74fd2265c06a6}{00063}}\ \textcolor{preprocessor}{\#define\ SHOW\_LOGO()\ PDCommon::Utils::Logger::getInstance().showLogo()}}
+\DoxyCodeLine{\Hypertarget{_logger_8h_source_l00064}00064\ }
+\DoxyCodeLine{\Hypertarget{_logger_8h_source_l00065}00065\ \}\ \textcolor{comment}{//\ namespace\ Utils}}
+\DoxyCodeLine{\Hypertarget{_logger_8h_source_l00066}00066\ \}\ \textcolor{comment}{//\ namespace\ PDCommon}}
+
+\end{DoxyCode}

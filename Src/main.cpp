@@ -1,6 +1,7 @@
+#include "EngineManager.h"
 #include "GRPD.h"
-#include "SolverEngine.h"
 #include <cstdlib>
+
 
 int main(int argc, char *argv[]) {
 
@@ -13,12 +14,12 @@ int main(int argc, char *argv[]) {
   // 2. Automated pre-processing: invoke Python to generate mesh
   // and read mesh to Particle
   // =================================================================
-  GRPD::Engine::SolverEngine pdtest;
-  pdtest.Initialize();
+  Src::Engine::EngineManager GRSIM;
+  GRSIM.Initialize();
 
-  // pdtest.Solve();
+  // GRSIM.Solve();
 
-  pdtest.Output();
+  GRSIM.Output();
 
   system("pause");
 

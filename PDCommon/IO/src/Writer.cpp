@@ -1,7 +1,7 @@
 #include "Writer.h"
 #include <iostream>
 
-namespace GRPD {
+namespace PDCommon {
 namespace IO {
 
 Writer::Writer() {
@@ -115,4 +115,4 @@ void Writer::setPointsVariable(dataType type, void *ptr, std::string name,
 }
 
 } // namespace IO
-} // namespace GRPD
+} // namespace PDCommon

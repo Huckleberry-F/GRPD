@@ -1,0 +1,10 @@
+<map id="GRPD::Field::FieldManager::createField" name="GRPD::Field::FieldManager::createField">
+<area shape="rect" id="Node000001" title="通过已注册的类型名创建物理场并加入管理器" alt="" coords="5,31,260,57"/>
+<area shape="rect" id="Node000002" href="$class_g_r_p_d_1_1_field_1_1_field_registry.html#ade14840b44b5a0caabe7414c2cb5fee1" title="使用注册的工厂函数创建物理场实例" alt="" coords="310,5,563,32"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="260,31,294,28,295,33,260,36"/>
+<area shape="rect" id="Node000003" href="$class_g_r_p_d_1_1_field_1_1_field_registry.html#a72316c3a6a16475b108620bb483d5997" title=" " alt="" coords="308,56,565,83"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="260,52,293,55,292,60,260,57"/>
+<area shape="rect" id="Node000004" href="$class_g_r_p_d_1_1_field_1_1_field_registry.html#acba333781bcd2e87861b7abf84a4feee" title=" " alt="" coords="613,56,879,83"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="565,67,597,67,597,72,565,72"/>
+<area shape="poly" id="edge4_Node000004_Node000004" title=" " alt="" coords="695,57,685,47,692,37,713,31,746,29,783,32,802,39,801,44,782,37,746,35,713,37,695,42,691,47,698,53"/>
+</map>

@@ -1,5 +1,5 @@
-#ifndef GRPD_FIELD_FIELD_REGISTRY_H
-#define GRPD_FIELD_FIELD_REGISTRY_H
+#ifndef PDCOMMON_FIELD_FIELD_REGISTRY_H
+#define PDCOMMON_FIELD_FIELD_REGISTRY_H
 
 // ============================================================================
 // FieldRegistry.h - 物理场全局注册中心 (单例)
@@ -14,8 +14,9 @@
 #include <map>
 #include <memory>
 #include <string>
+#include <vector>
 
-namespace GRPD::Field {
+namespace PDCommon::Field {
 
 // ---------------------------------------------------------------------------
 // 工厂函数定义：根据名称返回一个具体 Field 的 unique_ptr
@@ -50,6 +51,9 @@ public:
     std::unique_ptr<Field> createField(const std::string &type,
                                         const std::string &name);
 
+    /// @brief 获取所有已注册的类型名列表
+    std::vector<std::string> getRegisteredTypes() const;
+
 private:
     FieldRegistry() = default;
     ~FieldRegistry() = default;
@@ -65,13 +69,13 @@ private:
     namespace {                                                                \
     struct FieldRegistrar_##Type {                                              \
         FieldRegistrar_##Type() {                                              \
-            GRPD::Field::FieldRegistry::getInstance().registerFieldType(       \
+            PDCommon::Field::FieldRegistry::getInstance().registerFieldType(       \
                 #Type, Creator);                                               \
         }                                                                      \
     };                                                                         \
     static FieldRegistrar_##Type global_FieldRegistrar_##Type;                 \
     }
 
-} // namespace GRPD::Field
+} // namespace PDCommon::Field
 
-#endif // GRPD_FIELD_FIELD_REGISTRY_H
+#endif // PDCOMMON_FIELD_FIELD_REGISTRY_H

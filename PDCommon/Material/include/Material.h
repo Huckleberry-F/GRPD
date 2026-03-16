@@ -1,5 +1,5 @@
-#ifndef MATERIAL_H
-#define MATERIAL_H
+#ifndef PDCOMMON_MATERIAL_H
+#define PDCOMMON_MATERIAL_H
 
 // ============================================================================
 // Material.h - 材料基础接口
@@ -11,11 +11,11 @@
 #include <yaml-cpp/yaml.h>
 
 // 前置声明，避免在基类头文件引入具体物理场依赖
-namespace GRPD::Field {
+namespace PDCommon::Field {
 class FieldManager;
 }
 
-namespace GRPD::Material {
+namespace PDCommon::Material {
 
 class Material {
 public:
@@ -47,7 +47,7 @@ public:
   /// 子类覆盖此方法，向 FieldManager 注册材料所需的状态变量
   /// 注意：如果使用通用 SDV 池化机制，此方法可能为空，主要用于注册特殊命名的场
   /// @param fm 物理场管理器引用
-  virtual void allocateStateVariables(GRPD::Field::FieldManager &fm);
+  virtual void allocateStateVariables(PDCommon::Field::FieldManager &fm);
 
   /// @brief 获取该材料需要的状态变量(SDV)数量
   /// 引擎将根据所有材料的最大需求分配统一的 SDV 场
@@ -63,6 +63,6 @@ protected:
   int matId_;        // 关联的整型标号
 };
 
-} // namespace GRPD::Material
+} // namespace PDCommon::Material
 
-#endif // GRPD_MODEL_MATERIAL_H
+#endif // PDCOMMON_MODEL_PDCOMMON_MATERIAL_H

@@ -7,7 +7,7 @@
 #include "Logger.h"
 #include "PhysicsFieldRegistry.h"
 
-namespace GRPD::Field {
+namespace PDCommon::Field {
 
 void ThermalFields::registerFields(FieldManager &fm) {
     // 热传导核心场：温度 (标量)、变化率 (标量) 以及 热流密度 (标量)
@@ -18,6 +18,6 @@ void ThermalFields::registerFields(FieldManager &fm) {
 }
 
 // 静态注册到 PhysicsFieldRegistry
-REGISTER_PHYSICS_FIELDS(Thermal, GRPD::Field::ThermalFields)
+REGISTER_PHYSICS_FIELDS(Thermal, PDCommon::Field::ThermalFields)
 
-} // namespace GRPD::Field
+} // namespace PDCommon::Field

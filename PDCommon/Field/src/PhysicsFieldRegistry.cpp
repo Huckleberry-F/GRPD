@@ -6,7 +6,7 @@
 #include "Logger.h"
 #include <stdexcept>
 
-namespace GRPD::Field {
+namespace PDCommon::Field {
 
 PhysicsFieldRegistry &PhysicsFieldRegistry::getInstance() {
     static PhysicsFieldRegistry instance;
@@ -18,8 +18,6 @@ void PhysicsFieldRegistry::registerType(const std::string &type,
     if (registry_.find(type) != registry_.end()) {
         LOG_WARNING("[PhysicsFieldRegistry] Type '" + type +
                     "' already registered, overwriting.");
-    } else {
-        LOG_INFO("[PhysicsFieldRegistry] Type '" + type + "' registered.");
     }
     registry_[type] = creator;
 }
@@ -39,4 +37,13 @@ bool PhysicsFieldRegistry::hasType(const std::string &type) const {
     return registry_.find(type) != registry_.end();
 }
 
-} // namespace GRPD::Field
+std::vector<std::string> PhysicsFieldRegistry::getRegisteredTypes() const {
+    std::vector<std::string> types;
+    types.reserve(registry_.size());
+    for (const auto &[key, _] : registry_) {
+        types.push_back(key);
+    }
+    return types;
+}
+
+} // namespace PDCommon::Field

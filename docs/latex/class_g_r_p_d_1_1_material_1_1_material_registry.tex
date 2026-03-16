@@ -1,0 +1,273 @@
+\doxysection{GRPD\+::Material\+::Material\+Registry Class Reference}
+\hypertarget{class_g_r_p_d_1_1_material_1_1_material_registry}{}\label{class_g_r_p_d_1_1_material_1_1_material_registry}\index{GRPD::Material::MaterialRegistry@{GRPD::Material::MaterialRegistry}}
+
+
+{\ttfamily \#include $<$Material\+Registry.\+h$>$}
+
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{class_g_r_p_d_1_1_material_1_1_material_registry_af7d23b701a1ddf210a943f06c854eaff}{Material\+Registry}} (const \mbox{\hyperlink{class_g_r_p_d_1_1_material_1_1_material_registry}{Material\+Registry}} \&)=delete
+\item 
+\mbox{\hyperlink{class_g_r_p_d_1_1_material_1_1_material_registry}{Material\+Registry}} \& \mbox{\hyperlink{class_g_r_p_d_1_1_material_1_1_material_registry_a821dffb8bf8f373f8c64c24f90f3d13e}{operator=}} (const \mbox{\hyperlink{class_g_r_p_d_1_1_material_1_1_material_registry}{Material\+Registry}} \&)=delete
+\item 
+void \mbox{\hyperlink{class_g_r_p_d_1_1_material_1_1_material_registry_a7d341671cf5dfbb3af593fd6d0c276cd}{register\+Material\+Type}} (const std\+::string \&type, \mbox{\hyperlink{namespace_g_r_p_d_1_1_material_aa060d4f44a99128d54df3344a0b22640}{Material\+Creator\+Func}} creator)
+\begin{DoxyCompactList}\small\item\em Register a material type with its creator function. \end{DoxyCompactList}\item 
+std\+::unique\+\_\+ptr$<$ \mbox{\hyperlink{class_g_r_p_d_1_1_material_1_1_material}{Material}} $>$ \mbox{\hyperlink{class_g_r_p_d_1_1_material_1_1_material_registry_a285734d56128a301e45b8cccfcae077e}{create\+Material}} (const std\+::string \&type, const std\+::string \&name)
+\begin{DoxyCompactList}\small\item\em Create a material instance using the registered creator function. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+static \mbox{\hyperlink{class_g_r_p_d_1_1_material_1_1_material_registry}{Material\+Registry}} \& \mbox{\hyperlink{class_g_r_p_d_1_1_material_1_1_material_registry_a56dfb719cd07d41839dd6b1539951b31}{get\+Instance}} ()
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Private Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{class_g_r_p_d_1_1_material_1_1_material_registry_abc4fe14e4a30c54a34457a72ac510887}{Material\+Registry}} ()=default
+\item 
+\mbox{\hyperlink{class_g_r_p_d_1_1_material_1_1_material_registry_ac034c7acba11bf5bdfffd17a0e11f184}{\texorpdfstring{$\sim$}{\string~}\+Material\+Registry}} ()=default
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+std\+::map$<$ std\+::string, \mbox{\hyperlink{namespace_g_r_p_d_1_1_material_aa060d4f44a99128d54df3344a0b22640}{Material\+Creator\+Func}} $>$ \mbox{\hyperlink{class_g_r_p_d_1_1_material_1_1_material_registry_a56f0d4cb57bd3e92a453a8b225b6dc92}{registry\+Map\+\_\+}}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+
+
+Definition at line \mbox{\hyperlink{_material_registry_8h_source_l00026}{26}} of file \mbox{\hyperlink{_material_registry_8h_source}{Material\+Registry.\+h}}.
+
+
+
+\label{doc-constructors}
+\Hypertarget{class_g_r_p_d_1_1_material_1_1_material_registry_doc-constructors}
+\doxysubsection{Constructor \& Destructor Documentation}
+\Hypertarget{class_g_r_p_d_1_1_material_1_1_material_registry_af7d23b701a1ddf210a943f06c854eaff}\index{GRPD::Material::MaterialRegistry@{GRPD::Material::MaterialRegistry}!MaterialRegistry@{MaterialRegistry}}
+\index{MaterialRegistry@{MaterialRegistry}!GRPD::Material::MaterialRegistry@{GRPD::Material::MaterialRegistry}}
+\doxysubsubsection{\texorpdfstring{MaterialRegistry()}{MaterialRegistry()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \label{class_g_r_p_d_1_1_material_1_1_material_registry_af7d23b701a1ddf210a943f06c854eaff} 
+GRPD\+::\+Material\+::\+Material\+Registry\+::\+Material\+Registry (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{class_g_r_p_d_1_1_material_1_1_material_registry}{Material\+Registry}} \&}]{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [delete]}}
+
+
+
+References \mbox{\hyperlink{class_g_r_p_d_1_1_material_1_1_material_registry_af7d23b701a1ddf210a943f06c854eaff}{Material\+Registry()}}.
+
+
+
+Referenced by \mbox{\hyperlink{_material_registry_8cpp_source_l00014}{get\+Instance()}}, \mbox{\hyperlink{class_g_r_p_d_1_1_material_1_1_material_registry_af7d23b701a1ddf210a943f06c854eaff}{Material\+Registry()}}, and \mbox{\hyperlink{class_g_r_p_d_1_1_material_1_1_material_registry_a821dffb8bf8f373f8c64c24f90f3d13e}{operator=()}}.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=320pt]{class_g_r_p_d_1_1_material_1_1_material_registry_af7d23b701a1ddf210a943f06c854eaff_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{class_g_r_p_d_1_1_material_1_1_material_registry_af7d23b701a1ddf210a943f06c854eaff_icgraph}
+\end{center}
+\end{figure}
+\Hypertarget{class_g_r_p_d_1_1_material_1_1_material_registry_abc4fe14e4a30c54a34457a72ac510887}\index{GRPD::Material::MaterialRegistry@{GRPD::Material::MaterialRegistry}!MaterialRegistry@{MaterialRegistry}}
+\index{MaterialRegistry@{MaterialRegistry}!GRPD::Material::MaterialRegistry@{GRPD::Material::MaterialRegistry}}
+\doxysubsubsection{\texorpdfstring{MaterialRegistry()}{MaterialRegistry()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \label{class_g_r_p_d_1_1_material_1_1_material_registry_abc4fe14e4a30c54a34457a72ac510887} 
+GRPD\+::\+Material\+::\+Material\+Registry\+::\+Material\+Registry (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [private]}, {\ttfamily [default]}}
+
+\Hypertarget{class_g_r_p_d_1_1_material_1_1_material_registry_ac034c7acba11bf5bdfffd17a0e11f184}\index{GRPD::Material::MaterialRegistry@{GRPD::Material::MaterialRegistry}!````~MaterialRegistry@{\texorpdfstring{$\sim$}{\string~}MaterialRegistry}}
+\index{````~MaterialRegistry@{\texorpdfstring{$\sim$}{\string~}MaterialRegistry}!GRPD::Material::MaterialRegistry@{GRPD::Material::MaterialRegistry}}
+\doxysubsubsection{\texorpdfstring{\texorpdfstring{$\sim$}{\string~}MaterialRegistry()}{\string~MaterialRegistry()}}
+{\footnotesize\ttfamily \label{class_g_r_p_d_1_1_material_1_1_material_registry_ac034c7acba11bf5bdfffd17a0e11f184} 
+GRPD\+::\+Material\+::\+Material\+Registry\+::\texorpdfstring{$\sim$}{\string~}\+Material\+Registry (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [private]}, {\ttfamily [default]}}
+
+
+
+\label{doc-func-members}
+\Hypertarget{class_g_r_p_d_1_1_material_1_1_material_registry_doc-func-members}
+\doxysubsection{Member Function Documentation}
+\Hypertarget{class_g_r_p_d_1_1_material_1_1_material_registry_a285734d56128a301e45b8cccfcae077e}\index{GRPD::Material::MaterialRegistry@{GRPD::Material::MaterialRegistry}!createMaterial@{createMaterial}}
+\index{createMaterial@{createMaterial}!GRPD::Material::MaterialRegistry@{GRPD::Material::MaterialRegistry}}
+\doxysubsubsection{\texorpdfstring{createMaterial()}{createMaterial()}}
+{\footnotesize\ttfamily \label{class_g_r_p_d_1_1_material_1_1_material_registry_a285734d56128a301e45b8cccfcae077e} 
+std\+::unique\+\_\+ptr$<$ \mbox{\hyperlink{class_g_r_p_d_1_1_material_1_1_material}{Material}} $>$ GRPD\+::\+Material\+::\+Material\+Registry\+::create\+Material (\begin{DoxyParamCaption}\item[{const std\+::string \&}]{type}{, }\item[{const std\+::string \&}]{name}{}\end{DoxyParamCaption})}
+
+
+
+Create a material instance using the registered creator function. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em type} & Registered material type name \\
+\hline
+{\em name} & New instance name \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Created \doxylink{class_g_r_p_d_1_1_material_1_1_material}{Material} smart pointer 
+\end{DoxyReturn}
+
+
+Definition at line \mbox{\hyperlink{_material_registry_8cpp_source_l00038}{38}} of file \mbox{\hyperlink{_material_registry_8cpp_source}{Material\+Registry.\+cpp}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00039\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00040\ \ \ \textcolor{keyword}{auto}\ it\ =\ \mbox{\hyperlink{class_g_r_p_d_1_1_material_1_1_material_registry_a56f0d4cb57bd3e92a453a8b225b6dc92}{registryMap\_}}.find(type);}
+\DoxyCodeLine{00041\ \ \ \textcolor{keywordflow}{if}\ (it\ ==\ \mbox{\hyperlink{class_g_r_p_d_1_1_material_1_1_material_registry_a56f0d4cb57bd3e92a453a8b225b6dc92}{registryMap\_}}.end())\ \{}
+\DoxyCodeLine{00042\ \ \ \ \ \mbox{\hyperlink{_logger_8h_a7ebf4c3b4fb05d6f9094089ded75cbdd}{LOG\_ERROR}}(}
+\DoxyCodeLine{00043\ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}[MaterialRegistry]\ Create\ material\ failed:\ unknown\ material\ type\ '"{}}\ +}
+\DoxyCodeLine{00044\ \ \ \ \ \ \ \ \ type\ +\ \textcolor{stringliteral}{"{}'\ !"{}});}
+\DoxyCodeLine{00045\ \ \ \ \ \textcolor{keywordflow}{throw}\ std::runtime\_error(\textcolor{stringliteral}{"{}Unknown\ material\ type:\ "{}}\ +\ type);}
+\DoxyCodeLine{00046\ \ \ \}}
+\DoxyCodeLine{00047\ \ \ \mbox{\hyperlink{_logger_8h_ac8e803773221119947b55f6ae85a9c63}{LOG\_INFO}}(\textcolor{stringliteral}{"{}[MaterialRegistry]\ Using\ factory\ to\ create\ material:\ "{}}\ +\ name\ +}
+\DoxyCodeLine{00048\ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}\ (type:\ "{}}\ +\ type\ +\ \textcolor{stringliteral}{"{})"{}});}
+\DoxyCodeLine{00049\ \ \ \textcolor{keywordflow}{return}\ it-\/>second(name);}
+\DoxyCodeLine{00050\ \}}
+
+\end{DoxyCode}
+
+
+References \mbox{\hyperlink{_logger_8h_source_l00062}{LOG\+\_\+\+ERROR}}, \mbox{\hyperlink{_logger_8h_source_l00060}{LOG\+\_\+\+INFO}}, and \mbox{\hyperlink{_material_registry_8h_source_l00058}{registry\+Map\+\_\+}}.
+
+
+
+Referenced by \mbox{\hyperlink{_s_e___material_8cpp_source_l00016}{GRPD\+::\+Engine\+::\+Solver\+Engine\+::\+Init\+Material\+PD()}}.
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{class_g_r_p_d_1_1_material_1_1_material_registry_a285734d56128a301e45b8cccfcae077e_icgraph}
+\end{center}
+\end{figure}
+\Hypertarget{class_g_r_p_d_1_1_material_1_1_material_registry_a56dfb719cd07d41839dd6b1539951b31}\index{GRPD::Material::MaterialRegistry@{GRPD::Material::MaterialRegistry}!getInstance@{getInstance}}
+\index{getInstance@{getInstance}!GRPD::Material::MaterialRegistry@{GRPD::Material::MaterialRegistry}}
+\doxysubsubsection{\texorpdfstring{getInstance()}{getInstance()}}
+{\footnotesize\ttfamily \label{class_g_r_p_d_1_1_material_1_1_material_registry_a56dfb719cd07d41839dd6b1539951b31} 
+\mbox{\hyperlink{class_g_r_p_d_1_1_material_1_1_material_registry}{Material\+Registry}} \& GRPD\+::\+Material\+::\+Material\+Registry\+::get\+Instance (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Definition at line \mbox{\hyperlink{_material_registry_8cpp_source_l00014}{14}} of file \mbox{\hyperlink{_material_registry_8cpp_source}{Material\+Registry.\+cpp}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00014\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00015\ \ \ \textcolor{keyword}{static}\ \mbox{\hyperlink{class_g_r_p_d_1_1_material_1_1_material_registry_af7d23b701a1ddf210a943f06c854eaff}{MaterialRegistry}}\ instance;}
+\DoxyCodeLine{00016\ \ \ \textcolor{keywordflow}{return}\ instance;}
+\DoxyCodeLine{00017\ \}}
+
+\end{DoxyCode}
+
+
+References \mbox{\hyperlink{class_g_r_p_d_1_1_material_1_1_material_registry_af7d23b701a1ddf210a943f06c854eaff}{Material\+Registry()}}.
+
+
+
+Referenced by \mbox{\hyperlink{_s_e___material_8cpp_source_l00016}{GRPD\+::\+Engine\+::\+Solver\+Engine\+::\+Init\+Material\+PD()}}.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{class_g_r_p_d_1_1_material_1_1_material_registry_a56dfb719cd07d41839dd6b1539951b31_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{class_g_r_p_d_1_1_material_1_1_material_registry_a56dfb719cd07d41839dd6b1539951b31_icgraph}
+\end{center}
+\end{figure}
+\Hypertarget{class_g_r_p_d_1_1_material_1_1_material_registry_a821dffb8bf8f373f8c64c24f90f3d13e}\index{GRPD::Material::MaterialRegistry@{GRPD::Material::MaterialRegistry}!operator=@{operator=}}
+\index{operator=@{operator=}!GRPD::Material::MaterialRegistry@{GRPD::Material::MaterialRegistry}}
+\doxysubsubsection{\texorpdfstring{operator=()}{operator=()}}
+{\footnotesize\ttfamily \label{class_g_r_p_d_1_1_material_1_1_material_registry_a821dffb8bf8f373f8c64c24f90f3d13e} 
+\mbox{\hyperlink{class_g_r_p_d_1_1_material_1_1_material_registry}{Material\+Registry}} \& GRPD\+::\+Material\+::\+Material\+Registry\+::operator= (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{class_g_r_p_d_1_1_material_1_1_material_registry}{Material\+Registry}} \&}]{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [delete]}}
+
+
+
+References \mbox{\hyperlink{class_g_r_p_d_1_1_material_1_1_material_registry_af7d23b701a1ddf210a943f06c854eaff}{Material\+Registry()}}.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{class_g_r_p_d_1_1_material_1_1_material_registry_a821dffb8bf8f373f8c64c24f90f3d13e_cgraph}
+\end{center}
+\end{figure}
+\Hypertarget{class_g_r_p_d_1_1_material_1_1_material_registry_a7d341671cf5dfbb3af593fd6d0c276cd}\index{GRPD::Material::MaterialRegistry@{GRPD::Material::MaterialRegistry}!registerMaterialType@{registerMaterialType}}
+\index{registerMaterialType@{registerMaterialType}!GRPD::Material::MaterialRegistry@{GRPD::Material::MaterialRegistry}}
+\doxysubsubsection{\texorpdfstring{registerMaterialType()}{registerMaterialType()}}
+{\footnotesize\ttfamily \label{class_g_r_p_d_1_1_material_1_1_material_registry_a7d341671cf5dfbb3af593fd6d0c276cd} 
+void GRPD\+::\+Material\+::\+Material\+Registry\+::register\+Material\+Type (\begin{DoxyParamCaption}\item[{const std\+::string \&}]{type}{, }\item[{\mbox{\hyperlink{namespace_g_r_p_d_1_1_material_aa060d4f44a99128d54df3344a0b22640}{Material\+Creator\+Func}}}]{creator}{}\end{DoxyParamCaption})}
+
+
+
+Register a material type with its creator function. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em type} & \doxylink{class_g_r_p_d_1_1_material_1_1_material}{Material} type name (e.\+g., "{}\+Elastic"{}, "{}\+Thermal\+Mat"{}) \\
+\hline
+{\em creator} & Function to create the material instance \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line \mbox{\hyperlink{_material_registry_8cpp_source_l00022}{22}} of file \mbox{\hyperlink{_material_registry_8cpp_source}{Material\+Registry.\+cpp}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00023\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00024\ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{class_g_r_p_d_1_1_material_1_1_material_registry_a56f0d4cb57bd3e92a453a8b225b6dc92}{registryMap\_}}.find(type)\ !=\ \mbox{\hyperlink{class_g_r_p_d_1_1_material_1_1_material_registry_a56f0d4cb57bd3e92a453a8b225b6dc92}{registryMap\_}}.end())\ \{}
+\DoxyCodeLine{00025\ \ \ \ \ \mbox{\hyperlink{_logger_8h_a0c53e5566a3b790db039421523dd4637}{LOG\_WARNING}}(\textcolor{stringliteral}{"{}[MaterialRegistry]\ Material\ type\ '"{}}\ +\ type\ +}
+\DoxyCodeLine{00026\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}'\ has\ been\ registry,\ overwrite\ it."{}});}
+\DoxyCodeLine{00027\ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
+\DoxyCodeLine{00028\ \ \ \ \ \mbox{\hyperlink{_logger_8h_ac8e803773221119947b55f6ae85a9c63}{LOG\_INFO}}(\textcolor{stringliteral}{"{}[MaterialRegistry]\ Material\ type\ '"{}}\ +\ type\ +}
+\DoxyCodeLine{00029\ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}'\ has\ been\ registry."{}});}
+\DoxyCodeLine{00030\ \ \ \}}
+\DoxyCodeLine{00031\ \ \ \mbox{\hyperlink{class_g_r_p_d_1_1_material_1_1_material_registry_a56f0d4cb57bd3e92a453a8b225b6dc92}{registryMap\_}}[type]\ =\ creator;}
+\DoxyCodeLine{00032\ \}}
+
+\end{DoxyCode}
+
+
+References \mbox{\hyperlink{_logger_8h_source_l00060}{LOG\+\_\+\+INFO}}, \mbox{\hyperlink{_logger_8h_source_l00061}{LOG\+\_\+\+WARNING}}, and \mbox{\hyperlink{_material_registry_8h_source_l00058}{registry\+Map\+\_\+}}.
+
+
+
+\label{doc-variable-members}
+\Hypertarget{class_g_r_p_d_1_1_material_1_1_material_registry_doc-variable-members}
+\doxysubsection{Member Data Documentation}
+\Hypertarget{class_g_r_p_d_1_1_material_1_1_material_registry_a56f0d4cb57bd3e92a453a8b225b6dc92}\index{GRPD::Material::MaterialRegistry@{GRPD::Material::MaterialRegistry}!registryMap\_@{registryMap\_}}
+\index{registryMap\_@{registryMap\_}!GRPD::Material::MaterialRegistry@{GRPD::Material::MaterialRegistry}}
+\doxysubsubsection{\texorpdfstring{registryMap\_}{registryMap\_}}
+{\footnotesize\ttfamily \label{class_g_r_p_d_1_1_material_1_1_material_registry_a56f0d4cb57bd3e92a453a8b225b6dc92} 
+std\+::map$<$std\+::string, \mbox{\hyperlink{namespace_g_r_p_d_1_1_material_aa060d4f44a99128d54df3344a0b22640}{Material\+Creator\+Func}}$>$ GRPD\+::\+Material\+::\+Material\+Registry\+::registry\+Map\+\_\+\hspace{0.3cm}{\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_material_registry_8h_source_l00058}{58}} of file \mbox{\hyperlink{_material_registry_8h_source}{Material\+Registry.\+h}}.
+
+
+
+Referenced by \mbox{\hyperlink{_material_registry_8cpp_source_l00038}{create\+Material()}}, and \mbox{\hyperlink{_material_registry_8cpp_source_l00022}{register\+Material\+Type()}}.
+
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+PDCommon/\+Material/include/\mbox{\hyperlink{_material_registry_8h}{Material\+Registry.\+h}}\item 
+PDCommon/\+Material/src/\mbox{\hyperlink{_material_registry_8cpp}{Material\+Registry.\+cpp}}\end{DoxyCompactItemize}

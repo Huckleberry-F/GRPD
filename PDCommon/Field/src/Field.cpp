@@ -4,7 +4,7 @@
 
 #include "Field.h"
 
-namespace GRPD::Field {
+namespace PDCommon::Field {
 
 // ---------------------------------------------------------------------------
 // 构造函数：初始化场名称与分量维度
@@ -19,4 +19,4 @@ const std::string &Field::getName() const { return name_; }
 
 int Field::getDim() const { return dim_; }
 
-} // namespace GRPD::Field
+} // namespace PDCommon::Field

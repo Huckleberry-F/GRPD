@@ -1,0 +1,9 @@
+<map id="GRPD::Field::FieldManager::getFieldAs" name="GRPD::Field::FieldManager::getFieldAs">
+<area shape="rect" id="Node000001" title="获取带类型安全的物理场指针（不存在或类型不匹配返回 nullptr）" alt="" coords="295,56,547,83"/>
+<area shape="rect" id="Node000002" href="$class_g_r_p_d_1_1_b_c_1_1_convection_b_c.html#af8c0f1a323f9f22191fb65c88f202af0" title="初始化：从 FieldManager 获取场指针，设置粒子 ID、h 和 T_inf" alt="" coords="8,5,244,32"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="324,55,207,35,208,30,325,50"/>
+<area shape="rect" id="Node000003" href="$class_g_r_p_d_1_1_b_c_1_1_heat_flux_b_c.html#a22a6f5f45cd1d25459f634eddccb9151" title="初始化：从 FieldManager 获取场指针，设置粒子 ID 和热流密度" alt="" coords="15,56,237,83"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="279,72,238,72,238,67,279,67"/>
+<area shape="rect" id="Node000004" href="$class_g_r_p_d_1_1_b_c_1_1_temperature_b_c.html#a3c926ac863815571b7779d3f7c507059" title="初始化：从 FieldManager 获取场指针，设置粒子 ID 和温度值" alt="" coords="5,107,247,133"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="325,88,208,109,207,103,324,83"/>
+</map>

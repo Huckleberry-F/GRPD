@@ -2,7 +2,7 @@
 #include <iomanip>
 #include <iostream>
 
-namespace GRPD {
+namespace PDCommon {
 namespace IO {
 
 VtkWriter::VtkWriter() : Writer() {
@@ -313,4 +313,4 @@ void VtkWriter::convertEndian(char *buf, void *ptr, dataType type, int length) {
 }
 
 } // namespace IO
-} // namespace GRPD
+} // namespace PDCommon

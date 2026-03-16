@@ -4,12 +4,12 @@
 
 # 1. Define object library for the simulation hub
 add_library(Core_Obj OBJECT 
-    src/PDSimulater.cpp
+    src/PDContext.cpp
 )
 
 # 2. Add header files to target
 target_sources(Core_Obj PRIVATE
-    include/PDSimulater.h
+    include/PDContext.h
 )
 
 # 3. Set header include paths for this module

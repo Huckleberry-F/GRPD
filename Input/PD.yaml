@@ -73,7 +73,8 @@ Materials:
 
 # 5. 求解器控制 (纯供 C++ 读取)
 Solver:
-  Type: "Thermal"
+  Engine: "PD"              # 求解引擎类型 (PD / FEM)
+  Type: "Thermal"           # 物理场类型 (Thermal / Mechanical / ThermalMechanical)
   TotalTime: 10.0 # 总仿真时间 (s)
   TimeStep_dt: 1.0e-4 # 时间步长 (s)
   OMP_Threads: 8 # OpenMP 加速线程数

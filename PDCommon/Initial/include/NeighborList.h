@@ -1,5 +1,5 @@
-#ifndef GRPD_INITIAL_NEIGHBOR_LIST_H
-#define GRPD_INITIAL_NEIGHBOR_LIST_H
+#ifndef PDCOMMON_INITIAL_NEIGHBOR_LIST_H
+#define PDCOMMON_INITIAL_NEIGHBOR_LIST_H
 
 // ============================================================================
 // NeighborList.h - 近场动力学近邻搜索管理器
@@ -12,11 +12,11 @@
 #include <vector>
 #include <cstddef>
 
-namespace GRPD::Model {
+namespace PDCommon::Model {
     class ParticleManager;
 }
 
-namespace GRPD::Initial {
+namespace PDCommon::Initial {
 
 class NeighborList {
 public:
@@ -32,7 +32,7 @@ public:
      * @param mgr ParticleManager 实例，包含所有点位置
      * @param horizon 邻域半径 delta
      */
-    void buildNeighbors(const GRPD::Model::ParticleManager& mgr, double horizon);
+    void buildNeighbors(const PDCommon::Model::ParticleManager& mgr, double horizon);
 
     /**
      * @brief 获取指定粒子的邻居 ID 列表
@@ -67,6 +67,6 @@ private:
     double horizon_{0.0}; // 邻域半径
 };
 
-} // namespace GRPD::Initial
+} // namespace PDCommon::Initial
 
-#endif // GRPD_INITIAL_NEIGHBOR_LIST_H
+#endif // PDCOMMON_INITIAL_NEIGHBOR_LIST_H

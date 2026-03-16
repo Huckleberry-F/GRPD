@@ -1,25 +1,22 @@
 # ==============================================================================
-# Src/Engine/CMakeLists.txt
+# Src/Engine/CMakeLists.txt - 通用框架层
 # ==============================================================================
 
-# 1. Define object library for the simulation engine
+# 1. Define object library for the simulation engine framework
 add_library(Engine_Obj OBJECT 
-    src/SolverEngine.cpp
-    src/SE_Model.cpp
-    src/SE_Output.cpp
-    src/SE_Material.cpp
-    src/SE_Field.cpp
-    src/SE_Condition.cpp
-    src/SE_Solve.cpp
+    src/Engine.cpp
+    src/EngineManager.cpp
+    src/EngineRegistry.cpp
 )
 
 # 2. Add header files to target
 target_sources(Engine_Obj PRIVATE
-    include/SolverEngine.h
+    include/Engine.h
+    include/EngineManager.h
+    include/EngineRegistry.h
 )
 
-# 3. No public includes needed here, handled by parent Src/CMakeLists.txt
-# but we do need the include paths to compile SolverEngine.cpp itself
+# 3. Include directories
 target_include_directories(Engine_Obj PRIVATE
     include
     ${PROJECT_SOURCE_DIR}/PDCommon/Utils/include
@@ -29,5 +26,5 @@ target_include_directories(Engine_Obj PRIVATE
     ${PROJECT_SOURCE_DIR}/Src
 )
 
-# 4. Link dependencies (mostly for includes when using OBJECT library)
+# 4. Link dependencies
 target_link_libraries(Engine_Obj PRIVATE PDCommon)

@@ -1,5 +1,5 @@
-#ifndef GRPD_BC_THERMAL_BC_H
-#define GRPD_BC_THERMAL_BC_H
+#ifndef PDCOMMON_BC_THERMAL_BC_H
+#define PDCOMMON_BC_THERMAL_BC_H
 
 // ============================================================================
 // ThermalBC.h - 热边界条件派生体系
@@ -13,7 +13,7 @@
 #include "BC.h"
 #include "TypedField.h"
 
-namespace GRPD::BC {
+namespace PDCommon::BC {
 
 /**
  * @brief 热边界条件抽象中间类
@@ -31,9 +31,9 @@ public:
     virtual ~ThermalBC() = default;
 
 protected:
-    GRPD::Field::TypedField<double> *temperature_; // 温度场指针
-    GRPD::Field::TypedField<double> *tempRate_;    // 温度变化率场指针
-    GRPD::Field::TypedField<double> *heatFlux_;    // 热流密度场指针
+    PDCommon::Field::TypedField<double> *temperature_; // 温度场指针
+    PDCommon::Field::TypedField<double> *tempRate_;    // 温度变化率场指针
+    PDCommon::Field::TypedField<double> *heatFlux_;    // 热流密度场指针
 };
 
 /**
@@ -47,7 +47,7 @@ public:
         : ThermalBC(name), particleId_(-1), temperatureVal_(0.0) {}
 
     /// 初始化：从 FieldManager 获取场指针，设置粒子 ID 和温度值
-    void initialize(GRPD::Field::FieldManager &fieldManager,
+    void initialize(PDCommon::Field::FieldManager &fieldManager,
                     int particleId,
                     const std::vector<double> &values) override;
 
@@ -70,7 +70,7 @@ public:
         : ThermalBC(name), particleId_(-1), flux_(0.0) {}
 
     /// 初始化：从 FieldManager 获取场指针，设置粒子 ID 和热流密度
-    void initialize(GRPD::Field::FieldManager &fieldManager,
+    void initialize(PDCommon::Field::FieldManager &fieldManager,
                     int particleId,
                     const std::vector<double> &values) override;
 
@@ -92,7 +92,7 @@ public:
         : ThermalBC(name), particleId_(-1), hConv_(0.0), tInf_(0.0) {}
 
     /// 初始化：从 FieldManager 获取场指针，设置粒子 ID、h 和 T_inf
-    void initialize(GRPD::Field::FieldManager &fieldManager,
+    void initialize(PDCommon::Field::FieldManager &fieldManager,
                     int particleId,
                     const std::vector<double> &values) override;
 
@@ -104,6 +104,6 @@ private:
     double tInf_;
 };
 
-} // namespace GRPD::BC
+} // namespace PDCommon::BC
 
-#endif // GRPD_BC_THERMAL_BC_H
+#endif // PDCOMMON_BC_THERMAL_BC_H

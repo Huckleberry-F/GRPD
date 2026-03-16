@@ -1,0 +1,502 @@
+\doxysection{GRPD\+::Model\+::Particle\+Manager Class Reference}
+\hypertarget{class_g_r_p_d_1_1_model_1_1_particle_manager}{}\label{class_g_r_p_d_1_1_model_1_1_particle_manager}\index{GRPD::Model::ParticleManager@{GRPD::Model::ParticleManager}}
+
+
+{\ttfamily \#include $<$Particle\+Manager.\+h$>$}
+
+\doxysubsubsection*{Public Types}
+\begin{DoxyCompactItemize}
+\item 
+enum class \mbox{\hyperlink{class_g_r_p_d_1_1_model_1_1_particle_manager_ab3bc0a37ca3475c2ee4748483620cd2f}{Var\+Data\+Type}} \{ \mbox{\hyperlink{class_g_r_p_d_1_1_model_1_1_particle_manager_ab3bc0a37ca3475c2ee4748483620cd2fa1686a6c336b71b36d77354cea19a8b52}{Int}}
+, \mbox{\hyperlink{class_g_r_p_d_1_1_model_1_1_particle_manager_ab3bc0a37ca3475c2ee4748483620cd2fad909d38d705ce75386dd86e611a82f5b}{Double}}
+ \}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{class_g_r_p_d_1_1_model_1_1_particle_manager_a6a51f1f6bc802f22e0a4daac8ba60289}{Particle\+Manager}} ()=default
+\item 
+void \mbox{\hyperlink{class_g_r_p_d_1_1_model_1_1_particle_manager_a7eff63be683fc494e88dc63c2b0a0d4a}{add\+Particle}} (int id, int part\+Id, int mat\+Id, double x, double y, double z, double volume)
+\item 
+const \mbox{\hyperlink{class_g_r_p_d_1_1_model_1_1_particle}{Particle}} \& \mbox{\hyperlink{class_g_r_p_d_1_1_model_1_1_particle_manager_ae8144d3df45fb2f0be79b0dc7d3fbd0a}{get\+Particle}} (int id) const
+\begin{DoxyCompactList}\small\item\em O(1) indexed access -\/ const version. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{class_g_r_p_d_1_1_model_1_1_particle}{Particle}} \& \mbox{\hyperlink{class_g_r_p_d_1_1_model_1_1_particle_manager_a7869789dd4fdc7a6ffedb34b3a991b40}{get\+Particle}} (int id)
+\begin{DoxyCompactList}\small\item\em O(1) indexed access -\/ mutable version (e.\+g. for setting temperature) \end{DoxyCompactList}\item 
+size\+\_\+t \mbox{\hyperlink{class_g_r_p_d_1_1_model_1_1_particle_manager_a752c18898c5a2cac7b7fed29423d79f5}{get\+Total\+Particles}} () const
+\begin{DoxyCompactList}\small\item\em Get current total particle count. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_g_r_p_d_1_1_model_1_1_particle_manager_ae4e97309c2ce9748259b7b5c1e3cb557}{reserve\+Memory}} (size\+\_\+t size)
+\item 
+const std\+::vector$<$ \mbox{\hyperlink{class_g_r_p_d_1_1_model_1_1_particle}{Particle}} $>$ \& \mbox{\hyperlink{class_g_r_p_d_1_1_model_1_1_particle_manager_a25831c48716de81fdd7efe93de18df3b}{get\+All\+Particles}} () const
+\begin{DoxyCompactList}\small\item\em Get const reference to the underlying array (for solver traversal) \end{DoxyCompactList}\item 
+std\+::vector$<$ \mbox{\hyperlink{class_g_r_p_d_1_1_model_1_1_particle}{Particle}} $>$ \& \mbox{\hyperlink{class_g_r_p_d_1_1_model_1_1_particle_manager_aae00f771f327d5ca111cd6d73f36f058}{get\+All\+Particles}} ()
+\begin{DoxyCompactList}\small\item\em Get mutable reference to the underlying array (for solver field writes) \end{DoxyCompactList}\item 
+double \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{class_g_r_p_d_1_1_model_1_1_particle_manager_ab60b46d2894a8a5896fd587d796a5323}{get\+Geom\+Data\+Ptr}} (\mbox{\hyperlink{namespace_g_r_p_d_1_1_model_a794e169a6b06cecc5757ae3bc52793d4}{Model\+Var}} var\+Name) const
+\item 
+int \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{class_g_r_p_d_1_1_model_1_1_particle_manager_a2d64371ce07f0a8427a422e834952fa7}{get\+Int\+Data\+Ptr}} (\mbox{\hyperlink{namespace_g_r_p_d_1_1_model_a794e169a6b06cecc5757ae3bc52793d4}{Model\+Var}} var\+Name) const
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+static bool \mbox{\hyperlink{class_g_r_p_d_1_1_model_1_1_particle_manager_a8a0367cb867ef47dbf420c8f1cdb9ed4}{get\+Model\+Var\+Info}} (const std\+::string \&var\+Name, \mbox{\hyperlink{namespace_g_r_p_d_1_1_model_a794e169a6b06cecc5757ae3bc52793d4}{Model\+Var}} \&out\+Var, \mbox{\hyperlink{class_g_r_p_d_1_1_model_1_1_particle_manager_ab3bc0a37ca3475c2ee4748483620cd2f}{Var\+Data\+Type}} \&out\+Type, int \&out\+Dim)
+\begin{DoxyCompactList}\small\item\em Get the \doxylink{namespace_g_r_p_d_1_1_model_a794e169a6b06cecc5757ae3bc52793d4}{Model\+Var} enum and data type for a given variable string name. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+std\+::vector$<$ \mbox{\hyperlink{class_g_r_p_d_1_1_model_1_1_particle}{Particle}} $>$ \mbox{\hyperlink{class_g_r_p_d_1_1_model_1_1_particle_manager_a3d60f2ee3684eef665be5e13174d8f0b}{global\+Particles\+\_\+}}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+
+
+Definition at line \mbox{\hyperlink{_particle_manager_8h_source_l00021}{21}} of file \mbox{\hyperlink{_particle_manager_8h_source}{Particle\+Manager.\+h}}.
+
+
+
+\label{doc-enum-members}
+\Hypertarget{class_g_r_p_d_1_1_model_1_1_particle_manager_doc-enum-members}
+\doxysubsection{Member Enumeration Documentation}
+\Hypertarget{class_g_r_p_d_1_1_model_1_1_particle_manager_ab3bc0a37ca3475c2ee4748483620cd2f}\index{GRPD::Model::ParticleManager@{GRPD::Model::ParticleManager}!VarDataType@{VarDataType}}
+\index{VarDataType@{VarDataType}!GRPD::Model::ParticleManager@{GRPD::Model::ParticleManager}}
+\doxysubsubsection{\texorpdfstring{VarDataType}{VarDataType}}
+{\footnotesize\ttfamily \label{class_g_r_p_d_1_1_model_1_1_particle_manager_ab3bc0a37ca3475c2ee4748483620cd2f} 
+enum class \mbox{\hyperlink{class_g_r_p_d_1_1_model_1_1_particle_manager_ab3bc0a37ca3475c2ee4748483620cd2f}{GRPD\+::\+Model\+::\+Particle\+Manager\+::\+Var\+Data\+Type}}\hspace{0.3cm}{\ttfamily [strong]}}
+
+\begin{DoxyEnumFields}[2]{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{Int@{Int}!GRPD::Model::ParticleManager@{GRPD::Model::ParticleManager}}\index{GRPD::Model::ParticleManager@{GRPD::Model::ParticleManager}!Int@{Int}}}\Hypertarget{class_g_r_p_d_1_1_model_1_1_particle_manager_ab3bc0a37ca3475c2ee4748483620cd2fa1686a6c336b71b36d77354cea19a8b52}\label{class_g_r_p_d_1_1_model_1_1_particle_manager_ab3bc0a37ca3475c2ee4748483620cd2fa1686a6c336b71b36d77354cea19a8b52} 
+Int&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{Double@{Double}!GRPD::Model::ParticleManager@{GRPD::Model::ParticleManager}}\index{GRPD::Model::ParticleManager@{GRPD::Model::ParticleManager}!Double@{Double}}}\Hypertarget{class_g_r_p_d_1_1_model_1_1_particle_manager_ab3bc0a37ca3475c2ee4748483620cd2fad909d38d705ce75386dd86e611a82f5b}\label{class_g_r_p_d_1_1_model_1_1_particle_manager_ab3bc0a37ca3475c2ee4748483620cd2fad909d38d705ce75386dd86e611a82f5b} 
+Double&\\
+\hline
+
+\end{DoxyEnumFields}
+
+
+Definition at line \mbox{\hyperlink{_particle_manager_8h_source_l00063}{63}} of file \mbox{\hyperlink{_particle_manager_8h_source}{Particle\+Manager.\+h}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00063\ \{\ Int,\ Double\ \};}
+
+\end{DoxyCode}
+
+
+\label{doc-constructors}
+\Hypertarget{class_g_r_p_d_1_1_model_1_1_particle_manager_doc-constructors}
+\doxysubsection{Constructor \& Destructor Documentation}
+\Hypertarget{class_g_r_p_d_1_1_model_1_1_particle_manager_a6a51f1f6bc802f22e0a4daac8ba60289}\index{GRPD::Model::ParticleManager@{GRPD::Model::ParticleManager}!ParticleManager@{ParticleManager}}
+\index{ParticleManager@{ParticleManager}!GRPD::Model::ParticleManager@{GRPD::Model::ParticleManager}}
+\doxysubsubsection{\texorpdfstring{ParticleManager()}{ParticleManager()}}
+{\footnotesize\ttfamily \label{class_g_r_p_d_1_1_model_1_1_particle_manager_a6a51f1f6bc802f22e0a4daac8ba60289} 
+GRPD\+::\+Model\+::\+Particle\+Manager\+::\+Particle\+Manager (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [default]}}
+
+
+
+\label{doc-func-members}
+\Hypertarget{class_g_r_p_d_1_1_model_1_1_particle_manager_doc-func-members}
+\doxysubsection{Member Function Documentation}
+\Hypertarget{class_g_r_p_d_1_1_model_1_1_particle_manager_a7eff63be683fc494e88dc63c2b0a0d4a}\index{GRPD::Model::ParticleManager@{GRPD::Model::ParticleManager}!addParticle@{addParticle}}
+\index{addParticle@{addParticle}!GRPD::Model::ParticleManager@{GRPD::Model::ParticleManager}}
+\doxysubsubsection{\texorpdfstring{addParticle()}{addParticle()}}
+{\footnotesize\ttfamily \label{class_g_r_p_d_1_1_model_1_1_particle_manager_a7eff63be683fc494e88dc63c2b0a0d4a} 
+void GRPD\+::\+Model\+::\+Particle\+Manager\+::add\+Particle (\begin{DoxyParamCaption}\item[{int}]{id}{, }\item[{int}]{part\+Id}{, }\item[{int}]{mat\+Id}{, }\item[{double}]{x}{, }\item[{double}]{y}{, }\item[{double}]{z}{, }\item[{double}]{volume}{}\end{DoxyParamCaption})}
+
+Emplace-\/construct a new particle and push it into the global array 
+\begin{DoxyParams}{Parameters}
+{\em id} & Globally unique ID (must equal current array size) \\
+\hline
+{\em part\+Id} & Part number this particle belongs to \\
+\hline
+{\em mat\+Id} & \doxylink{namespace_g_r_p_d_1_1_material}{Material} ID assigned to this particle \\
+\hline
+{\em x,y,z} & 3D coordinates \\
+\hline
+{\em volume} & \doxylink{class_g_r_p_d_1_1_model_1_1_particle}{Particle} volume \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line \mbox{\hyperlink{_particle_manager_8cpp_source_l00021}{21}} of file \mbox{\hyperlink{_particle_manager_8cpp_source}{Particle\+Manager.\+cpp}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00022\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00023\ \ \ \textcolor{comment}{//\ Assert\ ID\ continuity:\ incoming\ id\ must\ exactly\ equal\ current\ array\ length}}
+\DoxyCodeLine{00024\ \ \ \textcolor{keywordflow}{if}\ (\textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{size\_t}\textcolor{keyword}{>}(\textcolor{keywordtype}{id})\ !=\ \mbox{\hyperlink{class_g_r_p_d_1_1_model_1_1_particle_manager_a3d60f2ee3684eef665be5e13174d8f0b}{globalParticles\_}}.size())\ \{}
+\DoxyCodeLine{00025\ \ \ \ \ \mbox{\hyperlink{_logger_8h_a7ebf4c3b4fb05d6f9094089ded75cbdd}{LOG\_ERROR}}(\textcolor{stringliteral}{"{}[ParticleManager]\ Error:\ particle\ ID="{}}\ +\ std::to\_string(\textcolor{keywordtype}{id})\ +}
+\DoxyCodeLine{00026\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}\ does\ not\ match\ expected\ index\ "{}}\ +}
+\DoxyCodeLine{00027\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ std::to\_string(\mbox{\hyperlink{class_g_r_p_d_1_1_model_1_1_particle_manager_a3d60f2ee3684eef665be5e13174d8f0b}{globalParticles\_}}.size())\ +}
+\DoxyCodeLine{00028\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}!\ Violates\ zero-\/based\ ID\ invariant!"{}});}
+\DoxyCodeLine{00029\ \ \ \ \ \textcolor{keywordflow}{throw}\ std::runtime\_error(}
+\DoxyCodeLine{00030\ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}Particle\ ID\ does\ not\ match\ expected\ vector\ index."{}});}
+\DoxyCodeLine{00031\ \ \ \}}
+\DoxyCodeLine{00032\ }
+\DoxyCodeLine{00033\ \ \ \mbox{\hyperlink{class_g_r_p_d_1_1_model_1_1_particle_manager_a3d60f2ee3684eef665be5e13174d8f0b}{globalParticles\_}}.emplace\_back(\textcolor{keywordtype}{id},\ partId,\ matId,\ x,\ y,\ z,\ volume);}
+\DoxyCodeLine{00034\ \}}
+
+\end{DoxyCode}
+
+
+References \mbox{\hyperlink{_particle_manager_8h_source_l00070}{global\+Particles\+\_\+}}, and \mbox{\hyperlink{_logger_8h_source_l00062}{LOG\+\_\+\+ERROR}}.
+
+
+
+Referenced by \mbox{\hyperlink{_grpd_reader_8cpp_source_l00119}{GRPD\+::\+IO\+::\+Grpd\+Reader\+::read()}}.
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{class_g_r_p_d_1_1_model_1_1_particle_manager_a7eff63be683fc494e88dc63c2b0a0d4a_icgraph}
+\end{center}
+\end{figure}
+\Hypertarget{class_g_r_p_d_1_1_model_1_1_particle_manager_aae00f771f327d5ca111cd6d73f36f058}\index{GRPD::Model::ParticleManager@{GRPD::Model::ParticleManager}!getAllParticles@{getAllParticles}}
+\index{getAllParticles@{getAllParticles}!GRPD::Model::ParticleManager@{GRPD::Model::ParticleManager}}
+\doxysubsubsection{\texorpdfstring{getAllParticles()}{getAllParticles()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \label{class_g_r_p_d_1_1_model_1_1_particle_manager_aae00f771f327d5ca111cd6d73f36f058} 
+std\+::vector$<$ \mbox{\hyperlink{class_g_r_p_d_1_1_model_1_1_particle}{Particle}} $>$ \& GRPD\+::\+Model\+::\+Particle\+Manager\+::get\+All\+Particles (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+
+
+Get mutable reference to the underlying array (for solver field writes) 
+
+
+
+Definition at line \mbox{\hyperlink{_particle_manager_8cpp_source_l00062}{62}} of file \mbox{\hyperlink{_particle_manager_8cpp_source}{Particle\+Manager.\+cpp}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00062\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00063\ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{class_g_r_p_d_1_1_model_1_1_particle_manager_a3d60f2ee3684eef665be5e13174d8f0b}{globalParticles\_}};}
+\DoxyCodeLine{00064\ \}}
+
+\end{DoxyCode}
+
+
+References \mbox{\hyperlink{_particle_manager_8h_source_l00070}{global\+Particles\+\_\+}}.
+
+\Hypertarget{class_g_r_p_d_1_1_model_1_1_particle_manager_a25831c48716de81fdd7efe93de18df3b}\index{GRPD::Model::ParticleManager@{GRPD::Model::ParticleManager}!getAllParticles@{getAllParticles}}
+\index{getAllParticles@{getAllParticles}!GRPD::Model::ParticleManager@{GRPD::Model::ParticleManager}}
+\doxysubsubsection{\texorpdfstring{getAllParticles()}{getAllParticles()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \label{class_g_r_p_d_1_1_model_1_1_particle_manager_a25831c48716de81fdd7efe93de18df3b} 
+const std\+::vector$<$ \mbox{\hyperlink{class_g_r_p_d_1_1_model_1_1_particle}{Particle}} $>$ \& GRPD\+::\+Model\+::\+Particle\+Manager\+::get\+All\+Particles (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const}
+
+
+
+Get const reference to the underlying array (for solver traversal) 
+
+
+
+Definition at line \mbox{\hyperlink{_particle_manager_8cpp_source_l00058}{58}} of file \mbox{\hyperlink{_particle_manager_8cpp_source}{Particle\+Manager.\+cpp}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00058\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00059\ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{class_g_r_p_d_1_1_model_1_1_particle_manager_a3d60f2ee3684eef665be5e13174d8f0b}{globalParticles\_}};}
+\DoxyCodeLine{00060\ \}}
+
+\end{DoxyCode}
+
+
+References \mbox{\hyperlink{_particle_manager_8h_source_l00070}{global\+Particles\+\_\+}}.
+
+\Hypertarget{class_g_r_p_d_1_1_model_1_1_particle_manager_ab60b46d2894a8a5896fd587d796a5323}\index{GRPD::Model::ParticleManager@{GRPD::Model::ParticleManager}!getGeomDataPtr@{getGeomDataPtr}}
+\index{getGeomDataPtr@{getGeomDataPtr}!GRPD::Model::ParticleManager@{GRPD::Model::ParticleManager}}
+\doxysubsubsection{\texorpdfstring{getGeomDataPtr()}{getGeomDataPtr()}}
+{\footnotesize\ttfamily \label{class_g_r_p_d_1_1_model_1_1_particle_manager_ab60b46d2894a8a5896fd587d796a5323} 
+double \texorpdfstring{$\ast$}{*} GRPD\+::\+Model\+::\+Particle\+Manager\+::get\+Geom\+Data\+Ptr (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{namespace_g_r_p_d_1_1_model_a794e169a6b06cecc5757ae3bc52793d4}{Model\+Var}}}]{var\+Name}{}\end{DoxyParamCaption}) const}
+
+
+
+Definition at line \mbox{\hyperlink{_particle_manager_8cpp_source_l00069}{69}} of file \mbox{\hyperlink{_particle_manager_8cpp_source}{Particle\+Manager.\+cpp}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00069\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00070\ \ \ \textcolor{keywordflow}{switch}\ (varName)\ \{}
+\DoxyCodeLine{00071\ \ \ \textcolor{keywordflow}{case}\ \mbox{\hyperlink{namespace_g_r_p_d_1_1_model_a794e169a6b06cecc5757ae3bc52793d4ad3268a031987f18fd931b0859cc05074}{ModelVar::Coords}}:}
+\DoxyCodeLine{00072\ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{class_g_r_p_d_1_1_utils_1_1_data_extractor_af6560423aa764b84b8cd0be6f8ae40e2}{Utils::DataExtractor::getVectorPtr}}<Particle,\ double,\ 3,}
+\DoxyCodeLine{00073\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \&\mbox{\hyperlink{class_g_r_p_d_1_1_model_1_1_particle_a71c7fc26c9c71295de2ce59fcedb560f}{Particle::coords\_}}>(}
+\DoxyCodeLine{00074\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_g_r_p_d_1_1_model_1_1_particle_manager_a3d60f2ee3684eef665be5e13174d8f0b}{globalParticles\_}});}
+\DoxyCodeLine{00075\ \ \ \textcolor{keywordflow}{case}\ \mbox{\hyperlink{namespace_g_r_p_d_1_1_model_a794e169a6b06cecc5757ae3bc52793d4abd7a9717d29c5ddcab1bc175eda1e298}{ModelVar::Volume}}:}
+\DoxyCodeLine{00076\ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{class_g_r_p_d_1_1_utils_1_1_data_extractor_a402caf071028e59b409019b5b1ec484a}{Utils::DataExtractor::getScalarPtr}}<Particle,\ double,}
+\DoxyCodeLine{00077\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \&\mbox{\hyperlink{class_g_r_p_d_1_1_model_1_1_particle_aac3327d76f89e036b53d4aa32fce919b}{Particle::volume\_}}>(}
+\DoxyCodeLine{00078\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_g_r_p_d_1_1_model_1_1_particle_manager_a3d60f2ee3684eef665be5e13174d8f0b}{globalParticles\_}});}
+\DoxyCodeLine{00079\ }
+\DoxyCodeLine{00080\ \ \ \textcolor{keywordflow}{default}:}
+\DoxyCodeLine{00081\ \ \ \ \ \mbox{\hyperlink{_logger_8h_a0c53e5566a3b790db039421523dd4637}{LOG\_WARNING}}(}
+\DoxyCodeLine{00082\ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}[ParticleManager]\ Requested\ unmapped\ double\ variable\ from\ ModelVar!"{}});}
+\DoxyCodeLine{00083\ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{nullptr};}
+\DoxyCodeLine{00084\ \ \ \}}
+\DoxyCodeLine{00085\ \}}
+
+\end{DoxyCode}
+
+
+References \mbox{\hyperlink{_particle_manager_8h_source_l00019}{GRPD\+::\+Model\+::\+Coords}}, \mbox{\hyperlink{_particle_8h_source_l00066}{GRPD\+::\+Model\+::\+Particle\+::coords\+\_\+}}, \mbox{\hyperlink{_data_extractor_8h_source_l00014}{GRPD\+::\+Utils\+::\+Data\+Extractor\+::get\+Scalar\+Ptr()}}, \mbox{\hyperlink{_data_extractor_8h_source_l00027}{GRPD\+::\+Utils\+::\+Data\+Extractor\+::get\+Vector\+Ptr()}}, \mbox{\hyperlink{_particle_manager_8h_source_l00070}{global\+Particles\+\_\+}}, \mbox{\hyperlink{_logger_8h_source_l00061}{LOG\+\_\+\+WARNING}}, \mbox{\hyperlink{_particle_manager_8h_source_l00019}{GRPD\+::\+Model\+::\+Volume}}, and \mbox{\hyperlink{_particle_8h_source_l00067}{GRPD\+::\+Model\+::\+Particle\+::volume\+\_\+}}.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{class_g_r_p_d_1_1_model_1_1_particle_manager_ab60b46d2894a8a5896fd587d796a5323_cgraph}
+\end{center}
+\end{figure}
+\Hypertarget{class_g_r_p_d_1_1_model_1_1_particle_manager_a2d64371ce07f0a8427a422e834952fa7}\index{GRPD::Model::ParticleManager@{GRPD::Model::ParticleManager}!getIntDataPtr@{getIntDataPtr}}
+\index{getIntDataPtr@{getIntDataPtr}!GRPD::Model::ParticleManager@{GRPD::Model::ParticleManager}}
+\doxysubsubsection{\texorpdfstring{getIntDataPtr()}{getIntDataPtr()}}
+{\footnotesize\ttfamily \label{class_g_r_p_d_1_1_model_1_1_particle_manager_a2d64371ce07f0a8427a422e834952fa7} 
+int \texorpdfstring{$\ast$}{*} GRPD\+::\+Model\+::\+Particle\+Manager\+::get\+Int\+Data\+Ptr (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{namespace_g_r_p_d_1_1_model_a794e169a6b06cecc5757ae3bc52793d4}{Model\+Var}}}]{var\+Name}{}\end{DoxyParamCaption}) const}
+
+
+
+Definition at line \mbox{\hyperlink{_particle_manager_8cpp_source_l00087}{87}} of file \mbox{\hyperlink{_particle_manager_8cpp_source}{Particle\+Manager.\+cpp}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00087\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00088\ \ \ \textcolor{keywordflow}{switch}\ (varName)\ \{}
+\DoxyCodeLine{00089\ \ \ \textcolor{keywordflow}{case}\ \mbox{\hyperlink{namespace_g_r_p_d_1_1_model_a794e169a6b06cecc5757ae3bc52793d4ab718adec73e04ce3ec720dd11a06a308}{ModelVar::ID}}:}
+\DoxyCodeLine{00090\ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{class_g_r_p_d_1_1_utils_1_1_data_extractor_a402caf071028e59b409019b5b1ec484a}{Utils::DataExtractor::getScalarPtr<Particle,\ int,\ \&Particle::id\_>}}(}
+\DoxyCodeLine{00091\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_g_r_p_d_1_1_model_1_1_particle_manager_a3d60f2ee3684eef665be5e13174d8f0b}{globalParticles\_}});}
+\DoxyCodeLine{00092\ \ \ \textcolor{keywordflow}{case}\ \mbox{\hyperlink{namespace_g_r_p_d_1_1_model_a794e169a6b06cecc5757ae3bc52793d4a9877555a9915b497f5e766f23b0c86fd}{ModelVar::PartID}}:}
+\DoxyCodeLine{00093\ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{class_g_r_p_d_1_1_utils_1_1_data_extractor_a402caf071028e59b409019b5b1ec484a}{Utils::DataExtractor::getScalarPtr}}<Particle,\ int,}
+\DoxyCodeLine{00094\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \&\mbox{\hyperlink{class_g_r_p_d_1_1_model_1_1_particle_acb0f950bedcd14422e43707f2635e4c6}{Particle::partId\_}}>(}
+\DoxyCodeLine{00095\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_g_r_p_d_1_1_model_1_1_particle_manager_a3d60f2ee3684eef665be5e13174d8f0b}{globalParticles\_}});}
+\DoxyCodeLine{00096\ \ \ \textcolor{keywordflow}{case}\ \mbox{\hyperlink{namespace_g_r_p_d_1_1_model_a794e169a6b06cecc5757ae3bc52793d4ae135d6c8a1d2f36bc3bfb4630f3a7da7}{ModelVar::MatID}}:}
+\DoxyCodeLine{00097\ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{class_g_r_p_d_1_1_utils_1_1_data_extractor_a402caf071028e59b409019b5b1ec484a}{Utils::DataExtractor::getScalarPtr<Particle,\ int,\ \&Particle::matId\_>}}(}
+\DoxyCodeLine{00098\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_g_r_p_d_1_1_model_1_1_particle_manager_a3d60f2ee3684eef665be5e13174d8f0b}{globalParticles\_}});}
+\DoxyCodeLine{00099\ \ \ \textcolor{keywordflow}{default}:}
+\DoxyCodeLine{00100\ \ \ \ \ \mbox{\hyperlink{_logger_8h_a0c53e5566a3b790db039421523dd4637}{LOG\_WARNING}}(}
+\DoxyCodeLine{00101\ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}[ParticleManager]\ Requested\ unmapped\ int\ variable\ from\ ModelVar!"{}});}
+\DoxyCodeLine{00102\ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{nullptr};}
+\DoxyCodeLine{00103\ \ \ \}}
+\DoxyCodeLine{00104\ \}}
+
+\end{DoxyCode}
+
+
+References \mbox{\hyperlink{_data_extractor_8h_source_l00014}{GRPD\+::\+Utils\+::\+Data\+Extractor\+::get\+Scalar\+Ptr()}}, \mbox{\hyperlink{_particle_manager_8h_source_l00070}{global\+Particles\+\_\+}}, \mbox{\hyperlink{_particle_manager_8h_source_l00019}{GRPD\+::\+Model\+::\+ID}}, \mbox{\hyperlink{_logger_8h_source_l00061}{LOG\+\_\+\+WARNING}}, \mbox{\hyperlink{_particle_manager_8h_source_l00019}{GRPD\+::\+Model\+::\+Mat\+ID}}, \mbox{\hyperlink{_particle_manager_8h_source_l00019}{GRPD\+::\+Model\+::\+Part\+ID}}, and \mbox{\hyperlink{_particle_8h_source_l00064}{GRPD\+::\+Model\+::\+Particle\+::part\+Id\+\_\+}}.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{class_g_r_p_d_1_1_model_1_1_particle_manager_a2d64371ce07f0a8427a422e834952fa7_cgraph}
+\end{center}
+\end{figure}
+\Hypertarget{class_g_r_p_d_1_1_model_1_1_particle_manager_a8a0367cb867ef47dbf420c8f1cdb9ed4}\index{GRPD::Model::ParticleManager@{GRPD::Model::ParticleManager}!getModelVarInfo@{getModelVarInfo}}
+\index{getModelVarInfo@{getModelVarInfo}!GRPD::Model::ParticleManager@{GRPD::Model::ParticleManager}}
+\doxysubsubsection{\texorpdfstring{getModelVarInfo()}{getModelVarInfo()}}
+{\footnotesize\ttfamily \label{class_g_r_p_d_1_1_model_1_1_particle_manager_a8a0367cb867ef47dbf420c8f1cdb9ed4} 
+bool GRPD\+::\+Model\+::\+Particle\+Manager\+::get\+Model\+Var\+Info (\begin{DoxyParamCaption}\item[{const std\+::string \&}]{var\+Name}{, }\item[{\mbox{\hyperlink{namespace_g_r_p_d_1_1_model_a794e169a6b06cecc5757ae3bc52793d4}{Model\+Var}} \&}]{out\+Var}{, }\item[{\mbox{\hyperlink{class_g_r_p_d_1_1_model_1_1_particle_manager_ab3bc0a37ca3475c2ee4748483620cd2f}{Var\+Data\+Type}} \&}]{out\+Type}{, }\item[{int \&}]{out\+Dim}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Get the \doxylink{namespace_g_r_p_d_1_1_model_a794e169a6b06cecc5757ae3bc52793d4}{Model\+Var} enum and data type for a given variable string name. 
+
+
+
+Definition at line \mbox{\hyperlink{_particle_manager_8cpp_source_l00106}{106}} of file \mbox{\hyperlink{_particle_manager_8cpp_source}{Particle\+Manager.\+cpp}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00108\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00109\ \ \ \textcolor{comment}{//\ Map\ structure:\ \{\ "{}StringName"{},\ \{\ ModelVarEnum,\ VarDataTypeEnum,}}
+\DoxyCodeLine{00110\ \ \ \textcolor{comment}{//\ DimensionValue\ \}\ \}}}
+\DoxyCodeLine{00111\ \ \ \textcolor{keyword}{struct\ }VarInfo\ \{}
+\DoxyCodeLine{00112\ \ \ \ \ \mbox{\hyperlink{namespace_g_r_p_d_1_1_model_a794e169a6b06cecc5757ae3bc52793d4}{ModelVar}}\ var;}
+\DoxyCodeLine{00113\ \ \ \ \ VarDataType\ type;}
+\DoxyCodeLine{00114\ \ \ \ \ \textcolor{keywordtype}{int}\ dim;}
+\DoxyCodeLine{00115\ \ \ \};}
+\DoxyCodeLine{00116\ }
+\DoxyCodeLine{00117\ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ std::unordered\_map<std::string,\ VarInfo>\ varMap\ =\ \{}
+\DoxyCodeLine{00118\ \ \ \ \ \ \ \{\textcolor{stringliteral}{"{}Coords"{}},\ \{\mbox{\hyperlink{namespace_g_r_p_d_1_1_model_a794e169a6b06cecc5757ae3bc52793d4ad3268a031987f18fd931b0859cc05074}{ModelVar::Coords}},\ \mbox{\hyperlink{class_g_r_p_d_1_1_model_1_1_particle_manager_ab3bc0a37ca3475c2ee4748483620cd2fad909d38d705ce75386dd86e611a82f5b}{VarDataType::Double}},\ 3\}\},}
+\DoxyCodeLine{00119\ \ \ \ \ \ \ \{\textcolor{stringliteral}{"{}Volume"{}},\ \{\mbox{\hyperlink{namespace_g_r_p_d_1_1_model_a794e169a6b06cecc5757ae3bc52793d4abd7a9717d29c5ddcab1bc175eda1e298}{ModelVar::Volume}},\ \mbox{\hyperlink{class_g_r_p_d_1_1_model_1_1_particle_manager_ab3bc0a37ca3475c2ee4748483620cd2fad909d38d705ce75386dd86e611a82f5b}{VarDataType::Double}},\ 1\}\},}
+\DoxyCodeLine{00120\ }
+\DoxyCodeLine{00121\ \ \ \ \ \ \ \{\textcolor{stringliteral}{"{}ID"{}},\ \{\mbox{\hyperlink{namespace_g_r_p_d_1_1_model_a794e169a6b06cecc5757ae3bc52793d4ab718adec73e04ce3ec720dd11a06a308}{ModelVar::ID}},\ \mbox{\hyperlink{class_g_r_p_d_1_1_model_1_1_particle_manager_ab3bc0a37ca3475c2ee4748483620cd2fa1686a6c336b71b36d77354cea19a8b52}{VarDataType::Int}},\ 1\}\},}
+\DoxyCodeLine{00122\ \ \ \ \ \ \ \{\textcolor{stringliteral}{"{}PartID"{}},\ \{\mbox{\hyperlink{namespace_g_r_p_d_1_1_model_a794e169a6b06cecc5757ae3bc52793d4a9877555a9915b497f5e766f23b0c86fd}{ModelVar::PartID}},\ \mbox{\hyperlink{class_g_r_p_d_1_1_model_1_1_particle_manager_ab3bc0a37ca3475c2ee4748483620cd2fa1686a6c336b71b36d77354cea19a8b52}{VarDataType::Int}},\ 1\}\},}
+\DoxyCodeLine{00123\ \ \ \ \ \ \ \{\textcolor{stringliteral}{"{}MatID"{}},\ \{\mbox{\hyperlink{namespace_g_r_p_d_1_1_model_a794e169a6b06cecc5757ae3bc52793d4ae135d6c8a1d2f36bc3bfb4630f3a7da7}{ModelVar::MatID}},\ \mbox{\hyperlink{class_g_r_p_d_1_1_model_1_1_particle_manager_ab3bc0a37ca3475c2ee4748483620cd2fa1686a6c336b71b36d77354cea19a8b52}{VarDataType::Int}},\ 1\}\}\};}
+\DoxyCodeLine{00124\ }
+\DoxyCodeLine{00125\ \ \ \textcolor{keyword}{auto}\ it\ =\ varMap.find(varName);}
+\DoxyCodeLine{00126\ \ \ \textcolor{keywordflow}{if}\ (it\ !=\ varMap.end())\ \{}
+\DoxyCodeLine{00127\ \ \ \ \ outVar\ =\ it-\/>second.var;}
+\DoxyCodeLine{00128\ \ \ \ \ outType\ =\ it-\/>second.type;}
+\DoxyCodeLine{00129\ \ \ \ \ outDim\ =\ it-\/>second.dim;}
+\DoxyCodeLine{00130\ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00131\ \ \ \}}
+\DoxyCodeLine{00132\ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00133\ \}}
+
+\end{DoxyCode}
+
+
+References \mbox{\hyperlink{_particle_manager_8h_source_l00019}{GRPD\+::\+Model\+::\+Coords}}, \mbox{\hyperlink{_particle_manager_8h_source_l00063}{Double}}, \mbox{\hyperlink{_particle_manager_8h_source_l00019}{GRPD\+::\+Model\+::\+ID}}, \mbox{\hyperlink{_particle_manager_8h_source_l00063}{Int}}, \mbox{\hyperlink{_particle_manager_8h_source_l00019}{GRPD\+::\+Model\+::\+Mat\+ID}}, \mbox{\hyperlink{_particle_manager_8h_source_l00019}{GRPD\+::\+Model\+::\+Part\+ID}}, and \mbox{\hyperlink{_particle_manager_8h_source_l00019}{GRPD\+::\+Model\+::\+Volume}}.
+
+
+
+Referenced by \mbox{\hyperlink{_s_e___output_8cpp_source_l00018}{GRPD\+::\+Engine\+::\+Solver\+Engine\+::\+Output\+PD()}}.
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{class_g_r_p_d_1_1_model_1_1_particle_manager_a8a0367cb867ef47dbf420c8f1cdb9ed4_icgraph}
+\end{center}
+\end{figure}
+\Hypertarget{class_g_r_p_d_1_1_model_1_1_particle_manager_a7869789dd4fdc7a6ffedb34b3a991b40}\index{GRPD::Model::ParticleManager@{GRPD::Model::ParticleManager}!getParticle@{getParticle}}
+\index{getParticle@{getParticle}!GRPD::Model::ParticleManager@{GRPD::Model::ParticleManager}}
+\doxysubsubsection{\texorpdfstring{getParticle()}{getParticle()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \label{class_g_r_p_d_1_1_model_1_1_particle_manager_a7869789dd4fdc7a6ffedb34b3a991b40} 
+\mbox{\hyperlink{class_g_r_p_d_1_1_model_1_1_particle}{Particle}} \& GRPD\+::\+Model\+::\+Particle\+Manager\+::get\+Particle (\begin{DoxyParamCaption}\item[{int}]{id}{}\end{DoxyParamCaption})}
+
+
+
+O(1) indexed access -\/ mutable version (e.\+g. for setting temperature) 
+
+
+
+Definition at line \mbox{\hyperlink{_particle_manager_8cpp_source_l00052}{52}} of file \mbox{\hyperlink{_particle_manager_8cpp_source}{Particle\+Manager.\+cpp}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00052\ \{\ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{class_g_r_p_d_1_1_model_1_1_particle_manager_a3d60f2ee3684eef665be5e13174d8f0b}{globalParticles\_}}[id];\ \}}
+
+\end{DoxyCode}
+
+
+References \mbox{\hyperlink{_particle_manager_8h_source_l00070}{global\+Particles\+\_\+}}.
+
+\Hypertarget{class_g_r_p_d_1_1_model_1_1_particle_manager_ae8144d3df45fb2f0be79b0dc7d3fbd0a}\index{GRPD::Model::ParticleManager@{GRPD::Model::ParticleManager}!getParticle@{getParticle}}
+\index{getParticle@{getParticle}!GRPD::Model::ParticleManager@{GRPD::Model::ParticleManager}}
+\doxysubsubsection{\texorpdfstring{getParticle()}{getParticle()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \label{class_g_r_p_d_1_1_model_1_1_particle_manager_ae8144d3df45fb2f0be79b0dc7d3fbd0a} 
+const \mbox{\hyperlink{class_g_r_p_d_1_1_model_1_1_particle}{Particle}} \& GRPD\+::\+Model\+::\+Particle\+Manager\+::get\+Particle (\begin{DoxyParamCaption}\item[{int}]{id}{}\end{DoxyParamCaption}) const}
+
+
+
+O(1) indexed access -\/ const version. 
+
+
+
+Definition at line \mbox{\hyperlink{_particle_manager_8cpp_source_l00048}{48}} of file \mbox{\hyperlink{_particle_manager_8cpp_source}{Particle\+Manager.\+cpp}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00048\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00049\ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{class_g_r_p_d_1_1_model_1_1_particle_manager_a3d60f2ee3684eef665be5e13174d8f0b}{globalParticles\_}}[id];}
+\DoxyCodeLine{00050\ \}}
+
+\end{DoxyCode}
+
+
+References \mbox{\hyperlink{_particle_manager_8h_source_l00070}{global\+Particles\+\_\+}}.
+
+
+
+Referenced by \mbox{\hyperlink{_neighbor_list_8cpp_source_l00010}{GRPD\+::\+Initial\+::\+Neighbor\+List\+::build\+Neighbors()}}.
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{class_g_r_p_d_1_1_model_1_1_particle_manager_ae8144d3df45fb2f0be79b0dc7d3fbd0a_icgraph}
+\end{center}
+\end{figure}
+\Hypertarget{class_g_r_p_d_1_1_model_1_1_particle_manager_a752c18898c5a2cac7b7fed29423d79f5}\index{GRPD::Model::ParticleManager@{GRPD::Model::ParticleManager}!getTotalParticles@{getTotalParticles}}
+\index{getTotalParticles@{getTotalParticles}!GRPD::Model::ParticleManager@{GRPD::Model::ParticleManager}}
+\doxysubsubsection{\texorpdfstring{getTotalParticles()}{getTotalParticles()}}
+{\footnotesize\ttfamily \label{class_g_r_p_d_1_1_model_1_1_particle_manager_a752c18898c5a2cac7b7fed29423d79f5} 
+size\+\_\+t GRPD\+::\+Model\+::\+Particle\+Manager\+::get\+Total\+Particles (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const}
+
+
+
+Get current total particle count. 
+
+
+
+Definition at line \mbox{\hyperlink{_particle_manager_8cpp_source_l00054}{54}} of file \mbox{\hyperlink{_particle_manager_8cpp_source}{Particle\+Manager.\+cpp}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00054\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00055\ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{class_g_r_p_d_1_1_model_1_1_particle_manager_a3d60f2ee3684eef665be5e13174d8f0b}{globalParticles\_}}.size();}
+\DoxyCodeLine{00056\ \}}
+
+\end{DoxyCode}
+
+
+References \mbox{\hyperlink{_particle_manager_8h_source_l00070}{global\+Particles\+\_\+}}.
+
+
+
+Referenced by \mbox{\hyperlink{_neighbor_list_8cpp_source_l00010}{GRPD\+::\+Initial\+::\+Neighbor\+List\+::build\+Neighbors()}}.
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{class_g_r_p_d_1_1_model_1_1_particle_manager_a752c18898c5a2cac7b7fed29423d79f5_icgraph}
+\end{center}
+\end{figure}
+\Hypertarget{class_g_r_p_d_1_1_model_1_1_particle_manager_ae4e97309c2ce9748259b7b5c1e3cb557}\index{GRPD::Model::ParticleManager@{GRPD::Model::ParticleManager}!reserveMemory@{reserveMemory}}
+\index{reserveMemory@{reserveMemory}!GRPD::Model::ParticleManager@{GRPD::Model::ParticleManager}}
+\doxysubsubsection{\texorpdfstring{reserveMemory()}{reserveMemory()}}
+{\footnotesize\ttfamily \label{class_g_r_p_d_1_1_model_1_1_particle_manager_ae4e97309c2ce9748259b7b5c1e3cb557} 
+void GRPD\+::\+Model\+::\+Particle\+Manager\+::reserve\+Memory (\begin{DoxyParamCaption}\item[{size\+\_\+t}]{size}{}\end{DoxyParamCaption})}
+
+Pre-\/allocate memory before file reading to avoid dynamic resizing jitter 
+\begin{DoxyParams}{Parameters}
+{\em size} & Expected total particle count \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line \mbox{\hyperlink{_particle_manager_8cpp_source_l00039}{39}} of file \mbox{\hyperlink{_particle_manager_8cpp_source}{Particle\+Manager.\+cpp}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00039\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00040\ \ \ \mbox{\hyperlink{class_g_r_p_d_1_1_model_1_1_particle_manager_a3d60f2ee3684eef665be5e13174d8f0b}{globalParticles\_}}.reserve(size);}
+\DoxyCodeLine{00041\ \ \ \mbox{\hyperlink{_logger_8h_ac8e803773221119947b55f6ae85a9c63}{LOG\_INFO}}(\textcolor{stringliteral}{"{}[ParticleManager]\ Pre-\/allocated\ memory\ for\ "{}}\ +}
+\DoxyCodeLine{00042\ \ \ \ \ \ \ \ \ \ \ \ std::to\_string(size)\ +\ \textcolor{stringliteral}{"{}\ particles"{}});}
+\DoxyCodeLine{00043\ \}}
+
+\end{DoxyCode}
+
+
+References \mbox{\hyperlink{_particle_manager_8h_source_l00070}{global\+Particles\+\_\+}}, and \mbox{\hyperlink{_logger_8h_source_l00060}{LOG\+\_\+\+INFO}}.
+
+
+
+\label{doc-variable-members}
+\Hypertarget{class_g_r_p_d_1_1_model_1_1_particle_manager_doc-variable-members}
+\doxysubsection{Member Data Documentation}
+\Hypertarget{class_g_r_p_d_1_1_model_1_1_particle_manager_a3d60f2ee3684eef665be5e13174d8f0b}\index{GRPD::Model::ParticleManager@{GRPD::Model::ParticleManager}!globalParticles\_@{globalParticles\_}}
+\index{globalParticles\_@{globalParticles\_}!GRPD::Model::ParticleManager@{GRPD::Model::ParticleManager}}
+\doxysubsubsection{\texorpdfstring{globalParticles\_}{globalParticles\_}}
+{\footnotesize\ttfamily \label{class_g_r_p_d_1_1_model_1_1_particle_manager_a3d60f2ee3684eef665be5e13174d8f0b} 
+std\+::vector$<$\mbox{\hyperlink{class_g_r_p_d_1_1_model_1_1_particle}{Particle}}$>$ GRPD\+::\+Model\+::\+Particle\+Manager\+::global\+Particles\+\_\+\hspace{0.3cm}{\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_particle_manager_8h_source_l00070}{70}} of file \mbox{\hyperlink{_particle_manager_8h_source}{Particle\+Manager.\+h}}.
+
+
+
+Referenced by \mbox{\hyperlink{_particle_manager_8cpp_source_l00021}{add\+Particle()}}, \mbox{\hyperlink{_particle_manager_8cpp_source_l00062}{get\+All\+Particles()}}, \mbox{\hyperlink{_particle_manager_8cpp_source_l00058}{get\+All\+Particles()}}, \mbox{\hyperlink{_particle_manager_8cpp_source_l00069}{get\+Geom\+Data\+Ptr()}}, \mbox{\hyperlink{_particle_manager_8cpp_source_l00087}{get\+Int\+Data\+Ptr()}}, \mbox{\hyperlink{_particle_manager_8cpp_source_l00052}{get\+Particle()}}, \mbox{\hyperlink{_particle_manager_8cpp_source_l00048}{get\+Particle()}}, \mbox{\hyperlink{_particle_manager_8cpp_source_l00054}{get\+Total\+Particles()}}, and \mbox{\hyperlink{_particle_manager_8cpp_source_l00039}{reserve\+Memory()}}.
+
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+PDCommon/\+Model/include/\mbox{\hyperlink{_particle_manager_8h}{Particle\+Manager.\+h}}\item 
+PDCommon/\+Model/src/\mbox{\hyperlink{_particle_manager_8cpp}{Particle\+Manager.\+cpp}}\end{DoxyCompactItemize}

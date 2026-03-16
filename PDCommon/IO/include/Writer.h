@@ -4,7 +4,7 @@
 #include <string>
 #include <vector>
 
-namespace GRPD {
+namespace PDCommon {
 namespace IO {
 
 enum fileFormat { ascii, binary };
@@ -46,4 +46,4 @@ public:
 };
 
 } // namespace IO
-} // namespace GRPD
+} // namespace PDCommon

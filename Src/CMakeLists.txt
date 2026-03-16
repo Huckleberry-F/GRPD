@@ -20,6 +20,7 @@ target_include_directories(${PROJECT_NAME} PRIVATE
 target_link_libraries(${PROJECT_NAME} PRIVATE 
     PDCommon 
     Engine_Obj 
+    PDSolve_Obj
     Material_Obj 
     BC_Obj 
     IO_Obj 

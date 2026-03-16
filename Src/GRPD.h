@@ -12,19 +12,19 @@
 #ifndef GRPD_H
 #define GRPD_H
 
-#include "PDSimulater.h"
+#include "PDContext.h"
 
 void Start();
 
 // Initializes the provided simulation model context with mesh data
-void Model(GRPD::Core::PDSimulater &model);
+void Model(PDCommon::Core::PDContext &model);
 
-void Material(GRPD::Core::PDSimulater &model);
+void Material(PDCommon::Core::PDContext &model);
 
-void Initialize(GRPD::Core::PDSimulater &model);
+void Initialize(PDCommon::Core::PDContext &model);
 
-void Solve(GRPD::Core::PDSimulater &model);
+void Solve(PDCommon::Core::PDContext &model);
 
-void Write(const GRPD::Core::PDSimulater &model);
+void Write(const PDCommon::Core::PDContext &model);
 
 #endif

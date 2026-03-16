@@ -1,5 +1,5 @@
-#ifndef GRPD_BC_BC_REGISTRY_H
-#define GRPD_BC_BC_REGISTRY_H
+#ifndef PDCOMMON_BC_BC_REGISTRY_H
+#define PDCOMMON_BC_BC_REGISTRY_H
 
 // ============================================================================
 // BCRegistry.h - 边界条件全局注册中心 (单例)
@@ -14,8 +14,9 @@
 #include <map>
 #include <memory>
 #include <string>
+#include <vector>
 
-namespace GRPD::BC {
+namespace PDCommon::BC {
 
 // ---------------------------------------------------------------------------
 // 工厂函数定义：根据名称返回一个具体 BC 的 unique_ptr
@@ -49,6 +50,9 @@ public:
     std::unique_ptr<BC> createBC(const std::string &type,
                                   const std::string &name);
 
+    /// @brief 获取所有已注册的类型名列表
+    std::vector<std::string> getRegisteredTypes() const;
+
 private:
     BCRegistry() = default;
     ~BCRegistry() = default;
@@ -64,12 +68,12 @@ private:
     namespace {                                                                \
     struct BCRegistrar_##Type {                                                 \
         BCRegistrar_##Type() {                                                 \
-            GRPD::BC::BCRegistry::getInstance().registerBCType(#Type, Creator);\
+            PDCommon::BC::BCRegistry::getInstance().registerBCType(#Type, Creator);\
         }                                                                      \
     };                                                                         \
     static BCRegistrar_##Type global_BCRegistrar_##Type;                        \
     }
 
-} // namespace GRPD::BC
+} // namespace PDCommon::BC
 
-#endif // GRPD_BC_BC_REGISTRY_H
+#endif // PDCOMMON_BC_BC_REGISTRY_H

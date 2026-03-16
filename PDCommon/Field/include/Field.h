@@ -1,5 +1,5 @@
-#ifndef GRPD_FIELD_FIELD_H
-#define GRPD_FIELD_FIELD_H
+#ifndef PDCOMMON_FIELD_FIELD_H
+#define PDCOMMON_FIELD_FIELD_H
 
 // ============================================================================
 // Field.h - 物理场基类 (原 FieldBase)
@@ -12,7 +12,7 @@
 #include <cstddef>
 #include <string>
 
-namespace GRPD::Field {
+namespace PDCommon::Field {
 
 class Field {
 public:
@@ -62,6 +62,6 @@ protected:
   int dim_;          // 每个粒子的分量维度
 };
 
-} // namespace GRPD::Field
+} // namespace PDCommon::Field
 
-#endif // GRPD_FIELD_FIELD_H
+#endif // PDCOMMON_FIELD_FIELD_H

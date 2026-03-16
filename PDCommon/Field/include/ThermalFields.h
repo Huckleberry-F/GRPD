@@ -1,5 +1,5 @@
-#ifndef GRPD_FIELD_THERMAL_FIELDS_H
-#define GRPD_FIELD_THERMAL_FIELDS_H
+#ifndef PDCOMMON_FIELD_THERMAL_FIELDS_H
+#define PDCOMMON_FIELD_THERMAL_FIELDS_H
 
 // ============================================================================
 // ThermalFields.h - 热传导物理场配置器
@@ -8,7 +8,7 @@
 
 #include "PhysicsFields.h"
 
-namespace GRPD::Field {
+namespace PDCommon::Field {
 
 class ThermalFields : public PhysicsFields {
 public:
@@ -19,6 +19,6 @@ public:
     void registerFields(FieldManager &fm) override;
 };
 
-} // namespace GRPD::Field
+} // namespace PDCommon::Field
 
-#endif // GRPD_FIELD_THERMAL_FIELDS_H
+#endif // PDCOMMON_FIELD_THERMAL_FIELDS_H

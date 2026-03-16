@@ -1,5 +1,5 @@
-#ifndef MATERIALMANAGER_H
-#define MATERIALMANAGER_H
+#ifndef PDCOMMON_MATERIAL_MANAGER_H
+#define PDCOMMON_MATERIAL_MANAGER_H
 
 // ============================================================================
 // MaterialManager.h - 材料实例管理器 (非单例，每个模型一个)
@@ -12,7 +12,7 @@
 #include <memory>
 #include <string>
 
-namespace GRPD::Material {
+namespace PDCommon::Material {
 
 class MaterialManager {
 public:
@@ -57,6 +57,6 @@ private:
   std::map<std::string, std::unique_ptr<Material>> materials_;
 };
 
-} // namespace GRPD::Material
+} // namespace PDCommon::Material
 
-#endif // GRPD_MODEL_MATERIAL_MANAGER_H
+#endif // PDCOMMON_MODEL_MATERIAL_MANAGER_H

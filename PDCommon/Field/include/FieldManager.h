@@ -1,5 +1,5 @@
-#ifndef GRPD_FIELD_FIELD_MANAGER_H
-#define GRPD_FIELD_FIELD_MANAGER_H
+#ifndef PDCOMMON_FIELD_FIELD_MANAGER_H
+#define PDCOMMON_FIELD_FIELD_MANAGER_H
 
 // ============================================================================
 // FieldManager.h - 物理场管理器 (数据总线)
@@ -16,7 +16,7 @@
 #include <string>
 #include <vector>
 
-namespace GRPD::Field {
+namespace PDCommon::Field {
 
 class FieldManager {
 public:
@@ -126,6 +126,6 @@ const TypedField<T> *FieldManager::getFieldAs(const std::string &name) const {
     return dynamic_cast<const TypedField<T> *>(it->second.get());
 }
 
-} // namespace GRPD::Field
+} // namespace PDCommon::Field
 
-#endif // GRPD_FIELD_FIELD_MANAGER_H
+#endif // PDCOMMON_FIELD_FIELD_MANAGER_H

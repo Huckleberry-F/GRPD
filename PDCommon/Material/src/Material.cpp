@@ -4,7 +4,7 @@
 
 #include "Material.h"
 
-namespace GRPD::Material {
+namespace PDCommon::Material {
 
 // 基础类实现
 Material::Material(const std::string &name) : name_(name), matId_(-1) {}
@@ -21,7 +21,7 @@ void Material::initialize(const YAML::Node &matNode) {
   // 默认空实现，子类可覆盖以处理具体的 YAML 数据
 }
 
-void Material::allocateStateVariables(GRPD::Field::FieldManager &fm) {
+void Material::allocateStateVariables(PDCommon::Field::FieldManager &fm) {
   // 默认空实现，子类覆盖以注册材料私有的特定场（非 SDV 池模式）
 }
 
@@ -30,4 +30,4 @@ size_t Material::getNumStateVariables() const {
   return 0;
 }
 
-} // namespace GRPD::Material
+} // namespace PDCommon::Material

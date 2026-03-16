@@ -1,0 +1,39 @@
+\doxysection{GRPD\+::BC Namespace Reference}
+\hypertarget{namespace_g_r_p_d_1_1_b_c}{}\label{namespace_g_r_p_d_1_1_b_c}\index{GRPD::BC@{GRPD::BC}}
+\doxysubsubsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class \mbox{\hyperlink{class_g_r_p_d_1_1_b_c_1_1_b_c}{BC}}
+\item 
+class \mbox{\hyperlink{class_g_r_p_d_1_1_b_c_1_1_b_c_manager}{BCManager}}
+\item 
+class \mbox{\hyperlink{class_g_r_p_d_1_1_b_c_1_1_b_c_registry}{BCRegistry}}
+\item 
+class \mbox{\hyperlink{class_g_r_p_d_1_1_b_c_1_1_convection_b_c}{Convection\+BC}}
+\begin{DoxyCompactList}\small\item\em 对流边界条件 (Robin) q = h \texorpdfstring{$\ast$}{*} (T\+\_\+inf -\/ T) \end{DoxyCompactList}\item 
+class \mbox{\hyperlink{class_g_r_p_d_1_1_b_c_1_1_heat_flux_b_c}{Heat\+Flux\+BC}}
+\begin{DoxyCompactList}\small\item\em 热流边界条件 (Neumann) q = q\+\_\+fixed \end{DoxyCompactList}\item 
+class \mbox{\hyperlink{class_g_r_p_d_1_1_b_c_1_1_temperature_b_c}{Temperature\+BC}}
+\begin{DoxyCompactList}\small\item\em 温度边界条件 (Dirichlet) T(x, t) = T\+\_\+fixed \end{DoxyCompactList}\item 
+class \mbox{\hyperlink{class_g_r_p_d_1_1_b_c_1_1_thermal_b_c}{Thermal\+BC}}
+\begin{DoxyCompactList}\small\item\em 热边界条件抽象中间类 持有三个 Typed\+Field$<$double$>$ 指针（温度、温度变化率、热流密度）， 所有热相关 \doxylink{class_g_r_p_d_1_1_b_c_1_1_b_c}{BC} 均从此类派生。 使用指针而非引用以支持工厂模式的两阶段构造。 \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Typedefs}
+\begin{DoxyCompactItemize}
+\item 
+typedef std\+::function$<$ std\+::unique\+\_\+ptr$<$ \mbox{\hyperlink{class_g_r_p_d_1_1_b_c_1_1_b_c}{BC}} $>$(const std\+::string \&)$>$ \mbox{\hyperlink{namespace_g_r_p_d_1_1_b_c_a9642af366a197eb9734f8b4223a6c619}{BCCreator\+Func}}
+\end{DoxyCompactItemize}
+
+
+\label{doc-typedef-members}
+\Hypertarget{namespace_g_r_p_d_1_1_b_c_doc-typedef-members}
+\doxysubsection{Typedef Documentation}
+\Hypertarget{namespace_g_r_p_d_1_1_b_c_a9642af366a197eb9734f8b4223a6c619}\index{GRPD::BC@{GRPD::BC}!BCCreatorFunc@{BCCreatorFunc}}
+\index{BCCreatorFunc@{BCCreatorFunc}!GRPD::BC@{GRPD::BC}}
+\doxysubsubsection{\texorpdfstring{BCCreatorFunc}{BCCreatorFunc}}
+{\footnotesize\ttfamily \label{namespace_g_r_p_d_1_1_b_c_a9642af366a197eb9734f8b4223a6c619} 
+typedef std\+::function$<$std\+::unique\+\_\+ptr$<$\mbox{\hyperlink{class_g_r_p_d_1_1_b_c_1_1_b_c}{BC}}$>$(const std\+::string \&)$>$ \mbox{\hyperlink{namespace_g_r_p_d_1_1_b_c_a9642af366a197eb9734f8b4223a6c619}{GRPD\+::\+BC\+::\+BCCreator\+Func}}}
+
+
+
+Definition at line \mbox{\hyperlink{_b_c_registry_8h_source_l00023}{23}} of file \mbox{\hyperlink{_b_c_registry_8h_source}{BCRegistry.\+h}}.
+

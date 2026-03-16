@@ -7,7 +7,7 @@
 #include "Logger.h"
 #include "MaterialRegistry.h"
 
-namespace GRPD::Material {
+namespace PDCommon::Material {
 
 // ---------------------------------------------------------------------------
 // 构造函数
@@ -47,7 +47,7 @@ void ThermalMat::initialize(const YAML::Node &matNode) {
 // ---------------------------------------------------------------------------
 // 分配材料状态变量场
 // ---------------------------------------------------------------------------
-void ThermalMat::allocateStateVariables(GRPD::Field::FieldManager &fm) {
+void ThermalMat::allocateStateVariables(PDCommon::Field::FieldManager &fm) {
   // 注意：HeatFlux 已在 ThermalFields 中作为核心场注册，此处无需重复
 }
 
@@ -84,4 +84,4 @@ void ThermalMat::setHeatCapacity(double Cap) { heatCapacity_ = Cap; }
 double ThermalMat::getDensity() const { return density_; }
 void ThermalMat::setDensity(double rho) { density_ = rho; }
 
-} // namespace GRPD::Material
+} // namespace PDCommon::Material
