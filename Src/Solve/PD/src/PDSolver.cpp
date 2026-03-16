@@ -34,6 +34,9 @@ void PDSolver::Initialize(const std::string &yamlPath) {
   // 4. 边界条件与载荷加载
   InitConditions();
 
+  // 5. 邻域搜索与 NeighborCount 场构建
+  InitNeighbors();
+
   LOG_INFO("[PDSolver] PD simulation context initialized successfully.");
 }
 

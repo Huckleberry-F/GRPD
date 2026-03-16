@@ -105,8 +105,8 @@ void PDSolver::Solve() {
 // (D) 计算 PD 键相互作用 (并行的热传导内核)
 #pragma omp parallel for schedule(dynamic, 64)
     for (int i = 0; i < static_cast<int>(numParticles); ++i) {
-      const auto &neighbors = neighborList.getNeighbors(i);
-      if (neighbors.empty())
+      int nNeighbors = neighborList.getNeighborCount(i);
+      if (nNeighbors == 0)
         continue;
 
       // 获取当前粒子材料属性
@@ -119,21 +119,21 @@ void PDSolver::Solve() {
       double kappa_base = (6.0 * k) / (PI * horizon4);
 
       double Ti = tempPtr[i];
-      const double *pos_i = &coords[3 * i];
+
+      // CSR 裸指针遍历——100% 缓存连续
+      const int *ids = neighborList.getNeighborIds(i);
+      const double *dists = neighborList.getBondLengths(i);
 
       double totalContribution = 0.0;
 
-      for (int j : neighbors) {
-        double Tj = tempPtr[j];
-        const double *pos_j = &coords[3 * j];
-
-        double dx = pos_j[0] - pos_i[0];
-        double dy = pos_j[1] - pos_i[1];
-        double dz = pos_j[2] - pos_i[2];
-        double dist = std::sqrt(dx * dx + dy * dy + dz * dz);
+      for (int n = 0; n < nNeighbors; ++n) {
+        int j = ids[n];
+        double dist = dists[n];
 
         if (dist < 1e-12)
           continue;
+
+        double Tj = tempPtr[j];
 
         // PD 传导公式：kappa * (Tj - Ti) / dist * Vj
         double bondContribution =

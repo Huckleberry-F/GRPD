@@ -1,5 +1,5 @@
 // ============================================================================
-// PDContext.cpp - 杩戝満鍔ㄥ姏瀛︿豢鐪熸€绘帶绫诲疄鐜?
+// PDContext.cpp - 鏉╂垵婧€閸斻劌濮忕€涳缚璞㈤惇鐔糕偓缁樺付缁鐤勯悳?
 // ============================================================================
 
 #include "PDContext.h"
@@ -14,7 +14,7 @@ PDContext::PDContext(const std::string &name) : name_(name) {
 
 void PDContext::createNeighborList(const PDCommon::Model::ParticleManager &mgr,
                                     double horizon) {
-  neighborList_ = std::make_unique<PDCommon::Initial::NeighborList>();
+  neighborList_ = std::make_unique<PDCommon::Neighbor::NeighborList>();
   neighborList_->buildNeighbors(mgr, horizon);
 }
 

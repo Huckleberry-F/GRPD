@@ -25,7 +25,7 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
     BC_Obj 
     IO_Obj 
     Model_Obj 
-    Initial_Obj
+    Neighbor_Obj
     Core_Obj
     Field_Obj
 )

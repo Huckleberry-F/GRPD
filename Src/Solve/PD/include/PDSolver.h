@@ -44,6 +44,7 @@ private:
   void InitMaterial();   ///< 材料分配与初始化
   void InitFields();     ///< 物理场与状态变量注册
   void InitConditions(); ///< 边界条件与载荷加载
+  void InitNeighbors();  ///< 邻域搜索与 NeighborCount 场构建
 
   // -----------------------------------------------------------------------
   // PD 仿真上下文与配置

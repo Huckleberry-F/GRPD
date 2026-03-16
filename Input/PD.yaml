@@ -32,7 +32,7 @@ Parts:
     Length: 1.0 # 长度 0.5m
     Width: 1.0
     Thickness: 1.0
-    dx: 0.025
+    dx: 0.01
     Offset: [1.5, 0.0, 0.0] # 模型 2 在 X 方向平移 0.5m，避免重叠
 
     # 3. 边界条件配置 (使用全局坐标系框选)
@@ -78,6 +78,7 @@ Solver:
   TotalTime: 10.0 # 总仿真时间 (s)
   TimeStep_dt: 1.0e-4 # 时间步长 (s)
   OMP_Threads: 8 # OpenMP 加速线程数
+  Horizon: 0.061   # 邻域半径 delta (通常为 3 * dx + dx*0.1)
 
 # 6. 输出设置
 Writer:
@@ -93,4 +94,6 @@ Writer:
     - Name: "ID"
       Dimension: 1
     - Name: "HeatFlux"
+      Dimension: 1
+    - Name: "NeighborCount"
       Dimension: 1

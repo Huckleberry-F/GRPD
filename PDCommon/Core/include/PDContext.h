@@ -2,18 +2,19 @@
 #define PDCOMMON_CORE_PDCONTEXT_H
 
 // ============================================================================
-// PDContext.h - 杩戝満鍔ㄥ姏瀛︿豢鐪熷ぇ绠″ (鏍稿績鏋㈢航)
-// 璐ｄ换锛?
-// 1. 浠ｈ〃涓€涓畬鏁寸殑 PD 鐗╃悊鎴栬绠楀伐绋嬩笂涓嬫枃
-// 2. 鐙珛鎸佹湁鑷繁涓撳睘鐨?ParticleManager銆丮aterialManager銆丗ieldManager 绛夋暟鎹粍浠?
-// 3. 浣滀负 PD 绯荤粺涓庡鐣?(濡備富绋嬪簭銆佹垨鑰呮湭鏉ョ殑 FEM 绯荤粺) 鑰﹀悎鐨勫敮涓€鏁版嵁妗ユ
+// PDContext.h - 近场动力学仿真上下文容器 (核心枢纽)
+// 责任：
+// 1. 代表一个完整的 PD 物理或计算工程上下文
+// 2. 独立持有自己专属的 ParticleManager、MaterialManager、FieldManager
+// 等数据组件
+// 3. 作为 PD 系统与外界 (如主程序、或者未来的 FEM 系统) 耦合的唯一数据桥梁
 // ============================================================================
 
-#include "MaterialManager.h"
-#include "ParticleManager.h"
-#include "FieldManager.h"
-#include "NeighborList.h"
 #include "BCManager.h"
+#include "FieldManager.h"
+#include "MaterialManager.h"
+#include "NeighborList.h"
+#include "ParticleManager.h"
 #include <memory>
 #include <string>
 
@@ -21,28 +22,28 @@ namespace PDCommon::Core {
 
 class PDContext {
 public:
-  /// @brief 榛樿鏋勯€犲嚱鏁?
+  /// @brief 默认构造函数
   PDContext() = default;
 
-  /// @brief 鏋勯€犲嚱鏁帮紝鍒濆鍖栦竴涓叏鏂扮殑浠跨湡妯″瀷涓婁笅鏂?
-  /// @param name 妯″瀷鍚嶇О锛岀敤浜庢爣璇嗗拰鏃ュ織杈撳嚭
+  /// @brief 构造函数，初始化一个全新的仿真模型上下文
+  /// @param name 模型名称，用于标识和日志输出
   explicit PDContext(const std::string &name);
 
   ~PDContext() = default;
 
-  // 绂佺敤鎷疯礉锛屽厑璁哥Щ鍔紙淇濇寔璧勬簮鐙崰锛?
+  // 禁用拷贝，允许移动（保持资源独占）
   PDContext(const PDContext &) = delete;
   PDContext &operator=(const PDContext &) = delete;
   PDContext(PDContext &&) = default;
   PDContext &operator=(PDContext &&) = default;
 
-  /// @brief 鑾峰彇妯″瀷鍚嶇О
+  /// @brief 获取模型名称
   const std::string &getName() const { return name_; }
 
-  /// @brief 璁剧疆妯″瀷鍚嶇О
+  /// @brief 设置模型名称
   void setName(const std::string &name) { name_ = name; }
 
-  /// @brief 鑾峰彇绮掑瓙绠＄悊鍣ㄥ紩鐢紙闈?const锛岀敤浜庢眰瑙ｅ拰鍒濆鍖栵級
+  /// @brief 获取粒子管理器引用（非 const，用于求解和初始化）
   PDCommon::Model::ParticleManager &getParticleManager() {
     return particleManager_;
   }
@@ -50,7 +51,7 @@ public:
     return particleManager_;
   }
 
-  /// @brief 鑾峰彇鏉愭枡绠＄悊鍣ㄥ紩鐢紙闈?const锛岀敤浜庣粦瀹氬拰姹傝В锛?
+  /// @brief 获取材料管理器引用（非 const，用于绑定和求解）
   PDCommon::Material::MaterialManager &getMaterialManager() {
     return materialManager_;
   }
@@ -59,42 +60,42 @@ public:
   }
 
   // -----------------------------------------------------------------------
-  // 鐗╃悊鍦虹鐞嗗櫒 (FieldManager) 鈥?缁熶竴绠＄悊鎵€鏈夌墿鐞嗗満
+  // 物理场管理器 (FieldManager) — 统一管理所有物理场
   // -----------------------------------------------------------------------
 
-  /// @brief 鑾峰彇鐗╃悊鍦虹鐞嗗櫒寮曠敤
+  /// @brief 获取物理场管理器引用
   PDCommon::Field::FieldManager &getFieldManager() { return fieldManager_; }
   const PDCommon::Field::FieldManager &getFieldManager() const {
     return fieldManager_;
   }
 
   // -----------------------------------------------------------------------
-  // 杩戦偦鍒楄〃 (NeighborList) 鎸夐渶鍒嗛厤
+  // 近邻列表 (NeighborList) 按需分配
   // -----------------------------------------------------------------------
   void createNeighborList(const PDCommon::Model::ParticleManager &mgr,
-                         double horizon);
+                          double horizon);
   bool hasNeighborList() const { return neighborList_ != nullptr; }
-  PDCommon::Initial::NeighborList &getNeighborList() { return *neighborList_; }
-  const PDCommon::Initial::NeighborList &getNeighborList() const {
+  PDCommon::Neighbor::NeighborList &getNeighborList() { return *neighborList_; }
+  const PDCommon::Neighbor::NeighborList &getNeighborList() const {
     return *neighborList_;
   }
 
   // -----------------------------------------------------------------------
-  // 杈圭晫鏉′欢绠＄悊鍣?(BCManager)
+  // 边界条件管理器 (BCManager)
   // -----------------------------------------------------------------------
   PDCommon::BC::BCManager &getBCManager() { return bcManager_; }
   const PDCommon::BC::BCManager &getBCManager() const { return bcManager_; }
 
 private:
-  std::string name_;                             // 妯″瀷鍚嶇О
-  PDCommon::Model::ParticleManager particleManager_; // 璇ユā鍨嬩笓灞炵殑绮掑瓙鏁扮粍涓庣鐞嗗櫒
-  PDCommon::Material::MaterialManager materialManager_; // 璇ユā鍨嬩笓灞炵殑鏉愭枡瀹炰緥绠＄悊
-  PDCommon::Field::FieldManager fieldManager_;       // 鐗╃悊鍦虹鐞嗗櫒 (缁熶竴绠＄悊鎵€鏈夊満鏁版嵁)
+  std::string name_;                                    ///< 模型名称
+  PDCommon::Model::ParticleManager particleManager_;    ///< 粒子管理器
+  PDCommon::Material::MaterialManager materialManager_; ///< 材料管理器
+  PDCommon::Field::FieldManager fieldManager_;          ///< 物理场管理器
 
-  std::unique_ptr<PDCommon::Initial::NeighborList>
-      neighborList_; // 杩戦偦鍒楄〃锛堟寜闇€鍒嗛厤锛?
+  std::unique_ptr<PDCommon::Neighbor::NeighborList>
+      neighborList_; ///< 近邻列表（按需分配）
 
-  PDCommon::BC::BCManager bcManager_; // 杈圭晫鏉′欢绠＄悊鍣?(闈欐€佸垎閰?
+  PDCommon::BC::BCManager bcManager_; ///< 边界条件管理器
 };
 
 } // namespace PDCommon::Core

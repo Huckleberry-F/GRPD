@@ -15,7 +15,7 @@ add_subdirectory(Field)
 add_subdirectory(Material)
 add_subdirectory(Model)
 add_subdirectory(BC)
-add_subdirectory(Initial)
+add_subdirectory(Neighbor)
 add_subdirectory(IO)
 add_subdirectory(Core)
 
@@ -24,7 +24,7 @@ add_subdirectory(Core)
 add_library(PDCommon STATIC
     $<TARGET_OBJECTS:Model_Obj>
     $<TARGET_OBJECTS:Field_Obj>
-	$<TARGET_OBJECTS:Initial_Obj>
+	$<TARGET_OBJECTS:Neighbor_Obj>
     $<TARGET_OBJECTS:IO_Obj>
     $<TARGET_OBJECTS:Material_Obj>
     $<TARGET_OBJECTS:BC_Obj>
@@ -40,7 +40,7 @@ target_link_libraries(PDCommon PUBLIC
     Utils_Obj
     Material_Obj
     BC_Obj
-    Initial_Obj
+    Neighbor_Obj
     IO_Obj
     Core_Obj
     yaml-cpp

@@ -8,6 +8,7 @@ add_library(PDSolve_Obj OBJECT
     src/PD_Material.cpp
     src/PD_Field.cpp
     src/PD_Condition.cpp
+    src/PD_Neighbor.cpp
     src/PD_Solve.cpp
     src/PD_Output.cpp
 )
@@ -21,7 +22,7 @@ target_include_directories(PDSolve_Obj PRIVATE
     ${PROJECT_SOURCE_DIR}/PDCommon/Material/include
     ${PROJECT_SOURCE_DIR}/PDCommon/BC/include
     ${PROJECT_SOURCE_DIR}/PDCommon/Field/include
-    ${PROJECT_SOURCE_DIR}/PDCommon/Initial/include
+    ${PROJECT_SOURCE_DIR}/PDCommon/Neighbor/include
     ${PROJECT_SOURCE_DIR}/PDCommon/IO/include
 )
 
