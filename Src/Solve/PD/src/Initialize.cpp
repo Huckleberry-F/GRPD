@@ -11,10 +11,12 @@ namespace Src::Solve {
 // ---------------------------------------------------------------------------
 // 构造函数
 // ---------------------------------------------------------------------------
-PDSolver::PDSolver() { LOG_INFO("[PDSolver] PD Solver instance created."); }
+PDSolver::PDSolver() {
+  LOG_INFO("[PDSolver] PD Solver instance created.");
+}
 
 // ---------------------------------------------------------------------------
-// Initialize: 依次调用五个分步初始化函数
+// Initialize: 依次调用四个分步初始化函数
 // ---------------------------------------------------------------------------
 void PDSolver::Initialize(const std::string &yamlPath) {
   LOG_INFO("[PDSolver] Initializing PD simulation context...");
@@ -43,5 +45,6 @@ void PDSolver::Initialize(const std::string &yamlPath) {
 // ============================================================================
 // 静态注册：将 PDSolver 注册到全局 EngineRegistry
 // ============================================================================
-REGISTER_ENGINE_TYPE(PD,
-                     []() { return std::make_unique<Src::Solve::PDSolver>(); });
+REGISTER_ENGINE_TYPE(PD, []() {
+  return std::make_unique<Src::Solve::PDSolver>();
+});

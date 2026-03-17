@@ -3,14 +3,18 @@
 # ==============================================================================
 
 add_library(PDSolve_Obj OBJECT
-    src/PDSolver.cpp
-    src/PD_Model.cpp
-    src/PD_Material.cpp
-    src/PD_Field.cpp
-    src/PD_Condition.cpp
-    src/PD_Neighbor.cpp
-    src/PD_Solve.cpp
-    src/PD_Output.cpp
+    src/Initialize.cpp
+    src/InitModel.cpp
+    src/InitMaterial.cpp
+    src/InitFields.cpp
+    src/InitConditions.cpp
+    src/InitNeighbors.cpp
+    src/Solve.cpp
+    src/Output.cpp
+)
+
+target_sources(PDSolve_Obj PRIVATE
+    include/PDSolver.h
 )
 
 target_include_directories(PDSolve_Obj PRIVATE

@@ -6,9 +6,9 @@
 // 3. 注册 NeighborCount 场，记录每个粒子的邻居数
 // ============================================================================
 
-#include "PDSolver.h"
 #include "FieldManager.h"
 #include "Logger.h"
+#include "PDSolver.h"
 #include "TypedField.h"
 #include <cstdlib>
 #include <yaml-cpp/yaml.h>
@@ -26,8 +26,7 @@ void PDSolver::InitNeighbors() {
   try {
     config = YAML::LoadFile(yamlPath_);
   } catch (const YAML::BadFile &e) {
-    LOG_ERROR("[InitNeighbors] Failed to load YAML: " +
-              std::string(e.what()));
+    LOG_ERROR("[InitNeighbors] Failed to load YAML: " + std::string(e.what()));
     exit(EXIT_FAILURE);
   }
 
@@ -64,8 +63,8 @@ void PDSolver::InitNeighbors() {
     double *ncPtr = ncField->dataPtr();
 
     for (size_t i = 0; i < numParticles; ++i) {
-      ncPtr[i] = static_cast<double>(neighborList.getNeighborCount(
-          static_cast<int>(i)));
+      ncPtr[i] = static_cast<double>(
+          neighborList.getNeighborCount(static_cast<int>(i)));
     }
 
     LOG_INFO("[InitNeighbors] NeighborCount field populated for " +
@@ -78,9 +77,7 @@ void PDSolver::InitNeighbors() {
   neighborList.registerBondField("BondDamage");
   double *dmgPtr = neighborList.getBondFieldPtr("BondDamage");
   size_t nBonds = neighborList.totalBonds();
-  for (size_t k = 0; k < nBonds; ++k) {
-    dmgPtr[k] = 1.0;
-  }
+  std::fill(dmgPtr, dmgPtr + nBonds, 1.0);
   LOG_INFO("[InitNeighbors] BondDamage field registered, " +
            std::to_string(nBonds) + " bonds initialized to 1.0");
 
