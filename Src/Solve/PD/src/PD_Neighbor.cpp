@@ -72,6 +72,18 @@ void PDSolver::InitNeighbors() {
              std::to_string(numParticles) + " particles.");
   }
 
+  // =================================================================
+  // 4. 注册 BondDamage 键场（初始值 1.0 = 完好）
+  // =================================================================
+  neighborList.registerBondField("BondDamage");
+  double *dmgPtr = neighborList.getBondFieldPtr("BondDamage");
+  size_t nBonds = neighborList.totalBonds();
+  for (size_t k = 0; k < nBonds; ++k) {
+    dmgPtr[k] = 1.0;
+  }
+  LOG_INFO("[InitNeighbors] BondDamage field registered, " +
+           std::to_string(nBonds) + " bonds initialized to 1.0");
+
   LOG_INFO("[InitNeighbors] Neighbor search phase complete.");
 }
 
