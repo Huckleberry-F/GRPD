@@ -11,10 +11,12 @@ add_library(PDSolve_Obj OBJECT
     src/InitNeighbors.cpp
     src/Solve.cpp
     src/Output.cpp
+    src/NOSB_T.cpp
 )
 
 target_sources(PDSolve_Obj PRIVATE
     include/PDSolver.h
+    include/NOSB_T.h
 )
 
 target_include_directories(PDSolve_Obj PRIVATE

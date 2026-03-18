@@ -298,13 +298,15 @@ void NeighborList::registerBondField(const std::string &name) {
 
 double *NeighborList::getBondFieldPtr(const std::string &name) {
   auto it = bondFields_.find(name);
-  if (it == bondFields_.end()) return nullptr;
+  if (it == bondFields_.end())
+    return nullptr;
   return it->second.data();
 }
 
 const double *NeighborList::getBondFieldPtr(const std::string &name) const {
   auto it = bondFields_.find(name);
-  if (it == bondFields_.end()) return nullptr;
+  if (it == bondFields_.end())
+    return nullptr;
   return it->second.data();
 }
 
@@ -314,14 +316,16 @@ bool NeighborList::hasBondField(const std::string &name) const {
 
 double *NeighborList::getBondFieldForParticle(const std::string &name, int i) {
   auto it = bondFields_.find(name);
-  if (it == bondFields_.end()) return nullptr;
+  if (it == bondFields_.end())
+    return nullptr;
   return &(it->second[offsets_[i]]);
 }
 
 const double *NeighborList::getBondFieldForParticle(const std::string &name,
-                                                     int i) const {
+                                                    int i) const {
   auto it = bondFields_.find(name);
-  if (it == bondFields_.end()) return nullptr;
+  if (it == bondFields_.end())
+    return nullptr;
   return &(it->second[offsets_[i]]);
 }
 

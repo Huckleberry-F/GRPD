@@ -1,14 +1,14 @@
 // ============================================================================
-// PD_Solve.cpp - PD 热传导求解核心（从 SE_Solve.cpp 迁移）
+// PD_Solve.cpp - PD 热传导求解核心（NOSB-PD 非常规态基版本）
 // ============================================================================
 
-#include "PDSolver.h"
 #include "BCManager.h"
 #include "FieldManager.h"
 #include "Logger.h"
+#include "NOSB_T.h"
 #include "NeighborList.h"
+#include "PDSolver.h"
 #include "ParticleManager.h"
-#include "ThermalMat.h"
 #include "TypedField.h"
 #include <cmath>
 #include <omp.h>
@@ -25,8 +25,8 @@ void PDSolver::Solve() {
   // =================================================================
   YAML::Node config = YAML::LoadFile(yamlPath_);
 
-  double dt = 1e-4;
-  double totalTime = 1.0;
+  double dt = 1.0;
+  double totalTime = 100.0;
   int outputInterval = 10;
 
   if (config["Solver"]) {
@@ -52,41 +52,32 @@ void PDSolver::Solve() {
 
   auto *tempField = fieldManager.getFieldAs<double>("Temperature");
   auto *rateField = fieldManager.getFieldAs<double>("TempRate");
-  auto *fluxField = fieldManager.getFieldAs<double>("HeatFlux");
 
-  auto &neighborList = ctx.getNeighborList();
-  auto &manager = ctx.getParticleManager();
   auto &bcManager = ctx.getBCManager();
-
-  size_t numParticles = manager.getTotalParticles();
-  double horizon = neighborList.getHorizon();
-
-  // 3D 微导率系数 (Bobaru model): kappa = 6k / (pi * delta^4)
-  double PI = 3.14159265358979323846;
-  double horizon4 = std::pow(horizon, 4.0);
-
-  // 获取数据指针 (SoA)
-  const double *volumes =
-      manager.getGeomDataPtr(PDCommon::Model::ModelVar::Volume);
-  const double *coords =
-      manager.getGeomDataPtr(PDCommon::Model::ModelVar::Coords);
+  size_t numParticles = ctx.getParticleManager().getTotalParticles();
 
   // 获取 Field 的裸指针（用于 OpenMP 高性能循环）
   double *tempPtr = tempField->dataPtr();
   double *ratePtr = rateField->dataPtr();
-  double *fluxPtr = fluxField->dataPtr();
 
   LOG_INFO("Time loop: Dt = " + std::to_string(dt) +
            ", TotalSteps = " + std::to_string(totalSteps));
 
   // =================================================================
-  // 3. 时间步循环
+  // 3. 预计算：NOSB 形状张量 + 注册工作场（仅一次）
+  // =================================================================
+  NOSB_T nosb;
+  nosb.ComputeShapeTensors(ctx);
+
+  // =================================================================
+  // 4. 时间步循环
   // =================================================================
   for (int step = 0; step <= totalSteps; ++step) {
 
     // (A) 输出结果
     if (step % outputInterval == 0) {
-      LOG_INFO("--- Outputting Step: " + std::to_string(step));
+      LOG_INFO("--- Outputting Step: " + std::to_string(step) + " / " +
+               std::to_string(totalSteps));
       this->Output();
     }
     if (step == totalSteps)
@@ -94,7 +85,6 @@ void PDSolver::Solve() {
 
     // (B) 清零变化率
     rateField->clearToZero();
-    fluxField->clearToZero();
 
     // (C) 施加所有边界条件中的源项 (含热流、对流)
     bcManager.applySources();
@@ -102,64 +92,14 @@ void PDSolver::Solve() {
     // (C2) 施加强制约束 (Dirichlet)
     bcManager.applyConstraints();
 
-// (D) 计算 PD 键相互作用 (并行的热传导内核)
-#pragma omp parallel for schedule(dynamic, 64)
+    // (D) NOSB-PD 热传导内核（三步非局部积分 + 本构黑盒）
+    nosb.ComputeThermalState(ctx);
+
+    // (E) 显式时间积分：T_new = T_old + Rate * dt
+    //     注意：NOSB_T 输出的 TempRate 已包含 1/(ρcₚ) 因子
+#pragma omp parallel for schedule(static)
     for (int i = 0; i < static_cast<int>(numParticles); ++i) {
-      int nNeighbors = neighborList.getNeighborCount(i);
-      if (nNeighbors == 0)
-        continue;
-
-      // 获取当前粒子材料属性
-      auto *mat = dynamic_cast<PDCommon::Material::ThermalMat *>(
-          manager.getParticle(i).getMaterial());
-      if (!mat)
-        continue;
-
-      double k = mat->getConductivity();
-      double kappa_base = (6.0 * k) / (PI * horizon4);
-
-      double Ti = tempPtr[i];
-
-      // CSR 裸指针遍历——100% 缓存连续
-      const int *ids = neighborList.getNeighborIds(i);
-      const double *dists = neighborList.getBondLengths(i);
-
-      double totalContribution = 0.0;
-
-      for (int n = 0; n < nNeighbors; ++n) {
-        int j = ids[n];
-        double dist = dists[n];
-
-        if (dist < 1e-12)
-          continue;
-
-        double Tj = tempPtr[j];
-
-        // PD 传导公式：kappa * (Tj - Ti) / dist * Vj
-        double bondContribution =
-            kappa_base * ((Tj - Ti) / dist) * volumes[j];
-        totalContribution += bondContribution;
-      }
-
-      rateField->add(i, totalContribution);
-      fluxField->add(i, totalContribution);
-    }
-
-// (E) 显式时间积分：T_new = T_old + (Rate / (rho * Cp)) * dt
-#pragma omp parallel for
-    for (int i = 0; i < static_cast<int>(numParticles); ++i) {
-      auto *mat = dynamic_cast<PDCommon::Material::ThermalMat *>(
-          manager.getParticle(i).getMaterial());
-      if (!mat)
-        continue;
-
-      double rho = mat->getDensity();
-      double cp = mat->getHeatCapacity();
-
-      double heatRate = ratePtr[i];
-      double deltaT = (heatRate / (rho * cp)) * dt;
-
-      tempPtr[i] += deltaT;
+      tempPtr[i] += ratePtr[i] * dt;
     }
 
     // (F) 施加固定温度约束 (Dirichlet) - 积分后重新覆盖

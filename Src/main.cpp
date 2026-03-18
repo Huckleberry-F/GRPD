@@ -2,7 +2,6 @@
 #include "GRPD.h"
 #include <cstdlib>
 
-
 int main(int argc, char *argv[]) {
 
   // =================================================================
@@ -17,7 +16,7 @@ int main(int argc, char *argv[]) {
   Src::Engine::EngineManager GRSIM;
   GRSIM.Initialize();
 
-  // GRSIM.Solve();
+  GRSIM.Solve();
 
   GRSIM.Output();
 

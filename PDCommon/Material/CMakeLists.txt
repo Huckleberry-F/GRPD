@@ -8,7 +8,7 @@ add_library(Material_Obj OBJECT
     src/Material.cpp
     src/MaterialManager.cpp
     src/MaterialRegistry.cpp
-    src/ThermalMat.cpp
+    src/FourierThermalMat.cpp
 )
 
 # 2. Add header files to target
@@ -16,13 +16,16 @@ target_sources(Material_Obj PRIVATE
     include/Material.h
     include/MaterialManager.h
     include/MaterialRegistry.h
-    include/ThermalMat.h
+    include/ThermalMaterial.h
+    include/FourierThermalMat.h
 )
 
 # 3. Set header include paths for this module
 # PUBLIC ensures targets linking to Material_Obj can see these headers
 target_include_directories(Material_Obj PUBLIC include)
 
-# 4. Link dependencies if this module uses yaml-cpp or OpenMP headers
+# 4. Link dependencies
 # Note: For OBJECT libraries, this is mainly to propagate include paths
+# Eigen3::Eigen 需要 PUBLIC 因为 ThermalMaterial.h 公共头文件包含了 <Eigen/Dense>
 target_link_libraries(Material_Obj PRIVATE yaml-cpp OpenMP::OpenMP_CXX Utils_Obj Field_Obj)
+target_link_libraries(Material_Obj PUBLIC Eigen3::Eigen)
