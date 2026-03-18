@@ -37,6 +37,9 @@ void PDSolver::Initialize(const std::string &yamlPath) {
   // 5. 邻域搜索与 NeighborCount 场构建
   InitNeighbors();
 
+  // 6. 从 YAML 创建求解算法 (L1) 与 PD 积分核心 (L2)
+  InitSolverComponents();
+
   LOG_INFO("[PDSolver] PD simulation context initialized successfully.");
 }
 

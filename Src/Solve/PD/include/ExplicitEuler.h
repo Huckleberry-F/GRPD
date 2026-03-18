@@ -1,0 +1,31 @@
+// ============================================================================
+// ExplicitEuler.h - 显式欧拉时间积分 (Layer 1 具体实现)
+// ============================================================================
+
+#ifndef SRC_SOLVE_PD_EXPLICIT_EULER_H
+#define SRC_SOLVE_PD_EXPLICIT_EULER_H
+
+#include "TimeIntegrator.h"
+
+namespace Src::Solve {
+
+/// @brief 显式欧拉时间积分器
+/// @details
+///   T_{n+1} = T_n + Rate_n * dt
+///   适用于热传导等显式时间推进问题。
+class ExplicitEuler : public TimeIntegrator {
+public:
+  ExplicitEuler() = default;
+  ~ExplicitEuler() override = default;
+
+  /// @brief 执行显式欧拉时间推进循环
+  void run(PDCommon::Core::PDContext &ctx, PDKernel &kernel,
+           const SolverConfig &config,
+           std::function<void()> outputCallback) override;
+
+  std::string getName() const override { return "ExplicitEuler"; }
+};
+
+} // namespace Src::Solve
+
+#endif // SRC_SOLVE_PD_EXPLICIT_EULER_H

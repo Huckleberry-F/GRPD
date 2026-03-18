@@ -1,6 +1,11 @@
 // ============================================================================
 // PDSolver.h - 近场动力学 (PD) 求解器
 // 继承 Src::Engine::Engine，封装完整的 PD 仿真生命周期
+//
+// 架构：三层多态组装器
+//   L1 TimeIntegrator (integrator_) — 求解算法
+//   L2 PDKernel       (kernel_)     — PD 积分框架
+//   L3 Material                     — 本构模型（由 PDContext 持有）
 // ============================================================================
 
 #ifndef SRC_SOLVE_PD_SOLVER_H
@@ -8,6 +13,9 @@
 
 #include "Engine.h"
 #include "PDContext.h"
+#include "PDKernel.h"
+#include "TimeIntegrator.h"
+#include <memory>
 
 namespace Src::Solve {
 
@@ -38,19 +46,23 @@ public:
 
 private:
   // -----------------------------------------------------------------------
-  // PD 分步初始化私有函数（从 SE_*.cpp 迁移而来）
+  // PD 分步初始化私有函数
   // -----------------------------------------------------------------------
-  void InitModel();      ///< 模型几何与粒子生成
-  void InitMaterial();   ///< 材料分配与初始化
-  void InitFields();     ///< 物理场与状态变量注册
-  void InitConditions(); ///< 边界条件与载荷加载
-  void InitNeighbors();  ///< 邻域搜索与 NeighborCount 场构建
+  void InitModel();             ///< 模型几何与粒子生成
+  void InitMaterial();          ///< 材料分配与初始化
+  void InitFields();            ///< 物理场与状态变量注册
+  void InitConditions();        ///< 边界条件与载荷加载
+  void InitNeighbors();         ///< 邻域搜索与 NeighborCount 场构建
+  void InitSolverComponents();  ///< 从 YAML 创建 L1 + L2 实例
 
   // -----------------------------------------------------------------------
-  // PD 仿真上下文与配置
+  // PD 仿真上下文与三层组件
   // -----------------------------------------------------------------------
-  PDCommon::Core::PDContext pdContext_; ///< PD 数据容器
-  std::string yamlPath_;               ///< YAML 配置文件路径
+  PDCommon::Core::PDContext pdContext_;              ///< PD 数据容器
+  std::string yamlPath_;                             ///< YAML 配置文件路径
+  std::unique_ptr<TimeIntegrator> integrator_;       ///< L1: 时间推进策略
+  std::unique_ptr<PDKernel> kernel_;                 ///< L2: PD 积分核心
+  SolverConfig solverConfig_;                        ///< 求解器配置参数
 };
 
 } // namespace Src::Solve

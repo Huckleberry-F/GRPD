@@ -332,4 +332,20 @@ void NOSB_T::ComputeThermalState(PDContext &ctx) {
   }
 }
 
+// ---------------------------------------------------------------------------
+// PDKernel 接口实现：委托到内部方法
+// ---------------------------------------------------------------------------
+
+void NOSB_T::preCompute(PDCommon::Core::PDContext &ctx) {
+  ComputeShapeTensors(ctx);
+}
+
+void NOSB_T::computeForceState(PDCommon::Core::PDContext &ctx) {
+  ComputeThermalState(ctx);
+}
+
+std::vector<PDKernel::IntegrationTarget> NOSB_T::getIntegrationTargets() const {
+  return {{"Temperature", "TempRate", 1}};
+}
+
 } // namespace Src::Solve
