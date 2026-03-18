@@ -11,6 +11,7 @@
 #include "ParticleManager.h"
 #include "TypedField.h"
 #include <cmath>
+#include <chrono>
 #include <omp.h>
 #include <yaml-cpp/yaml.h>
 
@@ -72,16 +73,32 @@ void PDSolver::Solve() {
   // =================================================================
   // 4. 时间步循环
   // =================================================================
+  auto tStart = std::chrono::high_resolution_clock::now();
+  double pureComputeTime = 0.0; // 累计纯计算时间 (跳过 Output)
+
   for (int step = 0; step <= totalSteps; ++step) {
 
-    // (A) 输出结果
+    // (A) 输出结果 + 打印进度 (这部分不计入 ComputeTime)
     if (step % outputInterval == 0) {
-      LOG_INFO("--- Outputting Step: " + std::to_string(step) + " / " +
-               std::to_string(totalSteps));
+      auto tNow = std::chrono::high_resolution_clock::now();
+      double totalElapsed = std::chrono::duration<double>(tNow - tStart).count();
+      
+      // 真实纯计算步速 (排除写磁盘的时间)
+      double pureSpeed = (step > 0 && pureComputeTime > 0.0) 
+                         ? (step / pureComputeTime) : 0.0;
+                         
+      LOG_INFO("--- Step " + std::to_string(step) + " / " + std::to_string(totalSteps) +
+               "  |  Pure Compute: " + std::to_string(pureComputeTime) + "s" +
+               "  |  Total: " + std::to_string(totalElapsed) + "s" +
+               "  |  Pure Speed: " + std::to_string(pureSpeed) + " steps/s");
+               
+      LOG_INFO("Starting data export process...");
       this->Output();
     }
     if (step == totalSteps)
       break;
+
+    auto tComputeStart = std::chrono::high_resolution_clock::now();
 
     // (B) 清零变化率
     rateField->clearToZero();
@@ -104,9 +121,16 @@ void PDSolver::Solve() {
 
     // (F) 施加固定温度约束 (Dirichlet) - 积分后重新覆盖
     bcManager.applyConstraints();
+    
+    // 累加单步的纯计算时间
+    auto tComputeEnd = std::chrono::high_resolution_clock::now();
+    pureComputeTime += std::chrono::duration<double>(tComputeEnd - tComputeStart).count();
   }
 
-  LOG_INFO("PD Solver Simulation Finished.");
+  auto tEnd = std::chrono::high_resolution_clock::now();
+  double totalElapsed = std::chrono::duration<double>(tEnd - tStart).count();
+  LOG_INFO("PD Solver Finished. Total: " + std::to_string(totalElapsed) + "s" +
+           "  |  Pure Compute avg: " + std::to_string(pureComputeTime / totalSteps) + " s/step");
 }
 
 } // namespace Src::Solve
