@@ -7,7 +7,11 @@
 
 #include "TimeIntegrator.h"
 
-namespace Src::Solve {
+namespace PDCommon::Kernel { class PDKernel; }
+
+namespace Src::Integration {
+
+using PDCommon::Kernel::PDKernel;
 
 /// @brief 显式欧拉时间积分器
 /// @details
@@ -21,11 +25,11 @@ public:
   /// @brief 执行显式欧拉时间推进循环
   void run(PDCommon::Core::PDContext &ctx, PDKernel &kernel,
            const SolverConfig &config,
-           std::function<void()> outputCallback) override;
+           std::function<void(int, double)> outputCallback) override;
 
   std::string getName() const override { return "ExplicitEuler"; }
 };
 
-} // namespace Src::Solve
+} // namespace Src::Integration
 
 #endif // SRC_SOLVE_PD_EXPLICIT_EULER_H

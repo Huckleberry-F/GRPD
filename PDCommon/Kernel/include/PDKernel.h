@@ -7,20 +7,20 @@
 //   实现算法层与 PD 理论层的完全解耦。
 //
 // 架构位置：
-//   PDSolver::Solve()
+//   PDEngine::Solve()
 //     → integrator_->run()          ← L1: 求解算法
 //         → kernel_->computeForceState()  ← L2: 本类
 //             → mat->evaluate()     ← L3: 本构
 // ============================================================================
 
-#ifndef SRC_SOLVE_PD_KERNEL_H
-#define SRC_SOLVE_PD_KERNEL_H
+#ifndef PDCOMMON_KERNEL_PDKERNEL_H
+#define PDCOMMON_KERNEL_PDKERNEL_H
 
 #include "PDContext.h"
 #include <string>
 #include <vector>
 
-namespace Src::Solve {
+namespace PDCommon::Kernel {
 
 class PDKernel {
 public:
@@ -60,6 +60,6 @@ protected:
   PDKernel() = default; // 只允许子类构造
 };
 
-} // namespace Src::Solve
+} // namespace PDCommon::Kernel
 
-#endif // SRC_SOLVE_PD_KERNEL_H
+#endif // PDCOMMON_KERNEL_PDKERNEL_H

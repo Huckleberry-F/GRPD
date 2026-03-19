@@ -1,8 +1,10 @@
 // ============================================================================
-// PD_Output.cpp - PD 计算结果输出（从 SE_Output.cpp 迁移）
+// PDEngine.cpp - PD 求解引擎 (整合自 Initialize, Solve, Output)
 // ============================================================================
 
-#include "PDSolver.h"
+#include "PDEngine.h"
+#include "PDEngineInitializer.h"
+#include "EngineRegistry.h"
 #include "FieldManager.h"
 #include "Logger.h"
 #include "Outputer.h"
@@ -10,11 +12,50 @@
 #include <vector>
 #include <yaml-cpp/yaml.h>
 
-namespace Src::Solve {
+namespace Src::Engine::Solvers::PD {
 
-void PDSolver::Output() {
+PDEngine::PDEngine() { 
+  LOG_INFO("[PDEngine] PD Engine instance created."); 
+}
+
+void PDEngine::Initialize(const std::string &yamlPath) {
+  LOG_INFO("[PDEngine] Initializing PD simulation context...");
+  yamlPath_ = yamlPath;
+
+  PDEngineInitializer::InitModel(pdContext_, yamlPath_);
+  PDEngineInitializer::InitMaterial(pdContext_, yamlPath_);
+  PDEngineInitializer::InitFields(pdContext_, yamlPath_);
+  PDEngineInitializer::InitConditions(pdContext_, yamlPath_);
+  PDEngineInitializer::InitNeighbors(pdContext_, yamlPath_);
+  PDEngineInitializer::InitSolverComponents(yamlPath_, integrator_, kernel_, solverConfig_);
+
+  LOG_INFO("[PDEngine] PD simulation context initialized successfully.");
+}
+
+void PDEngine::Solve() {
+  LOG_INFO("[PDEngine] Starting PD Engine Solve Phase...");
+
+  if (!integrator_ || !kernel_) {
+    LOG_ERROR("[PDEngine] Solver components not initialized! "
+              "Call Initialize() before Solve().");
+    return;
+  }
+
+  auto outputCallback = [this](int step, double time) { this->Output(step, time); };
+
+  integrator_->run(pdContext_, *kernel_, solverConfig_, outputCallback);
+
+  LOG_INFO("[PDEngine] PD Engine Solve Phase Finished.");
+}
+
+void PDEngine::Output() {
+  Output(-1, 0.0);
+}
+
+void PDEngine::Output(int step, double physicalTime) {
   const auto &currentModel = pdContext_;
-  LOG_INFO("Starting data export process...");
+  LOG_INFO("Starting data export process step=" + std::to_string(step) + 
+           " t=" + std::to_string(physicalTime));
 
   std::string currentModelName = currentModel.getName();
   bool binaryRequested = false;
@@ -78,8 +119,15 @@ void PDSolver::Output() {
 
     std::string finalOutputName =
         customWriterName.empty() ? currentModelName : customWriterName;
-    std::string vtkOutputPath =
-        "../../Output/" + finalOutputName + "_output.vtk";
+        
+    std::string vtkOutputPath;
+    if (step >= 0) {
+      char timeBuffer[32];
+      snprintf(timeBuffer, sizeof(timeBuffer), "%.4f", physicalTime);
+      vtkOutputPath = "../../Output/" + finalOutputName + "_t" + std::string(timeBuffer) + ".vtk";
+    } else {
+      vtkOutputPath = "../../Output/" + finalOutputName + "_output.vtk";
+    }
     LOG_INFO("Exporting to VTK format: " + vtkOutputPath);
 
     const size_t numParticles = coordsField->size();
@@ -140,4 +188,8 @@ void PDSolver::Output() {
   }
 }
 
-} // namespace Src::Solve
+} // namespace Src::Engine::Solvers::PD
+
+REGISTER_ENGINE_TYPE(PD, []() {
+  return std::make_unique<Src::Engine::Solvers::PD::PDEngine>();
+});

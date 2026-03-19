@@ -27,4 +27,7 @@ target_include_directories(Engine_Obj PRIVATE
 )
 
 # 4. Link dependencies
-target_link_libraries(Engine_Obj PRIVATE PDCommon)
+target_link_libraries(Engine_Obj PRIVATE PDCommon Integration_Obj)
+
+# 5. Add specific solvers
+add_subdirectory(Solvers/PD)

@@ -21,7 +21,7 @@
 #include <cmath>
 #include <omp.h>
 
-namespace Src::Solve {
+namespace PDCommon::Kernel {
 
 using namespace PDCommon::Core;
 using namespace PDCommon::Model;
@@ -149,8 +149,7 @@ void NOSB_T::ComputeThermalState(PDContext &ctx) {
     return;
   }
 
-  // 清空当前步的增量
-  rateField->clearToZero();
+  // 清空当前步的增量(由 ExplicitEuler 负责清除，这里不能清除否则会覆盖由 BC 应用的热流源项)
 
   // 3. 提取所有高性能 SoA 裸指针
   auto *coordsField = fieldManager.getFieldAs<double>("Coords");
@@ -348,4 +347,4 @@ std::vector<PDKernel::IntegrationTarget> NOSB_T::getIntegrationTargets() const {
   return {{"Temperature", "TempRate", 1}};
 }
 
-} // namespace Src::Solve
+} // namespace PDCommon::Kernel

@@ -14,11 +14,11 @@
 #include <chrono>
 #include <omp.h>
 
-namespace Src::Solve {
+namespace Src::Integration {
 
 void ExplicitEuler::run(PDCommon::Core::PDContext &ctx, PDKernel &kernel,
                         const SolverConfig &config,
-                        std::function<void()> outputCallback) {
+                        std::function<void(int, double)> outputCallback) {
 
   const double dt = config.dt;
   const int totalSteps = static_cast<int>(config.totalTime / dt);
@@ -90,7 +90,7 @@ void ExplicitEuler::run(PDCommon::Core::PDContext &ctx, PDKernel &kernel,
 
       LOG_INFO("Starting data export process...");
       if (outputCallback)
-        outputCallback();
+        outputCallback(step, step * dt);
     }
     if (step == totalSteps)
       break;
@@ -134,4 +134,4 @@ void ExplicitEuler::run(PDCommon::Core::PDContext &ctx, PDKernel &kernel,
            std::to_string(pureComputeTime / totalSteps) + " s/step");
 }
 
-} // namespace Src::Solve
+} // namespace Src::Integration

@@ -17,10 +17,10 @@ Assembly:
 Parts:
   - PartID: 1
     MatID: 1
-    Dimension: 3
+    Dimension: 2
     Length: 100.0       # 100 mm
     Width: 100.0        # 100 mm
-    Thickness: 100.0      # 1 层粒子 (= dx)，2D 平面问题
+    Thickness: 1.0      # 1 层粒子 (= dx)，2D 平面问题
     dx: 1.0             # 粒子间距 5mm → 100x100x1 = 10000 粒子
     Offset: [0.0, 0.0, 0.0]
 
@@ -31,13 +31,13 @@ BoundaryConditions:
     Name: "Left_Fixed_Temp_500K"
     Box: [-999.0, 1.1, -999.0, 999.0, -999.0, 999.0]  # x < 5.1mm → 左端第一层
     Type: "T"
-    Value: 100.0
+    Value: 0.0
 
   - BcID: 2
-    Name: "Right_Insulated"
-    Box: [94.9, 999.0, -999.0, 999.0, -999.0, 999.0]  # 右端面绝热
+    Name: "Right_Flux"
+    Box: [98.9, 999.0, -999.0, 999.0, -999.0, 999.0]  # 右端面绝热
     Type: "FLUX"
-    Value: 0.0
+    Value: 100.0
 
 # 4. 材质物理属性 (钢，N-mm-tonne-s 单位)
 #    SI → N-mm-tonne 换算:

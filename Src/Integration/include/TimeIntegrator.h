@@ -19,10 +19,12 @@
 #include <functional>
 #include <string>
 
-namespace Src::Solve {
+namespace PDCommon::Kernel { class PDKernel; }
+
+namespace Src::Integration {
 
 // 前置声明
-class PDKernel;
+using PDCommon::Kernel::PDKernel;
 
 /// @brief 求解器配置参数（从 YAML 解析后传入）
 struct SolverConfig {
@@ -51,7 +53,7 @@ public:
   /// @param outputCallback 输出回调（由 PDSolver 提供）
   virtual void run(PDCommon::Core::PDContext &ctx, PDKernel &kernel,
                    const SolverConfig &config,
-                   std::function<void()> outputCallback) = 0;
+                   std::function<void(int, double)> outputCallback) = 0;
 
   /// @brief 获取算法名称（如 "ExplicitEuler", "ADR"）
   virtual std::string getName() const = 0;
@@ -60,6 +62,6 @@ protected:
   TimeIntegrator() = default; // 只允许子类构造
 };
 
-} // namespace Src::Solve
+} // namespace Src::Integration
 
 #endif // SRC_SOLVE_PD_TIME_INTEGRATOR_H

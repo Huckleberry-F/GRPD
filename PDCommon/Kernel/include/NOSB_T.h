@@ -1,5 +1,5 @@
-#ifndef SRC_SOLVE_PD_NOSB_T_H
-#define SRC_SOLVE_PD_NOSB_T_H
+#ifndef PDCOMMON_KERNEL_NOSB_T_H
+#define PDCOMMON_KERNEL_NOSB_T_H
 
 // ============================================================================
 // NOSB_T.h - 热传导非常规态基近场动力学 (Thermal NOSB-PD)
@@ -29,16 +29,9 @@
 #include "PDKernel.h"
 #include <Eigen/Dense>
 
-namespace Src::Solve {
+namespace PDCommon::Kernel {
 
 /// @brief 热传导非常规态基近场动力学 (Thermal NOSB-PD) 计算框架
-/// @details
-///   继承 PDKernel，作为 L2 的具体实现。
-///   核心计算流程（三步法）：
-///     Step 1: 为每个粒子计算形函数张量 K（非局部积分）
-///     Step 2: 利用 K 从非局部温差场构造温度梯度 ∇T（经典量重构）
-///     Step 3: 调用 ThermalMaterial::ComputeHeatFlux(∇T) 获取本构热流 q，
-///             再将 q 通过非局部散度积分转化为粒子热量变化率
 class NOSB_T : public PDKernel {
 public:
   NOSB_T() = default;
@@ -69,6 +62,6 @@ private:
   void ComputeThermalState(PDCommon::Core::PDContext &ctx);
 };
 
-} // namespace Src::Solve
+} // namespace PDCommon::Kernel
 
-#endif // SRC_SOLVE_PD_NOSB_T_H
+#endif // PDCOMMON_KERNEL_NOSB_T_H
