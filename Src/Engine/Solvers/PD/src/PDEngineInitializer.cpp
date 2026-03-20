@@ -13,13 +13,10 @@
 #include "FieldManager.h"
 #include "NeighborList.h"
 #include "ExplicitEuler.h"
-#include "NOSB_T.h"
+#include "KernelRegistry.h"
 #include "MaterialRegistry.h"
 #include "PhysicsFieldRegistry.h"
-#include <typeindex>
-#include <typeinfo>
 #include <memory>
-#include <type_traits>
 #include <cstdlib>
 #include <filesystem>
 #include <string>
@@ -211,16 +208,15 @@ void PDEngineInitializer::InitFields(PDCommon::Core::PDContext &ctx, const std::
   auto &registry = PDCommon::Field::PhysicsFieldRegistry::getInstance();
   bool anyMatch = false;
 
-  if (solverType.find("Thermal") != std::string::npos && registry.hasType("Thermal")) {
-    auto thermalFields = registry.create("Thermal");
-    thermalFields->registerFields(fieldManager);
-    anyMatch = true;
-  }
-
-  if (solverType.find("Mechanical") != std::string::npos && registry.hasType("Mechanical")) {
-    auto mechFields = registry.create("Mechanical");
-    mechFields->registerFields(fieldManager);
-    anyMatch = true;
+  for (const auto &registeredType : registry.getRegisteredTypes()) {
+    if (solverType.find(registeredType) != std::string::npos) {
+      auto fields = registry.create(registeredType);
+      if (fields) {
+        fields->registerFields(fieldManager);
+        anyMatch = true;
+        LOG_INFO("[InitFields] Auto-registered PhysicsFields module: " + registeredType);
+      }
+    }
   }
 
   if (!anyMatch) {
@@ -407,14 +403,23 @@ void PDEngineInitializer::InitSolverComponents(
     integrator = std::make_unique<Src::Integration::ExplicitEuler>(); // fallback
   }
 
-  // 创建 L2: PD 积分核心 (PDKernel)
+  // 创建 L2: PD 积分核心 (PDKernel) — 反射工厂，零 if-else
   std::string kernelKey = pdType + "_" + physics;
 
-  if (kernelKey == "NOSB_Thermal") {
-    kernel = std::make_unique<PDCommon::Kernel::NOSB_T>();
-  } else {
-    LOG_ERROR("[PDEngine] Unknown kernel type: '" + kernelKey + "'. Supported: NOSB_Thermal");
-    kernel = std::make_unique<PDCommon::Kernel::NOSB_T>(); // fallback
+  kernel = PDCommon::Kernel::KernelRegistry::getInstance().create(kernelKey);
+  if (!kernel) {
+    LOG_ERROR("[PDEngine] Unknown kernel type: '" + kernelKey +
+              "'. Registered types: ");
+    for (const auto &t :
+         PDCommon::Kernel::KernelRegistry::getInstance().getRegisteredTypes()) {
+      LOG_ERROR("  - " + t);
+    }
+    exit(EXIT_FAILURE);
+  }
+
+  // 多态配置：内核自己从 YAML 中提取属于自己家族的参数
+  if (config["Solver"]) {
+    kernel->configure(config["Solver"]);
   }
 
   LOG_INFO("[PDEngine] L1: " + integrator->getName() + ", L2: " + kernelKey + " - components ready.");

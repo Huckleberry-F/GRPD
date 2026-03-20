@@ -3,6 +3,8 @@
 # ==============================================================================
 
 add_library(Kernel_Obj OBJECT 
+    src/KernelRegistry.cpp
+    src/NOSB_Base.cpp
     src/NOSB_T.cpp
 )
 

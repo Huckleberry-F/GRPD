@@ -19,6 +19,7 @@
 #include "PDContext.h"
 #include <string>
 #include <vector>
+#include <yaml-cpp/yaml.h>
 
 namespace PDCommon::Kernel {
 
@@ -33,6 +34,10 @@ public:
   // -----------------------------------------------------------------------
   // 核心接口
   // -----------------------------------------------------------------------
+
+  /// @brief 从 YAML Solver 段读取本核心的配置参数
+  /// 默认空实现，各中间基类/子类按需重写
+  virtual void configure(const YAML::Node &solverNode) {}
 
   /// @brief 时间循环前的一次性预计算（如 NOSB 形函数张量）
   /// @param ctx PD 仿真上下文

@@ -7,6 +7,7 @@
 #include "BCRegistry.h"
 #include "EngineRegistry.h"
 #include "FieldRegistry.h"
+#include "KernelRegistry.h"
 #include "Logger.h"
 #include "MaterialRegistry.h"
 #include "PhysicsFieldRegistry.h"
@@ -72,6 +73,17 @@ void EngineManager::Initialize(const std::string &yamlPath) {
     matStr.erase(matStr.size() - 2);
   }
   LOG_INFO("  MaterialRegistry  : " + matStr);
+
+  auto kernelTypes =
+      PDCommon::Kernel::KernelRegistry::getInstance().getRegisteredTypes();
+  std::string kernelStr;
+  for (const auto &t : kernelTypes) {
+    kernelStr += t + ", ";
+  }
+  if (!kernelStr.empty()) {
+    kernelStr.erase(kernelStr.size() - 2);
+  }
+  LOG_INFO("  KernelRegistry    : " + kernelStr);
 
   auto solverTypes = EngineRegistry::getInstance().getRegisteredTypes();
   std::string solverStr;

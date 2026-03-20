@@ -26,13 +26,13 @@
 //   本构计算通过 ThermalMaterial 基类的虚函数多态调用。
 // ============================================================================
 
-#include "PDKernel.h"
+#include "NOSB_Base.h"
 #include <Eigen/Dense>
 
 namespace PDCommon::Kernel {
 
 /// @brief 热传导非常规态基近场动力学 (Thermal NOSB-PD) 计算框架
-class NOSB_T : public PDKernel {
+class NOSB_T : public NOSB_Base {
 public:
   NOSB_T() = default;
   ~NOSB_T() override = default;
@@ -54,9 +54,6 @@ private:
   // -----------------------------------------------------------------------
   // 内部实现方法
   // -----------------------------------------------------------------------
-
-  /// @brief 计算形状张量逆 K⁻¹ 并存入 "ShapeTensorInv" 场
-  void ComputeShapeTensors(PDCommon::Core::PDContext &ctx);
 
   /// @brief 执行 Thermal NOSB-PD 完整三步积分
   void ComputeThermalState(PDCommon::Core::PDContext &ctx);

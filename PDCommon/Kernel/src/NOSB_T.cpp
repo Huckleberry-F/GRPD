@@ -14,12 +14,18 @@
 
 #include "NOSB_T.h"
 #include "FieldManager.h"
+#include "KernelRegistry.h"
 #include "Logger.h"
 #include "NeighborList.h"
 #include "ParticleManager.h"
 #include "ThermalMaterial.h"
 #include <cmath>
 #include <omp.h>
+
+// ---------------------------------------------------------------------------
+// 编译期静态注册：将 NOSB_T 以 "NOSB_Thermal" 名称注入 KernelRegistry
+// ---------------------------------------------------------------------------
+REGISTER_KERNEL(NOSB_Thermal, PDCommon::Kernel::NOSB_T)
 
 namespace PDCommon::Kernel {
 
@@ -28,94 +34,6 @@ using namespace PDCommon::Model;
 using namespace PDCommon::Field;
 using namespace PDCommon::Material;
 using namespace Eigen;
-
-// ---------------------------------------------------------------------------
-// 预计算：形状张量的逆 K⁻¹，仅在时间循环外调用一次
-// ---------------------------------------------------------------------------
-void NOSB_T::ComputeShapeTensors(PDContext &ctx) {
-  auto &manager = ctx.getParticleManager();
-  auto &neighborList = ctx.getNeighborList();
-  auto &fieldManager = ctx.getFieldManager();
-
-  const size_t numParticles = manager.getTotalParticles();
-
-  // ===================================================================
-  // 集中注册 NOSB_T 算法框架所需的全部工作场（仅此一次）
-  // ===================================================================
-  auto *shapeInvField = fieldManager.registerField<double>("ShapeTensorInv", 9);
-  auto *tempGradField = fieldManager.registerField<double>("TempGradient", 3);
-  auto *heatFluxField = fieldManager.registerField<double>("HeatFluxVec", 3);
-
-  shapeInvField->resize(numParticles);
-  tempGradField->resize(numParticles);
-  heatFluxField->resize(numParticles);
-
-  shapeInvField->clearToZero();
-
-  // 提取高性能 SoA 裸指针
-  double *shapeInvPtr = shapeInvField->dataPtr();
-  auto *coordsField = fieldManager.getFieldAs<double>("Coords");
-  auto *volumeField = fieldManager.getFieldAs<double>("Volume");
-  if (!coordsField || !volumeField) {
-    LOG_ERROR(
-        "[NOSB_T] Critical: Coords or Volume field missing in FieldManager!");
-    return;
-  }
-  const double *coords = coordsField->dataPtr();
-  const double *volumes = volumeField->dataPtr();
-
-  LOG_INFO("[NOSB_T] Computing Shape Tensor Inverse (K^-1)...");
-
-// =======================================================================
-// [HPC 优势] OpenMP 静态调度，赋予每个线程连续的粒子内存块，提升缓存命中率
-// =======================================================================
-#pragma omp parallel for schedule(static)
-  for (int i = 0; i < static_cast<int>(numParticles); ++i) {
-    Vector3d xi(coords[i * 3], coords[i * 3 + 1], coords[i * 3 + 2]);
-    Matrix3d K = Matrix3d::Zero();
-
-    // 提取粒子 i 的 CSR 邻居表边界
-    const int numNeighbors = neighborList.getNeighborCount(i);
-    const int *neighbors = neighborList.getNeighborIds(i);
-    const double *bondLens = neighborList.getBondLengths(i);
-
-    // ===================================================================
-    // [HPC 优势] 纯局部邻居遍历，1D 数组顺序访问
-    // ===================================================================
-    for (int k = 0; k < numNeighbors; ++k) {
-      int j = neighbors[k];
-
-      // [HPC 优势] 遇到断键 (-1) 极速跳过
-      if (j == -1)
-        continue;
-
-      Vector3d xj(coords[j * 3], coords[j * 3 + 1], coords[j * 3 + 2]);
-      Vector3d deltaX = xj - xi;
-
-      // 影响函数 omega(xi) = 1.0 / |xi|，其中 |xi| 是初始键长
-      double omega = 1.0 / bondLens[k];
-      double vj = volumes[j];
-
-      // 积分累加：K_i += omega * (deltaX ⊗ deltaX) * Vj
-      K += omega * (deltaX * deltaX.transpose()) * vj;
-    }
-
-    // 正则化：防止 2D 粒子（z=0 平面）导致 K 矩阵奇异
-    // 对 3D 问题影响可忽略（1e-20 量级）
-    K += 1e-20 * Matrix3d::Identity();
-
-    // 求逆计算
-    // 备注：如果矩阵不可逆（例如表面孤立粒子或积分域过小），这里可加伪逆判断或惩罚，当前使用纯逆
-    Matrix3d K_inv = K.inverse();
-
-    // [HPC 优势] 使用 Eigen::Map 零拷贝直接覆写到底层 double[9] 连续内存中
-    Map<Matrix<double, 3, 3, RowMajor>> K_inv_map(&shapeInvPtr[i * 9]);
-    K_inv_map = K_inv;
-  }
-
-  LOG_INFO(
-      "[NOSB_T] All NOSB fields registered and Shape Tensor Inverse computed.");
-}
 
 // ---------------------------------------------------------------------------
 // 核心三步：Thermal NOSB 态基积分算法（每个时间步调用）
@@ -149,7 +67,8 @@ void NOSB_T::ComputeThermalState(PDContext &ctx) {
     return;
   }
 
-  // 清空当前步的增量(由 ExplicitEuler 负责清除，这里不能清除否则会覆盖由 BC 应用的热流源项)
+  // 清空当前步的增量(由 ExplicitEuler 负责清除，这里不能清除否则会覆盖由 BC
+  // 应用的热流源项)
 
   // 3. 提取所有高性能 SoA 裸指针
   auto *coordsField = fieldManager.getFieldAs<double>("Coords");
@@ -169,20 +88,29 @@ void NOSB_T::ComputeThermalState(PDContext &ctx) {
   double *fluxPtr = heatFluxField->dataPtr();
   double *ratePtr = rateField->dataPtr();
 
+  // 获取预计算的影响函数权重 BondField
+  const double *omegaPtr = neighborList.getBondFieldPtr("InfluenceWeight");
+
+  // 获取预计算的加权体积和邻域半径
+  auto *weightedVolField = fieldManager.getFieldAs<double>("WeightedVolume");
+  const double *mmPtr = weightedVolField->dataPtr();
+  const double horizon = neighborList.getHorizon();
+
   // 用于访问每颗粒子的绑定的具体 ThermalMaterial
   const auto &particles = manager.getAllParticles();
 
   // ===================================================================
   // [HPC 优化] 预提取材料属性到连续数组，消灭热循环中的 dynamic_cast
   // ===================================================================
-  std::vector<double> rhoArr(numParticles), cpArr(numParticles), kArr(numParticles);
+  std::vector<double> rhoArr(numParticles), cpArr(numParticles),
+      kArr(numParticles);
   for (size_t i = 0; i < numParticles; ++i) {
-      auto* mat = dynamic_cast<ThermalMaterial*>(particles[i].getMaterial());
-      if (mat) {
-          rhoArr[i] = mat->getDensity();
-          cpArr[i]  = mat->getHeatCapacity();
-          kArr[i]   = mat->getConductivity();
-      }
+    auto *mat = dynamic_cast<ThermalMaterial *>(particles[i].getMaterial());
+    if (mat) {
+      rhoArr[i] = mat->getDensity();
+      cpArr[i] = mat->getHeatCapacity();
+      kArr[i] = mat->getConductivity();
+    }
   }
 
 // =======================================================================
@@ -201,7 +129,7 @@ void NOSB_T::ComputeThermalState(PDContext &ctx) {
 
     const int numNeighbors = neighborList.getNeighborCount(i);
     const int *neighbors = neighborList.getNeighborIds(i);
-    const double *bondLens = neighborList.getBondLengths(i);
+    const int offset = neighbors - neighborList.getNeighborIds(0);
 
     for (int k = 0; k < numNeighbors; ++k) {
       int j = neighbors[k];
@@ -211,9 +139,9 @@ void NOSB_T::ComputeThermalState(PDContext &ctx) {
       double dx = coords[j * 3] - xi_x;
       double dy = coords[j * 3 + 1] - xi_y;
       double dz = coords[j * 3 + 2] - xi_z;
-      
+
       double deltaT = tempPtr[j] - ti;
-      double omega = 1.0 / bondLens[k];
+      double omega = omegaPtr[offset + k];
       double vj = volumes[j];
 
       double factor = omega * deltaT * vj;
@@ -224,9 +152,12 @@ void NOSB_T::ComputeThermalState(PDContext &ctx) {
 
     // 从 ShapeInv 数组中提取 3x3 矩阵并展平计算
     int idx9 = i * 9;
-    double k00 = shapeInvPtr[idx9],     k01 = shapeInvPtr[idx9 + 1], k02 = shapeInvPtr[idx9 + 2];
-    double k10 = shapeInvPtr[idx9 + 3], k11 = shapeInvPtr[idx9 + 4], k12 = shapeInvPtr[idx9 + 5];
-    double k20 = shapeInvPtr[idx9 + 6], k21 = shapeInvPtr[idx9 + 7], k22 = shapeInvPtr[idx9 + 8];
+    double k00 = shapeInvPtr[idx9], k01 = shapeInvPtr[idx9 + 1],
+           k02 = shapeInvPtr[idx9 + 2];
+    double k10 = shapeInvPtr[idx9 + 3], k11 = shapeInvPtr[idx9 + 4],
+           k12 = shapeInvPtr[idx9 + 5];
+    double k20 = shapeInvPtr[idx9 + 6], k21 = shapeInvPtr[idx9 + 7],
+           k22 = shapeInvPtr[idx9 + 8];
 
     // 计算梯度 (K^-1 * sum)
     double grad_x = k00 * sum_x + k01 * sum_y + k02 * sum_z;
@@ -239,7 +170,7 @@ void NOSB_T::ComputeThermalState(PDContext &ctx) {
 
     // --- 紧接着执行类似 Step 2 的操作 ---
     double k_i = kArr[i];
-    fluxPtr[i * 3]     = -k_i * grad_x;
+    fluxPtr[i * 3] = -k_i * grad_x;
     fluxPtr[i * 3 + 1] = -k_i * grad_y;
     fluxPtr[i * 3 + 2] = -k_i * grad_z;
   }
@@ -252,10 +183,12 @@ void NOSB_T::ComputeThermalState(PDContext &ctx) {
     double rho = rhoArr[i];
     double cp = cpArr[i];
     double k = kArr[i];
-    if (rho <= 0.0 || cp <= 0.0) continue;
+    if (rho <= 0.0 || cp <= 0.0)
+      continue;
     double thermal_coeff = 1.0 / (rho * cp);
 
-    double G0 = 0.1 * k;
+    double G0 = zeroEnergyG0_ * k; // Silling 方法中 G = G0 * k
+    double mm_i = mmPtr[i];
 
     double xi_x = coords[i * 3];
     double xi_y = coords[i * 3 + 1];
@@ -271,9 +204,12 @@ void NOSB_T::ComputeThermalState(PDContext &ctx) {
     double qi_z = fluxPtr[i * 3 + 2];
 
     int idx9_i = i * 9;
-    double i_k00 = shapeInvPtr[idx9_i],     i_k01 = shapeInvPtr[idx9_i + 1], i_k02 = shapeInvPtr[idx9_i + 2];
-    double i_k10 = shapeInvPtr[idx9_i + 3], i_k11 = shapeInvPtr[idx9_i + 4], i_k12 = shapeInvPtr[idx9_i + 5];
-    double i_k20 = shapeInvPtr[idx9_i + 6], i_k21 = shapeInvPtr[idx9_i + 7], i_k22 = shapeInvPtr[idx9_i + 8];
+    double i_k00 = shapeInvPtr[idx9_i], i_k01 = shapeInvPtr[idx9_i + 1],
+           i_k02 = shapeInvPtr[idx9_i + 2];
+    double i_k10 = shapeInvPtr[idx9_i + 3], i_k11 = shapeInvPtr[idx9_i + 4],
+           i_k12 = shapeInvPtr[idx9_i + 5];
+    double i_k20 = shapeInvPtr[idx9_i + 6], i_k21 = shapeInvPtr[idx9_i + 7],
+           i_k22 = shapeInvPtr[idx9_i + 8];
 
     // KQ_i = K_i^-1 * q_i
     double KQi_x = i_k00 * qi_x + i_k01 * qi_y + i_k02 * qi_z;
@@ -286,6 +222,7 @@ void NOSB_T::ComputeThermalState(PDContext &ctx) {
     const int numNeighbors = neighborList.getNeighborCount(i);
     const int *neighbors = neighborList.getNeighborIds(i);
     const double *bondLens = neighborList.getBondLengths(i);
+    const int offset = neighbors - neighborList.getNeighborIds(0);
 
     for (int k_nb = 0; k_nb < numNeighbors; ++k_nb) {
       int j = neighbors[k_nb];
@@ -295,8 +232,8 @@ void NOSB_T::ComputeThermalState(PDContext &ctx) {
       double dx = coords[j * 3] - xi_x;
       double dy = coords[j * 3 + 1] - xi_y;
       double dz = coords[j * 3 + 2] - xi_z;
-      
-      double omega = 1.0 / bondLens[k_nb];
+
+      double omega = omegaPtr[offset + k_nb];
       double vj = volumes[j];
 
       // --- NOSB 散度积分 ---
@@ -305,9 +242,12 @@ void NOSB_T::ComputeThermalState(PDContext &ctx) {
       double qj_z = fluxPtr[j * 3 + 2];
 
       int idx9_j = j * 9;
-      double j_k00 = shapeInvPtr[idx9_j],     j_k01 = shapeInvPtr[idx9_j + 1], j_k02 = shapeInvPtr[idx9_j + 2];
-      double j_k10 = shapeInvPtr[idx9_j + 3], j_k11 = shapeInvPtr[idx9_j + 4], j_k12 = shapeInvPtr[idx9_j + 5];
-      double j_k20 = shapeInvPtr[idx9_j + 6], j_k21 = shapeInvPtr[idx9_j + 7], j_k22 = shapeInvPtr[idx9_j + 8];
+      double j_k00 = shapeInvPtr[idx9_j], j_k01 = shapeInvPtr[idx9_j + 1],
+             j_k02 = shapeInvPtr[idx9_j + 2];
+      double j_k10 = shapeInvPtr[idx9_j + 3], j_k11 = shapeInvPtr[idx9_j + 4],
+             j_k12 = shapeInvPtr[idx9_j + 5];
+      double j_k20 = shapeInvPtr[idx9_j + 6], j_k21 = shapeInvPtr[idx9_j + 7],
+             j_k22 = shapeInvPtr[idx9_j + 8];
 
       // KQ_j = K_j^-1 * q_j
       double KQj_x = j_k00 * qj_x + j_k01 * qj_y + j_k02 * qj_z;
@@ -315,19 +255,30 @@ void NOSB_T::ComputeThermalState(PDContext &ctx) {
       double KQj_z = j_k20 * qj_x + j_k21 * qj_y + j_k22 * qj_z;
 
       // dot product
-      double dot_val = (KQi_x + KQj_x) * dx + (KQi_y + KQj_y) * dy + (KQi_z + KQj_z) * dz;
+      double dot_val =
+          (KQi_x + KQj_x) * dx + (KQi_y + KQj_y) * dy + (KQi_z + KQj_z) * dz;
       rate_sum_nosb += omega * dot_val * vj;
 
       // --- 零能模式修正 ---
+      double grad_xj = gradPtr[j * 3];
+      double grad_yj = gradPtr[j * 3 + 1];
+      double grad_zj = gradPtr[j * 3 + 2];
       double deltaT_actual = tempPtr[j] - ti;
-      double deltaT_predicted = grad_x * dx + grad_y * dy + grad_z * dz;
-      double deltaT_res = deltaT_actual - deltaT_predicted;
-      double dist2 = dx * dx + dy * dy + dz * dz;
+      double deltaT_predicted_plus = grad_x * dx + grad_y * dy + grad_z * dz;
+      double deltaT_predicted_minus =
+          grad_xj * dx + grad_yj * dy + grad_zj * dz;
+      double deltaT_res_plus = deltaT_actual - deltaT_predicted_plus;
+      double deltaT_res_minus = deltaT_actual - deltaT_predicted_minus;
 
-      rate_sum_ze += omega * (deltaT_res / dist2) * vj;
+      rate_sum_ze += ComputeZeroEnergyModePenalty(
+          omega, deltaT_res_plus, bondLens[k_nb], vj, G0, mm_i, horizon);
+      rate_sum_ze += ComputeZeroEnergyModePenalty(
+          omega, deltaT_res_minus, bondLens[k_nb], vj, G0, mm_i, horizon);
     }
 
-    ratePtr[i] += thermal_coeff * (-rate_sum_nosb + G0 * rate_sum_ze);
+    double external_Q = ratePtr[i]; // 取出当前累加在里面的外部边界体积热源
+                                    // (Boundary condition source Q_v)
+    ratePtr[i] = thermal_coeff * (external_Q - rate_sum_nosb + rate_sum_ze);
   }
 }
 
@@ -336,7 +287,19 @@ void NOSB_T::ComputeThermalState(PDContext &ctx) {
 // ---------------------------------------------------------------------------
 
 void NOSB_T::preCompute(PDCommon::Core::PDContext &ctx) {
+  // 1. 获取通用形状张量
   ComputeShapeTensors(ctx);
+
+  // 2. 注册热传导特有的本地状态场
+  auto &fieldManager = ctx.getFieldManager();
+  auto &manager = ctx.getParticleManager();
+  const size_t numParticles = manager.getTotalParticles();
+
+  auto *tempGradField = fieldManager.registerField<double>("TempGradient", 3);
+  auto *heatFluxField = fieldManager.registerField<double>("HeatFluxVec", 3);
+
+  tempGradField->resize(numParticles);
+  heatFluxField->resize(numParticles);
 }
 
 void NOSB_T::computeForceState(PDCommon::Core::PDContext &ctx) {

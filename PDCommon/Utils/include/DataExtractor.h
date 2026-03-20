@@ -1,6 +1,14 @@
 #ifndef PDCOMMON_UTILS_DATAEXTRACTOR_H
 #define PDCOMMON_UTILS_DATAEXTRACTOR_H
 
+// ==========================================================================
+// [遗留模块 - 可删除]
+// 本模块已被 FieldManager + TypedField 体系完全替代。
+// 所有物理场数据现在通过 FieldManager 统一管理，不再需要从 Particle 结构体中
+// 逐字段提取裸指针。当前仅 ParticleManager.cpp 残留引用，但其对外 getter
+// (getCoordsPtr 等) 已无任何外部调用者。待确认后可安全移除本文件。
+// ==========================================================================
+
 #include <array>
 #include <vector>
 
