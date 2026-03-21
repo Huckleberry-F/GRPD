@@ -153,3 +153,159 @@ cmake --build . --config Release
 - **多种零能模式修正式**: 在 `NOSB_Base` 框架中正式引入 Silling, Wan, Zhang 等多种零能纠正策略，由 YAML 枚举项动态指定，且使用加权体积进行精准修正。
 - **性能修复**: 回退可能阻断 OMP 与 SIMD 分支预测的多态影响函数计算，将其压入内联函数体系中完美保证底层循环纯净。
 - **废除冗余架构**: 由于 `FieldManager` 的完美接管，旧版用于分离 Particle 数据的 `DataExtractor` 获取方式已废弃，真正达成数据彻底解耦！
+
+---
+
+## 📋 模块完整性与路线图
+
+### 全局架构总览
+
+```mermaid
+graph TB
+    %% ═══════════ 顶层入口与调度 ═══════════
+    subgraph EntryLayer["🚀 入口与调度层"]
+        main["main.cpp"] --> EM["EngineManager"]
+        EM -->|"EngineRegistry<br/>工厂创建"| PDE["PDEngine"]
+    end
+
+    %% ═══════════ 初始化流程 ═══════════
+    subgraph InitLayer["🔧 初始化 (PDEngineInitializer)"]
+        direction LR
+        I1["InitModel"] --> I2["InitMaterial"]
+        I2 --> I3["InitFields"]
+        I3 --> I4["InitConditions"]
+        I4 --> I5["InitNeighbors"]
+        I5 --> I6["InitSolverComponents"]
+    end
+
+    PDE -->|"Initialize()"| InitLayer
+
+    %% ═══════════ 数据容器 PDContext ═══════════
+    subgraph PDCtx["📦 PDContext (仿真数据容器)"]
+        PM["ParticleManager<br/>粒子几何数据"]
+        FM["FieldManager<br/>物理场存储 (SoA)"]
+        MM["MaterialManager<br/>材料实例"]
+        BCM["BCManager<br/>边界条件"]
+        NL["NeighborList<br/>CSR 邻域表 + BondField"]
+    end
+
+    InitLayer -.->|"填充"| PDCtx
+
+    %% ═══════════ 求解三层 ═══════════
+    subgraph SolveLayer["⚡ 求解循环 (Solve)"]
+        L1["L1: TimeIntegrator<br/>(ExplicitEuler)"]
+        L2["L2: PDKernel<br/>(NOSB_T)"]
+        L3["L3: Material<br/>(FourierThermalMat)"]
+        L1 -->|"每步调用<br/>computeForceState()"| L2
+        L2 -->|"本构求解<br/>evaluate()"| L3
+    end
+
+    PDE -->|"Solve()"| L1
+
+    %% ═══════════ 求解层 ↔ 数据层 交互 ═══════════
+    L1 <-->|"读写主场/变化率场<br/>施加边界条件"| FM
+    L1 <-->|"applySources()<br/>applyConstraints()"| BCM
+    L2 <-->|"读写温度/梯度/热流场"| FM
+    L2 <-->|"遍历邻域"| NL
+    L2 -->|"获取粒子材料指针"| PM
+    L3 -->|"提供物理属性<br/>(ρ, k, cp)"| L2
+
+    %% ═══════════ 输出 ═══════════
+    subgraph OutputLayer["📤 后处理"]
+        OUT["Outputer (VTK)"]
+    end
+    PDE -->|"Output()"| OUT
+    OUT <-->|"读取场数据"| FM
+
+    %% ═══════════ 注册表体系 ═══════════
+    subgraph Registries["🏭 编译期注册表"]
+        direction LR
+        ER["EngineRegistry"]
+        KR["KernelRegistry"]
+        MR["MaterialRegistry"]
+        BR["BCRegistry"]
+        FR["FieldRegistry"]
+        PFR["PhysicsFieldRegistry"]
+    end
+
+    Registries -.->|"工厂创建"| SolveLayer
+    Registries -.->|"工厂创建"| PDCtx
+
+    %% ═══════════ 样式 ═══════════
+    style L1 fill:#4CAF50,color:#fff
+    style L2 fill:#2196F3,color:#fff
+    style L3 fill:#FF9800,color:#fff
+    style PDCtx fill:#f5f5f5,stroke:#333
+    style SolveLayer fill:#e8f5e9,stroke:#4CAF50
+    style InitLayer fill:#fff3e0,stroke:#FF9800
+    style Registries fill:#e3f2fd,stroke:#2196F3
+```
+
+**说明**：程序并非只有「三层」，**三层多态 (L1/L2/L3)** 是指求解循环内部的调用链。完整架构还包括：
+
+- **入口调度层**：`EngineManager` 通过 `EngineRegistry` 工厂创建具体引擎（如 `PDEngine`）
+- **初始化层**：`PDEngineInitializer` 按 6 步依次建模、分配材料、注册场、加载边界条件、构建邻域、创建求解组件
+- **数据容器层**：`PDContext` 统一持有 `ParticleManager`、`FieldManager`、`MaterialManager`、`BCManager`、`NeighborList`
+- **求解循环层**：L1 时间积分器驱动 L2 PD 核心积分，L2 调用 L3 本构计算；同时 L1/L2 分别与 `FieldManager`、`BCManager`、`NeighborList` 交互
+- **注册表体系**：所有核心模块均通过编译期静态注册实现零耦合扩展
+
+### 各层已有实现 vs 缺失模块
+
+#### L1 — 时间积分器 (`Src/Integration/`)
+
+| 模块 | 状态 | 说明 |
+|------|------|------|
+| `TimeIntegrator` (基类) | ✅ 已完成 | 抽象接口，定义 `run()` |
+| `ExplicitEuler` | ✅ 已完成 | 显式前向 Euler，支持多场积分目标 |
+| `ADR` (自适应动态松弛) | ❌ 缺失 | 静态/准静态力学求解必需 |
+| `Velocity-Verlet` | ❌ 缺失 | 显式动力学（力学二阶 ODE）常用 |
+
+#### L2 — PD 积分核心 (`PDCommon/Kernel/`)
+
+| 模块 | 注册键 | 状态 | 说明 |
+|------|--------|------|------|
+| `PDKernel` (基类) | — | ✅ 已完成 | 纯虚接口 |
+| `NOSB_Base` (中间基类) | — | ✅ 已完成 | 形状张量 K⁻¹、影响函数、零能修正 |
+| `NOSB_T` (热传导) | `NOSB_Thermal` | ✅ 已完成 | 非局部温度梯度 + 散度积分 |
+| `NOSB_M` (力学) | `NOSB_Mechanical` | ❌ 缺失 | 变形梯度 F → 应力 → 力散度 |
+| `BB_Elastic` | `BB_Elastic` | ❌ 缺失 | 键基弹性力学 |
+| `BB_Thermal` | `BB_Thermal` | ❌ 缺失 | 键基热传导 |
+
+#### L3 — 材料本构 (`PDCommon/Material/`)
+
+| 模块 | 状态 | 说明 |
+|------|------|------|
+| `Material` (基类) | ✅ 已完成 | 抽象接口 |
+| `ThermalMaterial` → `FourierThermalMat` | ✅ 已完成 | 各向同性傅里叶导热 |
+| `MechanicalMaterial` (力学中间基类) | ❌ 缺失 | 应提供 `computeStress(F)` 接口 |
+| `LinearElastic` | ❌ 缺失 | 各向同性线弹本构 |
+| `J2Plasticity` | ❌ 缺失 | J2 弹塑性本构 |
+
+#### 支撑模块
+
+| 模块 | 状态 |
+|------|------|
+| `FieldManager` / `FieldRegistry` / `PhysicsFieldRegistry` | ✅ 已完成 |
+| `BCManager` / `BCRegistry` | ✅ 已完成 |
+| `NeighborList` (CSR 格式 + BondField) | ✅ 已完成 |
+| `ParticleManager` / `PDContext` | ✅ 已完成 |
+| `MaterialManager` / `MaterialRegistry` | ✅ 已完成 |
+| `KernelRegistry` / `EngineRegistry` | ✅ 已完成 |
+| `IO` (GrpdReader / Outputer) | ✅ 已完成 |
+
+### 开发路线图 (按优先级)
+
+| 优先级 | 模块 | 所在层 | 理由 |
+|--------|------|--------|------|
+| 🔴 P0 | `NOSB_Mechanical` (NOSB 力学核) | L2 Kernel | 项目最核心需求——力学求解 |
+| 🔴 P0 | `MechanicalMaterial` + `LinearElastic` | L3 Material | 力学核心的本构依赖 |
+| 🟡 P1 | `MechanicalPhysicsFields` | PhysicsFields | 力学场自动注册 (Displacement, Velocity, Force) |
+| 🟡 P1 | `Velocity-Verlet` 积分器 | L1 Integration | 力学二阶 ODE 必需 |
+| 🟡 P1 | 力学边界条件 (`DisplacementBC`, `ForceBC`) | BC | 位移约束与外力 |
+| 🟢 P2 | `ADR` 准静态积分器 | L1 Integration | 静态力学问题 |
+| 🟢 P2 | `BB_Elastic` / `BB_Thermal` 键基核 | L2 Kernel | 键基理论实现 |
+| 🟢 P2 | `J2Plasticity` 弹塑性本构 | L3 Material | 非线性材料行为 |
+| ⚪ P3 | 热力耦合 (`ThermoMechanical`) | L2 + L3 | 多物理场耦合 |
+| ⚪ P3 | 断裂判据 + 裂纹扩展 | Kernel 内部 | PD 特色破坏力学功能 |
+
+> **当前状态**: 热传导求解链路已完整闭环 (`ExplicitEuler → NOSB_T → FourierThermalMat`)，下一步最关键的工作是补全力学求解链路。
