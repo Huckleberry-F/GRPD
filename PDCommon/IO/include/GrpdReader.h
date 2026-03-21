@@ -12,7 +12,7 @@
 #include <string>
 #include <vector>
 
-// 鍓嶅悜澹版槑锛岄伩鍏嶅惊鐜ご鏂囦欢渚濊禆
+// 前向声明，避免循环头文件依赖
 namespace PDCommon::Model {
 class ParticleManager;
 class ThermalField;
@@ -31,61 +31,61 @@ namespace PDCommon::IO {
 class GrpdReader {
 public:
   // -----------------------------------------------------------------------
-  // 璇诲彇 .grpd 鏂囦欢鐨?*PARTICLE 娈碉紝濉厖绮掑瓙鍑犱綍鏁版嵁
-  // @param filepath  .grpd 鏂囦欢璺緞
-  // @param manager   鐩爣绮掑瓙绠＄悊鍣紙寮曠敤浼犲叆锛?
-  // @return true=鎴愬姛, false=澶辫触
+  // 读取 .grpd 文件的 *PARTICLE 段，填充粒子几何数据
+  // @param filepath  .grpd 文件路径
+  // @param manager   目标粒子管理器（引用传入）
+  // @return true=成功, false=失败
   // -----------------------------------------------------------------------
   static bool read(const std::string &filepath,
                    PDCommon::Model::ParticleManager &manager);
 
-  /// @brief 娉ㄥ唽绮掑瓙鍑犱綍涓庢爣璇嗗瓧娈靛埌 FieldManager
+  /// @brief 注册粒子几何与标识字段到 FieldManager
   static void ensureParticleFields(PDCommon::Field::FieldManager &fm);
 
-  /// @brief 灏?ParticleManager 涓殑绮掑瓙鍑犱綍涓庢爣璇嗘暟鎹洖濉埌 FieldManager
+  /// @brief 将 ParticleManager 中的粒子几何与标识数据回填到 FieldManager
   static bool populateParticleFields(const PDCommon::Model::ParticleManager &pm,
                                      PDCommon::Field::FieldManager &fm);
 
   // -----------------------------------------------------------------------
-  // 璇诲彇 .grpd 鏂囦欢鐨?*LOAD 娈碉紝灏嗘俯搴﹀瀷杞借嵎鏂藉姞鍒?ThermalField
-  // @param filepath   .grpd 鏂囦欢璺緞
-  // @param simulater  浠跨湡澶х瀹讹紙鐢ㄤ簬鑾峰彇 BCManager 鍜?ThermalField锛?
-  // @return true=鎴愬姛, false=澶辫触
+  // 读取 .grpd 文件的 *LOAD 段，将温度型载荷施加到 ThermalField
+  // @param filepath   .grpd 文件路径
+  // @param simulater  仿真大管家（用于获取 BCManager 和 ThermalField）
+  // @return true=成功, false=失败
   // -----------------------------------------------------------------------
   static bool readLoads(const std::string &filepath,
                         PDCommon::Core::PDContext &simulater);
 
 private:
-  /// 鍐呴儴瑙ｆ瀽鐘舵€佹灇涓?
+  /// 内部解析状态枚举
   enum class ParseState {
-    IDLE,              // 鍒濆鐘舵€侊紝绛夊緟娈垫爣璁?
-    READING_PARTICLES, // 姝ｅ湪璇诲彇 *PARTICLE 娈?
-    READING_LOADS      // 姝ｅ湪璇诲彇 *LOAD 娈?
+    IDLE,              // 初始状态，等待段标记
+    READING_PARTICLES, // 正在读取 *PARTICLE 段
+    READING_LOADS      // 正在读取 *LOAD 段
   };
 
   // -----------------------------------------------------------------------
-  // 琛屽洖璋冨嚱鏁扮鍚嶏細(褰撳墠鐘舵€? 宸插垎鍓茬殑瀛楁鍒楄〃, 琛屽彿)
-  // 杩斿洖 true 琛ㄧず缁х画鎵弿锛宖alse 琛ㄧず缁堟
+  // 行回调函数签名：(当前状态, 已分割的字段列表, 行号)
+  // 返回 true 表示继续扫描，false 表示终止
   // -----------------------------------------------------------------------
   using LineCallback = std::function<bool(ParseState state,
                                           const std::vector<std::string> &tokens,
                                           int lineNumber)>;
 
   // -----------------------------------------------------------------------
-  // 閫氱敤鏂囦欢鎵弿鍣細灏佽鏂囦欢鎵撳紑銆侀€愯璇诲彇銆佺姸鎬佹満鍒囨崲
-  // @param filepath    .grpd 鏂囦欢璺緞
-  // @param callback    姣忛亣鍒版湁鏁堟暟鎹鏃惰皟鐢ㄧ殑鍥炶皟
-  // @param logPrefix   鏃ュ織鍓嶇紑鏍囪瘑锛堢敤浜庡尯鍒嗚皟鐢ㄦ潵婧愶級
-  // @return true=鎴愬姛, false=鏂囦欢鎵撳紑澶辫触
+  // 通用文件扫描器：封装文件打开、逐行读取、状态机切换
+  // @param filepath    .grpd 文件路径
+  // @param callback    每遇到有效数据行时调用的回调
+  // @param logPrefix   日志前缀标识（用于区分调用来源）
+  // @return true=成功, false=文件打开失败
   // -----------------------------------------------------------------------
   static bool scanFile(const std::string &filepath,
                        LineCallback callback,
                        const std::string &logPrefix);
 
-  /// 灏嗛€楀彿鍒嗛殧鐨勪竴琛屾枃鏈垎鍓蹭负淇壀鍚庣殑瀛楁鏁扮粍
+  /// 将逗号分隔的一行文本分割为修剪后的字段数组
   static std::vector<std::string> tokenizeCsv(const std::string &line);
 
-  /// 鍘婚櫎瀛楃涓查灏剧┖鐧藉瓧绗?
+  /// 去除字符串首尾空白字符
   static std::string trim(const std::string &s);
 };
 

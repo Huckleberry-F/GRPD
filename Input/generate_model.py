@@ -11,6 +11,10 @@ def in_box(x, y, z, box):
            (y >= ymin) & (y <= ymax) & \
            (z >= zmin) & (z <= zmax)
 
+def _check_chunk_worker(mesh, i, chunk_points):
+    """Worker function for parallel ray intersections."""
+    return i, mesh.contains(chunk_points)
+
 def generate_from_yaml(yaml_path):
     print("==================================================")
     print("[START] GRPD Multi-Part Assembly Pre-Processor...")
@@ -35,30 +39,157 @@ def generate_from_yaml(yaml_path):
     for part in parts:
         part_id = part['PartID']
         mat_id = part.get('MatID', 1)  # 默认无 MatID 则给 1
-        dim = part['Dimension']
         dx = part['dx']
         offset = part.get('Offset', [0.0, 0.0, 0.0]) # 默认无平移
         
         print(f"[BUILD] Generating Part {part_id} with MatID {mat_id}...")
         
-        x_coords = np.arange(dx / 2, part['Length'], dx)
-        y_coords = np.arange(dx / 2, part['Width'],  dx)
-        
-        if dim == 2:
-            X, Y = np.meshgrid(x_coords, y_coords, indexing='ij')
-            x_flat, y_flat = X.ravel(), Y.ravel()
-            z_flat = np.zeros_like(x_flat)
-            volume = dx * dx * part['Thickness']
+        if 'Source' in part:
+            # ============================================================
+            # STL/OBJ 体素化路径：从外部网格文件导入复杂几何
+            # ============================================================
+            try:
+                import trimesh
+            except ImportError:
+                print("[FATAL] 'trimesh' package is required for STL import.")
+                print("        Install it with: pip install trimesh")
+                exit(1)
+            
+            source_path = part['Source']
+            # 支持相对于 YAML 文件的相对路径
+            if not os.path.isabs(source_path):
+                yaml_dir = os.path.dirname(os.path.abspath(yaml_path))
+                source_path = os.path.join(yaml_dir, source_path)
+            
+            print(f"[STL]  Loading mesh from: {source_path}")
+            mesh = trimesh.load(source_path)
+            
+            if not mesh.is_watertight:
+                print("[WARNING] Mesh is NOT watertight! Results may be inaccurate.")
+                print("          Please check your STL file for holes or gaps.")
+            
+            # 缩放支持 (可选)
+            scale = part.get('Scale', 1.0)
+            if scale != 1.0:
+                mesh.apply_scale(scale)
+                print(f"[STL]  Applied scale factor: {scale}")
+            
+            # 在包围盒内生成均匀网格点
+            bbox_min, bbox_max = mesh.bounds[0], mesh.bounds[1]
+            print(f"[STL]  Bounding box: ({bbox_min[0]:.2f}, {bbox_min[1]:.2f}, {bbox_min[2]:.2f})"
+                  f" -> ({bbox_max[0]:.2f}, {bbox_max[1]:.2f}, {bbox_max[2]:.2f})")
+            
+            dim = part.get('Dimension', 3)
+            
+            x_coords = np.arange(bbox_min[0] + dx/2, bbox_max[0], dx)
+            y_coords = np.arange(bbox_min[1] + dx/2, bbox_max[1], dx)
+            
+            # 先构建 2D XY 平面网格，避免 3D 网格导致内存爆炸 (O(N^3) -> O(N^2))
+            X_2d, Y_2d = np.meshgrid(x_coords, y_coords, indexing='ij')
+            x_flat_2d = X_2d.ravel()
+            y_flat_2d = Y_2d.ravel()
+            pts_per_slice = len(x_flat_2d)
+            
+            if dim == 2:
+                z_coords = np.array([(bbox_min[2] + bbox_max[2]) / 2.0])
+                thickness = part.get('Thickness', bbox_max[2] - bbox_min[2])
+                volume = dx * dx * thickness
+            else:
+                z_coords = np.arange(bbox_min[2] + dx/2, bbox_max[2], dx)
+                volume = dx * dx * dx
+                
+            total_slices = len(z_coords)
+            total_candidates = total_slices * pts_per_slice
+            print(f"[STL]  Total candidate points in bounding box: {total_candidates} ({total_slices} Z-slices)")
+            
+            # 使用分批生成点来做射线碰撞检测，极其节省内存！
+            import time
+            from concurrent.futures import ProcessPoolExecutor, as_completed
+            
+            start_time = time.time()
+            valid_x, valid_y, valid_z = [], [], []
+            
+            # 准备待处理的 Z 层数据列表，按小 block 打包发送给子进程
+            # 避免一次性给子进程喂太多 Z 层导致 pickle 内存依然很高
+            slice_blocks = []
+            block_size = max(1, 200000 // max(1, pts_per_slice)) # 每个 block 约 20 万个候选点
+            
+            for i in range(0, total_slices, block_size):
+                end_i = min(i + block_size, total_slices)
+                # 为该 block 生成所有 3D 点
+                block_pts = []
+                for z_idx in range(i, end_i):
+                    z_val = z_coords[z_idx]
+                    pts = np.column_stack([x_flat_2d, y_flat_2d, np.full(pts_per_slice, z_val)])
+                    block_pts.append(pts)
+                
+                block_pts_array = np.vstack(block_pts)
+                slice_blocks.append((i, block_pts_array))
+            
+            print(f"[STL]  Checking ray intersections in {len(slice_blocks)} parallel memory-friendly blocks...")
+            
+            total_inside = 0
+            with ProcessPoolExecutor(max_workers=os.cpu_count()) as executor:
+                # 提交任务
+                futures = {executor.submit(_check_chunk_worker, mesh, b_idx, pts): b_idx for b_idx, pts in slice_blocks}
+                
+                completed = 0
+                for future in as_completed(futures):
+                    b_idx, in_mask = future.result()
+                    # 通过 future 获取原始点稍微有点麻烦，我们可以在此处只收集有效点，
+                    # 但需要在返回时连同点一起返回。
+                    # 为了省事，我们这里使用字典还原对应的原始点
+                    pts = next(b[1] for b in slice_blocks if b[0] == b_idx)
+                    inside = pts[in_mask]
+                    
+                    if len(inside) > 0:
+                        valid_x.append(inside[:, 0])
+                        valid_y.append(inside[:, 1])
+                        valid_z.append(inside[:, 2])
+                        total_inside += len(inside)
+                        
+                    completed += 1
+                    elapsed = time.time() - start_time
+                    
+                    # 为了输出漂亮，计算已处理的 slices
+                    print(f"[STL]    Progress: {completed}/{len(slice_blocks)} blocks ({(completed/len(slice_blocks))*100:.1f}%) - Found: {total_inside} pts - Elapsed: {elapsed:.1f}s", flush=True)
+            
+            print(f"[STL]  Points inside mesh: {total_inside} / {total_candidates} ({100*total_inside/max(total_candidates,1):.1f}%)")
+            
+            # 合并有效点
+            if total_inside > 0:
+                x_flat = np.concatenate(valid_x)
+                y_flat = np.concatenate(valid_y)
+                z_flat = np.concatenate(valid_z) if dim == 3 else np.zeros(total_inside)
+            else:
+                x_flat = np.array([])
+                y_flat = np.array([])
+                z_flat = np.array([])
+            
         else:
-            z_coords = np.arange(dx / 2, part['Thickness'], dx)
-            X, Y, Z = np.meshgrid(x_coords, y_coords, z_coords, indexing='ij')
-            x_flat, y_flat, z_flat = X.ravel(), Y.ravel(), Z.ravel()
-            volume = dx * dx * dx
+            # ============================================================
+            # 原始矩形网格路径：Length x Width x Thickness + dx
+            # ============================================================
+            dim = part['Dimension']
+            
+            x_coords = np.arange(dx / 2, part['Length'], dx)
+            y_coords = np.arange(dx / 2, part['Width'],  dx)
+            
+            if dim == 2:
+                X, Y = np.meshgrid(x_coords, y_coords, indexing='ij')
+                x_flat, y_flat = X.ravel(), Y.ravel()
+                z_flat = np.zeros_like(x_flat)
+                volume = dx * dx * part['Thickness']
+            else:
+                z_coords = np.arange(dx / 2, part['Thickness'], dx)
+                X, Y, Z = np.meshgrid(x_coords, y_coords, z_coords, indexing='ij')
+                x_flat, y_flat, z_flat = X.ravel(), Y.ravel(), Z.ravel()
+                volume = dx * dx * dx
 
         # 应用平移偏移量 (非常关键，组合装配体必备)
-        x_flat += offset[0]
-        y_flat += offset[1]
-        z_flat += offset[2]
+        x_flat = x_flat + offset[0]
+        y_flat = y_flat + offset[1]
+        z_flat = z_flat + offset[2]
 
         num_part_particles = len(x_flat)
         

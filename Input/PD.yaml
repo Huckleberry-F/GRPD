@@ -18,24 +18,23 @@ Parts:
   - PartID: 1
     MatID: 1
     Dimension: 3
-    Length: 100.0       # 100 mm
-    Width: 100.0        # 100 mm
-    Thickness: 10.0      # 1 层粒子 (= dx)，2D 平面问题
-    dx: 1.0             # 粒子间距 5mm → 100x100x1 = 10000 粒子
-    Offset: [0.0, 0.0, 0.0]
+    Thickness: 1.0
+    Source: "UMesh_Merged_Brian18.stl"
+    dx: 1.0          # 先用较大的 dx 快速测试
+    Scale: 1.0     # Stanford Bunny 原始尺寸很小，需要放大
 
     # 3. 边界条件
     # 左端面固定 500K，右端面绝热
 BoundaryConditions:
   - BcID: 1
     Name: "Left_Fixed_Temp_500K"
-    Box: [-999.0, 1.1, -999.0, 999.0, -999.0, 999.0]  # x < 5.1mm → 左端第一层
+    Box: [-999.0, 999.0, -999.0, 999.0, -999.0, 2.0]  # z < 2.0mm → 左端第一层
     Type: "T"
     Value: 100.0
 
   - BcID: 2
     Name: "Right_Flux"
-    Box: [98.9, 999.0, -999.0, 60.0, -999.0, 999.0]  # 右端面绝热
+    Box: [-999.0, 999.0, -999.0, 999.0, 58, 999.0]  # 上端面热流
     Type: "FLUX"
     Value: 100.0
 
@@ -58,11 +57,11 @@ Materials:
 Solver:
   Engine: "PD"
   Type: "Thermal"
-  TotalTime: 1000.0            # 10 秒
-  TimeStep_dt: 0.1          # dt = 0.01 s
+  TotalTime: 10000.0            # 10 秒
+  TimeStep_dt: 1.0          # dt = 0.01 s
   OutputInterval: 100        # 每 100 步输出一次（共 10 个输出帧）
   OMP_Threads: 8
-  Horizon: 3.015              # 3.1 * dx = 3.1 * 1.0 = 3.1 mm
+  Horizon: 3.015              # 3.015 * dx = 3.015 * 1.0 = 3.015 mm
   KernelWeightType: "Linear" # 可选: Constant, InverseDistance, Linear, Quadratic, Cubic, Quartic, Gaussian
   ZeroEnergyG0: 1.0          # 零能模式修正系数
   ZeroEnergyMethod: "Silling"   # 可选: Silling, Wan, Zhang
