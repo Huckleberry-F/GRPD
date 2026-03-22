@@ -1,5 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+import warnings
+warnings.filterwarnings("ignore") # 屏蔽掉 numpy 1.26 在 Python 3.14 上的兼容性报警红字
+
 import numpy as np
 import os
 import yaml
@@ -49,10 +52,10 @@ def generate_from_yaml(yaml_path):
             # STL/OBJ 体素化路径：从外部网格文件导入复杂几何
             # ============================================================
             try:
-                import trimesh
+                import open3d as o3d
             except ImportError:
-                print("[FATAL] 'trimesh' package is required for STL import.")
-                print("        Install it with: pip install trimesh")
+                print("[FATAL] 'open3d' package is required for STL import.")
+                print("        Install it with: pip install open3d")
                 exit(1)
             
             source_path = part['Source']
@@ -62,20 +65,27 @@ def generate_from_yaml(yaml_path):
                 source_path = os.path.join(yaml_dir, source_path)
             
             print(f"[STL]  Loading mesh from: {source_path}")
-            mesh = trimesh.load(source_path)
+            mesh_o3d = o3d.io.read_triangle_mesh(source_path)
             
-            if not mesh.is_watertight:
+            if not mesh_o3d.has_vertices():
+                print("[FATAL] Could not load mesh or mesh is empty.")
+                exit(1)
+                
+            if not mesh_o3d.is_watertight():
                 print("[WARNING] Mesh is NOT watertight! Results may be inaccurate.")
                 print("          Please check your STL file for holes or gaps.")
             
             # 缩放支持 (可选)
             scale = part.get('Scale', 1.0)
             if scale != 1.0:
-                mesh.apply_scale(scale)
+                # Open3D 默认按照指定中心缩放，这里保持与 Trimesh 相同的基于原点缩放
+                mesh_o3d.scale(scale, center=(0, 0, 0))
                 print(f"[STL]  Applied scale factor: {scale}")
             
             # 在包围盒内生成均匀网格点
-            bbox_min, bbox_max = mesh.bounds[0], mesh.bounds[1]
+            bbox = mesh_o3d.get_axis_aligned_bounding_box()
+            bbox_min = bbox.get_min_bound()
+            bbox_max = bbox.get_max_bound()
             print(f"[STL]  Bounding box: ({bbox_min[0]:.2f}, {bbox_min[1]:.2f}, {bbox_min[2]:.2f})"
                   f" -> ({bbox_max[0]:.2f}, {bbox_max[1]:.2f}, {bbox_max[2]:.2f})")
             
@@ -104,13 +114,10 @@ def generate_from_yaml(yaml_path):
             
             # 使用分批生成点来做射线碰撞检测，极其节省内存！
             import time
-            from concurrent.futures import ProcessPoolExecutor, as_completed
-            
             start_time = time.time()
             valid_x, valid_y, valid_z = [], [], []
             
-            # 准备待处理的 Z 层数据列表，按小 block 打包发送给子进程
-            # 避免一次性给子进程喂太多 Z 层导致 pickle 内存依然很高
+            # 准备待处理的 Z 层数据列表，按小 block 打包
             slice_blocks = []
             block_size = max(1, 200000 // max(1, pts_per_slice)) # 每个 block 约 20 万个候选点
             
@@ -126,33 +133,35 @@ def generate_from_yaml(yaml_path):
                 block_pts_array = np.vstack(block_pts)
                 slice_blocks.append((i, block_pts_array))
             
-            print(f"[STL]  Checking ray intersections in {len(slice_blocks)} parallel memory-friendly blocks...")
+            print(f"[STL]  Converting mesh to Open3D RaycastingScene for extreme acceleration...")
+            
+            # 将旧版 TriangleMesh 转为用于高速射线追踪的 Tensor 格式
+            mesh_t = o3d.t.geometry.TriangleMesh.from_legacy(mesh_o3d)
+            
+            scene = o3d.t.geometry.RaycastingScene()
+            _ = scene.add_triangles(mesh_t)
+
+            print(f"[STL]  Checking ray intersections in {len(slice_blocks)} memory-friendly blocks with Open3D...")
             
             total_inside = 0
-            with ProcessPoolExecutor(max_workers=os.cpu_count()) as executor:
-                # 提交任务
-                futures = {executor.submit(_check_chunk_worker, mesh, b_idx, pts): b_idx for b_idx, pts in slice_blocks}
+            completed = 0
+            
+            for b_idx, pts in slice_blocks:
+                pts_tensor = o3d.core.Tensor(pts, dtype=o3d.core.Dtype.Float32)
+                occupancy = scene.compute_occupancy(pts_tensor)
+                in_mask = occupancy.numpy() > 0.5
                 
-                completed = 0
-                for future in as_completed(futures):
-                    b_idx, in_mask = future.result()
-                    # 通过 future 获取原始点稍微有点麻烦，我们可以在此处只收集有效点，
-                    # 但需要在返回时连同点一起返回。
-                    # 为了省事，我们这里使用字典还原对应的原始点
-                    pts = next(b[1] for b in slice_blocks if b[0] == b_idx)
-                    inside = pts[in_mask]
+                inside = pts[in_mask]
+                
+                if len(inside) > 0:
+                    valid_x.append(inside[:, 0])
+                    valid_y.append(inside[:, 1])
+                    valid_z.append(inside[:, 2])
+                    total_inside += len(inside)
                     
-                    if len(inside) > 0:
-                        valid_x.append(inside[:, 0])
-                        valid_y.append(inside[:, 1])
-                        valid_z.append(inside[:, 2])
-                        total_inside += len(inside)
-                        
-                    completed += 1
-                    elapsed = time.time() - start_time
-                    
-                    # 为了输出漂亮，计算已处理的 slices
-                    print(f"[STL]    Progress: {completed}/{len(slice_blocks)} blocks ({(completed/len(slice_blocks))*100:.1f}%) - Found: {total_inside} pts - Elapsed: {elapsed:.1f}s", flush=True)
+                completed += 1
+                elapsed = time.time() - start_time
+                print(f"[STL]    Progress: {completed}/{len(slice_blocks)} blocks ({(completed/len(slice_blocks))*100:.1f}%) - Found: {total_inside} pts - Elapsed: {elapsed:.1f}s", flush=True)
             
             print(f"[STL]  Points inside mesh: {total_inside} / {total_candidates} ({100*total_inside/max(total_candidates,1):.1f}%)")
             
