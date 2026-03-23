@@ -10,6 +10,11 @@ add_library(IO_Obj OBJECT
     src/Outputer.cpp
     src/Writer.cpp
     src/VtkWriter.cpp
+    src/MeshReader.cpp
+    src/ReaderRegistry.cpp
+    src/ReaderManager.cpp
+    src/GrpdMeshReader.cpp
+    src/InpMeshReader.cpp
 )
 
 # 2. Add header files to target
@@ -19,7 +24,12 @@ target_sources(IO_Obj PRIVATE
     include/Outputer.h
     include/Writer.h
     include/VtkWriter.h
-    # Other headers...
+    include/MeshData.h
+    include/MeshReader.h
+    include/ReaderRegistry.h
+    include/ReaderManager.h
+    include/GrpdMeshReader.h
+    include/InpMeshReader.h
 )
 
 # 3. Set header include paths for this module

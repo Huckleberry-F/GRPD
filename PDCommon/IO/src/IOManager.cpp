@@ -4,6 +4,7 @@
 
 #include "IOManager.h"
 #include "Logger.h"
+#include "ReaderRegistry.h"
 #include <chrono>
 #include <cstdio>
 #include <cstdlib>
@@ -132,6 +133,27 @@ fs::path IOManager::getScriptPath(const std::string &scriptName) const {
 
 fs::path IOManager::getGrpdPath() const {
   return workDir_ / (modelName_ + ".grpd");
+}
+
+fs::path IOManager::findMeshFile() const {
+  // 获取所有已注册的后缀名
+  auto registeredExts = ReaderRegistry::getInstance().getRegisteredTypes();
+
+  // 遍历工作目录，查找匹配的网格文件
+  for (const auto &entry : fs::directory_iterator(workDir_)) {
+    if (!entry.is_regular_file())
+      continue;
+    std::string ext = entry.path().extension().string();
+    for (const auto &regExt : registeredExts) {
+      if (ext == regExt) {
+        LOG_INFO("[IOManager] Found mesh file: " + entry.path().string());
+        return entry.path();
+      }
+    }
+  }
+
+  LOG_WARNING("[IOManager] No mesh file found in: " + workDir_.string());
+  return fs::path{};
 }
 
 bool IOManager::isInitialized() const { return initialized_; }

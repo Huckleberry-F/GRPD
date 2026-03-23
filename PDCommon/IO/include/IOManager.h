@@ -66,6 +66,11 @@ public:
   /// 例如： workDir / "Bunny_Thermal.grpd"
   fs::path getGrpdPath() const;
 
+  /// @brief 在工作目录中查找已注册的网格文件
+  /// 扫描 workDir，返回第一个匹配 ReaderRegistry 已注册后缀名的文件路径
+  /// @return 找到的网格文件路径，未找到则返回空路径
+  fs::path findMeshFile() const;
+
   // ---- 输出路径生成 ----
 
   /// @brief 根据步数和物理时间，生成 VTK 文件的完整路径

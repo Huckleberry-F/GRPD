@@ -213,6 +213,35 @@ def generate_from_yaml(yaml_path):
                 x_flat = np.concatenate(valid_x)
                 y_flat = np.concatenate(valid_y)
                 z_flat = np.concatenate(valid_z) if dim == 3 else np.zeros(total_inside)
+                
+                # ===========================================================
+                # 孤立粒子过滤：移除邻居数不足的飘散粒子
+                # 使用 Open3D KDTree 统计每个点在 1.5*dx 范围内的邻居数，
+                # 邻居数 < 4 的视为孤立粒子并剔除
+                # ===========================================================
+                pts_arr = np.column_stack([x_flat, y_flat, z_flat])
+                pcd_filter = o3d.geometry.PointCloud()
+                pcd_filter.points = o3d.utility.Vector3dVector(pts_arr)
+                kdtree = o3d.geometry.KDTreeFlann(pcd_filter)
+                
+                min_neighbors = 4 if dim == 3 else 3
+                search_radius = dx * 1.5
+                keep_mask = np.ones(len(pts_arr), dtype=bool)
+                
+                for idx in range(len(pts_arr)):
+                    [count, _, _] = kdtree.search_radius_vector_3d(pcd_filter.points[idx], search_radius)
+                    # count 包含自身，所以实际邻居数 = count - 1
+                    if (count - 1) < min_neighbors:
+                        keep_mask[idx] = False
+                
+                n_removed = np.sum(~keep_mask)
+                if n_removed > 0:
+                    print(f"[FILTER] Removed {n_removed} isolated particles (neighbors < {min_neighbors} within {search_radius:.4f})")
+                    x_flat = x_flat[keep_mask]
+                    y_flat = y_flat[keep_mask]
+                    z_flat = z_flat[keep_mask]
+                    total_inside = len(x_flat)
+                    print(f"[FILTER] Remaining points: {total_inside}")
             else:
                 x_flat = np.array([])
                 y_flat = np.array([])

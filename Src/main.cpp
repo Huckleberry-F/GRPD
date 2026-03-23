@@ -17,8 +17,8 @@ int main(int argc, char *argv[]) {
   auto &io = PDCommon::IO::IOManager::getInstance();
   io.initialize();
 
-  // 将日志文件输出到 Result 目录中
-  LOG_SET_FILE(io.buildResultPath("GRPD.log"));
+  // 将日志文件输出到工作目录（Job 文件夹根目录）
+  LOG_SET_FILE((io.getWorkDir() / "GRPD.log").string());
 
   // =================================================================
   // 3. 引擎调度：将 IOManager 提供的 YAML 路径传入引擎管理器

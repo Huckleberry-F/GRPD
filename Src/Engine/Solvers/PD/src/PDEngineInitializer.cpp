@@ -8,6 +8,7 @@
 #include "FieldManager.h"
 #include "GrpdReader.h"
 #include "IOManager.h"
+#include "ReaderRegistry.h"
 #include "KernelRegistry.h"
 #include "Logger.h"
 #include "Material.h"
@@ -88,14 +89,41 @@ void PDEngineInitializer::InitModel(PDCommon::Core::PDContext &ctx,
 
   auto &manager = ctx.getParticleManager();
 
-  // 读取 .grpd 文件并填充粒子管理器
-  LOG_INFO("Reading .grpd model file: " + grpdPath + " ...");
-  if (!PDCommon::IO::GrpdReader::read(grpdPath, manager)) {
-    LOG_ERROR("Failed to read .grpd file!");
+  // ================================================================
+  // 多态读取：通过 ReaderRegistry 按文件后缀名自动调度读取器
+  // 新增格式只需注册对应 Reader，此处零修改
+  // ================================================================
+  namespace fs = std::filesystem;
+  std::string ext = fs::path(grpdPath).extension().string();
+  auto reader = PDCommon::IO::ReaderRegistry::getInstance().createReader(
+      ext, currentModelName);
+
+  if (!reader) {
+    LOG_ERROR("[InitModel] No reader registered for extension: " + ext);
     exit(EXIT_FAILURE);
   }
 
-  LOG_INFO("Total particles loaded for model " + currentModelName + ": " +
+  LOG_INFO("[InitModel] Reading mesh file: " + grpdPath +
+           " (reader: " + ext + ")");
+
+  if (!reader->read(grpdPath)) {
+    LOG_ERROR("[InitModel] Reader failed for file: " + grpdPath);
+    exit(EXIT_FAILURE);
+  }
+
+  // 从 MeshData 中间结构填充 ParticleManager
+  const auto &meshData = reader->getMeshData();
+  size_t numPts = meshData.nodeIDs.size();
+
+  for (size_t i = 0; i < numPts; ++i) {
+    manager.addParticle(meshData.nodeIDs[i], meshData.partIDs[i],
+                        meshData.matIDs[i], meshData.coords[i * 3 + 0],
+                        meshData.coords[i * 3 + 1],
+                        meshData.coords[i * 3 + 2], meshData.volumes[i]);
+  }
+
+  LOG_INFO("[InitModel] Total particles loaded for model " +
+           currentModelName + ": " +
            std::to_string(manager.getTotalParticles()));
 
   // 验证：打印前 5 个粒子信息
