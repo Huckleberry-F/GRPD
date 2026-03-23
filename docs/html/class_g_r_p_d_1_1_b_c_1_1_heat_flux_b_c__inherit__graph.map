@@ -1,0 +1,7 @@
+<map id="GRPD::BC::HeatFluxBC" name="GRPD::BC::HeatFluxBC">
+<area shape="rect" id="Node000001" title="热流边界条件 (Neumann) q = q_fixed" alt="" coords="5,155,173,181"/>
+<area shape="rect" id="Node000002" href="$class_g_r_p_d_1_1_b_c_1_1_thermal_b_c.html" title="热边界条件抽象中间类 持有三个 TypedField&lt;double&gt; 指针（温度、温度变化率、热流密度）， 所有热相关 BC 均从此类派生。 使用指针而非引用以支持工厂模式的两阶段构造。" alt="" coords="8,80,170,107"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="92,122,92,154,86,154,86,122"/>
+<area shape="rect" id="Node000003" href="$class_g_r_p_d_1_1_b_c_1_1_b_c.html" title=" " alt="" coords="32,5,146,32"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="92,48,92,80,86,80,86,48"/>
+</map>

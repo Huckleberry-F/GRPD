@@ -3,11 +3,12 @@
 // ============================================================================
 
 #include "FieldRegistry.h"
-#include "TypedField.h"
 #include "Logger.h"
+#include "TypedField.h"
 #include <stdexcept>
 
-namespace GRPD::Field {
+
+namespace PDCommon::Field {
 
 // ---------------------------------------------------------------------------
 // 单例实例获取
@@ -21,12 +22,10 @@ FieldRegistry &FieldRegistry::getInstance() {
 // 注册物理场工厂函数
 // ---------------------------------------------------------------------------
 void FieldRegistry::registerFieldType(const std::string &type,
-                                       FieldCreatorFunc creator) {
+                                      FieldCreatorFunc creator) {
   if (registryMap_.find(type) != registryMap_.end()) {
     LOG_WARNING("[FieldRegistry] Field type '" + type +
                 "' already registered, overwriting.");
-  } else {
-    LOG_INFO("[FieldRegistry] Field type '" + type + "' registered.");
   }
   registryMap_[type] = creator;
 }
@@ -35,7 +34,7 @@ void FieldRegistry::registerFieldType(const std::string &type,
 // 通过工厂创建物理场实例
 // ---------------------------------------------------------------------------
 std::unique_ptr<Field> FieldRegistry::createField(const std::string &type,
-                                                    const std::string &name) {
+                                                  const std::string &name) {
   auto it = registryMap_.find(type);
   if (it == registryMap_.end()) {
     LOG_ERROR("[FieldRegistry] Create Field failed: unknown type '" + type +
@@ -43,6 +42,15 @@ std::unique_ptr<Field> FieldRegistry::createField(const std::string &type,
     throw std::runtime_error("Unknown Field type: " + type);
   }
   return it->second(name);
+}
+
+std::vector<std::string> FieldRegistry::getRegisteredTypes() const {
+  std::vector<std::string> types;
+  types.reserve(registryMap_.size());
+  for (const auto &[key, _] : registryMap_) {
+    types.push_back(key);
+  }
+  return types;
 }
 
 // ============================================================================
@@ -69,4 +77,4 @@ REGISTER_FIELD_TYPE(IntField, [](const std::string &name) {
   return std::make_unique<TypedField<int>>(name, 1);
 });
 
-} // namespace GRPD::Field
+} // namespace PDCommon::Field

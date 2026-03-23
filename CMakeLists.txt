@@ -5,7 +5,7 @@
 # ==============================================================================
 
 # 1. Set minimum CMake version (4.0.3 introduced improved FetchContent support)
-cmake_minimum_required(VERSION 4.0.3)
+cmake_minimum_required(VERSION 3.10)
 
 # 2. Define project name, version, and language (C++)
 project(GRPD VERSION 1.0.0 LANGUAGES CXX)
@@ -18,6 +18,8 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 # Disable compiler-specific extensions (e.g. gnu++17) for maximum cross-platform portability
 set(CMAKE_CXX_EXTENSIONS OFF)
+# Export compile_commands.json for IntelliSense
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/bin")
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/lib")

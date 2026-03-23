@@ -1,5 +1,5 @@
-#ifndef GRPD_MODEL_PARTICLE_H
-#define GRPD_MODEL_PARTICLE_H
+#ifndef PDCOMMON_MODEL_PARTICLE_H
+#define PDCOMMON_MODEL_PARTICLE_H
 
 // ============================================================================
 // Particle.h - PD particle entity class
@@ -11,11 +11,11 @@
 
 #include <array>
 
-namespace GRPD::Material {
+namespace PDCommon::Material {
 class Material;
 }
 
-namespace GRPD::Model {
+namespace PDCommon::Model {
 
 class Particle {
   friend class ParticleManager;
@@ -48,14 +48,14 @@ public:
   int getMatId() const;
 
   /// Get the assigned physical material pointer
-  ::GRPD::Material::Material *getMaterial() const;
+  ::PDCommon::Material::Material *getMaterial() const;
 
   // -----------------------------------------------------------------------
   // Setter (only temperature and material pointer are mutable)
   // -----------------------------------------------------------------------
 
   /// Assign the material instance to this particle
-  void setMaterial(::GRPD::Material::Material *mat);
+  void setMaterial(::PDCommon::Material::Material *mat);
 
 
 
@@ -66,10 +66,10 @@ private:
   std::array<double, 3> coords_; // 3D coordinates [x, y, z]
   double volume_;                // Particle volume
 
-  GRPD::Material::Material *material_ =
+  PDCommon::Material::Material *material_ =
       nullptr; // Pointer to actual physical material instance
 };
 
-} // namespace GRPD::Model
+} // namespace PDCommon::Model
 
-#endif // GRPD_MODEL_PARTICLE_H
+#endif // PDCOMMON_MODEL_PARTICLE_H

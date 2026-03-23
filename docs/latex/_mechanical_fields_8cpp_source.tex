@@ -1,0 +1,30 @@
+\doxysection{Mechanical\+Fields.\+cpp}
+\hypertarget{_mechanical_fields_8cpp_source}{}\label{_mechanical_fields_8cpp_source}\index{PDCommon/Field/src/MechanicalFields.cpp@{PDCommon/Field/src/MechanicalFields.cpp}}
+\mbox{\hyperlink{_mechanical_fields_8cpp}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\Hypertarget{_mechanical_fields_8cpp_source_l00001}00001\ \textcolor{comment}{//\ ============================================================================}}
+\DoxyCodeLine{\Hypertarget{_mechanical_fields_8cpp_source_l00002}00002\ \textcolor{comment}{//\ MechanicalFields.cpp\ -\/\ 力学物理场配置器实现}}
+\DoxyCodeLine{\Hypertarget{_mechanical_fields_8cpp_source_l00003}00003\ \textcolor{comment}{//\ ============================================================================}}
+\DoxyCodeLine{\Hypertarget{_mechanical_fields_8cpp_source_l00004}00004\ }
+\DoxyCodeLine{\Hypertarget{_mechanical_fields_8cpp_source_l00005}00005\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{_mechanical_fields_8h}{MechanicalFields.h}}"{}}}
+\DoxyCodeLine{\Hypertarget{_mechanical_fields_8cpp_source_l00006}00006\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{_field_manager_8h}{FieldManager.h}}"{}}}
+\DoxyCodeLine{\Hypertarget{_mechanical_fields_8cpp_source_l00007}00007\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{_logger_8h}{Logger.h}}"{}}}
+\DoxyCodeLine{\Hypertarget{_mechanical_fields_8cpp_source_l00008}00008\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{_physics_field_registry_8h}{PhysicsFieldRegistry.h}}"{}}}
+\DoxyCodeLine{\Hypertarget{_mechanical_fields_8cpp_source_l00009}00009\ }
+\DoxyCodeLine{\Hypertarget{_mechanical_fields_8cpp_source_l00010}00010\ \textcolor{keyword}{namespace\ }\mbox{\hyperlink{namespace_g_r_p_d_1_1_field}{GRPD::Field}}\ \{}
+\DoxyCodeLine{\Hypertarget{_mechanical_fields_8cpp_source_l00011}00011\ }
+\DoxyCodeLine{\Hypertarget{_mechanical_fields_8cpp_source_l00012}\mbox{\hyperlink{class_g_r_p_d_1_1_field_1_1_mechanical_fields_aaf6aa6ac7c9fcb6192daeff65b03d044}{00012}}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_g_r_p_d_1_1_field_1_1_mechanical_fields_aaf6aa6ac7c9fcb6192daeff65b03d044}{MechanicalFields::registerFields}}(\mbox{\hyperlink{class_g_r_p_d_1_1_field_1_1_field_manager}{FieldManager}}\ \&fm)\ \{}
+\DoxyCodeLine{\Hypertarget{_mechanical_fields_8cpp_source_l00013}00013\ \ \ \ \ \textcolor{comment}{//\ 力学核心场：位移、速度、加速度（均为三维矢量场）}}
+\DoxyCodeLine{\Hypertarget{_mechanical_fields_8cpp_source_l00014}00014\ \ \ \ \ fm.\mbox{\hyperlink{class_g_r_p_d_1_1_field_1_1_field_manager_a5c8d6e3009f683af77cf9dcc2c08842a}{registerField}}<\textcolor{keywordtype}{double}>(\textcolor{stringliteral}{"{}Displacement"{}},\ 3);}
+\DoxyCodeLine{\Hypertarget{_mechanical_fields_8cpp_source_l00015}00015\ \ \ \ \ fm.\mbox{\hyperlink{class_g_r_p_d_1_1_field_1_1_field_manager_a5c8d6e3009f683af77cf9dcc2c08842a}{registerField}}<\textcolor{keywordtype}{double}>(\textcolor{stringliteral}{"{}Velocity"{}},\ 3);}
+\DoxyCodeLine{\Hypertarget{_mechanical_fields_8cpp_source_l00016}00016\ \ \ \ \ fm.\mbox{\hyperlink{class_g_r_p_d_1_1_field_1_1_field_manager_a5c8d6e3009f683af77cf9dcc2c08842a}{registerField}}<\textcolor{keywordtype}{double}>(\textcolor{stringliteral}{"{}Acceleration"{}},\ 3);}
+\DoxyCodeLine{\Hypertarget{_mechanical_fields_8cpp_source_l00017}00017\ \ \ \ \ \mbox{\hyperlink{_logger_8h_ac8e803773221119947b55f6ae85a9c63}{LOG\_INFO}}(\textcolor{stringliteral}{"{}[MechanicalFields]\ Core\ fields\ registered:\ "{}}}
+\DoxyCodeLine{\Hypertarget{_mechanical_fields_8cpp_source_l00018}00018\ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}Displacement,\ Velocity,\ Acceleration."{}});}
+\DoxyCodeLine{\Hypertarget{_mechanical_fields_8cpp_source_l00019}00019\ \}}
+\DoxyCodeLine{\Hypertarget{_mechanical_fields_8cpp_source_l00020}00020\ }
+\DoxyCodeLine{\Hypertarget{_mechanical_fields_8cpp_source_l00021}00021\ \textcolor{comment}{//\ 静态注册到\ PhysicsFieldRegistry}}
+\DoxyCodeLine{\Hypertarget{_mechanical_fields_8cpp_source_l00022}00022\ \mbox{\hyperlink{_physics_field_registry_8h_a6b93342785650c321ae1df57cd192e2f}{REGISTER\_PHYSICS\_FIELDS}}(Mechanical,\ \mbox{\hyperlink{class_g_r_p_d_1_1_field_1_1_mechanical_fields}{GRPD::Field::MechanicalFields}})}
+\DoxyCodeLine{\Hypertarget{_mechanical_fields_8cpp_source_l00023}00023\ }
+\DoxyCodeLine{\Hypertarget{_mechanical_fields_8cpp_source_l00024}00024\ \}\ \textcolor{comment}{//\ namespace\ GRPD::Field}}
+
+\end{DoxyCode}

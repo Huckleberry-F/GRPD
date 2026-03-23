@@ -1,0 +1,345 @@
+\doxysection{GRPD\+::Field\+::Field Class Reference}
+\hypertarget{class_g_r_p_d_1_1_field_1_1_field}{}\label{class_g_r_p_d_1_1_field_1_1_field}\index{GRPD::Field::Field@{GRPD::Field::Field}}
+
+
+{\ttfamily \#include $<$Field.\+h$>$}
+
+
+
+Inheritance diagram for GRPD\+::Field\+::Field\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{class_g_r_p_d_1_1_field_1_1_field__inherit__graph}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{class_g_r_p_d_1_1_field_1_1_field_a5053e44c52090df1450ec34dd7282f60}{Field}} (const std\+::string \&name, int dim=1)
+\begin{DoxyCompactList}\small\item\em 构造函数 \end{DoxyCompactList}\item 
+virtual \mbox{\hyperlink{class_g_r_p_d_1_1_field_1_1_field_a3158bae54eb7a2d64ade8a39390b9431}{\texorpdfstring{$\sim$}{\string~}\+Field}} ()=default
+\item 
+\mbox{\hyperlink{class_g_r_p_d_1_1_field_1_1_field_afe5657f5d8bcebc5a64dcb5cf98589b5}{Field}} (const \mbox{\hyperlink{class_g_r_p_d_1_1_field_1_1_field}{Field}} \&)=delete
+\item 
+\mbox{\hyperlink{class_g_r_p_d_1_1_field_1_1_field}{Field}} \& \mbox{\hyperlink{class_g_r_p_d_1_1_field_1_1_field_abd2d6042f47983859012af4578606891}{operator=}} (const \mbox{\hyperlink{class_g_r_p_d_1_1_field_1_1_field}{Field}} \&)=delete
+\item 
+\mbox{\hyperlink{class_g_r_p_d_1_1_field_1_1_field_a03cbc61d2944762f7ee226874def3c5a}{Field}} (\mbox{\hyperlink{class_g_r_p_d_1_1_field_1_1_field}{Field}} \&\&)=default
+\item 
+\mbox{\hyperlink{class_g_r_p_d_1_1_field_1_1_field}{Field}} \& \mbox{\hyperlink{class_g_r_p_d_1_1_field_1_1_field_a5cdc10c8a4c61850307edc26259dcbea}{operator=}} (\mbox{\hyperlink{class_g_r_p_d_1_1_field_1_1_field}{Field}} \&\&)=default
+\item 
+const std\+::string \& \mbox{\hyperlink{class_g_r_p_d_1_1_field_1_1_field_a15a0ae4ff4f8d393d28e7356aab3d424}{get\+Name}} () const
+\begin{DoxyCompactList}\small\item\em 获取物理场名称 \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{class_g_r_p_d_1_1_field_1_1_field_ad28e805c6c69b1786af6495cc6669b11}{get\+Dim}} () const
+\begin{DoxyCompactList}\small\item\em 获取每个粒子的分量维度（标量=1, 矢量=3, 张量=9） \end{DoxyCompactList}\item 
+virtual void \mbox{\hyperlink{class_g_r_p_d_1_1_field_1_1_field_a95ccec366b7e3c36253e02af4889f8ef}{resize}} (size\+\_\+t num\+Particles)=0
+\begin{DoxyCompactList}\small\item\em 按粒子总数分配/重新分配内存，初始化为零值 \end{DoxyCompactList}\item 
+virtual size\+\_\+t \mbox{\hyperlink{class_g_r_p_d_1_1_field_1_1_field_a6b85534ee3a07e02311c0d8a554115a2}{size}} () const =0
+\begin{DoxyCompactList}\small\item\em 当前已分配的粒子数量 \end{DoxyCompactList}\item 
+virtual void \mbox{\hyperlink{class_g_r_p_d_1_1_field_1_1_field_adc47c775ea8450a445930ba2a1a8a27a}{clear\+To\+Zero}} ()=0
+\begin{DoxyCompactList}\small\item\em 将所有数据清零（每个时间步开始时重置变化率等场量） \end{DoxyCompactList}\item 
+virtual double \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{class_g_r_p_d_1_1_field_1_1_field_ab34a5b5b0e40dc623a14823e9e48c9df}{raw\+Ptr}} ()=0
+\begin{DoxyCompactList}\small\item\em 获取底层连续内存的 double 裸指针（用于 VTK 输出 / Open\+MP 并行） \end{DoxyCompactList}\item 
+virtual const double \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{class_g_r_p_d_1_1_field_1_1_field_a2ed9bc1eaaaf950f4e2d95e3530957c0}{raw\+Ptr}} () const =0
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Protected Attributes}
+\begin{DoxyCompactItemize}
+\item 
+std\+::string \mbox{\hyperlink{class_g_r_p_d_1_1_field_1_1_field_aba41caf0f366cb6623ac35ca9a44ab00}{name\+\_\+}}
+\item 
+int \mbox{\hyperlink{class_g_r_p_d_1_1_field_1_1_field_a504f2ec54a298dd93a61abfe7f1e37d3}{dim\+\_\+}}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+
+
+Definition at line \mbox{\hyperlink{_field_8h_source_l00017}{17}} of file \mbox{\hyperlink{_field_8h_source}{Field.\+h}}.
+
+
+
+\label{doc-constructors}
+\Hypertarget{class_g_r_p_d_1_1_field_1_1_field_doc-constructors}
+\doxysubsection{Constructor \& Destructor Documentation}
+\Hypertarget{class_g_r_p_d_1_1_field_1_1_field_a5053e44c52090df1450ec34dd7282f60}\index{GRPD::Field::Field@{GRPD::Field::Field}!Field@{Field}}
+\index{Field@{Field}!GRPD::Field::Field@{GRPD::Field::Field}}
+\doxysubsubsection{\texorpdfstring{Field()}{Field()}\hspace{0.1cm}{\footnotesize\ttfamily [1/3]}}
+{\footnotesize\ttfamily \label{class_g_r_p_d_1_1_field_1_1_field_a5053e44c52090df1450ec34dd7282f60} 
+GRPD\+::\+Field\+::\+Field\+::\+Field (\begin{DoxyParamCaption}\item[{const std\+::string \&}]{name}{, }\item[{int}]{dim}{ = {\ttfamily 1}}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [explicit]}}
+
+
+
+构造函数 
+
+
+\begin{DoxyParams}{Parameters}
+{\em name} & 物理场名称（如 "{}\+Temperature"{}, "{}\+Displacement"{}） \\
+\hline
+{\em dim} & 每个粒子的分量数（标量=1, 矢量=3, 对称张量=6） \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line \mbox{\hyperlink{_field_8cpp_source_l00012}{12}} of file \mbox{\hyperlink{_field_8cpp_source}{Field.\+cpp}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00013\ \ \ \ \ :\ \mbox{\hyperlink{class_g_r_p_d_1_1_field_1_1_field_aba41caf0f366cb6623ac35ca9a44ab00}{name\_}}(name),\ \mbox{\hyperlink{class_g_r_p_d_1_1_field_1_1_field_a504f2ec54a298dd93a61abfe7f1e37d3}{dim\_}}(dim)\ \{\}}
+
+\end{DoxyCode}
+
+
+References \mbox{\hyperlink{_field_8h_source_l00062}{dim\+\_\+}}, and \mbox{\hyperlink{_field_8h_source_l00061}{name\+\_\+}}.
+
+
+
+Referenced by \mbox{\hyperlink{class_g_r_p_d_1_1_field_1_1_field_afe5657f5d8bcebc5a64dcb5cf98589b5}{Field()}}, \mbox{\hyperlink{class_g_r_p_d_1_1_field_1_1_field_a03cbc61d2944762f7ee226874def3c5a}{Field()}}, \mbox{\hyperlink{class_g_r_p_d_1_1_field_1_1_field_abd2d6042f47983859012af4578606891}{operator=()}}, \mbox{\hyperlink{class_g_r_p_d_1_1_field_1_1_field_a5cdc10c8a4c61850307edc26259dcbea}{operator=()}}, and \mbox{\hyperlink{_typed_field_8h_source_l00026}{GRPD\+::\+Field\+::\+Typed\+Field$<$ T $>$\+::\+Typed\+Field()}}.
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{class_g_r_p_d_1_1_field_1_1_field_a5053e44c52090df1450ec34dd7282f60_icgraph}
+\end{center}
+\end{figure}
+\Hypertarget{class_g_r_p_d_1_1_field_1_1_field_a3158bae54eb7a2d64ade8a39390b9431}\index{GRPD::Field::Field@{GRPD::Field::Field}!````~Field@{\texorpdfstring{$\sim$}{\string~}Field}}
+\index{````~Field@{\texorpdfstring{$\sim$}{\string~}Field}!GRPD::Field::Field@{GRPD::Field::Field}}
+\doxysubsubsection{\texorpdfstring{\texorpdfstring{$\sim$}{\string~}Field()}{\string~Field()}}
+{\footnotesize\ttfamily \label{class_g_r_p_d_1_1_field_1_1_field_a3158bae54eb7a2d64ade8a39390b9431} 
+virtual GRPD\+::\+Field\+::\+Field\+::\texorpdfstring{$\sim$}{\string~}\+Field (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [virtual]}, {\ttfamily [default]}}
+
+\Hypertarget{class_g_r_p_d_1_1_field_1_1_field_afe5657f5d8bcebc5a64dcb5cf98589b5}\index{GRPD::Field::Field@{GRPD::Field::Field}!Field@{Field}}
+\index{Field@{Field}!GRPD::Field::Field@{GRPD::Field::Field}}
+\doxysubsubsection{\texorpdfstring{Field()}{Field()}\hspace{0.1cm}{\footnotesize\ttfamily [2/3]}}
+{\footnotesize\ttfamily \label{class_g_r_p_d_1_1_field_1_1_field_afe5657f5d8bcebc5a64dcb5cf98589b5} 
+GRPD\+::\+Field\+::\+Field\+::\+Field (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{class_g_r_p_d_1_1_field_1_1_field}{Field}} \&}]{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [delete]}}
+
+
+
+References \mbox{\hyperlink{_field_8cpp_source_l00012}{Field()}}.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{class_g_r_p_d_1_1_field_1_1_field_afe5657f5d8bcebc5a64dcb5cf98589b5_cgraph}
+\end{center}
+\end{figure}
+\Hypertarget{class_g_r_p_d_1_1_field_1_1_field_a03cbc61d2944762f7ee226874def3c5a}\index{GRPD::Field::Field@{GRPD::Field::Field}!Field@{Field}}
+\index{Field@{Field}!GRPD::Field::Field@{GRPD::Field::Field}}
+\doxysubsubsection{\texorpdfstring{Field()}{Field()}\hspace{0.1cm}{\footnotesize\ttfamily [3/3]}}
+{\footnotesize\ttfamily \label{class_g_r_p_d_1_1_field_1_1_field_a03cbc61d2944762f7ee226874def3c5a} 
+GRPD\+::\+Field\+::\+Field\+::\+Field (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{class_g_r_p_d_1_1_field_1_1_field}{Field}} \&\&}]{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [default]}}
+
+
+
+References \mbox{\hyperlink{_field_8cpp_source_l00012}{Field()}}.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{class_g_r_p_d_1_1_field_1_1_field_a03cbc61d2944762f7ee226874def3c5a_cgraph}
+\end{center}
+\end{figure}
+
+
+\label{doc-func-members}
+\Hypertarget{class_g_r_p_d_1_1_field_1_1_field_doc-func-members}
+\doxysubsection{Member Function Documentation}
+\Hypertarget{class_g_r_p_d_1_1_field_1_1_field_adc47c775ea8450a445930ba2a1a8a27a}\index{GRPD::Field::Field@{GRPD::Field::Field}!clearToZero@{clearToZero}}
+\index{clearToZero@{clearToZero}!GRPD::Field::Field@{GRPD::Field::Field}}
+\doxysubsubsection{\texorpdfstring{clearToZero()}{clearToZero()}}
+{\footnotesize\ttfamily \label{class_g_r_p_d_1_1_field_1_1_field_adc47c775ea8450a445930ba2a1a8a27a} 
+virtual void GRPD\+::\+Field\+::\+Field\+::clear\+To\+Zero (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+将所有数据清零（每个时间步开始时重置变化率等场量） 
+
+
+
+Implemented in \mbox{\hyperlink{class_g_r_p_d_1_1_field_1_1_typed_field_aa6d9ff56502916aa5a4221b11ae36410}{GRPD\+::\+Field\+::\+Typed\+Field$<$ T $>$}}, and \mbox{\hyperlink{class_g_r_p_d_1_1_field_1_1_typed_field_aa6d9ff56502916aa5a4221b11ae36410}{GRPD\+::\+Field\+::\+Typed\+Field$<$ double $>$}}.
+
+\Hypertarget{class_g_r_p_d_1_1_field_1_1_field_ad28e805c6c69b1786af6495cc6669b11}\index{GRPD::Field::Field@{GRPD::Field::Field}!getDim@{getDim}}
+\index{getDim@{getDim}!GRPD::Field::Field@{GRPD::Field::Field}}
+\doxysubsubsection{\texorpdfstring{getDim()}{getDim()}}
+{\footnotesize\ttfamily \label{class_g_r_p_d_1_1_field_1_1_field_ad28e805c6c69b1786af6495cc6669b11} 
+int GRPD\+::\+Field\+::\+Field\+::get\+Dim (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const}
+
+
+
+获取每个粒子的分量维度（标量=1, 矢量=3, 张量=9） 
+
+
+
+Definition at line \mbox{\hyperlink{_field_8cpp_source_l00020}{20}} of file \mbox{\hyperlink{_field_8cpp_source}{Field.\+cpp}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00020\ \{\ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{class_g_r_p_d_1_1_field_1_1_field_a504f2ec54a298dd93a61abfe7f1e37d3}{dim\_}};\ \}}
+
+\end{DoxyCode}
+
+
+References \mbox{\hyperlink{_field_8h_source_l00062}{dim\+\_\+}}.
+
+\Hypertarget{class_g_r_p_d_1_1_field_1_1_field_a15a0ae4ff4f8d393d28e7356aab3d424}\index{GRPD::Field::Field@{GRPD::Field::Field}!getName@{getName}}
+\index{getName@{getName}!GRPD::Field::Field@{GRPD::Field::Field}}
+\doxysubsubsection{\texorpdfstring{getName()}{getName()}}
+{\footnotesize\ttfamily \label{class_g_r_p_d_1_1_field_1_1_field_a15a0ae4ff4f8d393d28e7356aab3d424} 
+const std\+::string \& GRPD\+::\+Field\+::\+Field\+::get\+Name (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const}
+
+
+
+获取物理场名称 
+
+
+
+Definition at line \mbox{\hyperlink{_field_8cpp_source_l00018}{18}} of file \mbox{\hyperlink{_field_8cpp_source}{Field.\+cpp}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00018\ \{\ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{class_g_r_p_d_1_1_field_1_1_field_aba41caf0f366cb6623ac35ca9a44ab00}{name\_}};\ \}}
+
+\end{DoxyCode}
+
+
+References \mbox{\hyperlink{_field_8h_source_l00061}{name\+\_\+}}.
+
+\Hypertarget{class_g_r_p_d_1_1_field_1_1_field_abd2d6042f47983859012af4578606891}\index{GRPD::Field::Field@{GRPD::Field::Field}!operator=@{operator=}}
+\index{operator=@{operator=}!GRPD::Field::Field@{GRPD::Field::Field}}
+\doxysubsubsection{\texorpdfstring{operator=()}{operator=()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \label{class_g_r_p_d_1_1_field_1_1_field_abd2d6042f47983859012af4578606891} 
+\mbox{\hyperlink{class_g_r_p_d_1_1_field_1_1_field}{Field}} \& GRPD\+::\+Field\+::\+Field\+::operator= (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{class_g_r_p_d_1_1_field_1_1_field}{Field}} \&}]{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [delete]}}
+
+
+
+References \mbox{\hyperlink{_field_8cpp_source_l00012}{Field()}}.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{class_g_r_p_d_1_1_field_1_1_field_abd2d6042f47983859012af4578606891_cgraph}
+\end{center}
+\end{figure}
+\Hypertarget{class_g_r_p_d_1_1_field_1_1_field_a5cdc10c8a4c61850307edc26259dcbea}\index{GRPD::Field::Field@{GRPD::Field::Field}!operator=@{operator=}}
+\index{operator=@{operator=}!GRPD::Field::Field@{GRPD::Field::Field}}
+\doxysubsubsection{\texorpdfstring{operator=()}{operator=()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \label{class_g_r_p_d_1_1_field_1_1_field_a5cdc10c8a4c61850307edc26259dcbea} 
+\mbox{\hyperlink{class_g_r_p_d_1_1_field_1_1_field}{Field}} \& GRPD\+::\+Field\+::\+Field\+::operator= (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{class_g_r_p_d_1_1_field_1_1_field}{Field}} \&\&}]{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [default]}}
+
+
+
+References \mbox{\hyperlink{_field_8cpp_source_l00012}{Field()}}.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{class_g_r_p_d_1_1_field_1_1_field_a5cdc10c8a4c61850307edc26259dcbea_cgraph}
+\end{center}
+\end{figure}
+\Hypertarget{class_g_r_p_d_1_1_field_1_1_field_a2ed9bc1eaaaf950f4e2d95e3530957c0}\index{GRPD::Field::Field@{GRPD::Field::Field}!rawPtr@{rawPtr}}
+\index{rawPtr@{rawPtr}!GRPD::Field::Field@{GRPD::Field::Field}}
+\doxysubsubsection{\texorpdfstring{rawPtr()}{rawPtr()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \label{class_g_r_p_d_1_1_field_1_1_field_a2ed9bc1eaaaf950f4e2d95e3530957c0} 
+virtual const double \texorpdfstring{$\ast$}{*} GRPD\+::\+Field\+::\+Field\+::raw\+Ptr (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+Implemented in \mbox{\hyperlink{class_g_r_p_d_1_1_field_1_1_typed_field_a49befa548db3f024b0dbc614fa256e13}{GRPD\+::\+Field\+::\+Typed\+Field$<$ T $>$}}.
+
+\Hypertarget{class_g_r_p_d_1_1_field_1_1_field_ab34a5b5b0e40dc623a14823e9e48c9df}\index{GRPD::Field::Field@{GRPD::Field::Field}!rawPtr@{rawPtr}}
+\index{rawPtr@{rawPtr}!GRPD::Field::Field@{GRPD::Field::Field}}
+\doxysubsubsection{\texorpdfstring{rawPtr()}{rawPtr()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \label{class_g_r_p_d_1_1_field_1_1_field_ab34a5b5b0e40dc623a14823e9e48c9df} 
+virtual double \texorpdfstring{$\ast$}{*} GRPD\+::\+Field\+::\+Field\+::raw\+Ptr (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+获取底层连续内存的 double 裸指针（用于 VTK 输出 / Open\+MP 并行） 
+
+
+
+Implemented in \mbox{\hyperlink{class_g_r_p_d_1_1_field_1_1_typed_field_a0f617bb06c28a1f7463e8d4e2de19d6e}{GRPD\+::\+Field\+::\+Typed\+Field$<$ T $>$}}, and \mbox{\hyperlink{class_g_r_p_d_1_1_field_1_1_typed_field_a0f617bb06c28a1f7463e8d4e2de19d6e}{GRPD\+::\+Field\+::\+Typed\+Field$<$ double $>$}}.
+
+\Hypertarget{class_g_r_p_d_1_1_field_1_1_field_a95ccec366b7e3c36253e02af4889f8ef}\index{GRPD::Field::Field@{GRPD::Field::Field}!resize@{resize}}
+\index{resize@{resize}!GRPD::Field::Field@{GRPD::Field::Field}}
+\doxysubsubsection{\texorpdfstring{resize()}{resize()}}
+{\footnotesize\ttfamily \label{class_g_r_p_d_1_1_field_1_1_field_a95ccec366b7e3c36253e02af4889f8ef} 
+virtual void GRPD\+::\+Field\+::\+Field\+::resize (\begin{DoxyParamCaption}\item[{size\+\_\+t}]{num\+Particles}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+按粒子总数分配/重新分配内存，初始化为零值 
+
+
+\begin{DoxyParams}{Parameters}
+{\em num\+Particles} & 粒子总数 \\
+\hline
+\end{DoxyParams}
+
+
+Implemented in \mbox{\hyperlink{class_g_r_p_d_1_1_field_1_1_typed_field_a72f923bae08322ed99de40f830c6a313}{GRPD\+::\+Field\+::\+Typed\+Field$<$ T $>$}}, and \mbox{\hyperlink{class_g_r_p_d_1_1_field_1_1_typed_field_a72f923bae08322ed99de40f830c6a313}{GRPD\+::\+Field\+::\+Typed\+Field$<$ double $>$}}.
+
+\Hypertarget{class_g_r_p_d_1_1_field_1_1_field_a6b85534ee3a07e02311c0d8a554115a2}\index{GRPD::Field::Field@{GRPD::Field::Field}!size@{size}}
+\index{size@{size}!GRPD::Field::Field@{GRPD::Field::Field}}
+\doxysubsubsection{\texorpdfstring{size()}{size()}}
+{\footnotesize\ttfamily \label{class_g_r_p_d_1_1_field_1_1_field_a6b85534ee3a07e02311c0d8a554115a2} 
+virtual size\+\_\+t GRPD\+::\+Field\+::\+Field\+::size (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+当前已分配的粒子数量 
+
+
+
+Implemented in \mbox{\hyperlink{class_g_r_p_d_1_1_field_1_1_typed_field_a2168f3c1bb15a3538b47194c793bc2ec}{GRPD\+::\+Field\+::\+Typed\+Field$<$ T $>$}}, and \mbox{\hyperlink{class_g_r_p_d_1_1_field_1_1_typed_field_a2168f3c1bb15a3538b47194c793bc2ec}{GRPD\+::\+Field\+::\+Typed\+Field$<$ double $>$}}.
+
+
+
+\label{doc-variable-members}
+\Hypertarget{class_g_r_p_d_1_1_field_1_1_field_doc-variable-members}
+\doxysubsection{Member Data Documentation}
+\Hypertarget{class_g_r_p_d_1_1_field_1_1_field_a504f2ec54a298dd93a61abfe7f1e37d3}\index{GRPD::Field::Field@{GRPD::Field::Field}!dim\_@{dim\_}}
+\index{dim\_@{dim\_}!GRPD::Field::Field@{GRPD::Field::Field}}
+\doxysubsubsection{\texorpdfstring{dim\_}{dim\_}}
+{\footnotesize\ttfamily \label{class_g_r_p_d_1_1_field_1_1_field_a504f2ec54a298dd93a61abfe7f1e37d3} 
+int GRPD\+::\+Field\+::\+Field\+::dim\+\_\+\hspace{0.3cm}{\ttfamily [protected]}}
+
+
+
+Definition at line \mbox{\hyperlink{_field_8h_source_l00062}{62}} of file \mbox{\hyperlink{_field_8h_source}{Field.\+h}}.
+
+
+
+Referenced by \mbox{\hyperlink{_typed_field_8h_source_l00084}{GRPD\+::\+Field\+::\+Typed\+Field$<$ T $>$\+::add()}}, \mbox{\hyperlink{_field_8cpp_source_l00012}{Field()}}, \mbox{\hyperlink{_typed_field_8h_source_l00074}{GRPD\+::\+Field\+::\+Typed\+Field$<$ T $>$\+::get()}}, \mbox{\hyperlink{_field_8cpp_source_l00020}{get\+Dim()}}, \mbox{\hyperlink{_typed_field_8h_source_l00043}{GRPD\+::\+Field\+::\+Typed\+Field$<$ T $>$\+::resize()}}, \mbox{\hyperlink{_typed_field_8h_source_l00079}{GRPD\+::\+Field\+::\+Typed\+Field$<$ T $>$\+::set()}}, and \mbox{\hyperlink{_typed_field_8h_source_l00048}{GRPD\+::\+Field\+::\+Typed\+Field$<$ T $>$\+::size()}}.
+
+\Hypertarget{class_g_r_p_d_1_1_field_1_1_field_aba41caf0f366cb6623ac35ca9a44ab00}\index{GRPD::Field::Field@{GRPD::Field::Field}!name\_@{name\_}}
+\index{name\_@{name\_}!GRPD::Field::Field@{GRPD::Field::Field}}
+\doxysubsubsection{\texorpdfstring{name\_}{name\_}}
+{\footnotesize\ttfamily \label{class_g_r_p_d_1_1_field_1_1_field_aba41caf0f366cb6623ac35ca9a44ab00} 
+std\+::string GRPD\+::\+Field\+::\+Field\+::name\+\_\+\hspace{0.3cm}{\ttfamily [protected]}}
+
+
+
+Definition at line \mbox{\hyperlink{_field_8h_source_l00061}{61}} of file \mbox{\hyperlink{_field_8h_source}{Field.\+h}}.
+
+
+
+Referenced by \mbox{\hyperlink{_field_8cpp_source_l00012}{Field()}}, and \mbox{\hyperlink{_field_8cpp_source_l00018}{get\+Name()}}.
+
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+PDCommon/\+Field/include/\mbox{\hyperlink{_field_8h}{Field.\+h}}\item 
+PDCommon/\+Field/src/\mbox{\hyperlink{_field_8cpp}{Field.\+cpp}}\end{DoxyCompactItemize}

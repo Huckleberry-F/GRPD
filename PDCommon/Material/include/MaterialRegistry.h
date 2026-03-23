@@ -14,8 +14,9 @@
 #include <map>
 #include <memory>
 #include <string>
+#include <vector>
 
-namespace GRPD::Material {
+namespace PDCommon::Material {
 
 // ---------------------------------------------------------------------------
 // 工厂函数定义：根据名称返回一个具体 Material 的 unique_ptr
@@ -50,6 +51,9 @@ public:
   std::unique_ptr<Material> createMaterial(const std::string &type,
                                            const std::string &name);
 
+  /// @brief 获取所有已注册的类型名列表
+  std::vector<std::string> getRegisteredTypes() const;
+
 private:
   MaterialRegistry() = default;
   ~MaterialRegistry() = default;
@@ -64,13 +68,13 @@ private:
   namespace {                                                                  \
   struct MaterialRegistrar_##Type {                                            \
     MaterialRegistrar_##Type() {                                               \
-      GRPD::Material::MaterialRegistry::getInstance().registerMaterialType(    \
+      PDCommon::Material::MaterialRegistry::getInstance().registerMaterialType(    \
           #Type, Creator);                                                     \
     }                                                                          \
   };                                                                           \
   static MaterialRegistrar_##Type global_MaterialRegistrar_##Type;             \
   }
 
-} // namespace GRPD::Material
+} // namespace PDCommon::Material
 
-#endif // GRPD_MODEL_MATERIAL_REGISTRY_H
+#endif // PDCOMMON_MODEL_MATERIAL_REGISTRY_H

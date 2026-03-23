@@ -1,0 +1,8 @@
+CompileFlags:
+  Compiler: g++
+  Add: 
+    - "--target=x86_64-w64-mingw32"  # 【核心】强制告诉 Clangd 使用 MinGW 目标平台
+    - "-std=c++17"
+    - "-fopenmp"
+  Remove: 
+    - "-fms-*" # 移除所有可能导致误判的 MSVC 兼容性宏

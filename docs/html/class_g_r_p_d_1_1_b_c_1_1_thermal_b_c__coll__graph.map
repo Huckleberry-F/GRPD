@@ -1,0 +1,9 @@
+<map id="GRPD::BC::ThermalBC" name="GRPD::BC::ThermalBC">
+<area shape="rect" id="Node000001" title="热边界条件抽象中间类 持有三个 TypedField&lt;double&gt; 指针（温度、温度变化率、热流密度）， 所有热相关 BC 均从此类派生。 使用指针而非引用以支持工厂模式的两阶段构造。" alt="" coords="5,223,167,249"/>
+<area shape="rect" id="Node000002" href="$class_g_r_p_d_1_1_b_c_1_1_b_c.html" title=" " alt="" coords="8,81,122,108"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="72,123,87,222,81,223,66,124"/>
+<area shape="rect" id="Node000003" href="$class_g_r_p_d_1_1_field_1_1_typed_field.html" title=" " alt="" coords="146,81,375,108"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="235,120,103,224,100,220,232,116"/>
+<area shape="rect" id="Node000004" href="$class_g_r_p_d_1_1_field_1_1_field.html" title=" " alt="" coords="194,5,327,32"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="263,47,263,81,258,81,258,47"/>
+</map>

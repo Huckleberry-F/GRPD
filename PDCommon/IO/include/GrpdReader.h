@@ -1,5 +1,5 @@
-#ifndef GRPD_IO_GRPD_READER_H
-#define GRPD_IO_GRPD_READER_H
+#ifndef PDCOMMON_IO_GRPD_READER_H
+#define PDCOMMON_IO_GRPD_READER_H
 
 // ============================================================================
 // GrpdReader.h - High-speed state-machine parser for .grpd files
@@ -13,16 +13,20 @@
 #include <vector>
 
 // 前向声明，避免循环头文件依赖
-namespace GRPD::Model {
+namespace PDCommon::Model {
 class ParticleManager;
 class ThermalField;
-} // namespace GRPD::Model
+} // namespace PDCommon::Model
 
-namespace GRPD::Core {
-class PDSimulater;
-} // namespace GRPD::Core
+namespace PDCommon::Field {
+class FieldManager;
+}
 
-namespace GRPD::IO {
+namespace PDCommon::Core {
+class PDContext;
+} // namespace PDCommon::Core
+
+namespace PDCommon::IO {
 
 class GrpdReader {
 public:
@@ -33,7 +37,14 @@ public:
   // @return true=成功, false=失败
   // -----------------------------------------------------------------------
   static bool read(const std::string &filepath,
-                   GRPD::Model::ParticleManager &manager);
+                   PDCommon::Model::ParticleManager &manager);
+
+  /// @brief 注册粒子几何与标识字段到 FieldManager
+  static void ensureParticleFields(PDCommon::Field::FieldManager &fm);
+
+  /// @brief 将 ParticleManager 中的粒子几何与标识数据回填到 FieldManager
+  static bool populateParticleFields(const PDCommon::Model::ParticleManager &pm,
+                                     PDCommon::Field::FieldManager &fm);
 
   // -----------------------------------------------------------------------
   // 读取 .grpd 文件的 *LOAD 段，将温度型载荷施加到 ThermalField
@@ -42,7 +53,7 @@ public:
   // @return true=成功, false=失败
   // -----------------------------------------------------------------------
   static bool readLoads(const std::string &filepath,
-                        GRPD::Core::PDSimulater &simulater);
+                        PDCommon::Core::PDContext &simulater);
 
 private:
   /// 内部解析状态枚举
@@ -78,6 +89,6 @@ private:
   static std::string trim(const std::string &s);
 };
 
-} // namespace GRPD::IO
+} // namespace PDCommon::IO
 
-#endif // GRPD_IO_GRPD_READER_H
+#endif // PDCOMMON_IO_GRPD_READER_H

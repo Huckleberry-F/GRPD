@@ -1,0 +1,126 @@
+\doxysection{SE\+\_\+\+Material.\+cpp}
+\hypertarget{_s_e___material_8cpp_source}{}\label{_s_e___material_8cpp_source}\index{Src/Engine/src/SE\_Material.cpp@{Src/Engine/src/SE\_Material.cpp}}
+\mbox{\hyperlink{_s_e___material_8cpp}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\Hypertarget{_s_e___material_8cpp_source_l00001}00001\ \textcolor{comment}{//\ ==============================================================================}}
+\DoxyCodeLine{\Hypertarget{_s_e___material_8cpp_source_l00002}00002\ \textcolor{comment}{//\ SE\_Material.cpp}}
+\DoxyCodeLine{\Hypertarget{_s_e___material_8cpp_source_l00003}00003\ \textcolor{comment}{//\ Responsibility:}}
+\DoxyCodeLine{\Hypertarget{_s_e___material_8cpp_source_l00004}00004\ \textcolor{comment}{//\ 1.\ Parse\ 'Materials'\ from\ PD.yaml}}
+\DoxyCodeLine{\Hypertarget{_s_e___material_8cpp_source_l00005}00005\ \textcolor{comment}{//\ 2.\ Instantiate\ materials\ via\ MaterialRegistry}}
+\DoxyCodeLine{\Hypertarget{_s_e___material_8cpp_source_l00006}00006\ \textcolor{comment}{//\ 3.\ Assign\ material\ pointers\ to\ particles\ based\ on\ MatID}}
+\DoxyCodeLine{\Hypertarget{_s_e___material_8cpp_source_l00007}00007\ \textcolor{comment}{//\ ==============================================================================}}
+\DoxyCodeLine{\Hypertarget{_s_e___material_8cpp_source_l00008}00008\ }
+\DoxyCodeLine{\Hypertarget{_s_e___material_8cpp_source_l00009}00009\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{_logger_8h}{Logger.h}}"{}}}
+\DoxyCodeLine{\Hypertarget{_s_e___material_8cpp_source_l00010}00010\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{_material_registry_8h}{MaterialRegistry.h}}"{}}}
+\DoxyCodeLine{\Hypertarget{_s_e___material_8cpp_source_l00011}00011\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{_solver_engine_8h}{SolverEngine.h}}"{}}}
+\DoxyCodeLine{\Hypertarget{_s_e___material_8cpp_source_l00012}00012\ \textcolor{preprocessor}{\#include\ <yaml-\/cpp/yaml.h>}}
+\DoxyCodeLine{\Hypertarget{_s_e___material_8cpp_source_l00013}00013\ }
+\DoxyCodeLine{\Hypertarget{_s_e___material_8cpp_source_l00014}00014\ \textcolor{keyword}{namespace\ }\mbox{\hyperlink{namespace_g_r_p_d_1_1_engine}{GRPD::Engine}}\ \{}
+\DoxyCodeLine{\Hypertarget{_s_e___material_8cpp_source_l00015}00015\ }
+\DoxyCodeLine{\Hypertarget{_s_e___material_8cpp_source_l00016}\mbox{\hyperlink{class_g_r_p_d_1_1_engine_1_1_solver_engine_a9fc81bb7535e7b58853ce0ad152b8832}{00016}}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_g_r_p_d_1_1_engine_1_1_solver_engine_a9fc81bb7535e7b58853ce0ad152b8832}{SolverEngine::InitMaterialPD}}()\ \{}
+\DoxyCodeLine{\Hypertarget{_s_e___material_8cpp_source_l00017}00017\ \ \ \textcolor{keyword}{auto}\ \&ctx\ =\ this-\/>\mbox{\hyperlink{class_g_r_p_d_1_1_engine_1_1_solver_engine_a50b0e47e530f8919fd25b501f7a15348}{pdContext\_}};}
+\DoxyCodeLine{\Hypertarget{_s_e___material_8cpp_source_l00018}00018\ \ \ \mbox{\hyperlink{_logger_8h_ac8e803773221119947b55f6ae85a9c63}{LOG\_INFO}}(\textcolor{stringliteral}{"{}Entering\ Material\ Initialization\ Phase..."{}});}
+\DoxyCodeLine{\Hypertarget{_s_e___material_8cpp_source_l00019}00019\ }
+\DoxyCodeLine{\Hypertarget{_s_e___material_8cpp_source_l00020}00020\ \ \ std::string\ yamlPath\ =\ \textcolor{stringliteral}{"{}../../Input/PD.yaml"{}};}
+\DoxyCodeLine{\Hypertarget{_s_e___material_8cpp_source_l00021}00021\ \ \ YAML::Node\ config;}
+\DoxyCodeLine{\Hypertarget{_s_e___material_8cpp_source_l00022}00022\ \ \ \textcolor{keywordflow}{try}\ \{}
+\DoxyCodeLine{\Hypertarget{_s_e___material_8cpp_source_l00023}00023\ \ \ \ \ config\ =\ YAML::LoadFile(yamlPath);}
+\DoxyCodeLine{\Hypertarget{_s_e___material_8cpp_source_l00024}00024\ \ \ \}\ \textcolor{keywordflow}{catch}\ (\textcolor{keyword}{const}\ YAML::BadFile\ \&e)\ \{}
+\DoxyCodeLine{\Hypertarget{_s_e___material_8cpp_source_l00025}00025\ \ \ \ \ \mbox{\hyperlink{_logger_8h_a7ebf4c3b4fb05d6f9094089ded75cbdd}{LOG\_ERROR}}(\textcolor{stringliteral}{"{}Failed\ to\ load\ YAML\ file\ in\ InitMaterialPD:\ "{}}\ +}
+\DoxyCodeLine{\Hypertarget{_s_e___material_8cpp_source_l00026}00026\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ std::string(e.what()));}
+\DoxyCodeLine{\Hypertarget{_s_e___material_8cpp_source_l00027}00027\ \ \ \ \ exit(EXIT\_FAILURE);}
+\DoxyCodeLine{\Hypertarget{_s_e___material_8cpp_source_l00028}00028\ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_s_e___material_8cpp_source_l00029}00029\ }
+\DoxyCodeLine{\Hypertarget{_s_e___material_8cpp_source_l00030}00030\ \ \ \textcolor{comment}{//\ 1.\ Create\ Materials\ and\ add\ to\ Manager}}
+\DoxyCodeLine{\Hypertarget{_s_e___material_8cpp_source_l00031}00031\ \ \ \textcolor{keyword}{auto}\ \&matManager\ =\ ctx.getMaterialManager();}
+\DoxyCodeLine{\Hypertarget{_s_e___material_8cpp_source_l00032}00032\ \ \ std::unordered\_map<int,\ GRPD::Material::Material\ *>\ idToMatMap;}
+\DoxyCodeLine{\Hypertarget{_s_e___material_8cpp_source_l00033}00033\ }
+\DoxyCodeLine{\Hypertarget{_s_e___material_8cpp_source_l00034}00034\ \ \ \textcolor{comment}{//\ 获取材料配置节点\ (支持单数\ Material\ 或\ 复数\ Materials)}}
+\DoxyCodeLine{\Hypertarget{_s_e___material_8cpp_source_l00035}00035\ \ \ YAML::Node\ materialsNode;}
+\DoxyCodeLine{\Hypertarget{_s_e___material_8cpp_source_l00036}00036\ \ \ \textcolor{keywordflow}{if}\ (config[\textcolor{stringliteral}{"{}Materials"{}}])\ \{}
+\DoxyCodeLine{\Hypertarget{_s_e___material_8cpp_source_l00037}00037\ \ \ \ \ materialsNode\ =\ config[\textcolor{stringliteral}{"{}Materials"{}}];}
+\DoxyCodeLine{\Hypertarget{_s_e___material_8cpp_source_l00038}00038\ \ \ \}\ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}\ (config[\textcolor{stringliteral}{"{}Material"{}}])\ \{}
+\DoxyCodeLine{\Hypertarget{_s_e___material_8cpp_source_l00039}00039\ \ \ \ \ materialsNode\ =\ config[\textcolor{stringliteral}{"{}Material"{}}];}
+\DoxyCodeLine{\Hypertarget{_s_e___material_8cpp_source_l00040}00040\ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_s_e___material_8cpp_source_l00041}00041\ }
+\DoxyCodeLine{\Hypertarget{_s_e___material_8cpp_source_l00042}00042\ \ \ \textcolor{keywordflow}{if}\ (materialsNode)\ \{}
+\DoxyCodeLine{\Hypertarget{_s_e___material_8cpp_source_l00043}00043\ \ \ \ \ \textcolor{comment}{//\ 统一转换为列表处理：如果不是序列，就包装成只含一个元素的序列}}
+\DoxyCodeLine{\Hypertarget{_s_e___material_8cpp_source_l00044}00044\ \ \ \ \ std::vector<YAML::Node>\ nodes;}
+\DoxyCodeLine{\Hypertarget{_s_e___material_8cpp_source_l00045}00045\ \ \ \ \ \textcolor{keywordflow}{if}\ (materialsNode.IsSequence())\ \{}
+\DoxyCodeLine{\Hypertarget{_s_e___material_8cpp_source_l00046}00046\ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keyword}{const}\ \textcolor{keyword}{auto}\ \&n\ :\ materialsNode)\ \{}
+\DoxyCodeLine{\Hypertarget{_s_e___material_8cpp_source_l00047}00047\ \ \ \ \ \ \ \ \ nodes.push\_back(n);}
+\DoxyCodeLine{\Hypertarget{_s_e___material_8cpp_source_l00048}00048\ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_s_e___material_8cpp_source_l00049}00049\ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
+\DoxyCodeLine{\Hypertarget{_s_e___material_8cpp_source_l00050}00050\ \ \ \ \ \ \ nodes.push\_back(materialsNode);}
+\DoxyCodeLine{\Hypertarget{_s_e___material_8cpp_source_l00051}00051\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_s_e___material_8cpp_source_l00052}00052\ }
+\DoxyCodeLine{\Hypertarget{_s_e___material_8cpp_source_l00053}00053\ \ \ \ \ \textcolor{comment}{//\ 循环实例化所有定义的材料}}
+\DoxyCodeLine{\Hypertarget{_s_e___material_8cpp_source_l00054}00054\ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keyword}{const}\ \textcolor{keyword}{auto}\ \&matNode\ :\ nodes)\ \{}
+\DoxyCodeLine{\Hypertarget{_s_e___material_8cpp_source_l00055}00055\ \ \ \ \ \ \ \textcolor{keywordflow}{try}\ \{}
+\DoxyCodeLine{\Hypertarget{_s_e___material_8cpp_source_l00056}00056\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ matId\ =\ matNode[\textcolor{stringliteral}{"{}MatID"{}}]\ ?\ matNode[\textcolor{stringliteral}{"{}MatID"{}}].as<\textcolor{keywordtype}{int}>()\ :\ 1;}
+\DoxyCodeLine{\Hypertarget{_s_e___material_8cpp_source_l00057}00057\ \ \ \ \ \ \ \ \ std::string\ type\ =\ matNode[\textcolor{stringliteral}{"{}Type"{}}].as<std::string>();}
+\DoxyCodeLine{\Hypertarget{_s_e___material_8cpp_source_l00058}00058\ \ \ \ \ \ \ \ \ std::string\ name\ =}
+\DoxyCodeLine{\Hypertarget{_s_e___material_8cpp_source_l00059}00059\ \ \ \ \ \ \ \ \ \ \ \ \ matNode[\textcolor{stringliteral}{"{}Name"{}}]\ ?\ matNode[\textcolor{stringliteral}{"{}Name"{}}].as<std::string>()\ :\ \textcolor{stringliteral}{"{}"{}};}
+\DoxyCodeLine{\Hypertarget{_s_e___material_8cpp_source_l00060}00060\ }
+\DoxyCodeLine{\Hypertarget{_s_e___material_8cpp_source_l00061}00061\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{_logger_8h_ac8e803773221119947b55f6ae85a9c63}{LOG\_INFO}}(\textcolor{stringliteral}{"{}Instantiating\ material\ ["{}}\ +\ std::to\_string(matId)\ +}
+\DoxyCodeLine{\Hypertarget{_s_e___material_8cpp_source_l00062}00062\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}]\ of\ type:\ "{}}\ +\ type);}
+\DoxyCodeLine{\Hypertarget{_s_e___material_8cpp_source_l00063}00063\ }
+\DoxyCodeLine{\Hypertarget{_s_e___material_8cpp_source_l00064}00064\ \ \ \ \ \ \ \ \ std::string\ keyName\ =}
+\DoxyCodeLine{\Hypertarget{_s_e___material_8cpp_source_l00065}00065\ \ \ \ \ \ \ \ \ \ \ \ \ name.empty()\ ?\ \textcolor{stringliteral}{"{}Mat\_"{}}\ +\ std::to\_string(matId)\ :\ name;}
+\DoxyCodeLine{\Hypertarget{_s_e___material_8cpp_source_l00066}00066\ }
+\DoxyCodeLine{\Hypertarget{_s_e___material_8cpp_source_l00067}00067\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ 利用工厂模式创建实例}}
+\DoxyCodeLine{\Hypertarget{_s_e___material_8cpp_source_l00068}00068\ \ \ \ \ \ \ \ \ \textcolor{keyword}{auto}\ matPtr\ =}
+\DoxyCodeLine{\Hypertarget{_s_e___material_8cpp_source_l00069}00069\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_g_r_p_d_1_1_material_1_1_material_registry_a56dfb719cd07d41839dd6b1539951b31}{GRPD::Material::MaterialRegistry::getInstance}}().\mbox{\hyperlink{class_g_r_p_d_1_1_material_1_1_material_registry_a285734d56128a301e45b8cccfcae077e}{createMaterial}}(}
+\DoxyCodeLine{\Hypertarget{_s_e___material_8cpp_source_l00070}00070\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ type,\ keyName);}
+\DoxyCodeLine{\Hypertarget{_s_e___material_8cpp_source_l00071}00071\ }
+\DoxyCodeLine{\Hypertarget{_s_e___material_8cpp_source_l00072}00072\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (matPtr)\ \{}
+\DoxyCodeLine{\Hypertarget{_s_e___material_8cpp_source_l00073}00073\ \ \ \ \ \ \ \ \ \ \ matPtr-\/>initialize(matNode);}
+\DoxyCodeLine{\Hypertarget{_s_e___material_8cpp_source_l00074}00074\ \ \ \ \ \ \ \ \ \ \ matPtr-\/>setName(keyName);}
+\DoxyCodeLine{\Hypertarget{_s_e___material_8cpp_source_l00075}00075\ \ \ \ \ \ \ \ \ \ \ matPtr-\/>setMatId(matId);}
+\DoxyCodeLine{\Hypertarget{_s_e___material_8cpp_source_l00076}00076\ }
+\DoxyCodeLine{\Hypertarget{_s_e___material_8cpp_source_l00077}00077\ \ \ \ \ \ \ \ \ \ \ idToMatMap[matId]\ =\ matPtr.get();}
+\DoxyCodeLine{\Hypertarget{_s_e___material_8cpp_source_l00078}00078\ \ \ \ \ \ \ \ \ \ \ matManager.addMaterial(keyName,\ std::move(matPtr));}
+\DoxyCodeLine{\Hypertarget{_s_e___material_8cpp_source_l00079}00079\ }
+\DoxyCodeLine{\Hypertarget{_s_e___material_8cpp_source_l00080}00080\ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{_logger_8h_ac8e803773221119947b55f6ae85a9c63}{LOG\_INFO}}(\textcolor{stringliteral}{"{}Successfully\ registered\ material\ ID\ "{}}\ +}
+\DoxyCodeLine{\Hypertarget{_s_e___material_8cpp_source_l00081}00081\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ std::to\_string(matId)\ +\ \textcolor{stringliteral}{"{}\ ("{}}\ +\ keyName\ +\ \textcolor{stringliteral}{"{})"{}});}
+\DoxyCodeLine{\Hypertarget{_s_e___material_8cpp_source_l00082}00082\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_s_e___material_8cpp_source_l00083}00083\ }
+\DoxyCodeLine{\Hypertarget{_s_e___material_8cpp_source_l00084}00084\ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{catch}\ (\textcolor{keyword}{const}\ std::exception\ \&e)\ \{}
+\DoxyCodeLine{\Hypertarget{_s_e___material_8cpp_source_l00085}00085\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{_logger_8h_a7ebf4c3b4fb05d6f9094089ded75cbdd}{LOG\_ERROR}}(\textcolor{stringliteral}{"{}Error\ parsing\ material\ entry:\ "{}}\ +\ std::string(e.what()));}
+\DoxyCodeLine{\Hypertarget{_s_e___material_8cpp_source_l00086}00086\ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_s_e___material_8cpp_source_l00087}00087\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_s_e___material_8cpp_source_l00088}00088\ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
+\DoxyCodeLine{\Hypertarget{_s_e___material_8cpp_source_l00089}00089\ \ \ \ \ \mbox{\hyperlink{_logger_8h_a0c53e5566a3b790db039421523dd4637}{LOG\_WARNING}}(\textcolor{stringliteral}{"{}No\ 'Material'\ or\ 'Materials'\ section\ found\ in\ PD.yaml!"{}});}
+\DoxyCodeLine{\Hypertarget{_s_e___material_8cpp_source_l00090}00090\ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_s_e___material_8cpp_source_l00091}00091\ }
+\DoxyCodeLine{\Hypertarget{_s_e___material_8cpp_source_l00092}00092\ \ \ \textcolor{comment}{//\ 2.\ Assign\ Material\ Pointers\ to\ Particles}}
+\DoxyCodeLine{\Hypertarget{_s_e___material_8cpp_source_l00093}00093\ \ \ \mbox{\hyperlink{_logger_8h_ac8e803773221119947b55f6ae85a9c63}{LOG\_INFO}}(\textcolor{stringliteral}{"{}Assigning\ material\ pointers\ to\ particles..."{}});}
+\DoxyCodeLine{\Hypertarget{_s_e___material_8cpp_source_l00094}00094\ \ \ \textcolor{keyword}{auto}\ \&particleArray\ =\ ctx.getParticleManager().getAllParticles();}
+\DoxyCodeLine{\Hypertarget{_s_e___material_8cpp_source_l00095}00095\ \ \ \textcolor{keywordtype}{int}\ assignCount\ =\ 0;}
+\DoxyCodeLine{\Hypertarget{_s_e___material_8cpp_source_l00096}00096\ }
+\DoxyCodeLine{\Hypertarget{_s_e___material_8cpp_source_l00097}00097\ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keyword}{auto}\ \&p\ :\ particleArray)\ \{}
+\DoxyCodeLine{\Hypertarget{_s_e___material_8cpp_source_l00098}00098\ \ \ \ \ \textcolor{keywordtype}{int}\ matId\ =\ p.getMatId();}
+\DoxyCodeLine{\Hypertarget{_s_e___material_8cpp_source_l00099}00099\ }
+\DoxyCodeLine{\Hypertarget{_s_e___material_8cpp_source_l00100}00100\ \ \ \ \ \mbox{\hyperlink{class_g_r_p_d_1_1_material_1_1_material}{GRPD::Material::Material}}\ *assignedMat\ =\ \textcolor{keyword}{nullptr};}
+\DoxyCodeLine{\Hypertarget{_s_e___material_8cpp_source_l00101}00101\ \ \ \ \ \textcolor{keyword}{auto}\ it\ =\ idToMatMap.find(matId);}
+\DoxyCodeLine{\Hypertarget{_s_e___material_8cpp_source_l00102}00102\ \ \ \ \ \textcolor{keywordflow}{if}\ (it\ !=\ idToMatMap.end())\ \{}
+\DoxyCodeLine{\Hypertarget{_s_e___material_8cpp_source_l00103}00103\ \ \ \ \ \ \ assignedMat\ =\ it-\/>second;}
+\DoxyCodeLine{\Hypertarget{_s_e___material_8cpp_source_l00104}00104\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_s_e___material_8cpp_source_l00105}00105\ }
+\DoxyCodeLine{\Hypertarget{_s_e___material_8cpp_source_l00106}00106\ \ \ \ \ \textcolor{keywordflow}{if}\ (assignedMat)\ \{}
+\DoxyCodeLine{\Hypertarget{_s_e___material_8cpp_source_l00107}00107\ \ \ \ \ \ \ p.setMaterial(assignedMat);}
+\DoxyCodeLine{\Hypertarget{_s_e___material_8cpp_source_l00108}00108\ \ \ \ \ \ \ assignCount++;}
+\DoxyCodeLine{\Hypertarget{_s_e___material_8cpp_source_l00109}00109\ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
+\DoxyCodeLine{\Hypertarget{_s_e___material_8cpp_source_l00110}00110\ \ \ \ \ \ \ \mbox{\hyperlink{_logger_8h_a7ebf4c3b4fb05d6f9094089ded75cbdd}{LOG\_ERROR}}(\textcolor{stringliteral}{"{}Particle\ ID\ "{}}\ +\ std::to\_string(p.getId())\ +}
+\DoxyCodeLine{\Hypertarget{_s_e___material_8cpp_source_l00111}00111\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}\ requests\ MatID\ "{}}\ +\ std::to\_string(matId)\ +}
+\DoxyCodeLine{\Hypertarget{_s_e___material_8cpp_source_l00112}00112\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}\ but\ it\ was\ not\ defined\ in\ YAML!"{}});}
+\DoxyCodeLine{\Hypertarget{_s_e___material_8cpp_source_l00113}00113\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_s_e___material_8cpp_source_l00114}00114\ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_s_e___material_8cpp_source_l00115}00115\ }
+\DoxyCodeLine{\Hypertarget{_s_e___material_8cpp_source_l00116}00116\ \ \ \mbox{\hyperlink{_logger_8h_ac8e803773221119947b55f6ae85a9c63}{LOG\_INFO}}(\textcolor{stringliteral}{"{}Successfully\ assigned\ materials\ to\ "{}}\ +\ std::to\_string(assignCount)\ +}
+\DoxyCodeLine{\Hypertarget{_s_e___material_8cpp_source_l00117}00117\ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}\ particles."{}});}
+\DoxyCodeLine{\Hypertarget{_s_e___material_8cpp_source_l00118}00118\ \}}
+\DoxyCodeLine{\Hypertarget{_s_e___material_8cpp_source_l00119}00119\ }
+\DoxyCodeLine{\Hypertarget{_s_e___material_8cpp_source_l00120}00120\ \}\ \textcolor{comment}{//\ namespace\ GRPD::Engine}}
+
+\end{DoxyCode}

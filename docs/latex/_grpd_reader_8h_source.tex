@@ -1,0 +1,86 @@
+\doxysection{Grpd\+Reader.\+h}
+\hypertarget{_grpd_reader_8h_source}{}\label{_grpd_reader_8h_source}\index{PDCommon/IO/include/GrpdReader.h@{PDCommon/IO/include/GrpdReader.h}}
+\mbox{\hyperlink{_grpd_reader_8h}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\Hypertarget{_grpd_reader_8h_source_l00001}00001\ \textcolor{preprocessor}{\#ifndef\ GRPD\_IO\_GRPD\_READER\_H}}
+\DoxyCodeLine{\Hypertarget{_grpd_reader_8h_source_l00002}00002\ \textcolor{preprocessor}{\#define\ GRPD\_IO\_GRPD\_READER\_H}}
+\DoxyCodeLine{\Hypertarget{_grpd_reader_8h_source_l00003}00003\ }
+\DoxyCodeLine{\Hypertarget{_grpd_reader_8h_source_l00004}00004\ \textcolor{comment}{//\ ============================================================================}}
+\DoxyCodeLine{\Hypertarget{_grpd_reader_8h_source_l00005}00005\ \textcolor{comment}{//\ GrpdReader.h\ -\/\ High-\/speed\ state-\/machine\ parser\ for\ .grpd\ files}}
+\DoxyCodeLine{\Hypertarget{_grpd_reader_8h_source_l00006}00006\ \textcolor{comment}{//\ Responsibility:\ Read\ .grpd\ text\ files,\ fill\ *PARTICLE\ section\ data\ into}}
+\DoxyCodeLine{\Hypertarget{_grpd_reader_8h_source_l00007}00007\ \textcolor{comment}{//\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ParticleManager,\ and\ apply\ *LOAD\ section\ data\ to\ physical}}
+\DoxyCodeLine{\Hypertarget{_grpd_reader_8h_source_l00008}00008\ \textcolor{comment}{//\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ field\ managers\ (e.g.\ ThermalField).}}
+\DoxyCodeLine{\Hypertarget{_grpd_reader_8h_source_l00009}00009\ \textcolor{comment}{//\ ============================================================================}}
+\DoxyCodeLine{\Hypertarget{_grpd_reader_8h_source_l00010}00010\ }
+\DoxyCodeLine{\Hypertarget{_grpd_reader_8h_source_l00011}00011\ \textcolor{preprocessor}{\#include\ <functional>}}
+\DoxyCodeLine{\Hypertarget{_grpd_reader_8h_source_l00012}00012\ \textcolor{preprocessor}{\#include\ <string>}}
+\DoxyCodeLine{\Hypertarget{_grpd_reader_8h_source_l00013}00013\ \textcolor{preprocessor}{\#include\ <vector>}}
+\DoxyCodeLine{\Hypertarget{_grpd_reader_8h_source_l00014}00014\ }
+\DoxyCodeLine{\Hypertarget{_grpd_reader_8h_source_l00015}00015\ \textcolor{comment}{//\ 前向声明，避免循环头文件依赖}}
+\DoxyCodeLine{\Hypertarget{_grpd_reader_8h_source_l00016}00016\ \textcolor{keyword}{namespace\ }\mbox{\hyperlink{namespace_g_r_p_d_1_1_model}{GRPD::Model}}\ \{}
+\DoxyCodeLine{\Hypertarget{_grpd_reader_8h_source_l00017}00017\ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_g_r_p_d_1_1_model_1_1_particle_manager}{ParticleManager}};}
+\DoxyCodeLine{\Hypertarget{_grpd_reader_8h_source_l00018}00018\ \textcolor{keyword}{class\ }ThermalField;}
+\DoxyCodeLine{\Hypertarget{_grpd_reader_8h_source_l00019}00019\ \}\ \textcolor{comment}{//\ namespace\ GRPD::Model}}
+\DoxyCodeLine{\Hypertarget{_grpd_reader_8h_source_l00020}00020\ }
+\DoxyCodeLine{\Hypertarget{_grpd_reader_8h_source_l00021}00021\ \textcolor{keyword}{namespace\ }\mbox{\hyperlink{namespace_g_r_p_d_1_1_core}{GRPD::Core}}\ \{}
+\DoxyCodeLine{\Hypertarget{_grpd_reader_8h_source_l00022}00022\ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_g_r_p_d_1_1_core_1_1_p_d_simulater}{PDSimulater}};}
+\DoxyCodeLine{\Hypertarget{_grpd_reader_8h_source_l00023}00023\ \}\ \textcolor{comment}{//\ namespace\ GRPD::Core}}
+\DoxyCodeLine{\Hypertarget{_grpd_reader_8h_source_l00024}00024\ }
+\DoxyCodeLine{\Hypertarget{_grpd_reader_8h_source_l00025}\mbox{\hyperlink{namespace_g_r_p_d_1_1_i_o}{00025}}\ \textcolor{keyword}{namespace\ }\mbox{\hyperlink{namespace_g_r_p_d_1_1_i_o}{GRPD::IO}}\ \{}
+\DoxyCodeLine{\Hypertarget{_grpd_reader_8h_source_l00026}00026\ }
+\DoxyCodeLine{\Hypertarget{_grpd_reader_8h_source_l00027}\mbox{\hyperlink{class_g_r_p_d_1_1_i_o_1_1_grpd_reader}{00027}}\ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_g_r_p_d_1_1_i_o_1_1_grpd_reader}{GrpdReader}}\ \{}
+\DoxyCodeLine{\Hypertarget{_grpd_reader_8h_source_l00028}00028\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{\Hypertarget{_grpd_reader_8h_source_l00029}00029\ \ \ \textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{\Hypertarget{_grpd_reader_8h_source_l00030}00030\ \ \ \textcolor{comment}{//\ 读取\ .grpd\ 文件的\ *PARTICLE\ 段，填充粒子几何数据}}
+\DoxyCodeLine{\Hypertarget{_grpd_reader_8h_source_l00031}00031\ \ \ \textcolor{comment}{//\ @param\ filepath\ \ .grpd\ 文件路径}}
+\DoxyCodeLine{\Hypertarget{_grpd_reader_8h_source_l00032}00032\ \ \ \textcolor{comment}{//\ @param\ manager\ \ \ 目标粒子管理器（引用传入）}}
+\DoxyCodeLine{\Hypertarget{_grpd_reader_8h_source_l00033}00033\ \ \ \textcolor{comment}{//\ @return\ true=成功,\ false=失败}}
+\DoxyCodeLine{\Hypertarget{_grpd_reader_8h_source_l00034}00034\ \ \ \textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{\Hypertarget{_grpd_reader_8h_source_l00035}00035\ \ \ \textcolor{keyword}{static}\ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{class_g_r_p_d_1_1_i_o_1_1_grpd_reader_acb78b0d0f156c100e18690733e77c00f}{read}}(\textcolor{keyword}{const}\ std::string\ \&filepath,}
+\DoxyCodeLine{\Hypertarget{_grpd_reader_8h_source_l00036}00036\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_g_r_p_d_1_1_model_1_1_particle_manager}{GRPD::Model::ParticleManager}}\ \&manager);}
+\DoxyCodeLine{\Hypertarget{_grpd_reader_8h_source_l00037}00037\ }
+\DoxyCodeLine{\Hypertarget{_grpd_reader_8h_source_l00038}00038\ \ \ \textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{\Hypertarget{_grpd_reader_8h_source_l00039}00039\ \ \ \textcolor{comment}{//\ 读取\ .grpd\ 文件的\ *LOAD\ 段，将温度型载荷施加到\ ThermalField}}
+\DoxyCodeLine{\Hypertarget{_grpd_reader_8h_source_l00040}00040\ \ \ \textcolor{comment}{//\ @param\ filepath\ \ \ .grpd\ 文件路径}}
+\DoxyCodeLine{\Hypertarget{_grpd_reader_8h_source_l00041}00041\ \ \ \textcolor{comment}{//\ @param\ simulater\ \ 仿真大管家（用于获取\ BCManager\ 和\ ThermalField）}}
+\DoxyCodeLine{\Hypertarget{_grpd_reader_8h_source_l00042}00042\ \ \ \textcolor{comment}{//\ @return\ true=成功,\ false=失败}}
+\DoxyCodeLine{\Hypertarget{_grpd_reader_8h_source_l00043}00043\ \ \ \textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{\Hypertarget{_grpd_reader_8h_source_l00044}00044\ \ \ \textcolor{keyword}{static}\ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{class_g_r_p_d_1_1_i_o_1_1_grpd_reader_a63f482039d38ccdffcb1ebb56d5d795f}{readLoads}}(\textcolor{keyword}{const}\ std::string\ \&filepath,}
+\DoxyCodeLine{\Hypertarget{_grpd_reader_8h_source_l00045}00045\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_g_r_p_d_1_1_core_1_1_p_d_simulater}{GRPD::Core::PDSimulater}}\ \&simulater);}
+\DoxyCodeLine{\Hypertarget{_grpd_reader_8h_source_l00046}00046\ }
+\DoxyCodeLine{\Hypertarget{_grpd_reader_8h_source_l00047}00047\ \textcolor{keyword}{private}:}
+\DoxyCodeLine{\Hypertarget{_grpd_reader_8h_source_l00049}\mbox{\hyperlink{class_g_r_p_d_1_1_i_o_1_1_grpd_reader_ac49b1eb14632aaf0678ecedcd482511f}{00049}}\ \ \ \textcolor{keyword}{enum\ class}\ \mbox{\hyperlink{class_g_r_p_d_1_1_i_o_1_1_grpd_reader_ac49b1eb14632aaf0678ecedcd482511f}{ParseState}}\ \{}
+\DoxyCodeLine{\Hypertarget{_grpd_reader_8h_source_l00050}\mbox{\hyperlink{class_g_r_p_d_1_1_i_o_1_1_grpd_reader_ac49b1eb14632aaf0678ecedcd482511faa5daf7f2ebbba4975d61dab1c40188c7}{00050}}\ \ \ \ \ \mbox{\hyperlink{class_g_r_p_d_1_1_i_o_1_1_grpd_reader_ac49b1eb14632aaf0678ecedcd482511faa5daf7f2ebbba4975d61dab1c40188c7}{IDLE}},\ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ 初始状态，等待段标记}}
+\DoxyCodeLine{\Hypertarget{_grpd_reader_8h_source_l00051}\mbox{\hyperlink{class_g_r_p_d_1_1_i_o_1_1_grpd_reader_ac49b1eb14632aaf0678ecedcd482511faba524ed637dd3f19a95a7e2c9e49990b}{00051}}\ \ \ \ \ \mbox{\hyperlink{class_g_r_p_d_1_1_i_o_1_1_grpd_reader_ac49b1eb14632aaf0678ecedcd482511faba524ed637dd3f19a95a7e2c9e49990b}{READING\_PARTICLES}},\ \textcolor{comment}{//\ 正在读取\ *PARTICLE\ 段}}
+\DoxyCodeLine{\Hypertarget{_grpd_reader_8h_source_l00052}\mbox{\hyperlink{class_g_r_p_d_1_1_i_o_1_1_grpd_reader_ac49b1eb14632aaf0678ecedcd482511fadd11e4b138ba6325c2aba90b97c84e11}{00052}}\ \ \ \ \ \mbox{\hyperlink{class_g_r_p_d_1_1_i_o_1_1_grpd_reader_ac49b1eb14632aaf0678ecedcd482511fadd11e4b138ba6325c2aba90b97c84e11}{READING\_LOADS}}\ \ \ \ \ \ \textcolor{comment}{//\ 正在读取\ *LOAD\ 段}}
+\DoxyCodeLine{\Hypertarget{_grpd_reader_8h_source_l00053}00053\ \ \ \};}
+\DoxyCodeLine{\Hypertarget{_grpd_reader_8h_source_l00054}00054\ }
+\DoxyCodeLine{\Hypertarget{_grpd_reader_8h_source_l00055}00055\ \ \ \textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{\Hypertarget{_grpd_reader_8h_source_l00056}00056\ \ \ \textcolor{comment}{//\ 行回调函数签名：(当前状态,\ 已分割的字段列表,\ 行号)}}
+\DoxyCodeLine{\Hypertarget{_grpd_reader_8h_source_l00057}00057\ \ \ \textcolor{comment}{//\ 返回\ true\ 表示继续扫描，false\ 表示终止}}
+\DoxyCodeLine{\Hypertarget{_grpd_reader_8h_source_l00058}00058\ \ \ \textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{\Hypertarget{_grpd_reader_8h_source_l00059}\mbox{\hyperlink{class_g_r_p_d_1_1_i_o_1_1_grpd_reader_a333298eaee2bdc3146f37f234b58d0fd}{00059}}\ \ \ \textcolor{keyword}{using\ }\mbox{\hyperlink{class_g_r_p_d_1_1_i_o_1_1_grpd_reader_a333298eaee2bdc3146f37f234b58d0fd}{LineCallback}}\ =\ std::function<bool(\mbox{\hyperlink{class_g_r_p_d_1_1_i_o_1_1_grpd_reader_ac49b1eb14632aaf0678ecedcd482511f}{ParseState}}\ state,}
+\DoxyCodeLine{\Hypertarget{_grpd_reader_8h_source_l00060}00060\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ std::vector<std::string>\ \&tokens,}
+\DoxyCodeLine{\Hypertarget{_grpd_reader_8h_source_l00061}00061\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ lineNumber)>;}
+\DoxyCodeLine{\Hypertarget{_grpd_reader_8h_source_l00062}00062\ }
+\DoxyCodeLine{\Hypertarget{_grpd_reader_8h_source_l00063}00063\ \ \ \textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{\Hypertarget{_grpd_reader_8h_source_l00064}00064\ \ \ \textcolor{comment}{//\ 通用文件扫描器：封装文件打开、逐行读取、状态机切换}}
+\DoxyCodeLine{\Hypertarget{_grpd_reader_8h_source_l00065}00065\ \ \ \textcolor{comment}{//\ @param\ filepath\ \ \ \ .grpd\ 文件路径}}
+\DoxyCodeLine{\Hypertarget{_grpd_reader_8h_source_l00066}00066\ \ \ \textcolor{comment}{//\ @param\ callback\ \ \ \ 每遇到有效数据行时调用的回调}}
+\DoxyCodeLine{\Hypertarget{_grpd_reader_8h_source_l00067}00067\ \ \ \textcolor{comment}{//\ @param\ logPrefix\ \ \ 日志前缀标识（用于区分调用来源）}}
+\DoxyCodeLine{\Hypertarget{_grpd_reader_8h_source_l00068}00068\ \ \ \textcolor{comment}{//\ @return\ true=成功,\ false=文件打开失败}}
+\DoxyCodeLine{\Hypertarget{_grpd_reader_8h_source_l00069}00069\ \ \ \textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{\Hypertarget{_grpd_reader_8h_source_l00070}00070\ \ \ \textcolor{keyword}{static}\ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{class_g_r_p_d_1_1_i_o_1_1_grpd_reader_addce73bde28df30151f834abb4883aad}{scanFile}}(\textcolor{keyword}{const}\ std::string\ \&filepath,}
+\DoxyCodeLine{\Hypertarget{_grpd_reader_8h_source_l00071}00071\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_g_r_p_d_1_1_i_o_1_1_grpd_reader_a333298eaee2bdc3146f37f234b58d0fd}{LineCallback}}\ callback,}
+\DoxyCodeLine{\Hypertarget{_grpd_reader_8h_source_l00072}00072\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ std::string\ \&logPrefix);}
+\DoxyCodeLine{\Hypertarget{_grpd_reader_8h_source_l00073}00073\ }
+\DoxyCodeLine{\Hypertarget{_grpd_reader_8h_source_l00075}00075\ \ \ \textcolor{keyword}{static}\ std::vector<std::string>\ \mbox{\hyperlink{class_g_r_p_d_1_1_i_o_1_1_grpd_reader_a17b521c3c8cf019fc84bcb483caef248}{tokenizeCsv}}(\textcolor{keyword}{const}\ std::string\ \&line);}
+\DoxyCodeLine{\Hypertarget{_grpd_reader_8h_source_l00076}00076\ }
+\DoxyCodeLine{\Hypertarget{_grpd_reader_8h_source_l00078}00078\ \ \ \textcolor{keyword}{static}\ std::string\ \mbox{\hyperlink{class_g_r_p_d_1_1_i_o_1_1_grpd_reader_ad1d8c861446c6db8b22cec01bb971aef}{trim}}(\textcolor{keyword}{const}\ std::string\ \&s);}
+\DoxyCodeLine{\Hypertarget{_grpd_reader_8h_source_l00079}00079\ \};}
+\DoxyCodeLine{\Hypertarget{_grpd_reader_8h_source_l00080}00080\ }
+\DoxyCodeLine{\Hypertarget{_grpd_reader_8h_source_l00081}00081\ \}\ \textcolor{comment}{//\ namespace\ GRPD::IO}}
+\DoxyCodeLine{\Hypertarget{_grpd_reader_8h_source_l00082}00082\ }
+\DoxyCodeLine{\Hypertarget{_grpd_reader_8h_source_l00083}00083\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{//\ GRPD\_IO\_GRPD\_READER\_H}}
+
+\end{DoxyCode}

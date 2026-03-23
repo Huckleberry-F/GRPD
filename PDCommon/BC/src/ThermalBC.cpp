@@ -5,13 +5,14 @@
 #include "ThermalBC.h"
 #include "BCRegistry.h"
 #include "FieldManager.h"
+#include <cmath>
 
-namespace GRPD::BC {
+namespace PDCommon::BC {
 
 // ===========================================================================
 // TemperatureBC (Dirichlet)
 // ===========================================================================
-void TemperatureBC::initialize(GRPD::Field::FieldManager &fieldManager,
+void TemperatureBC::initialize(PDCommon::Field::FieldManager &fieldManager,
                                int particleId,
                                const std::vector<double> &values) {
     // 从 FieldManager 获取各物理场指针
@@ -29,32 +30,44 @@ void TemperatureBC::apply() {
 // ===========================================================================
 // HeatFluxBC (Neumann)
 // ===========================================================================
-void HeatFluxBC::initialize(GRPD::Field::FieldManager &fieldManager,
+void HeatFluxBC::initialize(PDCommon::Field::FieldManager &fieldManager,
                             int particleId,
                             const std::vector<double> &values) {
     temperature_ = fieldManager.getFieldAs<double>("Temperature");
     tempRate_ = fieldManager.getFieldAs<double>("TempRate");
     heatFlux_ = fieldManager.getFieldAs<double>("HeatFlux");
     particleId_ = particleId;
-    flux_ = values[0];
+    
+    auto *volField = fieldManager.getFieldAs<double>("Volume");
+    double vol = volField ? volField->get(particleId) : 1.0;
+    double dx = std::cbrt(vol);
+    
+    // 等效体积热源换算: Q_v = q_s / dx
+    flux_ = values[0] / dx;
 }
 
 void HeatFluxBC::apply() {
     tempRate_->add(particleId_, flux_);
-    heatFlux_->add(particleId_, flux_);
+    heatFlux_->set(particleId_, flux_);
 }
 
 // ===========================================================================
 // ConvectionBC (Robin)
 // ===========================================================================
-void ConvectionBC::initialize(GRPD::Field::FieldManager &fieldManager,
+void ConvectionBC::initialize(PDCommon::Field::FieldManager &fieldManager,
                               int particleId,
                               const std::vector<double> &values) {
     temperature_ = fieldManager.getFieldAs<double>("Temperature");
     tempRate_ = fieldManager.getFieldAs<double>("TempRate");
     heatFlux_ = fieldManager.getFieldAs<double>("HeatFlux");
     particleId_ = particleId;
-    hConv_ = values[0];
+    
+    auto *volField = fieldManager.getFieldAs<double>("Volume");
+    double vol = volField ? volField->get(particleId) : 1.0;
+    double dx = std::cbrt(vol);
+    
+    // 等效体积对流系数换算
+    hConv_ = values[0] / dx;
     tInf_ = (values.size() > 1) ? values[1] : 0.0;
 }
 
@@ -62,7 +75,7 @@ void ConvectionBC::apply() {
     double currentT = temperature_->get(particleId_);
     double qConv = hConv_ * (tInf_ - currentT);
     tempRate_->add(particleId_, qConv);
-    heatFlux_->add(particleId_, qConv);
+    heatFlux_->set(particleId_, qConv);
 }
 
 // ============================================================================
@@ -80,4 +93,4 @@ REGISTER_BC_TYPE(CONV, [](const std::string &name) {
     return std::make_unique<ConvectionBC>(name);
 });
 
-} // namespace GRPD::BC
+} // namespace PDCommon::BC

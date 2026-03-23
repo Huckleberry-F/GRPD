@@ -1,0 +1,519 @@
+\doxysection{GRPD\+::IO\+::Grpd\+Reader Class Reference}
+\hypertarget{class_g_r_p_d_1_1_i_o_1_1_grpd_reader}{}\label{class_g_r_p_d_1_1_i_o_1_1_grpd_reader}\index{GRPD::IO::GrpdReader@{GRPD::IO::GrpdReader}}
+
+
+{\ttfamily \#include $<$Grpd\+Reader.\+h$>$}
+
+\doxysubsubsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+static bool \mbox{\hyperlink{class_g_r_p_d_1_1_i_o_1_1_grpd_reader_acb78b0d0f156c100e18690733e77c00f}{read}} (const std\+::string \&filepath, \mbox{\hyperlink{class_g_r_p_d_1_1_model_1_1_particle_manager}{GRPD\+::\+Model\+::\+Particle\+Manager}} \&manager)
+\item 
+static bool \mbox{\hyperlink{class_g_r_p_d_1_1_i_o_1_1_grpd_reader_a63f482039d38ccdffcb1ebb56d5d795f}{read\+Loads}} (const std\+::string \&filepath, \mbox{\hyperlink{class_g_r_p_d_1_1_core_1_1_p_d_simulater}{GRPD\+::\+Core\+::\+PDSimulater}} \&simulater)
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Private Types}
+\begin{DoxyCompactItemize}
+\item 
+enum class \mbox{\hyperlink{class_g_r_p_d_1_1_i_o_1_1_grpd_reader_ac49b1eb14632aaf0678ecedcd482511f}{Parse\+State}} \{ \mbox{\hyperlink{class_g_r_p_d_1_1_i_o_1_1_grpd_reader_ac49b1eb14632aaf0678ecedcd482511faa5daf7f2ebbba4975d61dab1c40188c7}{IDLE}}
+, \mbox{\hyperlink{class_g_r_p_d_1_1_i_o_1_1_grpd_reader_ac49b1eb14632aaf0678ecedcd482511faba524ed637dd3f19a95a7e2c9e49990b}{READING\+\_\+\+PARTICLES}}
+, \mbox{\hyperlink{class_g_r_p_d_1_1_i_o_1_1_grpd_reader_ac49b1eb14632aaf0678ecedcd482511fadd11e4b138ba6325c2aba90b97c84e11}{READING\+\_\+\+LOADS}}
+ \}
+\begin{DoxyCompactList}\small\item\em 内部解析状态枚举 \end{DoxyCompactList}\item 
+using \mbox{\hyperlink{class_g_r_p_d_1_1_i_o_1_1_grpd_reader_a333298eaee2bdc3146f37f234b58d0fd}{Line\+Callback}}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Static Private Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+static bool \mbox{\hyperlink{class_g_r_p_d_1_1_i_o_1_1_grpd_reader_addce73bde28df30151f834abb4883aad}{scan\+File}} (const std\+::string \&filepath, \mbox{\hyperlink{class_g_r_p_d_1_1_i_o_1_1_grpd_reader_a333298eaee2bdc3146f37f234b58d0fd}{Line\+Callback}} callback, const std\+::string \&log\+Prefix)
+\item 
+static std\+::vector$<$ std\+::string $>$ \mbox{\hyperlink{class_g_r_p_d_1_1_i_o_1_1_grpd_reader_a17b521c3c8cf019fc84bcb483caef248}{tokenize\+Csv}} (const std\+::string \&line)
+\begin{DoxyCompactList}\small\item\em 将逗号分隔的一行文本分割为修剪后的字段数组 \end{DoxyCompactList}\item 
+static std\+::string \mbox{\hyperlink{class_g_r_p_d_1_1_i_o_1_1_grpd_reader_ad1d8c861446c6db8b22cec01bb971aef}{trim}} (const std\+::string \&s)
+\begin{DoxyCompactList}\small\item\em 去除字符串首尾空白字符 \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+
+
+Definition at line \mbox{\hyperlink{_grpd_reader_8h_source_l00027}{27}} of file \mbox{\hyperlink{_grpd_reader_8h_source}{Grpd\+Reader.\+h}}.
+
+
+
+\label{doc-typedef-members}
+\Hypertarget{class_g_r_p_d_1_1_i_o_1_1_grpd_reader_doc-typedef-members}
+\doxysubsection{Member Typedef Documentation}
+\Hypertarget{class_g_r_p_d_1_1_i_o_1_1_grpd_reader_a333298eaee2bdc3146f37f234b58d0fd}\index{GRPD::IO::GrpdReader@{GRPD::IO::GrpdReader}!LineCallback@{LineCallback}}
+\index{LineCallback@{LineCallback}!GRPD::IO::GrpdReader@{GRPD::IO::GrpdReader}}
+\doxysubsubsection{\texorpdfstring{LineCallback}{LineCallback}}
+{\footnotesize\ttfamily \label{class_g_r_p_d_1_1_i_o_1_1_grpd_reader_a333298eaee2bdc3146f37f234b58d0fd} 
+using \mbox{\hyperlink{class_g_r_p_d_1_1_i_o_1_1_grpd_reader_a333298eaee2bdc3146f37f234b58d0fd}{GRPD\+::\+IO\+::\+Grpd\+Reader\+::\+Line\+Callback}}\hspace{0.3cm}{\ttfamily [private]}}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\ std::function<bool(\mbox{\hyperlink{class_g_r_p_d_1_1_i_o_1_1_grpd_reader_ac49b1eb14632aaf0678ecedcd482511f}{ParseState}}\ state,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ std::vector<std::string>\ \&tokens,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ lineNumber)>}
+
+\end{DoxyCode}
+
+
+Definition at line \mbox{\hyperlink{_grpd_reader_8h_source_l00059}{59}} of file \mbox{\hyperlink{_grpd_reader_8h_source}{Grpd\+Reader.\+h}}.
+
+
+
+\label{doc-enum-members}
+\Hypertarget{class_g_r_p_d_1_1_i_o_1_1_grpd_reader_doc-enum-members}
+\doxysubsection{Member Enumeration Documentation}
+\Hypertarget{class_g_r_p_d_1_1_i_o_1_1_grpd_reader_ac49b1eb14632aaf0678ecedcd482511f}\index{GRPD::IO::GrpdReader@{GRPD::IO::GrpdReader}!ParseState@{ParseState}}
+\index{ParseState@{ParseState}!GRPD::IO::GrpdReader@{GRPD::IO::GrpdReader}}
+\doxysubsubsection{\texorpdfstring{ParseState}{ParseState}}
+{\footnotesize\ttfamily \label{class_g_r_p_d_1_1_i_o_1_1_grpd_reader_ac49b1eb14632aaf0678ecedcd482511f} 
+enum class \mbox{\hyperlink{class_g_r_p_d_1_1_i_o_1_1_grpd_reader_ac49b1eb14632aaf0678ecedcd482511f}{GRPD\+::\+IO\+::\+Grpd\+Reader\+::\+Parse\+State}}\hspace{0.3cm}{\ttfamily [strong]}, {\ttfamily [private]}}
+
+
+
+内部解析状态枚举 
+
+\begin{DoxyEnumFields}[2]{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{IDLE@{IDLE}!GRPD::IO::GrpdReader@{GRPD::IO::GrpdReader}}\index{GRPD::IO::GrpdReader@{GRPD::IO::GrpdReader}!IDLE@{IDLE}}}\Hypertarget{class_g_r_p_d_1_1_i_o_1_1_grpd_reader_ac49b1eb14632aaf0678ecedcd482511faa5daf7f2ebbba4975d61dab1c40188c7}\label{class_g_r_p_d_1_1_i_o_1_1_grpd_reader_ac49b1eb14632aaf0678ecedcd482511faa5daf7f2ebbba4975d61dab1c40188c7} 
+IDLE&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{READING\_PARTICLES@{READING\_PARTICLES}!GRPD::IO::GrpdReader@{GRPD::IO::GrpdReader}}\index{GRPD::IO::GrpdReader@{GRPD::IO::GrpdReader}!READING\_PARTICLES@{READING\_PARTICLES}}}\Hypertarget{class_g_r_p_d_1_1_i_o_1_1_grpd_reader_ac49b1eb14632aaf0678ecedcd482511faba524ed637dd3f19a95a7e2c9e49990b}\label{class_g_r_p_d_1_1_i_o_1_1_grpd_reader_ac49b1eb14632aaf0678ecedcd482511faba524ed637dd3f19a95a7e2c9e49990b} 
+READING\+\_\+\+PARTICLES&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{READING\_LOADS@{READING\_LOADS}!GRPD::IO::GrpdReader@{GRPD::IO::GrpdReader}}\index{GRPD::IO::GrpdReader@{GRPD::IO::GrpdReader}!READING\_LOADS@{READING\_LOADS}}}\Hypertarget{class_g_r_p_d_1_1_i_o_1_1_grpd_reader_ac49b1eb14632aaf0678ecedcd482511fadd11e4b138ba6325c2aba90b97c84e11}\label{class_g_r_p_d_1_1_i_o_1_1_grpd_reader_ac49b1eb14632aaf0678ecedcd482511fadd11e4b138ba6325c2aba90b97c84e11} 
+READING\+\_\+\+LOADS&\\
+\hline
+
+\end{DoxyEnumFields}
+
+
+Definition at line \mbox{\hyperlink{_grpd_reader_8h_source_l00049}{49}} of file \mbox{\hyperlink{_grpd_reader_8h_source}{Grpd\+Reader.\+h}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00049\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00050\ \ \ \ \ IDLE,\ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ 初始状态，等待段标记}}
+\DoxyCodeLine{00051\ \ \ \ \ READING\_PARTICLES,\ \textcolor{comment}{//\ 正在读取\ *PARTICLE\ 段}}
+\DoxyCodeLine{00052\ \ \ \ \ READING\_LOADS\ \ \ \ \ \ \textcolor{comment}{//\ 正在读取\ *LOAD\ 段}}
+\DoxyCodeLine{00053\ \ \ \};}
+
+\end{DoxyCode}
+
+
+\label{doc-func-members}
+\Hypertarget{class_g_r_p_d_1_1_i_o_1_1_grpd_reader_doc-func-members}
+\doxysubsection{Member Function Documentation}
+\Hypertarget{class_g_r_p_d_1_1_i_o_1_1_grpd_reader_acb78b0d0f156c100e18690733e77c00f}\index{GRPD::IO::GrpdReader@{GRPD::IO::GrpdReader}!read@{read}}
+\index{read@{read}!GRPD::IO::GrpdReader@{GRPD::IO::GrpdReader}}
+\doxysubsubsection{\texorpdfstring{read()}{read()}}
+{\footnotesize\ttfamily \label{class_g_r_p_d_1_1_i_o_1_1_grpd_reader_acb78b0d0f156c100e18690733e77c00f} 
+bool GRPD\+::\+IO\+::\+Grpd\+Reader\+::read (\begin{DoxyParamCaption}\item[{const std\+::string \&}]{filepath}{, }\item[{\mbox{\hyperlink{class_g_r_p_d_1_1_model_1_1_particle_manager}{GRPD\+::\+Model\+::\+Particle\+Manager}} \&}]{manager}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Definition at line \mbox{\hyperlink{_grpd_reader_8cpp_source_l00119}{119}} of file \mbox{\hyperlink{_grpd_reader_8cpp_source}{Grpd\+Reader.\+cpp}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00120\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00121\ \ \ \textcolor{keywordtype}{int}\ particleCount\ =\ 0;}
+\DoxyCodeLine{00122\ \ \ \textcolor{keywordtype}{int}\ loadCount\ =\ 0;}
+\DoxyCodeLine{00123\ }
+\DoxyCodeLine{00124\ \ \ \textcolor{keywordtype}{bool}\ ok\ =\ \mbox{\hyperlink{class_g_r_p_d_1_1_i_o_1_1_grpd_reader_addce73bde28df30151f834abb4883aad}{scanFile}}(}
+\DoxyCodeLine{00125\ \ \ \ \ \ \ filepath,}
+\DoxyCodeLine{00126\ \ \ \ \ \ \ [\&](\mbox{\hyperlink{class_g_r_p_d_1_1_i_o_1_1_grpd_reader_ac49b1eb14632aaf0678ecedcd482511f}{ParseState}}\ state,\ \textcolor{keyword}{const}\ std::vector<std::string>\ \&tokens,}
+\DoxyCodeLine{00127\ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ lineNumber)\ -\/>\ \textcolor{keywordtype}{bool}\ \{}
+\DoxyCodeLine{00128\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ =====\ *PARTICLE\ 段：解析\ ID,\ PartID,\ MatID,\ X,\ Y,\ Z,\ Volume\ =====}}
+\DoxyCodeLine{00129\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (state\ ==\ \mbox{\hyperlink{class_g_r_p_d_1_1_i_o_1_1_grpd_reader_ac49b1eb14632aaf0678ecedcd482511faba524ed637dd3f19a95a7e2c9e49990b}{ParseState::READING\_PARTICLES}})\ \{}
+\DoxyCodeLine{00130\ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (tokens.size()\ !=\ 7)\ \{}
+\DoxyCodeLine{00131\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{_logger_8h_a0c53e5566a3b790db039421523dd4637}{LOG\_WARNING}}(}
+\DoxyCodeLine{00132\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}[GrpdReader]\ Line\ "{}}\ +\ std::to\_string(lineNumber)\ +}
+\DoxyCodeLine{00133\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}\ particle\ field\ count="{}}\ +\ std::to\_string(tokens.size())\ +}
+\DoxyCodeLine{00134\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{},\ expected\ 7,\ skipped"{}});}
+\DoxyCodeLine{00135\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};\ \textcolor{comment}{//\ 跳过当前行，继续扫描}}
+\DoxyCodeLine{00136\ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00137\ }
+\DoxyCodeLine{00138\ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{try}\ \{}
+\DoxyCodeLine{00139\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ \textcolor{keywordtype}{id}\ =\ std::stoi(tokens[0]);}
+\DoxyCodeLine{00140\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ partId\ =\ std::stoi(tokens[1]);}
+\DoxyCodeLine{00141\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ matId\ =\ std::stoi(tokens[2]);}
+\DoxyCodeLine{00142\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ x\ =\ std::stod(tokens[3]);}
+\DoxyCodeLine{00143\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ y\ =\ std::stod(tokens[4]);}
+\DoxyCodeLine{00144\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ z\ =\ std::stod(tokens[5]);}
+\DoxyCodeLine{00145\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ vol\ =\ std::stod(tokens[6]);}
+\DoxyCodeLine{00146\ }
+\DoxyCodeLine{00147\ \ \ \ \ \ \ \ \ \ \ \ \ manager.\mbox{\hyperlink{class_g_r_p_d_1_1_model_1_1_particle_manager_a7eff63be683fc494e88dc63c2b0a0d4a}{addParticle}}(\textcolor{keywordtype}{id},\ partId,\ matId,\ x,\ y,\ z,\ vol);}
+\DoxyCodeLine{00148\ \ \ \ \ \ \ \ \ \ \ \ \ particleCount++;}
+\DoxyCodeLine{00149\ \ \ \ \ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{catch}\ (\textcolor{keyword}{const}\ std::exception\ \&e)\ \{}
+\DoxyCodeLine{00150\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{_logger_8h_a7ebf4c3b4fb05d6f9094089ded75cbdd}{LOG\_ERROR}}(\textcolor{stringliteral}{"{}[GrpdReader]\ Line\ "{}}\ +\ std::to\_string(lineNumber)\ +}
+\DoxyCodeLine{00151\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}\ parse\ failed:\ "{}}\ +\ std::string(e.what()));}
+\DoxyCodeLine{00152\ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00153\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00154\ }
+\DoxyCodeLine{00155\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ =====\ *LOAD\ 段：仅计数，实际处理由\ readLoads()\ 负责\ =====}}
+\DoxyCodeLine{00156\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (state\ ==\ \mbox{\hyperlink{class_g_r_p_d_1_1_i_o_1_1_grpd_reader_ac49b1eb14632aaf0678ecedcd482511fadd11e4b138ba6325c2aba90b97c84e11}{ParseState::READING\_LOADS}})\ \{}
+\DoxyCodeLine{00157\ \ \ \ \ \ \ \ \ \ \ loadCount++;}
+\DoxyCodeLine{00158\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00159\ }
+\DoxyCodeLine{00160\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};\ \textcolor{comment}{//\ 继续扫描}}
+\DoxyCodeLine{00161\ \ \ \ \ \ \ \},}
+\DoxyCodeLine{00162\ \ \ \ \ \ \ \textcolor{stringliteral}{"{}GrpdReader"{}});}
+\DoxyCodeLine{00163\ }
+\DoxyCodeLine{00164\ \ \ \textcolor{keywordflow}{if}\ (!ok)}
+\DoxyCodeLine{00165\ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00166\ }
+\DoxyCodeLine{00167\ \ \ \textcolor{comment}{//\ 打印汇总统计}}
+\DoxyCodeLine{00168\ \ \ \mbox{\hyperlink{_logger_8h_ac8e803773221119947b55f6ae85a9c63}{LOG\_INFO}}(\textcolor{stringliteral}{"{}[GrpdReader]\ ============================================"{}});}
+\DoxyCodeLine{00169\ \ \ \mbox{\hyperlink{_logger_8h_ac8e803773221119947b55f6ae85a9c63}{LOG\_INFO}}(\textcolor{stringliteral}{"{}[GrpdReader]\ \ \ \ File\ reading\ complete!"{}});}
+\DoxyCodeLine{00170\ \ \ \mbox{\hyperlink{_logger_8h_ac8e803773221119947b55f6ae85a9c63}{LOG\_INFO}}(\textcolor{stringliteral}{"{}[GrpdReader]\ \ \ \ Total\ particles:\ "{}}\ +\ std::to\_string(particleCount));}
+\DoxyCodeLine{00171\ \ \ \mbox{\hyperlink{_logger_8h_ac8e803773221119947b55f6ae85a9c63}{LOG\_INFO}}(\textcolor{stringliteral}{"{}[GrpdReader]\ \ \ \ Total\ load\ entries:\ "{}}\ +\ std::to\_string(loadCount));}
+\DoxyCodeLine{00172\ \ \ \mbox{\hyperlink{_logger_8h_ac8e803773221119947b55f6ae85a9c63}{LOG\_INFO}}(\textcolor{stringliteral}{"{}[GrpdReader]\ ============================================"{}});}
+\DoxyCodeLine{00173\ }
+\DoxyCodeLine{00174\ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00175\ \}}
+
+\end{DoxyCode}
+
+
+References \mbox{\hyperlink{_particle_manager_8cpp_source_l00021}{GRPD\+::\+Model\+::\+Particle\+Manager\+::add\+Particle()}}, \mbox{\hyperlink{_logger_8h_source_l00062}{LOG\+\_\+\+ERROR}}, \mbox{\hyperlink{_logger_8h_source_l00060}{LOG\+\_\+\+INFO}}, \mbox{\hyperlink{_logger_8h_source_l00061}{LOG\+\_\+\+WARNING}}, \mbox{\hyperlink{_grpd_reader_8h_source_l00052}{READING\+\_\+\+LOADS}}, \mbox{\hyperlink{_grpd_reader_8h_source_l00051}{READING\+\_\+\+PARTICLES}}, and \mbox{\hyperlink{_grpd_reader_8cpp_source_l00052}{scan\+File()}}.
+
+
+
+Referenced by \mbox{\hyperlink{_s_e___model_8cpp_source_l00017}{GRPD\+::\+Engine\+::\+Solver\+Engine\+::\+Init\+Model\+PD()}}.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{class_g_r_p_d_1_1_i_o_1_1_grpd_reader_acb78b0d0f156c100e18690733e77c00f_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{class_g_r_p_d_1_1_i_o_1_1_grpd_reader_acb78b0d0f156c100e18690733e77c00f_icgraph}
+\end{center}
+\end{figure}
+\Hypertarget{class_g_r_p_d_1_1_i_o_1_1_grpd_reader_a63f482039d38ccdffcb1ebb56d5d795f}\index{GRPD::IO::GrpdReader@{GRPD::IO::GrpdReader}!readLoads@{readLoads}}
+\index{readLoads@{readLoads}!GRPD::IO::GrpdReader@{GRPD::IO::GrpdReader}}
+\doxysubsubsection{\texorpdfstring{readLoads()}{readLoads()}}
+{\footnotesize\ttfamily \label{class_g_r_p_d_1_1_i_o_1_1_grpd_reader_a63f482039d38ccdffcb1ebb56d5d795f} 
+bool GRPD\+::\+IO\+::\+Grpd\+Reader\+::read\+Loads (\begin{DoxyParamCaption}\item[{const std\+::string \&}]{filepath}{, }\item[{\mbox{\hyperlink{class_g_r_p_d_1_1_core_1_1_p_d_simulater}{GRPD\+::\+Core\+::\+PDSimulater}} \&}]{simulater}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Definition at line \mbox{\hyperlink{_grpd_reader_8cpp_source_l00181}{181}} of file \mbox{\hyperlink{_grpd_reader_8cpp_source}{Grpd\+Reader.\+cpp}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00182\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00183\ \ \ \textcolor{keyword}{auto}\ \&fieldManager\ =\ simulater.\mbox{\hyperlink{class_g_r_p_d_1_1_core_1_1_p_d_simulater_a7be7e26d7c073283b7ca162eb8ab4ed3}{getFieldManager}}();}
+\DoxyCodeLine{00184\ \ \ \textcolor{keyword}{auto}\ \&bcManager\ =\ simulater.\mbox{\hyperlink{class_g_r_p_d_1_1_core_1_1_p_d_simulater_a489fefd1c143eae35c1ed4fadb9922d4}{getBCManager}}();}
+\DoxyCodeLine{00185\ }
+\DoxyCodeLine{00186\ \ \ \textcolor{comment}{//\ 检查温度场是否已注册}}
+\DoxyCodeLine{00187\ \ \ \textcolor{keywordflow}{if}\ (!fieldManager.hasField(\textcolor{stringliteral}{"{}Temperature"{}}))\ \{}
+\DoxyCodeLine{00188\ \ \ \ \ \mbox{\hyperlink{_logger_8h_a0c53e5566a3b790db039421523dd4637}{LOG\_WARNING}}(\textcolor{stringliteral}{"{}[GrpdReader]\ Temperature\ field\ not\ registered.\ Skipping\ loads."{}});}
+\DoxyCodeLine{00189\ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00190\ \ \ \}}
+\DoxyCodeLine{00191\ }
+\DoxyCodeLine{00192\ \ \ \textcolor{comment}{//\ 获取温度场指针（用于\ Dirichlet\ 初始值设置）}}
+\DoxyCodeLine{00193\ \ \ \textcolor{keyword}{auto}\ *tempField\ =\ fieldManager.getFieldAs<\textcolor{keywordtype}{double}>(\textcolor{stringliteral}{"{}Temperature"{}});}
+\DoxyCodeLine{00194\ }
+\DoxyCodeLine{00195\ \ \ \textcolor{keywordtype}{int}\ tempCount\ =\ 0;}
+\DoxyCodeLine{00196\ \ \ \textcolor{keywordtype}{int}\ fluxCount\ =\ 0;}
+\DoxyCodeLine{00197\ \ \ \textcolor{keywordtype}{int}\ convCount\ =\ 0;}
+\DoxyCodeLine{00198\ \ \ \textcolor{keywordtype}{int}\ otherCount\ =\ 0;}
+\DoxyCodeLine{00199\ }
+\DoxyCodeLine{00200\ \ \ \textcolor{keywordtype}{bool}\ ok\ =\ \mbox{\hyperlink{class_g_r_p_d_1_1_i_o_1_1_grpd_reader_addce73bde28df30151f834abb4883aad}{scanFile}}(}
+\DoxyCodeLine{00201\ \ \ \ \ \ \ filepath,}
+\DoxyCodeLine{00202\ \ \ \ \ \ \ [\&](\mbox{\hyperlink{class_g_r_p_d_1_1_i_o_1_1_grpd_reader_ac49b1eb14632aaf0678ecedcd482511f}{ParseState}}\ state,\ \textcolor{keyword}{const}\ std::vector<std::string>\ \&tokens,}
+\DoxyCodeLine{00203\ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ lineNumber)\ -\/>\ \textcolor{keywordtype}{bool}\ \{}
+\DoxyCodeLine{00204\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (state\ !=\ \mbox{\hyperlink{class_g_r_p_d_1_1_i_o_1_1_grpd_reader_ac49b1eb14632aaf0678ecedcd482511fadd11e4b138ba6325c2aba90b97c84e11}{ParseState::READING\_LOADS}})}
+\DoxyCodeLine{00205\ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00206\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (tokens.size()\ <\ 4)}
+\DoxyCodeLine{00207\ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00208\ }
+\DoxyCodeLine{00209\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{try}\ \{}
+\DoxyCodeLine{00210\ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ \textcolor{keywordtype}{id}\ =\ std::stoi(tokens[0]);}
+\DoxyCodeLine{00211\ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ bcId\ =\ std::stoi(tokens[1]);}
+\DoxyCodeLine{00212\ \ \ \ \ \ \ \ \ \ \ std::string\ type\ =\ tokens[2];}
+\DoxyCodeLine{00213\ \ \ \ \ \ \ \ \ \ \ std::vector<double>\ values;}
+\DoxyCodeLine{00214\ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{size\_t}\ i\ =\ 3;\ i\ <\ tokens.size();\ i++)\ \{}
+\DoxyCodeLine{00215\ \ \ \ \ \ \ \ \ \ \ \ \ values.push\_back(std::stod(tokens[i]));}
+\DoxyCodeLine{00216\ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00217\ }
+\DoxyCodeLine{00218\ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ 使用\ BcID\ 作为\ BC\ 名称前缀，实现分类标记}}
+\DoxyCodeLine{00219\ \ \ \ \ \ \ \ \ \ \ std::string\ bcName\ =}
+\DoxyCodeLine{00220\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ type\ +\ \textcolor{stringliteral}{"{}\_BC"{}}\ +\ std::to\_string(bcId)\ +\ \textcolor{stringliteral}{"{}\_P"{}}\ +\ std::to\_string(\textcolor{keywordtype}{id});}
+\DoxyCodeLine{00221\ }
+\DoxyCodeLine{00222\ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ 通过\ BCRegistry\ 工厂创建\ BC\ 实例（消除\ if/else）}}
+\DoxyCodeLine{00223\ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{auto}\ bc\ =\ \mbox{\hyperlink{class_g_r_p_d_1_1_b_c_1_1_b_c_registry_a6cfc2f64f5427ff15db172217c81c5a6}{GRPD::BC::BCRegistry::getInstance}}().\mbox{\hyperlink{class_g_r_p_d_1_1_b_c_1_1_b_c_registry_a3a54e461fc4431c434b746ec1d233f1a}{createBC}}(type,\ bcName);}
+\DoxyCodeLine{00224\ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!bc)\ \{}
+\DoxyCodeLine{00225\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{_logger_8h_a0c53e5566a3b790db039421523dd4637}{LOG\_WARNING}}(\textcolor{stringliteral}{"{}[GrpdReader]\ Unknown\ BC\ type:\ "{}}\ +\ type);}
+\DoxyCodeLine{00226\ \ \ \ \ \ \ \ \ \ \ \ \ otherCount++;}
+\DoxyCodeLine{00227\ \ \ \ \ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
+\DoxyCodeLine{00228\ \ \ \ \ \ \ \ \ \ \ \ \ bc-\/>initialize(fieldManager,\ \textcolor{keywordtype}{id},\ values);}
+\DoxyCodeLine{00229\ }
+\DoxyCodeLine{00230\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Dirichlet\ 约束需要同步设置初始温度值}}
+\DoxyCodeLine{00231\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (bc-\/>isConstraint())\ \{}
+\DoxyCodeLine{00232\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ tempField-\/>set(\textcolor{keywordtype}{id},\ values[0]);}
+\DoxyCodeLine{00233\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ tempCount++;}
+\DoxyCodeLine{00234\ \ \ \ \ \ \ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}\ (type\ ==\ \textcolor{stringliteral}{"{}FLUX"{}})\ \{}
+\DoxyCodeLine{00235\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{auto}\ *heatFluxField\ =\ fieldManager.getFieldAs<\textcolor{keywordtype}{double}>(\textcolor{stringliteral}{"{}HeatFlux"{}});}
+\DoxyCodeLine{00236\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (heatFluxField)\ \{}
+\DoxyCodeLine{00237\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ heatFluxField-\/>set(\textcolor{keywordtype}{id},\ values[0]);}
+\DoxyCodeLine{00238\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00239\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ fluxCount++;}
+\DoxyCodeLine{00240\ \ \ \ \ \ \ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
+\DoxyCodeLine{00241\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ convCount++;}
+\DoxyCodeLine{00242\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00243\ }
+\DoxyCodeLine{00244\ \ \ \ \ \ \ \ \ \ \ \ \ bcManager.addBC(std::move(bc));}
+\DoxyCodeLine{00245\ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00246\ \ \ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{catch}\ (\textcolor{keyword}{const}\ std::exception\ \&e)\ \{}
+\DoxyCodeLine{00247\ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{_logger_8h_a7ebf4c3b4fb05d6f9094089ded75cbdd}{LOG\_ERROR}}(\textcolor{stringliteral}{"{}[GrpdReader::readLoads]\ Line\ "{}}\ +}
+\DoxyCodeLine{00248\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ std::to\_string(lineNumber)\ +}
+\DoxyCodeLine{00249\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}\ parse\ failed:\ "{}}\ +\ std::string(e.what()));}
+\DoxyCodeLine{00250\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00251\ }
+\DoxyCodeLine{00252\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00253\ \ \ \ \ \ \ \},}
+\DoxyCodeLine{00254\ \ \ \ \ \ \ \textcolor{stringliteral}{"{}GrpdReader::readLoads"{}});}
+\DoxyCodeLine{00255\ }
+\DoxyCodeLine{00256\ \ \ \textcolor{keywordflow}{if}\ (!ok)}
+\DoxyCodeLine{00257\ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00258\ }
+\DoxyCodeLine{00259\ \ \ \mbox{\hyperlink{_logger_8h_ac8e803773221119947b55f6ae85a9c63}{LOG\_INFO}}(\textcolor{stringliteral}{"{}[GrpdReader::readLoads]\ Load\ statistics:"{}});}
+\DoxyCodeLine{00260\ \ \ \mbox{\hyperlink{_logger_8h_ac8e803773221119947b55f6ae85a9c63}{LOG\_INFO}}(\textcolor{stringliteral}{"{}\ \ -\/\ Temperature\ (Dirichlet):\ "{}}\ +\ std::to\_string(tempCount));}
+\DoxyCodeLine{00261\ \ \ \mbox{\hyperlink{_logger_8h_ac8e803773221119947b55f6ae85a9c63}{LOG\_INFO}}(\textcolor{stringliteral}{"{}\ \ -\/\ Heat\ Flux\ (Neumann):\ \ \ \ "{}}\ +\ std::to\_string(fluxCount));}
+\DoxyCodeLine{00262\ \ \ \mbox{\hyperlink{_logger_8h_ac8e803773221119947b55f6ae85a9c63}{LOG\_INFO}}(\textcolor{stringliteral}{"{}\ \ -\/\ Convection\ (Robin):\ \ \ \ \ "{}}\ +\ std::to\_string(convCount));}
+\DoxyCodeLine{00263\ \ \ \textcolor{keywordflow}{if}\ (otherCount\ >\ 0)}
+\DoxyCodeLine{00264\ \ \ \ \ \mbox{\hyperlink{_logger_8h_a0c53e5566a3b790db039421523dd4637}{LOG\_WARNING}}(\textcolor{stringliteral}{"{}\ \ -\/\ Unknown\ types:\ "{}}\ +\ std::to\_string(otherCount));}
+\DoxyCodeLine{00265\ }
+\DoxyCodeLine{00266\ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00267\ \}}
+
+\end{DoxyCode}
+
+
+References \mbox{\hyperlink{_b_c_registry_8cpp_source_l00036}{GRPD\+::\+BC\+::\+BCRegistry\+::create\+BC()}}, \mbox{\hyperlink{_p_d_simulater_8h_source_l00082}{GRPD\+::\+Core\+::\+PDSimulater\+::get\+BCManager()}}, \mbox{\hyperlink{_p_d_simulater_8h_source_l00063}{GRPD\+::\+Core\+::\+PDSimulater\+::get\+Field\+Manager()}}, \mbox{\hyperlink{_b_c_registry_8cpp_source_l00014}{GRPD\+::\+BC\+::\+BCRegistry\+::get\+Instance()}}, \mbox{\hyperlink{_logger_8h_source_l00062}{LOG\+\_\+\+ERROR}}, \mbox{\hyperlink{_logger_8h_source_l00060}{LOG\+\_\+\+INFO}}, \mbox{\hyperlink{_logger_8h_source_l00061}{LOG\+\_\+\+WARNING}}, \mbox{\hyperlink{_grpd_reader_8h_source_l00052}{READING\+\_\+\+LOADS}}, and \mbox{\hyperlink{_grpd_reader_8cpp_source_l00052}{scan\+File()}}.
+
+
+
+Referenced by \mbox{\hyperlink{_s_e___condition_8cpp_source_l00018}{GRPD\+::\+Engine\+::\+Solver\+Engine\+::\+Init\+Conditions\+PD()}}.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{class_g_r_p_d_1_1_i_o_1_1_grpd_reader_a63f482039d38ccdffcb1ebb56d5d795f_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{class_g_r_p_d_1_1_i_o_1_1_grpd_reader_a63f482039d38ccdffcb1ebb56d5d795f_icgraph}
+\end{center}
+\end{figure}
+\Hypertarget{class_g_r_p_d_1_1_i_o_1_1_grpd_reader_addce73bde28df30151f834abb4883aad}\index{GRPD::IO::GrpdReader@{GRPD::IO::GrpdReader}!scanFile@{scanFile}}
+\index{scanFile@{scanFile}!GRPD::IO::GrpdReader@{GRPD::IO::GrpdReader}}
+\doxysubsubsection{\texorpdfstring{scanFile()}{scanFile()}}
+{\footnotesize\ttfamily \label{class_g_r_p_d_1_1_i_o_1_1_grpd_reader_addce73bde28df30151f834abb4883aad} 
+bool GRPD\+::\+IO\+::\+Grpd\+Reader\+::scan\+File (\begin{DoxyParamCaption}\item[{const std\+::string \&}]{filepath}{, }\item[{\mbox{\hyperlink{class_g_r_p_d_1_1_i_o_1_1_grpd_reader_a333298eaee2bdc3146f37f234b58d0fd}{Line\+Callback}}}]{callback}{, }\item[{const std\+::string \&}]{log\+Prefix}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}, {\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_grpd_reader_8cpp_source_l00052}{52}} of file \mbox{\hyperlink{_grpd_reader_8cpp_source}{Grpd\+Reader.\+cpp}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00053\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00054\ \ \ \textcolor{comment}{//\ 1.\ 打开文件}}
+\DoxyCodeLine{00055\ \ \ std::ifstream\ file(filepath);}
+\DoxyCodeLine{00056\ \ \ \textcolor{keywordflow}{if}\ (!file.is\_open())\ \{}
+\DoxyCodeLine{00057\ \ \ \ \ \mbox{\hyperlink{_logger_8h_a7ebf4c3b4fb05d6f9094089ded75cbdd}{LOG\_ERROR}}(\textcolor{stringliteral}{"{}["{}}\ +\ logPrefix\ +\ \textcolor{stringliteral}{"{}]\ Error:\ cannot\ open\ file\ \(\backslash\)"{}"{}}\ +\ filepath\ +}
+\DoxyCodeLine{00058\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}\(\backslash\)"{}"{}});}
+\DoxyCodeLine{00059\ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00060\ \ \ \}}
+\DoxyCodeLine{00061\ }
+\DoxyCodeLine{00062\ \ \ \textcolor{comment}{//\ 2.\ 状态机初始化}}
+\DoxyCodeLine{00063\ \ \ \mbox{\hyperlink{class_g_r_p_d_1_1_i_o_1_1_grpd_reader_ac49b1eb14632aaf0678ecedcd482511f}{ParseState}}\ state\ =\ \mbox{\hyperlink{class_g_r_p_d_1_1_i_o_1_1_grpd_reader_ac49b1eb14632aaf0678ecedcd482511faa5daf7f2ebbba4975d61dab1c40188c7}{ParseState::IDLE}};}
+\DoxyCodeLine{00064\ \ \ std::string\ line;}
+\DoxyCodeLine{00065\ \ \ \textcolor{keywordtype}{int}\ lineNumber\ =\ 0;}
+\DoxyCodeLine{00066\ }
+\DoxyCodeLine{00067\ \ \ \textcolor{comment}{//\ 3.\ 逐行扫描}}
+\DoxyCodeLine{00068\ \ \ \textcolor{keywordflow}{while}\ (std::getline(file,\ line))\ \{}
+\DoxyCodeLine{00069\ \ \ \ \ lineNumber++;}
+\DoxyCodeLine{00070\ }
+\DoxyCodeLine{00071\ \ \ \ \ \textcolor{comment}{//\ 去除首尾空白}}
+\DoxyCodeLine{00072\ \ \ \ \ std::string\ trimmedLine\ =\ \mbox{\hyperlink{class_g_r_p_d_1_1_i_o_1_1_grpd_reader_ad1d8c861446c6db8b22cec01bb971aef}{trim}}(line);}
+\DoxyCodeLine{00073\ }
+\DoxyCodeLine{00074\ \ \ \ \ \textcolor{comment}{//\ 跳过空行}}
+\DoxyCodeLine{00075\ \ \ \ \ \textcolor{keywordflow}{if}\ (trimmedLine.empty())\ \{}
+\DoxyCodeLine{00076\ \ \ \ \ \ \ \textcolor{keywordflow}{continue};}
+\DoxyCodeLine{00077\ \ \ \ \ \}}
+\DoxyCodeLine{00078\ }
+\DoxyCodeLine{00079\ \ \ \ \ \textcolor{comment}{//\ 跳过注释行（以\ \#\ 开头）}}
+\DoxyCodeLine{00080\ \ \ \ \ \textcolor{keywordflow}{if}\ (trimmedLine[0]\ ==\ \textcolor{charliteral}{'\#'})\ \{}
+\DoxyCodeLine{00081\ \ \ \ \ \ \ \textcolor{keywordflow}{continue};}
+\DoxyCodeLine{00082\ \ \ \ \ \}}
+\DoxyCodeLine{00083\ }
+\DoxyCodeLine{00084\ \ \ \ \ \textcolor{comment}{//\ -\/-\/-\/-\/-\/\ 段标记检测：切换状态\ -\/-\/-\/-\/-\/}}
+\DoxyCodeLine{00085\ \ \ \ \ \textcolor{keywordflow}{if}\ (trimmedLine\ ==\ \textcolor{stringliteral}{"{}*PARTICLE"{}})\ \{}
+\DoxyCodeLine{00086\ \ \ \ \ \ \ state\ =\ \mbox{\hyperlink{class_g_r_p_d_1_1_i_o_1_1_grpd_reader_ac49b1eb14632aaf0678ecedcd482511faba524ed637dd3f19a95a7e2c9e49990b}{ParseState::READING\_PARTICLES}};}
+\DoxyCodeLine{00087\ \ \ \ \ \ \ \mbox{\hyperlink{_logger_8h_ac8e803773221119947b55f6ae85a9c63}{LOG\_INFO}}(\textcolor{stringliteral}{"{}["{}}\ +\ logPrefix\ +\ \textcolor{stringliteral}{"{}]\ Entering\ *PARTICLE\ section\ (Line\ "{}}\ +}
+\DoxyCodeLine{00088\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ std::to\_string(lineNumber)\ +\ \textcolor{stringliteral}{"{})"{}});}
+\DoxyCodeLine{00089\ \ \ \ \ \ \ \textcolor{keywordflow}{continue};}
+\DoxyCodeLine{00090\ \ \ \ \ \}}
+\DoxyCodeLine{00091\ }
+\DoxyCodeLine{00092\ \ \ \ \ \textcolor{keywordflow}{if}\ (trimmedLine\ ==\ \textcolor{stringliteral}{"{}*LOAD"{}})\ \{}
+\DoxyCodeLine{00093\ \ \ \ \ \ \ state\ =\ \mbox{\hyperlink{class_g_r_p_d_1_1_i_o_1_1_grpd_reader_ac49b1eb14632aaf0678ecedcd482511fadd11e4b138ba6325c2aba90b97c84e11}{ParseState::READING\_LOADS}};}
+\DoxyCodeLine{00094\ \ \ \ \ \ \ \mbox{\hyperlink{_logger_8h_ac8e803773221119947b55f6ae85a9c63}{LOG\_INFO}}(\textcolor{stringliteral}{"{}["{}}\ +\ logPrefix\ +\ \textcolor{stringliteral}{"{}]\ Entering\ *LOAD\ section\ (Line\ "{}}\ +}
+\DoxyCodeLine{00095\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ std::to\_string(lineNumber)\ +\ \textcolor{stringliteral}{"{})"{}});}
+\DoxyCodeLine{00096\ \ \ \ \ \ \ \textcolor{keywordflow}{continue};}
+\DoxyCodeLine{00097\ \ \ \ \ \}}
+\DoxyCodeLine{00098\ }
+\DoxyCodeLine{00099\ \ \ \ \ \textcolor{comment}{//\ IDLE\ 状态下忽略数据行}}
+\DoxyCodeLine{00100\ \ \ \ \ \textcolor{keywordflow}{if}\ (state\ ==\ \mbox{\hyperlink{class_g_r_p_d_1_1_i_o_1_1_grpd_reader_ac49b1eb14632aaf0678ecedcd482511faa5daf7f2ebbba4975d61dab1c40188c7}{ParseState::IDLE}})\ \{}
+\DoxyCodeLine{00101\ \ \ \ \ \ \ \textcolor{keywordflow}{continue};}
+\DoxyCodeLine{00102\ \ \ \ \ \}}
+\DoxyCodeLine{00103\ }
+\DoxyCodeLine{00104\ \ \ \ \ \textcolor{comment}{//\ -\/-\/-\/-\/-\/\ 分割字段并调用回调\ -\/-\/-\/-\/-\/}}
+\DoxyCodeLine{00105\ \ \ \ \ \textcolor{keyword}{auto}\ tokens\ =\ \mbox{\hyperlink{class_g_r_p_d_1_1_i_o_1_1_grpd_reader_a17b521c3c8cf019fc84bcb483caef248}{tokenizeCsv}}(line);}
+\DoxyCodeLine{00106\ \ \ \ \ \textcolor{keywordflow}{if}\ (!callback(state,\ tokens,\ lineNumber))\ \{}
+\DoxyCodeLine{00107\ \ \ \ \ \ \ \textcolor{keywordflow}{break};\ \textcolor{comment}{//\ 回调返回\ false\ 则终止扫描}}
+\DoxyCodeLine{00108\ \ \ \ \ \}}
+\DoxyCodeLine{00109\ \ \ \}}
+\DoxyCodeLine{00110\ }
+\DoxyCodeLine{00111\ \ \ file.close();}
+\DoxyCodeLine{00112\ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00113\ \}}
+
+\end{DoxyCode}
+
+
+References \mbox{\hyperlink{_grpd_reader_8h_source_l00050}{IDLE}}, \mbox{\hyperlink{_logger_8h_source_l00062}{LOG\+\_\+\+ERROR}}, \mbox{\hyperlink{_logger_8h_source_l00060}{LOG\+\_\+\+INFO}}, \mbox{\hyperlink{_grpd_reader_8h_source_l00052}{READING\+\_\+\+LOADS}}, \mbox{\hyperlink{_grpd_reader_8h_source_l00051}{READING\+\_\+\+PARTICLES}}, \mbox{\hyperlink{_grpd_reader_8cpp_source_l00037}{tokenize\+Csv()}}, and \mbox{\hyperlink{_grpd_reader_8cpp_source_l00026}{trim()}}.
+
+
+
+Referenced by \mbox{\hyperlink{_grpd_reader_8cpp_source_l00119}{read()}}, and \mbox{\hyperlink{_grpd_reader_8cpp_source_l00181}{read\+Loads()}}.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{class_g_r_p_d_1_1_i_o_1_1_grpd_reader_addce73bde28df30151f834abb4883aad_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{class_g_r_p_d_1_1_i_o_1_1_grpd_reader_addce73bde28df30151f834abb4883aad_icgraph}
+\end{center}
+\end{figure}
+\Hypertarget{class_g_r_p_d_1_1_i_o_1_1_grpd_reader_a17b521c3c8cf019fc84bcb483caef248}\index{GRPD::IO::GrpdReader@{GRPD::IO::GrpdReader}!tokenizeCsv@{tokenizeCsv}}
+\index{tokenizeCsv@{tokenizeCsv}!GRPD::IO::GrpdReader@{GRPD::IO::GrpdReader}}
+\doxysubsubsection{\texorpdfstring{tokenizeCsv()}{tokenizeCsv()}}
+{\footnotesize\ttfamily \label{class_g_r_p_d_1_1_i_o_1_1_grpd_reader_a17b521c3c8cf019fc84bcb483caef248} 
+std\+::vector$<$ std\+::string $>$ GRPD\+::\+IO\+::\+Grpd\+Reader\+::tokenize\+Csv (\begin{DoxyParamCaption}\item[{const std\+::string \&}]{line}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}, {\ttfamily [private]}}
+
+
+
+将逗号分隔的一行文本分割为修剪后的字段数组 
+
+
+
+Definition at line \mbox{\hyperlink{_grpd_reader_8cpp_source_l00037}{37}} of file \mbox{\hyperlink{_grpd_reader_8cpp_source}{Grpd\+Reader.\+cpp}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00037\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00038\ \ \ std::vector<std::string>\ tokens;}
+\DoxyCodeLine{00039\ \ \ std::istringstream\ ss(line);}
+\DoxyCodeLine{00040\ \ \ std::string\ token;}
+\DoxyCodeLine{00041\ \ \ \textcolor{keywordflow}{while}\ (std::getline(ss,\ token,\ \textcolor{charliteral}{','}))\ \{}
+\DoxyCodeLine{00042\ \ \ \ \ tokens.push\_back(\mbox{\hyperlink{class_g_r_p_d_1_1_i_o_1_1_grpd_reader_ad1d8c861446c6db8b22cec01bb971aef}{trim}}(token));}
+\DoxyCodeLine{00043\ \ \ \}}
+\DoxyCodeLine{00044\ \ \ \textcolor{keywordflow}{return}\ tokens;}
+\DoxyCodeLine{00045\ \}}
+
+\end{DoxyCode}
+
+
+References \mbox{\hyperlink{_grpd_reader_8cpp_source_l00026}{trim()}}.
+
+
+
+Referenced by \mbox{\hyperlink{_grpd_reader_8cpp_source_l00052}{scan\+File()}}.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{class_g_r_p_d_1_1_i_o_1_1_grpd_reader_a17b521c3c8cf019fc84bcb483caef248_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{class_g_r_p_d_1_1_i_o_1_1_grpd_reader_a17b521c3c8cf019fc84bcb483caef248_icgraph}
+\end{center}
+\end{figure}
+\Hypertarget{class_g_r_p_d_1_1_i_o_1_1_grpd_reader_ad1d8c861446c6db8b22cec01bb971aef}\index{GRPD::IO::GrpdReader@{GRPD::IO::GrpdReader}!trim@{trim}}
+\index{trim@{trim}!GRPD::IO::GrpdReader@{GRPD::IO::GrpdReader}}
+\doxysubsubsection{\texorpdfstring{trim()}{trim()}}
+{\footnotesize\ttfamily \label{class_g_r_p_d_1_1_i_o_1_1_grpd_reader_ad1d8c861446c6db8b22cec01bb971aef} 
+std\+::string GRPD\+::\+IO\+::\+Grpd\+Reader\+::trim (\begin{DoxyParamCaption}\item[{const std\+::string \&}]{s}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}, {\ttfamily [private]}}
+
+
+
+去除字符串首尾空白字符 
+
+
+
+Definition at line \mbox{\hyperlink{_grpd_reader_8cpp_source_l00026}{26}} of file \mbox{\hyperlink{_grpd_reader_8cpp_source}{Grpd\+Reader.\+cpp}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00026\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00027\ \ \ \textcolor{keyword}{auto}\ start\ =\ s.find\_first\_not\_of(\textcolor{stringliteral}{"{}\ \(\backslash\)t\(\backslash\)r\(\backslash\)n"{}});}
+\DoxyCodeLine{00028\ \ \ \textcolor{keywordflow}{if}\ (start\ ==\ std::string::npos)}
+\DoxyCodeLine{00029\ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{stringliteral}{"{}"{}};}
+\DoxyCodeLine{00030\ \ \ \textcolor{keyword}{auto}\ end\ =\ s.find\_last\_not\_of(\textcolor{stringliteral}{"{}\ \(\backslash\)t\(\backslash\)r\(\backslash\)n"{}});}
+\DoxyCodeLine{00031\ \ \ \textcolor{keywordflow}{return}\ s.substr(start,\ end\ -\/\ start\ +\ 1);}
+\DoxyCodeLine{00032\ \}}
+
+\end{DoxyCode}
+
+
+Referenced by \mbox{\hyperlink{_grpd_reader_8cpp_source_l00052}{scan\+File()}}, and \mbox{\hyperlink{_grpd_reader_8cpp_source_l00037}{tokenize\+Csv()}}.
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{class_g_r_p_d_1_1_i_o_1_1_grpd_reader_ad1d8c861446c6db8b22cec01bb971aef_icgraph}
+\end{center}
+\end{figure}
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+PDCommon/\+IO/include/\mbox{\hyperlink{_grpd_reader_8h}{Grpd\+Reader.\+h}}\item 
+PDCommon/\+IO/src/\mbox{\hyperlink{_grpd_reader_8cpp}{Grpd\+Reader.\+cpp}}\end{DoxyCompactItemize}

@@ -7,16 +7,17 @@
 #include "Logger.h"
 #include "PhysicsFieldRegistry.h"
 
-namespace GRPD::Field {
+namespace PDCommon::Field {
 
 void ThermalFields::registerFields(FieldManager &fm) {
-    // 热传导核心场：温度 (标量) 和 温度变化率 (标量)
+    // 热传导核心场：温度 (标量)、变化率 (标量) 以及 热流密度 (标量)
     fm.registerField<double>("Temperature", 1);
     fm.registerField<double>("TempRate", 1);
-    LOG_INFO("[ThermalFields] Core fields registered: Temperature, TempRate.");
+    fm.registerField<double>("HeatFlux", 1);
+    LOG_INFO("[ThermalFields] Core fields registered: Temperature, TempRate, HeatFlux.");
 }
 
 // 静态注册到 PhysicsFieldRegistry
-REGISTER_PHYSICS_FIELDS(Thermal, GRPD::Field::ThermalFields)
+REGISTER_PHYSICS_FIELDS(Thermal, PDCommon::Field::ThermalFields)
 
-} // namespace GRPD::Field
+} // namespace PDCommon::Field

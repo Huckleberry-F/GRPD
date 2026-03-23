@@ -5,7 +5,7 @@
 
 #include "Particle.h"
 
-namespace GRPD::Model {
+namespace PDCommon::Model {
 
 // ---------------------------------------------------------------------------
 // Constructor: uses member initializer list, zero redundant assignment
@@ -30,13 +30,13 @@ double Particle::getVolume() const { return volume_; }
 
 int Particle::getMatId() const { return matId_; }
 
-::GRPD::Material::Material *Particle::getMaterial() const { return material_; }
+::PDCommon::Material::Material *Particle::getMaterial() const { return material_; }
 
 // ---------------------------------------------------------------------------
 // Setter implementations
 // ---------------------------------------------------------------------------
 
 
-void Particle::setMaterial(::GRPD::Material::Material *mat) { material_ = mat; }
+void Particle::setMaterial(::PDCommon::Material::Material *mat) { material_ = mat; }
 
-} // namespace GRPD::Model
+} // namespace PDCommon::Model

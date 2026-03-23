@@ -1,0 +1,63 @@
+\doxysection{Thermal\+Mat.\+h}
+\hypertarget{_thermal_mat_8h_source}{}\label{_thermal_mat_8h_source}\index{PDCommon/Material/include/ThermalMat.h@{PDCommon/Material/include/ThermalMat.h}}
+\mbox{\hyperlink{_thermal_mat_8h}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\Hypertarget{_thermal_mat_8h_source_l00001}00001\ \textcolor{preprocessor}{\#ifndef\ THERMAL\_MAT\_H}}
+\DoxyCodeLine{\Hypertarget{_thermal_mat_8h_source_l00002}00002\ \textcolor{preprocessor}{\#define\ THERMAL\_MAT\_H}}
+\DoxyCodeLine{\Hypertarget{_thermal_mat_8h_source_l00003}00003\ }
+\DoxyCodeLine{\Hypertarget{_thermal_mat_8h_source_l00004}00004\ \textcolor{comment}{//\ ============================================================================}}
+\DoxyCodeLine{\Hypertarget{_thermal_mat_8h_source_l00005}00005\ \textcolor{comment}{//\ ThermalMat.h\ -\/\ 近场动力学热传导微导率材料模型}}
+\DoxyCodeLine{\Hypertarget{_thermal_mat_8h_source_l00006}00006\ \textcolor{comment}{//\ 责任：}}
+\DoxyCodeLine{\Hypertarget{_thermal_mat_8h_source_l00007}00007\ \textcolor{comment}{//\ 1.\ 定义热传导过程中的物理常数（如：微导率、热导率等）。}}
+\DoxyCodeLine{\Hypertarget{_thermal_mat_8h_source_l00008}00008\ \textcolor{comment}{//\ 2.\ 继承\ Material\ 接口，实现\ evaluate\ 函数（预留）。}}
+\DoxyCodeLine{\Hypertarget{_thermal_mat_8h_source_l00009}00009\ \textcolor{comment}{//\ 架构规约：本构模型与计算核心绝对解耦。}}
+\DoxyCodeLine{\Hypertarget{_thermal_mat_8h_source_l00010}00010\ \textcolor{comment}{//\ ============================================================================}}
+\DoxyCodeLine{\Hypertarget{_thermal_mat_8h_source_l00011}00011\ }
+\DoxyCodeLine{\Hypertarget{_thermal_mat_8h_source_l00012}00012\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{_material_8h}{Material.h}}"{}}}
+\DoxyCodeLine{\Hypertarget{_thermal_mat_8h_source_l00013}00013\ \textcolor{preprocessor}{\#include\ <string>}}
+\DoxyCodeLine{\Hypertarget{_thermal_mat_8h_source_l00014}00014\ \textcolor{preprocessor}{\#include\ <yaml-\/cpp/yaml.h>}}
+\DoxyCodeLine{\Hypertarget{_thermal_mat_8h_source_l00015}00015\ }
+\DoxyCodeLine{\Hypertarget{_thermal_mat_8h_source_l00016}00016\ \textcolor{keyword}{namespace\ }\mbox{\hyperlink{namespace_g_r_p_d_1_1_material}{GRPD::Material}}\ \{}
+\DoxyCodeLine{\Hypertarget{_thermal_mat_8h_source_l00017}00017\ }
+\DoxyCodeLine{\Hypertarget{_thermal_mat_8h_source_l00018}\mbox{\hyperlink{class_g_r_p_d_1_1_material_1_1_thermal_mat}{00018}}\ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_g_r_p_d_1_1_material_1_1_thermal_mat_a90468a0e56fa121528db8ae4e6125310}{ThermalMat}}\ :\ \textcolor{keyword}{public}\ \mbox{\hyperlink{class_g_r_p_d_1_1_material_1_1_material_a6f1a7c0cbc3fa288802a5412814be0ec}{Material}}\ \{}
+\DoxyCodeLine{\Hypertarget{_thermal_mat_8h_source_l00019}00019\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{\Hypertarget{_thermal_mat_8h_source_l00022}00022\ \ \ \textcolor{keyword}{explicit}\ \mbox{\hyperlink{class_g_r_p_d_1_1_material_1_1_thermal_mat_a90468a0e56fa121528db8ae4e6125310}{ThermalMat}}(\textcolor{keyword}{const}\ std::string\ \&name\ =\ \textcolor{stringliteral}{"{}"{}});}
+\DoxyCodeLine{\Hypertarget{_thermal_mat_8h_source_l00023}00023\ }
+\DoxyCodeLine{\Hypertarget{_thermal_mat_8h_source_l00024}\mbox{\hyperlink{class_g_r_p_d_1_1_material_1_1_thermal_mat_aebc00edc3739d674b5d6fcda09613fdf}{00024}}\ \ \ \textcolor{keyword}{virtual}\ \mbox{\hyperlink{class_g_r_p_d_1_1_material_1_1_thermal_mat_aebc00edc3739d674b5d6fcda09613fdf}{\string~ThermalMat}}()\ =\ \textcolor{keywordflow}{default};}
+\DoxyCodeLine{\Hypertarget{_thermal_mat_8h_source_l00025}00025\ }
+\DoxyCodeLine{\Hypertarget{_thermal_mat_8h_source_l00026}00026\ \ \ \textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{\Hypertarget{_thermal_mat_8h_source_l00027}00027\ \ \ \textcolor{comment}{//\ 覆盖基类虚函数}}
+\DoxyCodeLine{\Hypertarget{_thermal_mat_8h_source_l00028}00028\ \ \ \textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{\Hypertarget{_thermal_mat_8h_source_l00029}00029\ }
+\DoxyCodeLine{\Hypertarget{_thermal_mat_8h_source_l00032}00032\ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_g_r_p_d_1_1_material_1_1_thermal_mat_a532dd2387e182898e79911c3eb1c7bc5}{initialize}}(\textcolor{keyword}{const}\ YAML::Node\ \&matNode)\ \textcolor{keyword}{override};}
+\DoxyCodeLine{\Hypertarget{_thermal_mat_8h_source_l00033}00033\ }
+\DoxyCodeLine{\Hypertarget{_thermal_mat_8h_source_l00035}00035\ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_g_r_p_d_1_1_material_1_1_thermal_mat_a494385c6fb349d4c3b00e5b833ab611d}{allocateStateVariables}}(\mbox{\hyperlink{class_g_r_p_d_1_1_field_1_1_field_manager}{GRPD::Field::FieldManager}}\ \&fm)\ \textcolor{keyword}{override};}
+\DoxyCodeLine{\Hypertarget{_thermal_mat_8h_source_l00036}00036\ }
+\DoxyCodeLine{\Hypertarget{_thermal_mat_8h_source_l00039}00039\ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_g_r_p_d_1_1_material_1_1_thermal_mat_a9a742ad010610af6574b62d0a8233d22}{evaluate}}()\ \textcolor{keyword}{override};}
+\DoxyCodeLine{\Hypertarget{_thermal_mat_8h_source_l00040}00040\ }
+\DoxyCodeLine{\Hypertarget{_thermal_mat_8h_source_l00041}00041\ \ \ \textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{\Hypertarget{_thermal_mat_8h_source_l00042}00042\ \ \ \textcolor{comment}{//\ 物理常数\ Getter\ /\ Setter}}
+\DoxyCodeLine{\Hypertarget{_thermal_mat_8h_source_l00043}00043\ \ \ \textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{\Hypertarget{_thermal_mat_8h_source_l00044}00044\ }
+\DoxyCodeLine{\Hypertarget{_thermal_mat_8h_source_l00046}00046\ \ \ \textcolor{keywordtype}{double}\ \mbox{\hyperlink{class_g_r_p_d_1_1_material_1_1_thermal_mat_a507448c96505babc0153e5d15c693de1}{getConductivity}}()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{\Hypertarget{_thermal_mat_8h_source_l00047}00047\ }
+\DoxyCodeLine{\Hypertarget{_thermal_mat_8h_source_l00049}00049\ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_g_r_p_d_1_1_material_1_1_thermal_mat_a2b3865b1967fbd905bb27c3873d4a6c3}{setConductivity}}(\textcolor{keywordtype}{double}\ Con);}
+\DoxyCodeLine{\Hypertarget{_thermal_mat_8h_source_l00050}00050\ }
+\DoxyCodeLine{\Hypertarget{_thermal_mat_8h_source_l00051}00051\ \ \ \textcolor{comment}{//\ 也可根据需要扩充诸如\ 热容(HeatCapacity)、密度(Density)\ 等参数}}
+\DoxyCodeLine{\Hypertarget{_thermal_mat_8h_source_l00052}00052\ \ \ \textcolor{keywordtype}{double}\ \mbox{\hyperlink{class_g_r_p_d_1_1_material_1_1_thermal_mat_abd9059c1dda55e3db81b38d6a5df7d29}{getHeatCapacity}}()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{\Hypertarget{_thermal_mat_8h_source_l00053}00053\ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_g_r_p_d_1_1_material_1_1_thermal_mat_ad0fb0c38cb92519687299dfda0673544}{setHeatCapacity}}(\textcolor{keywordtype}{double}\ Cap);}
+\DoxyCodeLine{\Hypertarget{_thermal_mat_8h_source_l00054}00054\ }
+\DoxyCodeLine{\Hypertarget{_thermal_mat_8h_source_l00055}00055\ \ \ \textcolor{keywordtype}{double}\ \mbox{\hyperlink{class_g_r_p_d_1_1_material_1_1_thermal_mat_a98256740ba8528e397014c32852856ff}{getDensity}}()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{\Hypertarget{_thermal_mat_8h_source_l00056}00056\ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_g_r_p_d_1_1_material_1_1_thermal_mat_af1031c40bccf46fedeae8069e5545ed0}{setDensity}}(\textcolor{keywordtype}{double}\ rho);}
+\DoxyCodeLine{\Hypertarget{_thermal_mat_8h_source_l00057}00057\ }
+\DoxyCodeLine{\Hypertarget{_thermal_mat_8h_source_l00058}00058\ \textcolor{keyword}{private}:}
+\DoxyCodeLine{\Hypertarget{_thermal_mat_8h_source_l00059}\mbox{\hyperlink{class_g_r_p_d_1_1_material_1_1_thermal_mat_a42a6df13a395041bb42b1139406ea50d}{00059}}\ \ \ \textcolor{keywordtype}{double}\ \mbox{\hyperlink{class_g_r_p_d_1_1_material_1_1_thermal_mat_a42a6df13a395041bb42b1139406ea50d}{conductivity\_}}\{-\/1.0\};\ \textcolor{comment}{//\ 热传导常数}}
+\DoxyCodeLine{\Hypertarget{_thermal_mat_8h_source_l00060}\mbox{\hyperlink{class_g_r_p_d_1_1_material_1_1_thermal_mat_af4c0c824291a3cadb08077f070a4fb42}{00060}}\ \ \ \textcolor{keywordtype}{double}\ \mbox{\hyperlink{class_g_r_p_d_1_1_material_1_1_thermal_mat_af4c0c824291a3cadb08077f070a4fb42}{heatCapacity\_}}\{-\/1.0\};\ \textcolor{comment}{//\ 比热容常数}}
+\DoxyCodeLine{\Hypertarget{_thermal_mat_8h_source_l00061}\mbox{\hyperlink{class_g_r_p_d_1_1_material_1_1_thermal_mat_a7a1987e9787445e4222eb570d767817d}{00061}}\ \ \ \textcolor{keywordtype}{double}\ \mbox{\hyperlink{class_g_r_p_d_1_1_material_1_1_thermal_mat_a7a1987e9787445e4222eb570d767817d}{density\_}}\{-\/1.0\};\ \ \ \ \ \ \textcolor{comment}{//\ 密度}}
+\DoxyCodeLine{\Hypertarget{_thermal_mat_8h_source_l00062}00062\ \};}
+\DoxyCodeLine{\Hypertarget{_thermal_mat_8h_source_l00063}00063\ }
+\DoxyCodeLine{\Hypertarget{_thermal_mat_8h_source_l00064}00064\ \}\ \textcolor{comment}{//\ namespace\ GRPD::Material}}
+\DoxyCodeLine{\Hypertarget{_thermal_mat_8h_source_l00065}00065\ }
+\DoxyCodeLine{\Hypertarget{_thermal_mat_8h_source_l00066}00066\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{//\ THERMAL\_MAT\_H}}
+
+\end{DoxyCode}

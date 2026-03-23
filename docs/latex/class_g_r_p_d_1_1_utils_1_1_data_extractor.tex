@@ -1,0 +1,104 @@
+\doxysection{GRPD\+::Utils\+::Data\+Extractor Class Reference}
+\hypertarget{class_g_r_p_d_1_1_utils_1_1_data_extractor}{}\label{class_g_r_p_d_1_1_utils_1_1_data_extractor}\index{GRPD::Utils::DataExtractor@{GRPD::Utils::DataExtractor}}
+
+
+{\ttfamily \#include $<$Data\+Extractor.\+h$>$}
+
+\doxysubsubsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\footnotesize template$<$typename C, typename T, T C\+::\texorpdfstring{$\ast$}{*} Member\+Ptr$>$ }\\static T \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{class_g_r_p_d_1_1_utils_1_1_data_extractor_a402caf071028e59b409019b5b1ec484a}{get\+Scalar\+Ptr}} (const std\+::vector$<$ C $>$ \&container)
+\item 
+{\footnotesize template$<$typename C, typename T, size\+\_\+t N, std\+::array$<$ T, N $>$ C\+::\texorpdfstring{$\ast$}{*} Member\+Ptr$>$ }\\static T \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{class_g_r_p_d_1_1_utils_1_1_data_extractor_af6560423aa764b84b8cd0be6f8ae40e2}{get\+Vector\+Ptr}} (const std\+::vector$<$ C $>$ \&container)
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+
+
+Definition at line \mbox{\hyperlink{_data_extractor_8h_source_l00009}{9}} of file \mbox{\hyperlink{_data_extractor_8h_source}{Data\+Extractor.\+h}}.
+
+
+
+\label{doc-func-members}
+\Hypertarget{class_g_r_p_d_1_1_utils_1_1_data_extractor_doc-func-members}
+\doxysubsection{Member Function Documentation}
+\Hypertarget{class_g_r_p_d_1_1_utils_1_1_data_extractor_a402caf071028e59b409019b5b1ec484a}\index{GRPD::Utils::DataExtractor@{GRPD::Utils::DataExtractor}!getScalarPtr@{getScalarPtr}}
+\index{getScalarPtr@{getScalarPtr}!GRPD::Utils::DataExtractor@{GRPD::Utils::DataExtractor}}
+\doxysubsubsection{\texorpdfstring{getScalarPtr()}{getScalarPtr()}}
+{\footnotesize\ttfamily \label{class_g_r_p_d_1_1_utils_1_1_data_extractor_a402caf071028e59b409019b5b1ec484a} 
+template$<$typename C, typename T, T C\+::\texorpdfstring{$\ast$}{*} Member\+Ptr$>$ \\
+T \texorpdfstring{$\ast$}{*} GRPD\+::\+Utils\+::\+Data\+Extractor\+::get\+Scalar\+Ptr (\begin{DoxyParamCaption}\item[{const std\+::vector$<$ C $>$ \&}]{container}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+
+
+Definition at line \mbox{\hyperlink{_data_extractor_8h_source_l00014}{14}} of file \mbox{\hyperlink{_data_extractor_8h_source}{Data\+Extractor.\+h}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00014\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00015\ \ \ \ \ \textcolor{comment}{//\ Use\ thread\_local\ to\ avoid\ repeated\ heavy\ allocations\ in\ the\ main\ thread}}
+\DoxyCodeLine{00016\ \ \ \ \ \textcolor{keyword}{thread\_local}\ std::vector<T>\ buf;}
+\DoxyCodeLine{00017\ \ \ \ \ buf.resize(container.size());}
+\DoxyCodeLine{00018\ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{size\_t}\ i\ =\ 0;\ i\ <\ container.size();\ ++i)\ \{}
+\DoxyCodeLine{00019\ \ \ \ \ \ \ buf[i]\ =\ container[i].*MemberPtr;}
+\DoxyCodeLine{00020\ \ \ \ \ \}}
+\DoxyCodeLine{00021\ \ \ \ \ \textcolor{keywordflow}{return}\ buf.data();}
+\DoxyCodeLine{00022\ \ \ \}}
+
+\end{DoxyCode}
+
+
+Referenced by \mbox{\hyperlink{_particle_manager_8cpp_source_l00069}{GRPD\+::\+Model\+::\+Particle\+Manager\+::get\+Geom\+Data\+Ptr()}}, and \mbox{\hyperlink{_particle_manager_8cpp_source_l00087}{GRPD\+::\+Model\+::\+Particle\+Manager\+::get\+Int\+Data\+Ptr()}}.
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{class_g_r_p_d_1_1_utils_1_1_data_extractor_a402caf071028e59b409019b5b1ec484a_icgraph}
+\end{center}
+\end{figure}
+\Hypertarget{class_g_r_p_d_1_1_utils_1_1_data_extractor_af6560423aa764b84b8cd0be6f8ae40e2}\index{GRPD::Utils::DataExtractor@{GRPD::Utils::DataExtractor}!getVectorPtr@{getVectorPtr}}
+\index{getVectorPtr@{getVectorPtr}!GRPD::Utils::DataExtractor@{GRPD::Utils::DataExtractor}}
+\doxysubsubsection{\texorpdfstring{getVectorPtr()}{getVectorPtr()}}
+{\footnotesize\ttfamily \label{class_g_r_p_d_1_1_utils_1_1_data_extractor_af6560423aa764b84b8cd0be6f8ae40e2} 
+template$<$typename C, typename T, size\+\_\+t N, std\+::array$<$ T, N $>$ C\+::\texorpdfstring{$\ast$}{*} Member\+Ptr$>$ \\
+T \texorpdfstring{$\ast$}{*} GRPD\+::\+Utils\+::\+Data\+Extractor\+::get\+Vector\+Ptr (\begin{DoxyParamCaption}\item[{const std\+::vector$<$ C $>$ \&}]{container}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+
+
+Definition at line \mbox{\hyperlink{_data_extractor_8h_source_l00027}{27}} of file \mbox{\hyperlink{_data_extractor_8h_source}{Data\+Extractor.\+h}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00027\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00028\ \ \ \ \ \textcolor{keyword}{thread\_local}\ std::vector<T>\ buf;}
+\DoxyCodeLine{00029\ \ \ \ \ buf.resize(container.size()\ *\ N);}
+\DoxyCodeLine{00030\ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{size\_t}\ i\ =\ 0;\ i\ <\ container.size();\ ++i)\ \{}
+\DoxyCodeLine{00031\ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keyword}{auto}\ \&arr\ =\ container[i].*MemberPtr;}
+\DoxyCodeLine{00032\ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{size\_t}\ j\ =\ 0;\ j\ <\ N;\ ++j)\ \{}
+\DoxyCodeLine{00033\ \ \ \ \ \ \ \ \ buf[i\ *\ N\ +\ j]\ =\ arr[j];}
+\DoxyCodeLine{00034\ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00035\ \ \ \ \ \}}
+\DoxyCodeLine{00036\ \ \ \ \ \textcolor{keywordflow}{return}\ buf.data();}
+\DoxyCodeLine{00037\ \ \ \}}
+
+\end{DoxyCode}
+
+
+Referenced by \mbox{\hyperlink{_particle_manager_8cpp_source_l00069}{GRPD\+::\+Model\+::\+Particle\+Manager\+::get\+Geom\+Data\+Ptr()}}.
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{class_g_r_p_d_1_1_utils_1_1_data_extractor_af6560423aa764b84b8cd0be6f8ae40e2_icgraph}
+\end{center}
+\end{figure}
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+PDCommon/\+Utils/include/\mbox{\hyperlink{_data_extractor_8h}{Data\+Extractor.\+h}}\end{DoxyCompactItemize}

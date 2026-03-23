@@ -1,0 +1,388 @@
+\doxysection{GRPD\+::Model\+::Particle Class Reference}
+\hypertarget{class_g_r_p_d_1_1_model_1_1_particle}{}\label{class_g_r_p_d_1_1_model_1_1_particle}\index{GRPD::Model::Particle@{GRPD::Model::Particle}}
+
+
+{\ttfamily \#include $<$Particle.\+h$>$}
+
+
+
+Collaboration diagram for GRPD\+::Model\+::Particle\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=206pt]{class_g_r_p_d_1_1_model_1_1_particle__coll__graph}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{class_g_r_p_d_1_1_model_1_1_particle_a65ee52e00761ce7b02ffd189dfc46117}{Particle}} (int id, int part\+Id, int mat\+Id, double x, double y, double z, double volume)
+\item 
+int \mbox{\hyperlink{class_g_r_p_d_1_1_model_1_1_particle_aec70bcce01306bbf467c7ab25bfe3d42}{get\+Id}} () const
+\begin{DoxyCompactList}\small\item\em Get the globally unique ID (equals the index in global\+Particles\+\_\+) \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{class_g_r_p_d_1_1_model_1_1_particle_ad6c3c586635e32ba94bad33ddf9a85eb}{get\+Part\+Id}} () const
+\begin{DoxyCompactList}\small\item\em Get the part number this particle belongs to. \end{DoxyCompactList}\item 
+const std\+::array$<$ double, 3 $>$ \& \mbox{\hyperlink{class_g_r_p_d_1_1_model_1_1_particle_acd624f1a69bc944040d64c7579baec2c}{get\+Coords}} () const
+\begin{DoxyCompactList}\small\item\em Get const reference to the 3D coordinate array \mbox{[}x, y, z\mbox{]}. \end{DoxyCompactList}\item 
+double \mbox{\hyperlink{class_g_r_p_d_1_1_model_1_1_particle_a296294b1f6b610f03f3b13d5f1222c31}{get\+Volume}} () const
+\begin{DoxyCompactList}\small\item\em Get the particle volume. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{class_g_r_p_d_1_1_model_1_1_particle_a7541abdbfd40110f11307b09fd8b3140}{get\+Mat\+Id}} () const
+\begin{DoxyCompactList}\small\item\em Get the material ID assigned from .grpd file. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{class_g_r_p_d_1_1_material_1_1_material}{\+::\+GRPD\+::\+Material\+::\+Material}} \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{class_g_r_p_d_1_1_model_1_1_particle_a0da815d52534c7903d60aa2c5d001eed}{get\+Material}} () const
+\begin{DoxyCompactList}\small\item\em Get the assigned physical material pointer. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_g_r_p_d_1_1_model_1_1_particle_abb743ffcb063ff74e8f7247321a55ce1}{set\+Material}} (\mbox{\hyperlink{class_g_r_p_d_1_1_material_1_1_material}{\+::\+GRPD\+::\+Material\+::\+Material}} \texorpdfstring{$\ast$}{*}mat)
+\begin{DoxyCompactList}\small\item\em Assign the material instance to this particle. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+int \mbox{\hyperlink{class_g_r_p_d_1_1_model_1_1_particle_a453d34dc842db2dac9d90d16b9b61fad}{id\+\_\+}}
+\item 
+int \mbox{\hyperlink{class_g_r_p_d_1_1_model_1_1_particle_acb0f950bedcd14422e43707f2635e4c6}{part\+Id\+\_\+}}
+\item 
+int \mbox{\hyperlink{class_g_r_p_d_1_1_model_1_1_particle_af552520bc326b2ea2a26a9f139d1cf68}{mat\+Id\+\_\+}}
+\item 
+std\+::array$<$ double, 3 $>$ \mbox{\hyperlink{class_g_r_p_d_1_1_model_1_1_particle_a71c7fc26c9c71295de2ce59fcedb560f}{coords\+\_\+}}
+\item 
+double \mbox{\hyperlink{class_g_r_p_d_1_1_model_1_1_particle_aac3327d76f89e036b53d4aa32fce919b}{volume\+\_\+}}
+\item 
+\mbox{\hyperlink{class_g_r_p_d_1_1_material_1_1_material}{GRPD\+::\+Material\+::\+Material}} \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{class_g_r_p_d_1_1_model_1_1_particle_ab02acc9fea92b4d78647e006ba6df6b2}{material\+\_\+}}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Friends}
+\begin{DoxyCompactItemize}
+\item 
+class \mbox{\hyperlink{class_g_r_p_d_1_1_model_1_1_particle_aabcb8951071e20a007cb9a19bda2c4d3}{Particle\+Manager}}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+
+
+Definition at line \mbox{\hyperlink{_particle_8h_source_l00020}{20}} of file \mbox{\hyperlink{_particle_8h_source}{Particle.\+h}}.
+
+
+
+\label{doc-constructors}
+\Hypertarget{class_g_r_p_d_1_1_model_1_1_particle_doc-constructors}
+\doxysubsection{Constructor \& Destructor Documentation}
+\Hypertarget{class_g_r_p_d_1_1_model_1_1_particle_a65ee52e00761ce7b02ffd189dfc46117}\index{GRPD::Model::Particle@{GRPD::Model::Particle}!Particle@{Particle}}
+\index{Particle@{Particle}!GRPD::Model::Particle@{GRPD::Model::Particle}}
+\doxysubsubsection{\texorpdfstring{Particle()}{Particle()}}
+{\footnotesize\ttfamily \label{class_g_r_p_d_1_1_model_1_1_particle_a65ee52e00761ce7b02ffd189dfc46117} 
+GRPD\+::\+Model\+::\+Particle\+::\+Particle (\begin{DoxyParamCaption}\item[{int}]{id}{, }\item[{int}]{part\+Id}{, }\item[{int}]{mat\+Id}{, }\item[{double}]{x}{, }\item[{double}]{y}{, }\item[{double}]{z}{, }\item[{double}]{volume}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \mbox{\hyperlink{_particle_8cpp_source_l00013}{13}} of file \mbox{\hyperlink{_particle_8cpp_source}{Particle.\+cpp}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00015\ \ \ \ \ :\ \mbox{\hyperlink{class_g_r_p_d_1_1_model_1_1_particle_a453d34dc842db2dac9d90d16b9b61fad}{id\_}}(\textcolor{keywordtype}{id}),\ \mbox{\hyperlink{class_g_r_p_d_1_1_model_1_1_particle_acb0f950bedcd14422e43707f2635e4c6}{partId\_}}(partId),\ \mbox{\hyperlink{class_g_r_p_d_1_1_model_1_1_particle_af552520bc326b2ea2a26a9f139d1cf68}{matId\_}}(matId),\ \mbox{\hyperlink{class_g_r_p_d_1_1_model_1_1_particle_a71c7fc26c9c71295de2ce59fcedb560f}{coords\_}}(\{x,\ y,\ z\}),}
+\DoxyCodeLine{00016\ \ \ \ \ \ \ \mbox{\hyperlink{class_g_r_p_d_1_1_model_1_1_particle_aac3327d76f89e036b53d4aa32fce919b}{volume\_}}(volume),\ \mbox{\hyperlink{class_g_r_p_d_1_1_model_1_1_particle_ab02acc9fea92b4d78647e006ba6df6b2}{material\_}}(\textcolor{keyword}{nullptr})\ \{\}}
+
+\end{DoxyCode}
+
+
+References \mbox{\hyperlink{_particle_8h_source_l00066}{coords\+\_\+}}, \mbox{\hyperlink{_particle_8h_source_l00063}{id\+\_\+}}, \mbox{\hyperlink{_particle_8h_source_l00065}{mat\+Id\+\_\+}}, and \mbox{\hyperlink{_particle_8h_source_l00064}{part\+Id\+\_\+}}.
+
+
+
+\label{doc-func-members}
+\Hypertarget{class_g_r_p_d_1_1_model_1_1_particle_doc-func-members}
+\doxysubsection{Member Function Documentation}
+\Hypertarget{class_g_r_p_d_1_1_model_1_1_particle_acd624f1a69bc944040d64c7579baec2c}\index{GRPD::Model::Particle@{GRPD::Model::Particle}!getCoords@{getCoords}}
+\index{getCoords@{getCoords}!GRPD::Model::Particle@{GRPD::Model::Particle}}
+\doxysubsubsection{\texorpdfstring{getCoords()}{getCoords()}}
+{\footnotesize\ttfamily \label{class_g_r_p_d_1_1_model_1_1_particle_acd624f1a69bc944040d64c7579baec2c} 
+const std\+::array$<$ double, 3 $>$ \& GRPD\+::\+Model\+::\+Particle\+::get\+Coords (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const}
+
+
+
+Get const reference to the 3D coordinate array \mbox{[}x, y, z\mbox{]}. 
+
+
+
+Definition at line \mbox{\hyperlink{_particle_8cpp_source_l00025}{25}} of file \mbox{\hyperlink{_particle_8cpp_source}{Particle.\+cpp}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00025\ \{\ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{class_g_r_p_d_1_1_model_1_1_particle_a71c7fc26c9c71295de2ce59fcedb560f}{coords\_}};\ \}}
+
+\end{DoxyCode}
+
+
+References \mbox{\hyperlink{_particle_8h_source_l00066}{coords\+\_\+}}.
+
+
+
+Referenced by \mbox{\hyperlink{_neighbor_list_8cpp_source_l00010}{GRPD\+::\+Initial\+::\+Neighbor\+List\+::build\+Neighbors()}}.
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{class_g_r_p_d_1_1_model_1_1_particle_acd624f1a69bc944040d64c7579baec2c_icgraph}
+\end{center}
+\end{figure}
+\Hypertarget{class_g_r_p_d_1_1_model_1_1_particle_aec70bcce01306bbf467c7ab25bfe3d42}\index{GRPD::Model::Particle@{GRPD::Model::Particle}!getId@{getId}}
+\index{getId@{getId}!GRPD::Model::Particle@{GRPD::Model::Particle}}
+\doxysubsubsection{\texorpdfstring{getId()}{getId()}}
+{\footnotesize\ttfamily \label{class_g_r_p_d_1_1_model_1_1_particle_aec70bcce01306bbf467c7ab25bfe3d42} 
+int GRPD\+::\+Model\+::\+Particle\+::get\+Id (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const}
+
+
+
+Get the globally unique ID (equals the index in global\+Particles\+\_\+) 
+
+
+
+Definition at line \mbox{\hyperlink{_particle_8cpp_source_l00021}{21}} of file \mbox{\hyperlink{_particle_8cpp_source}{Particle.\+cpp}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00021\ \{\ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{class_g_r_p_d_1_1_model_1_1_particle_a453d34dc842db2dac9d90d16b9b61fad}{id\_}};\ \}}
+
+\end{DoxyCode}
+
+
+References \mbox{\hyperlink{_particle_8h_source_l00063}{id\+\_\+}}.
+
+\Hypertarget{class_g_r_p_d_1_1_model_1_1_particle_a0da815d52534c7903d60aa2c5d001eed}\index{GRPD::Model::Particle@{GRPD::Model::Particle}!getMaterial@{getMaterial}}
+\index{getMaterial@{getMaterial}!GRPD::Model::Particle@{GRPD::Model::Particle}}
+\doxysubsubsection{\texorpdfstring{getMaterial()}{getMaterial()}}
+{\footnotesize\ttfamily \label{class_g_r_p_d_1_1_model_1_1_particle_a0da815d52534c7903d60aa2c5d001eed} 
+\mbox{\hyperlink{class_g_r_p_d_1_1_material_1_1_material}{GRPD\+::\+Material\+::\+Material}} \texorpdfstring{$\ast$}{*} GRPD\+::\+Model\+::\+Particle\+::get\+Material (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const}
+
+
+
+Get the assigned physical material pointer. 
+
+
+
+Definition at line \mbox{\hyperlink{_particle_8cpp_source_l00033}{33}} of file \mbox{\hyperlink{_particle_8cpp_source}{Particle.\+cpp}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00033\ \{\ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{class_g_r_p_d_1_1_model_1_1_particle_ab02acc9fea92b4d78647e006ba6df6b2}{material\_}};\ \}}
+
+\end{DoxyCode}
+
+
+References \mbox{\hyperlink{_particle_8h_source_l00069}{material\+\_\+}}.
+
+\Hypertarget{class_g_r_p_d_1_1_model_1_1_particle_a7541abdbfd40110f11307b09fd8b3140}\index{GRPD::Model::Particle@{GRPD::Model::Particle}!getMatId@{getMatId}}
+\index{getMatId@{getMatId}!GRPD::Model::Particle@{GRPD::Model::Particle}}
+\doxysubsubsection{\texorpdfstring{getMatId()}{getMatId()}}
+{\footnotesize\ttfamily \label{class_g_r_p_d_1_1_model_1_1_particle_a7541abdbfd40110f11307b09fd8b3140} 
+int GRPD\+::\+Model\+::\+Particle\+::get\+Mat\+Id (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const}
+
+
+
+Get the material ID assigned from .grpd file. 
+
+
+
+Definition at line \mbox{\hyperlink{_particle_8cpp_source_l00031}{31}} of file \mbox{\hyperlink{_particle_8cpp_source}{Particle.\+cpp}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00031\ \{\ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{class_g_r_p_d_1_1_model_1_1_particle_af552520bc326b2ea2a26a9f139d1cf68}{matId\_}};\ \}}
+
+\end{DoxyCode}
+
+
+References \mbox{\hyperlink{_particle_8h_source_l00065}{mat\+Id\+\_\+}}.
+
+\Hypertarget{class_g_r_p_d_1_1_model_1_1_particle_ad6c3c586635e32ba94bad33ddf9a85eb}\index{GRPD::Model::Particle@{GRPD::Model::Particle}!getPartId@{getPartId}}
+\index{getPartId@{getPartId}!GRPD::Model::Particle@{GRPD::Model::Particle}}
+\doxysubsubsection{\texorpdfstring{getPartId()}{getPartId()}}
+{\footnotesize\ttfamily \label{class_g_r_p_d_1_1_model_1_1_particle_ad6c3c586635e32ba94bad33ddf9a85eb} 
+int GRPD\+::\+Model\+::\+Particle\+::get\+Part\+Id (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const}
+
+
+
+Get the part number this particle belongs to. 
+
+
+
+Definition at line \mbox{\hyperlink{_particle_8cpp_source_l00023}{23}} of file \mbox{\hyperlink{_particle_8cpp_source}{Particle.\+cpp}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00023\ \{\ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{class_g_r_p_d_1_1_model_1_1_particle_acb0f950bedcd14422e43707f2635e4c6}{partId\_}};\ \}}
+
+\end{DoxyCode}
+
+
+References \mbox{\hyperlink{_particle_8h_source_l00064}{part\+Id\+\_\+}}.
+
+\Hypertarget{class_g_r_p_d_1_1_model_1_1_particle_a296294b1f6b610f03f3b13d5f1222c31}\index{GRPD::Model::Particle@{GRPD::Model::Particle}!getVolume@{getVolume}}
+\index{getVolume@{getVolume}!GRPD::Model::Particle@{GRPD::Model::Particle}}
+\doxysubsubsection{\texorpdfstring{getVolume()}{getVolume()}}
+{\footnotesize\ttfamily \label{class_g_r_p_d_1_1_model_1_1_particle_a296294b1f6b610f03f3b13d5f1222c31} 
+double GRPD\+::\+Model\+::\+Particle\+::get\+Volume (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const}
+
+
+
+Get the particle volume. 
+
+
+
+Definition at line \mbox{\hyperlink{_particle_8cpp_source_l00027}{27}} of file \mbox{\hyperlink{_particle_8cpp_source}{Particle.\+cpp}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00027\ \{\ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{class_g_r_p_d_1_1_model_1_1_particle_aac3327d76f89e036b53d4aa32fce919b}{volume\_}};\ \}}
+
+\end{DoxyCode}
+
+
+References \mbox{\hyperlink{_particle_8h_source_l00067}{volume\+\_\+}}.
+
+\Hypertarget{class_g_r_p_d_1_1_model_1_1_particle_abb743ffcb063ff74e8f7247321a55ce1}\index{GRPD::Model::Particle@{GRPD::Model::Particle}!setMaterial@{setMaterial}}
+\index{setMaterial@{setMaterial}!GRPD::Model::Particle@{GRPD::Model::Particle}}
+\doxysubsubsection{\texorpdfstring{setMaterial()}{setMaterial()}}
+{\footnotesize\ttfamily \label{class_g_r_p_d_1_1_model_1_1_particle_abb743ffcb063ff74e8f7247321a55ce1} 
+void GRPD\+::\+Model\+::\+Particle\+::set\+Material (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{class_g_r_p_d_1_1_material_1_1_material}{\+::\+GRPD\+::\+Material\+::\+Material}} \texorpdfstring{$\ast$}{*}}]{mat}{}\end{DoxyParamCaption})}
+
+
+
+Assign the material instance to this particle. 
+
+
+
+Definition at line \mbox{\hyperlink{_particle_8cpp_source_l00040}{40}} of file \mbox{\hyperlink{_particle_8cpp_source}{Particle.\+cpp}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00040\ \{\ \mbox{\hyperlink{class_g_r_p_d_1_1_model_1_1_particle_ab02acc9fea92b4d78647e006ba6df6b2}{material\_}}\ =\ mat;\ \}}
+
+\end{DoxyCode}
+
+
+References \mbox{\hyperlink{_particle_8h_source_l00069}{material\+\_\+}}.
+
+
+
+\label{doc-related-members}
+\Hypertarget{class_g_r_p_d_1_1_model_1_1_particle_doc-related-members}
+\doxysubsection{Friends And Related Symbol Documentation}
+\Hypertarget{class_g_r_p_d_1_1_model_1_1_particle_aabcb8951071e20a007cb9a19bda2c4d3}\index{GRPD::Model::Particle@{GRPD::Model::Particle}!ParticleManager@{ParticleManager}}
+\index{ParticleManager@{ParticleManager}!GRPD::Model::Particle@{GRPD::Model::Particle}}
+\doxysubsubsection{\texorpdfstring{ParticleManager}{ParticleManager}}
+{\footnotesize\ttfamily \label{class_g_r_p_d_1_1_model_1_1_particle_aabcb8951071e20a007cb9a19bda2c4d3} 
+friend class \mbox{\hyperlink{class_g_r_p_d_1_1_model_1_1_particle_manager}{Particle\+Manager}}\hspace{0.3cm}{\ttfamily [friend]}}
+
+
+
+Definition at line \mbox{\hyperlink{_particle_8h_source_l00021}{21}} of file \mbox{\hyperlink{_particle_8h_source}{Particle.\+h}}.
+
+
+
+References \mbox{\hyperlink{_particle_8h_source_l00021}{Particle\+Manager}}.
+
+
+
+Referenced by \mbox{\hyperlink{_particle_8h_source_l00021}{Particle\+Manager}}.
+
+
+
+\label{doc-variable-members}
+\Hypertarget{class_g_r_p_d_1_1_model_1_1_particle_doc-variable-members}
+\doxysubsection{Member Data Documentation}
+\Hypertarget{class_g_r_p_d_1_1_model_1_1_particle_a71c7fc26c9c71295de2ce59fcedb560f}\index{GRPD::Model::Particle@{GRPD::Model::Particle}!coords\_@{coords\_}}
+\index{coords\_@{coords\_}!GRPD::Model::Particle@{GRPD::Model::Particle}}
+\doxysubsubsection{\texorpdfstring{coords\_}{coords\_}}
+{\footnotesize\ttfamily \label{class_g_r_p_d_1_1_model_1_1_particle_a71c7fc26c9c71295de2ce59fcedb560f} 
+std\+::array$<$double, 3$>$ GRPD\+::\+Model\+::\+Particle\+::coords\+\_\+\hspace{0.3cm}{\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_particle_8h_source_l00066}{66}} of file \mbox{\hyperlink{_particle_8h_source}{Particle.\+h}}.
+
+
+
+Referenced by \mbox{\hyperlink{_particle_8cpp_source_l00025}{get\+Coords()}}, \mbox{\hyperlink{_particle_manager_8cpp_source_l00069}{GRPD\+::\+Model\+::\+Particle\+Manager\+::get\+Geom\+Data\+Ptr()}}, and \mbox{\hyperlink{_particle_8cpp_source_l00013}{Particle()}}.
+
+\Hypertarget{class_g_r_p_d_1_1_model_1_1_particle_a453d34dc842db2dac9d90d16b9b61fad}\index{GRPD::Model::Particle@{GRPD::Model::Particle}!id\_@{id\_}}
+\index{id\_@{id\_}!GRPD::Model::Particle@{GRPD::Model::Particle}}
+\doxysubsubsection{\texorpdfstring{id\_}{id\_}}
+{\footnotesize\ttfamily \label{class_g_r_p_d_1_1_model_1_1_particle_a453d34dc842db2dac9d90d16b9b61fad} 
+int GRPD\+::\+Model\+::\+Particle\+::id\+\_\+\hspace{0.3cm}{\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_particle_8h_source_l00063}{63}} of file \mbox{\hyperlink{_particle_8h_source}{Particle.\+h}}.
+
+
+
+Referenced by \mbox{\hyperlink{_particle_8cpp_source_l00021}{get\+Id()}}, and \mbox{\hyperlink{_particle_8cpp_source_l00013}{Particle()}}.
+
+\Hypertarget{class_g_r_p_d_1_1_model_1_1_particle_ab02acc9fea92b4d78647e006ba6df6b2}\index{GRPD::Model::Particle@{GRPD::Model::Particle}!material\_@{material\_}}
+\index{material\_@{material\_}!GRPD::Model::Particle@{GRPD::Model::Particle}}
+\doxysubsubsection{\texorpdfstring{material\_}{material\_}}
+{\footnotesize\ttfamily \label{class_g_r_p_d_1_1_model_1_1_particle_ab02acc9fea92b4d78647e006ba6df6b2} 
+\mbox{\hyperlink{class_g_r_p_d_1_1_material_1_1_material}{GRPD\+::\+Material\+::\+Material}}\texorpdfstring{$\ast$}{*} GRPD\+::\+Model\+::\+Particle\+::material\+\_\+\hspace{0.3cm}{\ttfamily [private]}}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{=}
+\DoxyCodeLine{\ \ \ \ \ \ \textcolor{keyword}{nullptr}}
+
+\end{DoxyCode}
+
+
+Definition at line \mbox{\hyperlink{_particle_8h_source_l00069}{69}} of file \mbox{\hyperlink{_particle_8h_source}{Particle.\+h}}.
+
+
+
+Referenced by \mbox{\hyperlink{_particle_8cpp_source_l00033}{get\+Material()}}, and \mbox{\hyperlink{_particle_8cpp_source_l00040}{set\+Material()}}.
+
+\Hypertarget{class_g_r_p_d_1_1_model_1_1_particle_af552520bc326b2ea2a26a9f139d1cf68}\index{GRPD::Model::Particle@{GRPD::Model::Particle}!matId\_@{matId\_}}
+\index{matId\_@{matId\_}!GRPD::Model::Particle@{GRPD::Model::Particle}}
+\doxysubsubsection{\texorpdfstring{matId\_}{matId\_}}
+{\footnotesize\ttfamily \label{class_g_r_p_d_1_1_model_1_1_particle_af552520bc326b2ea2a26a9f139d1cf68} 
+int GRPD\+::\+Model\+::\+Particle\+::mat\+Id\+\_\+\hspace{0.3cm}{\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_particle_8h_source_l00065}{65}} of file \mbox{\hyperlink{_particle_8h_source}{Particle.\+h}}.
+
+
+
+Referenced by \mbox{\hyperlink{_particle_8cpp_source_l00031}{get\+Mat\+Id()}}, and \mbox{\hyperlink{_particle_8cpp_source_l00013}{Particle()}}.
+
+\Hypertarget{class_g_r_p_d_1_1_model_1_1_particle_acb0f950bedcd14422e43707f2635e4c6}\index{GRPD::Model::Particle@{GRPD::Model::Particle}!partId\_@{partId\_}}
+\index{partId\_@{partId\_}!GRPD::Model::Particle@{GRPD::Model::Particle}}
+\doxysubsubsection{\texorpdfstring{partId\_}{partId\_}}
+{\footnotesize\ttfamily \label{class_g_r_p_d_1_1_model_1_1_particle_acb0f950bedcd14422e43707f2635e4c6} 
+int GRPD\+::\+Model\+::\+Particle\+::part\+Id\+\_\+\hspace{0.3cm}{\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_particle_8h_source_l00064}{64}} of file \mbox{\hyperlink{_particle_8h_source}{Particle.\+h}}.
+
+
+
+Referenced by \mbox{\hyperlink{_particle_manager_8cpp_source_l00087}{GRPD\+::\+Model\+::\+Particle\+Manager\+::get\+Int\+Data\+Ptr()}}, \mbox{\hyperlink{_particle_8cpp_source_l00023}{get\+Part\+Id()}}, and \mbox{\hyperlink{_particle_8cpp_source_l00013}{Particle()}}.
+
+\Hypertarget{class_g_r_p_d_1_1_model_1_1_particle_aac3327d76f89e036b53d4aa32fce919b}\index{GRPD::Model::Particle@{GRPD::Model::Particle}!volume\_@{volume\_}}
+\index{volume\_@{volume\_}!GRPD::Model::Particle@{GRPD::Model::Particle}}
+\doxysubsubsection{\texorpdfstring{volume\_}{volume\_}}
+{\footnotesize\ttfamily \label{class_g_r_p_d_1_1_model_1_1_particle_aac3327d76f89e036b53d4aa32fce919b} 
+double GRPD\+::\+Model\+::\+Particle\+::volume\+\_\+\hspace{0.3cm}{\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_particle_8h_source_l00067}{67}} of file \mbox{\hyperlink{_particle_8h_source}{Particle.\+h}}.
+
+
+
+Referenced by \mbox{\hyperlink{_particle_manager_8cpp_source_l00069}{GRPD\+::\+Model\+::\+Particle\+Manager\+::get\+Geom\+Data\+Ptr()}}, and \mbox{\hyperlink{_particle_8cpp_source_l00027}{get\+Volume()}}.
+
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+PDCommon/\+Model/include/\mbox{\hyperlink{_particle_8h}{Particle.\+h}}\item 
+PDCommon/\+Model/src/\mbox{\hyperlink{_particle_8cpp}{Particle.\+cpp}}\end{DoxyCompactItemize}

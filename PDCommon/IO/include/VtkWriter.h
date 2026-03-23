@@ -2,7 +2,7 @@
 
 #include "Writer.h"
 
-namespace GRPD {
+namespace PDCommon {
 namespace IO {
 
 class VtkWriter : public Writer {
@@ -35,4 +35,4 @@ private:
 };
 
 } // namespace IO
-} // namespace GRPD
+} // namespace PDCommon

@@ -14,3 +14,14 @@ else()
 endif()
 
 # If you add Eigen or NetCDF in the future, also add_subdirectory here
+
+# Include Eigen (header-only linear algebra library)
+if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/eigen/CMakeLists.txt")
+    # 禁用 Eigen 的测试和文档构建，加速编译
+    set(EIGEN_BUILD_DOC OFF CACHE BOOL "" FORCE)
+    set(BUILD_TESTING OFF CACHE BOOL "" FORCE)
+    set(EIGEN_BUILD_PKGCONFIG OFF CACHE BOOL "" FORCE)
+    add_subdirectory(eigen)
+else()
+    message(FATAL_ERROR "Eigen source not found in Third/eigen!")
+endif()

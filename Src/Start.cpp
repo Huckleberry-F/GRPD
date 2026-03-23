@@ -7,8 +7,6 @@
 
 void Start() {
 
-  LOG_SET_FILE("../../Output/log.txt");
-
   SHOW_LOGO();
 
   LOG_INFO("GRPD is running...!");

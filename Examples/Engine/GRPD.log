@@ -1,0 +1,1081 @@
+[INFO] ==================================================
+[INFO]    GRPD Solver Engine Initialized                 
+[INFO] ==================================================
+[INFO] ========== Registered Types Summary ===========
+[INFO]   FieldRegistry     : IntField, ScalarField, SymTensorField, VectorField
+[INFO]   PhysicsFields     : Mechanical, Thermal
+[INFO]   BCRegistry        : CONV, FLUX, T
+[INFO]   MaterialRegistry  : FourierThermalMat
+[INFO]   KernelRegistry    : NOSB_Thermal
+[INFO]   EngineRegistry    : PD
+[INFO] ===============================================
+[INFO] [EngineRegistry] Creating Engine instance: PD
+[INFO] [PDEngine] PD Engine instance created.
+[INFO] [EngineManager] Initializing solver: PD
+[INFO] [PDEngine] Initializing PD simulation context...
+[INFO] Model pre-processing...
+[INFO] [InitModel] grpd path: D:\Project_C++\GRPD\Examples\Engine\Engine.grpd
+[INFO] [InitModel] model name: Engine
+[INFO] Calling Python pre-processor to generate .grpd mesh...
+[INFO] Mesh generated successfully by Python.
+[INFO] [Context Manager] Formalized model name to: Engine
+[INFO] [Context Manager] Model dimension set to: 3D
+[INFO] Reading .grpd model file: D:\Project_C++\GRPD\Examples\Engine\Engine.grpd ...
+[INFO] [GrpdReader] Entering *PARTICLE section (Line 1)
+[INFO] [GrpdReader] Entering *LOAD section (Line 112334)
+[INFO] [GrpdReader] ============================================
+[INFO] [GrpdReader]    File reading complete!
+[INFO] [GrpdReader]    Total particles: 112331
+[INFO] [GrpdReader]    Total load entries: 19712
+[INFO] [GrpdReader] ============================================
+[INFO] Total particles loaded for model Engine: 112331
+[INFO]   Particle[0] Part=1 Pos=(286.763757, 40.690209, 0.100000) Vol=0.008000
+[INFO]   Particle[1] Part=1 Pos=(286.763757, 40.890209, 0.100000) Vol=0.008000
+[INFO]   Particle[2] Part=1 Pos=(286.763757, 41.090209, 0.100000) Vol=0.008000
+[INFO]   Particle[3] Part=1 Pos=(286.763757, 41.290209, 0.100000) Vol=0.008000
+[INFO]   Particle[4] Part=1 Pos=(286.963757, 40.290209, 0.100000) Vol=0.008000
+[INFO] Entering Material Initialization Phase...
+[INFO] Instantiating material [1] of type: FourierThermalMat
+[INFO] [MaterialRegistry] Using factory to create material: Steel_NmmTonne (type: FourierThermalMat)
+[INFO] [FourierThermalMat] Material 'Steel_NmmTonne' is initialized. Conductivity = 45.000000, HeatCapacity = 460000000.000000, Density = 0.000000
+[INFO] [MaterialManager] Successfully added material instance: Steel_NmmTonne
+[INFO] Successfully registered material ID 1 (Steel_NmmTonne)
+[INFO] Assigning material pointers to particles...
+[INFO] Successfully assigned materials to 112331 particles.
+[INFO] Entering Field Registration Phase...
+[INFO] [ThermalFields] Core fields registered: Temperature, TempRate, HeatFlux.
+[INFO] [InitFields] Auto-registered PhysicsFields module: Thermal
+[INFO] [FieldManager] Resized all 8 fields for 112331 particles.
+[INFO] [GrpdReader] Populated particle geometry fields into FieldManager for 112331 particles.
+[INFO] [InitFields] All fields allocated for 112331 particles. Total fields: 8.
+[INFO] Entering Conditions Initialization Phase...
+[INFO] [InitConditions] Reading load data from .grpd file: D:\Project_C++\GRPD\Examples\Engine\Engine.grpd
+[INFO] [GrpdReader::readLoads] Entering *PARTICLE section (Line 1)
+[INFO] [GrpdReader::readLoads] Entering *LOAD section (Line 112334)
+[INFO] [GrpdReader::readLoads] Load statistics:
+[INFO]   - Temperature (Dirichlet): 19712
+[INFO]   - Heat Flux (Neumann):    0
+[INFO]   - Convection (Robin):     0
+[INFO] [InitConditions] Boundary conditions initialization complete.
+[INFO] [InitNeighbors] Entering Neighbor Search Phase...
+[INFO] [InitNeighbors] Horizon radius: 1.000000
+[INFO] [NeighborList] Starting full-flat CSR search for 112331 particles, horizon = 1.000000
+[INFO] [NeighborList] Cell grid: 19 x 17 x 9 = 2907 cells
+[INFO] [NeighborList] Flat cell list built in 0.000000 ms
+[INFO] [NeighborList] Pass 1 (count) done in 87.999821 ms
+[INFO] [NeighborList] Total bonds: 47997890, Memory: 549 MB
+[INFO] [NeighborList] Pass 2 (fill) done in 259.000063 ms
+[INFO] [NeighborList] Max neighbors: 502
+[INFO] [NeighborList] Total time: 346.999884 ms
+[INFO] [InitNeighbors] NeighborCount field populated for 112331 particles.
+[INFO] [InitNeighbors] BondDamage field registered, 47997890 bonds initialized to 1.0
+[INFO] [InitNeighbors] Neighbor search phase complete.
+[INFO] [PDEngine] Creating solver components (L1 + L2)...
+[INFO] [PDSolver] Algorithm: Explicit, PDType: NOSB, Physics: Thermal
+[INFO] [NOSB_Base] Applied KernelWeightType: Linear
+[INFO] [NOSB_Base] Applied ZeroEnergyG0: 1.000000
+[INFO] [NOSB_Base] Applied ZeroEnergyMethod: Silling
+[INFO] [PDEngine] L1: ExplicitEuler, L2: NOSB_Thermal - components ready.
+[INFO] [PDEngine] PD simulation context initialized successfully.
+[INFO] [EngineManager] All solvers initialized. Total: 1
+[INFO] [EngineManager] Entering Main Solver Phase
+[INFO] [EngineManager] Solving: PD
+[INFO] [PDEngine] Starting PD Engine Solve Phase...
+[INFO] [ExplicitEuler] Time loop: dt = 0.010000, totalSteps = 1000
+[INFO] [NOSB_Base] Computing InfluenceWeight + Shape Tensor Inverse (K^-1)...
+[INFO] [NOSB_Base] All NOSB base fields registered and Shape Tensor Inverse computed.
+[INFO] --- Step 0 / 1000  |  Pure Compute: 0.000000s  |  Total: 0.000000s  |  Pure Speed: 0.000000 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=0 t=0.000000
+[INFO] Fetching model context for export: Engine
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Engine\Result_20260323_150520\Result_step00000_t0.0000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Engine
+[INFO] --- Step 100 / 1000  |  Pure Compute: 12.767070s  |  Total: 12.789121s  |  Pure Speed: 7.832651 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=100 t=1.000000
+[INFO] Fetching model context for export: Engine
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Engine\Result_20260323_150520\Result_step00100_t1.0000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Engine
+[INFO] --- Step 200 / 1000  |  Pure Compute: 23.526606s  |  Total: 23.560213s  |  Pure Speed: 8.501014 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=200 t=2.000000
+[INFO] Fetching model context for export: Engine
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Engine\Result_20260323_150520\Result_step00200_t2.0000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Engine
+[INFO] --- Step 300 / 1000  |  Pure Compute: 35.051628s  |  Total: 35.098334s  |  Pure Speed: 8.558804 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=300 t=3.000000
+[INFO] Fetching model context for export: Engine
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Engine\Result_20260323_150520\Result_step00300_t3.0000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Engine
+[INFO] --- Step 400 / 1000  |  Pure Compute: 47.373446s  |  Total: 47.434458s  |  Pure Speed: 8.443549 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=400 t=4.000000
+[INFO] Fetching model context for export: Engine
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Engine\Result_20260323_150520\Result_step00400_t4.0000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Engine
+[INFO] --- Step 500 / 1000  |  Pure Compute: 61.669184s  |  Total: 61.745900s  |  Pure Speed: 8.107777 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=500 t=5.000000
+[INFO] Fetching model context for export: Engine
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Engine\Result_20260323_150520\Result_step00500_t5.0000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Engine
+[INFO] --- Step 600 / 1000  |  Pure Compute: 75.276278s  |  Total: 75.373382s  |  Pure Speed: 7.970639 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=600 t=6.000000
+[INFO] Fetching model context for export: Engine
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Engine\Result_20260323_150520\Result_step00600_t6.0000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Engine
+[INFO] --- Step 700 / 1000  |  Pure Compute: 86.979976s  |  Total: 87.102319s  |  Pure Speed: 8.047829 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=700 t=7.000000
+[INFO] Fetching model context for export: Engine
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Engine\Result_20260323_150520\Result_step00700_t7.0000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Engine
+[INFO] --- Step 800 / 1000  |  Pure Compute: 98.717447s  |  Total: 98.855605s  |  Pure Speed: 8.103937 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=800 t=8.000000
+[INFO] Fetching model context for export: Engine
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Engine\Result_20260323_150520\Result_step00800_t8.0000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Engine
+[INFO] --- Step 900 / 1000  |  Pure Compute: 110.898969s  |  Total: 111.055436s  |  Pure Speed: 8.115495 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=900 t=9.000000
+[INFO] Fetching model context for export: Engine
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Engine\Result_20260323_150520\Result_step00900_t9.0000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Engine
+[INFO] --- Step 1000 / 1000  |  Pure Compute: 123.287104s  |  Total: 123.471548s  |  Pure Speed: 8.111148 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=1000 t=10.000000
+[INFO] Fetching model context for export: Engine
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Engine\Result_20260323_150520\Result_step01000_t10.0000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Engine
+[INFO] [ExplicitEuler] Finished. Total: 123.493273s  |  Pure Compute avg: 0.123287 s/step
+[INFO] [PDEngine] PD Engine Solve Phase Finished.
+[INFO] [EngineManager] Main Solver Phase finished.
+[INFO] [EngineManager] Entering Post-processing Phase
+[INFO] [EngineManager] Outputting: PD
+[INFO] Starting data export process step=-1 t=0.000000
+[INFO] Fetching model context for export: Engine
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Engine\Result_20260323_150520\Result_output.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Engine
+[INFO] [EngineManager] Post-processing Phase finished.
+[INFO] ==================================================
+[INFO]    GRPD Solver Engine Initialized                 
+[INFO] ==================================================
+[INFO] ========== Registered Types Summary ===========
+[INFO]   FieldRegistry     : IntField, ScalarField, SymTensorField, VectorField
+[INFO]   PhysicsFields     : Mechanical, Thermal
+[INFO]   BCRegistry        : CONV, FLUX, T
+[INFO]   MaterialRegistry  : FourierThermalMat
+[INFO]   KernelRegistry    : NOSB_Thermal
+[INFO]   EngineRegistry    : PD
+[INFO] ===============================================
+[INFO] [EngineRegistry] Creating Engine instance: PD
+[INFO] [PDEngine] PD Engine instance created.
+[INFO] [EngineManager] Initializing solver: PD
+[INFO] [PDEngine] Initializing PD simulation context...
+[INFO] Model pre-processing...
+[INFO] [InitModel] grpd path: D:\Project_C++\GRPD\Examples\Engine\Engine.grpd
+[INFO] [InitModel] model name: Engine
+[INFO] Calling Python pre-processor to generate .grpd mesh...
+[INFO] Mesh generated successfully by Python.
+[INFO] [Context Manager] Formalized model name to: Engine
+[INFO] [Context Manager] Model dimension set to: 3D
+[INFO] Reading .grpd model file: D:\Project_C++\GRPD\Examples\Engine\Engine.grpd ...
+[INFO] [GrpdReader] Entering *PARTICLE section (Line 1)
+[INFO] [GrpdReader] Entering *LOAD section (Line 891929)
+[INFO] [GrpdReader] ============================================
+[INFO] [GrpdReader]    File reading complete!
+[INFO] [GrpdReader]    Total particles: 891926
+[INFO] [GrpdReader]    Total load entries: 156815
+[INFO] [GrpdReader] ============================================
+[INFO] Total particles loaded for model Engine: 891926
+[INFO]   Particle[0] Part=1 Pos=(286.713757, 40.740209, 0.050000) Vol=0.001000
+[INFO]   Particle[1] Part=1 Pos=(286.713757, 40.840209, 0.050000) Vol=0.001000
+[INFO]   Particle[2] Part=1 Pos=(286.713757, 40.940209, 0.050000) Vol=0.001000
+[INFO]   Particle[3] Part=1 Pos=(286.713757, 41.040209, 0.050000) Vol=0.001000
+[INFO]   Particle[4] Part=1 Pos=(286.713757, 41.140209, 0.050000) Vol=0.001000
+[INFO] Entering Material Initialization Phase...
+[INFO] Instantiating material [1] of type: FourierThermalMat
+[INFO] [MaterialRegistry] Using factory to create material: Steel_NmmTonne (type: FourierThermalMat)
+[INFO] [FourierThermalMat] Material 'Steel_NmmTonne' is initialized. Conductivity = 45.000000, HeatCapacity = 460000000.000000, Density = 0.000000
+[INFO] [MaterialManager] Successfully added material instance: Steel_NmmTonne
+[INFO] Successfully registered material ID 1 (Steel_NmmTonne)
+[INFO] Assigning material pointers to particles...
+[INFO] Successfully assigned materials to 891926 particles.
+[INFO] Entering Field Registration Phase...
+[INFO] [ThermalFields] Core fields registered: Temperature, TempRate, HeatFlux.
+[INFO] [InitFields] Auto-registered PhysicsFields module: Thermal
+[INFO] [FieldManager] Resized all 8 fields for 891926 particles.
+[INFO] [GrpdReader] Populated particle geometry fields into FieldManager for 891926 particles.
+[INFO] [InitFields] All fields allocated for 891926 particles. Total fields: 8.
+[INFO] Entering Conditions Initialization Phase...
+[INFO] [InitConditions] Reading load data from .grpd file: D:\Project_C++\GRPD\Examples\Engine\Engine.grpd
+[INFO] [GrpdReader::readLoads] Entering *PARTICLE section (Line 1)
+[INFO] [GrpdReader::readLoads] Entering *LOAD section (Line 891929)
+[INFO] [GrpdReader::readLoads] Load statistics:
+[INFO]   - Temperature (Dirichlet): 156815
+[INFO]   - Heat Flux (Neumann):    0
+[INFO]   - Convection (Robin):     0
+[INFO] [InitConditions] Boundary conditions initialization complete.
+[INFO] [InitNeighbors] Entering Neighbor Search Phase...
+[INFO] [InitNeighbors] Horizon radius: 0.311500
+[INFO] [NeighborList] Starting full-flat CSR search for 891926 particles, horizon = 0.311500
+[INFO] [NeighborList] Cell grid: 61 x 54 x 28 = 92232 cells
+[INFO] [NeighborList] Flat cell list built in 21.000147 ms
+[INFO] [NeighborList] Pass 1 (count) done in 203.000069 ms
+[INFO] [NeighborList] Total bonds: 103728212, Memory: 1187 MB
+[INFO] [NeighborList] Pass 2 (fill) done in 472.999811 ms
+[INFO] [NeighborList] Max neighbors: 122
+[INFO] [NeighborList] Total time: 697.000027 ms
+[INFO] [InitNeighbors] NeighborCount field populated for 891926 particles.
+[INFO] [InitNeighbors] BondDamage field registered, 103728212 bonds initialized to 1.0
+[INFO] [InitNeighbors] Neighbor search phase complete.
+[INFO] [PDEngine] Creating solver components (L1 + L2)...
+[INFO] [PDSolver] Algorithm: Explicit, PDType: NOSB, Physics: Thermal
+[INFO] [NOSB_Base] Applied KernelWeightType: Linear
+[INFO] [NOSB_Base] Applied ZeroEnergyG0: 1.000000
+[INFO] [NOSB_Base] Applied ZeroEnergyMethod: Silling
+[INFO] [PDEngine] L1: ExplicitEuler, L2: NOSB_Thermal - components ready.
+[INFO] [PDEngine] PD simulation context initialized successfully.
+[INFO] [EngineManager] All solvers initialized. Total: 1
+[INFO] [EngineManager] Entering Main Solver Phase
+[INFO] [EngineManager] Solving: PD
+[INFO] [PDEngine] Starting PD Engine Solve Phase...
+[INFO] [ExplicitEuler] Time loop: dt = 0.010000, totalSteps = 1000
+[INFO] [NOSB_Base] Computing InfluenceWeight + Shape Tensor Inverse (K^-1)...
+[INFO] [NOSB_Base] All NOSB base fields registered and Shape Tensor Inverse computed.
+[INFO] --- Step 0 / 1000  |  Pure Compute: 0.000000s  |  Total: 0.000000s  |  Pure Speed: 0.000000 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=0 t=0.000000
+[INFO] Fetching model context for export: Engine
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Engine\Result_20260323_151425\Result_step00000_t0.0000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Engine
+[INFO] --- Step 100 / 1000  |  Pure Compute: 24.776644s  |  Total: 24.824137s  |  Pure Speed: 4.036059 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=100 t=1.000000
+[INFO] Fetching model context for export: Engine
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Engine\Result_20260323_151425\Result_step00100_t1.0000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Engine
+[INFO] --- Step 200 / 1000  |  Pure Compute: 49.136250s  |  Total: 49.250962s  |  Pure Speed: 4.070315 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=200 t=2.000000
+[INFO] Fetching model context for export: Engine
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Engine\Result_20260323_151425\Result_step00200_t2.0000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Engine
+[INFO] --- Step 300 / 1000  |  Pure Compute: 73.948498s  |  Total: 74.127755s  |  Pure Speed: 4.056878 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=300 t=3.000000
+[INFO] Fetching model context for export: Engine
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Engine\Result_20260323_151425\Result_step00300_t3.0000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Engine
+[INFO] --- Step 400 / 1000  |  Pure Compute: 98.523480s  |  Total: 98.757425s  |  Pure Speed: 4.059946 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=400 t=4.000000
+[INFO] Fetching model context for export: Engine
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Engine\Result_20260323_151425\Result_step00400_t4.0000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Engine
+[INFO] --- Step 500 / 1000  |  Pure Compute: 123.820372s  |  Total: 124.115239s  |  Pure Speed: 4.038108 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=500 t=5.000000
+[INFO] Fetching model context for export: Engine
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Engine\Result_20260323_151425\Result_step00500_t5.0000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Engine
+[INFO] --- Step 600 / 1000  |  Pure Compute: 149.791693s  |  Total: 150.141054s  |  Pure Speed: 4.005563 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=600 t=6.000000
+[INFO] Fetching model context for export: Engine
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Engine\Result_20260323_151425\Result_step00600_t6.0000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Engine
+[INFO] --- Step 700 / 1000  |  Pure Compute: 177.575185s  |  Total: 177.985838s  |  Pure Speed: 3.941992 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=700 t=7.000000
+[INFO] Fetching model context for export: Engine
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Engine\Result_20260323_151425\Result_step00700_t7.0000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Engine
+[INFO] --- Step 800 / 1000  |  Pure Compute: 205.060291s  |  Total: 205.538724s  |  Pure Speed: 3.901292 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=800 t=8.000000
+[INFO] Fetching model context for export: Engine
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Engine\Result_20260323_151425\Result_step00800_t8.0000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Engine
+[INFO] --- Step 900 / 1000  |  Pure Compute: 232.837887s  |  Total: 233.383824s  |  Pure Speed: 3.865350 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=900 t=9.000000
+[INFO] Fetching model context for export: Engine
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Engine\Result_20260323_151425\Result_step00900_t9.0000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Engine
+[INFO] --- Step 1000 / 1000  |  Pure Compute: 263.360463s  |  Total: 263.976189s  |  Pure Speed: 3.797077 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=1000 t=10.000000
+[INFO] Fetching model context for export: Engine
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Engine\Result_20260323_151425\Result_step01000_t10.0000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Engine
+[INFO] [ExplicitEuler] Finished. Total: 264.038935s  |  Pure Compute avg: 0.263360 s/step
+[INFO] [PDEngine] PD Engine Solve Phase Finished.
+[INFO] [EngineManager] Main Solver Phase finished.
+[INFO] [EngineManager] Entering Post-processing Phase
+[INFO] [EngineManager] Outputting: PD
+[INFO] Starting data export process step=-1 t=0.000000
+[INFO] Fetching model context for export: Engine
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Engine\Result_20260323_151425\Result_output.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Engine
+[INFO] [EngineManager] Post-processing Phase finished.
+[INFO] ==================================================
+[INFO]    GRPD Solver Engine Initialized                 
+[INFO] ==================================================
+[INFO] ========== Registered Types Summary ===========
+[INFO]   FieldRegistry     : IntField, ScalarField, SymTensorField, VectorField
+[INFO]   PhysicsFields     : Mechanical, Thermal
+[INFO]   BCRegistry        : CONV, FLUX, T
+[INFO]   MaterialRegistry  : FourierThermalMat
+[INFO]   KernelRegistry    : NOSB_Thermal
+[INFO]   EngineRegistry    : PD
+[INFO] ===============================================
+[INFO] [EngineRegistry] Creating Engine instance: PD
+[INFO] [PDEngine] PD Engine instance created.
+[INFO] [EngineManager] Initializing solver: PD
+[INFO] [PDEngine] Initializing PD simulation context...
+[INFO] Model pre-processing...
+[INFO] [InitModel] grpd path: D:\Project_C++\GRPD\Examples\Engine\Engine.grpd
+[INFO] [InitModel] model name: Engine
+[INFO] Calling Python pre-processor to generate .grpd mesh...
+[INFO] Mesh generated successfully by Python.
+[INFO] [Context Manager] Formalized model name to: Engine
+[INFO] [Context Manager] Model dimension set to: 3D
+[INFO] Reading .grpd model file: D:\Project_C++\GRPD\Examples\Engine\Engine.grpd ...
+[INFO] [GrpdReader] Entering *PARTICLE section (Line 1)
+[INFO] [GrpdReader] Entering *LOAD section (Line 7130866)
+[INFO] [GrpdReader] ============================================
+[INFO] [GrpdReader]    File reading complete!
+[INFO] [GrpdReader]    Total particles: 7130863
+[INFO] [GrpdReader]    Total load entries: 1254230
+[INFO] [GrpdReader] ============================================
+[INFO] Total particles loaded for model Engine: 7130863
+[INFO]   Particle[0] Part=1 Pos=(286.688757, 40.815209, 0.025000) Vol=0.000125
+[INFO]   Particle[1] Part=1 Pos=(286.688757, 40.865209, 0.025000) Vol=0.000125
+[INFO]   Particle[2] Part=1 Pos=(286.688757, 40.915209, 0.025000) Vol=0.000125
+[INFO]   Particle[3] Part=1 Pos=(286.688757, 40.965209, 0.025000) Vol=0.000125
+[INFO]   Particle[4] Part=1 Pos=(286.688757, 41.015209, 0.025000) Vol=0.000125
+[INFO] Entering Material Initialization Phase...
+[INFO] Instantiating material [1] of type: FourierThermalMat
+[INFO] [MaterialRegistry] Using factory to create material: Steel_NmmTonne (type: FourierThermalMat)
+[INFO] [FourierThermalMat] Material 'Steel_NmmTonne' is initialized. Conductivity = 45.000000, HeatCapacity = 460000000.000000, Density = 0.000000
+[INFO] [MaterialManager] Successfully added material instance: Steel_NmmTonne
+[INFO] Successfully registered material ID 1 (Steel_NmmTonne)
+[INFO] Assigning material pointers to particles...
+[INFO] Successfully assigned materials to 7130863 particles.
+[INFO] Entering Field Registration Phase...
+[INFO] [ThermalFields] Core fields registered: Temperature, TempRate, HeatFlux.
+[INFO] [InitFields] Auto-registered PhysicsFields module: Thermal
+[INFO] [FieldManager] Resized all 8 fields for 7130863 particles.
+[INFO] [GrpdReader] Populated particle geometry fields into FieldManager for 7130863 particles.
+[INFO] [InitFields] All fields allocated for 7130863 particles. Total fields: 8.
+[INFO] Entering Conditions Initialization Phase...
+[INFO] [InitConditions] Reading load data from .grpd file: D:\Project_C++\GRPD\Examples\Engine\Engine.grpd
+[INFO] [GrpdReader::readLoads] Entering *PARTICLE section (Line 1)
+[INFO] [GrpdReader::readLoads] Entering *LOAD section (Line 7130866)
+[INFO] [GrpdReader::readLoads] Load statistics:
+[INFO]   - Temperature (Dirichlet): 1254230
+[INFO]   - Heat Flux (Neumann):    0
+[INFO]   - Convection (Robin):     0
+[INFO] [InitConditions] Boundary conditions initialization complete.
+[INFO] [InitNeighbors] Entering Neighbor Search Phase...
+[INFO] [InitNeighbors] Horizon radius: 0.161500
+[INFO] [NeighborList] Starting full-flat CSR search for 7130863 particles, horizon = 0.161500
+[INFO] [NeighborList] Cell grid: 118 x 104 x 54 = 662688 cells
+[INFO] [NeighborList] Flat cell list built in 167.000055 ms
+[INFO] [NeighborList] Pass 1 (count) done in 2185.999870 ms
+[INFO] [NeighborList] Total bonds: 1015582806, Memory: 11622 MB
+[INFO] [NeighborList] Pass 2 (fill) done in 9144.000053 ms
+[INFO] [NeighborList] Max neighbors: 146
+[INFO] [NeighborList] Total time: 11496.999979 ms
+[INFO] [InitNeighbors] NeighborCount field populated for 7130863 particles.
+[INFO] [InitNeighbors] BondDamage field registered, 1015582806 bonds initialized to 1.0
+[INFO] [InitNeighbors] Neighbor search phase complete.
+[INFO] [PDEngine] Creating solver components (L1 + L2)...
+[INFO] [PDSolver] Algorithm: Explicit, PDType: NOSB, Physics: Thermal
+[INFO] [NOSB_Base] Applied KernelWeightType: Linear
+[INFO] [NOSB_Base] Applied ZeroEnergyG0: 1.000000
+[INFO] [NOSB_Base] Applied ZeroEnergyMethod: Silling
+[INFO] [PDEngine] L1: ExplicitEuler, L2: NOSB_Thermal - components ready.
+[INFO] [PDEngine] PD simulation context initialized successfully.
+[INFO] [EngineManager] All solvers initialized. Total: 1
+[INFO] [EngineManager] Entering Main Solver Phase
+[INFO] [EngineManager] Solving: PD
+[INFO] [PDEngine] Starting PD Engine Solve Phase...
+[INFO] [ExplicitEuler] Time loop: dt = 0.010000, totalSteps = 1000
+[INFO] [NOSB_Base] Computing InfluenceWeight + Shape Tensor Inverse (K^-1)...
+[INFO] [NOSB_Base] All NOSB base fields registered and Shape Tensor Inverse computed.
+[INFO] --- Step 0 / 1000  |  Pure Compute: 0.000000s  |  Total: 0.000000s  |  Pure Speed: 0.000000 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=0 t=0.000000
+[INFO] Fetching model context for export: Engine
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Engine\Result_20260323_152643\Result_step00000_t0.0000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Engine
+[INFO] ==================================================
+[INFO]    GRPD Solver Engine Initialized                 
+[INFO] ==================================================
+[INFO] ========== Registered Types Summary ===========
+[INFO]   FieldRegistry     : IntField, ScalarField, SymTensorField, VectorField
+[INFO]   PhysicsFields     : Mechanical, Thermal
+[INFO]   BCRegistry        : CONV, FLUX, T
+[INFO]   MaterialRegistry  : FourierThermalMat
+[INFO]   KernelRegistry    : NOSB_Thermal
+[INFO]   EngineRegistry    : PD
+[INFO] ===============================================
+[INFO] [EngineRegistry] Creating Engine instance: PD
+[INFO] [PDEngine] PD Engine instance created.
+[INFO] [EngineManager] Initializing solver: PD
+[INFO] [PDEngine] Initializing PD simulation context...
+[INFO] Model pre-processing...
+[INFO] [InitModel] grpd path: D:\Project_C++\GRPD\Examples\Engine\Engine.grpd
+[INFO] [InitModel] model name: Engine
+[INFO] Calling Python pre-processor to generate .grpd mesh...
+[ERROR] Python pre-processor failed! Please check if python is installed and paths are correct.
+[ERROR] Exit code: 1
+[INFO] ==================================================
+[INFO]    GRPD Solver Engine Initialized                 
+[INFO] ==================================================
+[INFO] ========== Registered Types Summary ===========
+[INFO]   FieldRegistry     : IntField, ScalarField, SymTensorField, VectorField
+[INFO]   PhysicsFields     : Mechanical, Thermal
+[INFO]   BCRegistry        : CONV, FLUX, T
+[INFO]   MaterialRegistry  : FourierThermalMat
+[INFO]   KernelRegistry    : NOSB_Thermal
+[INFO]   EngineRegistry    : PD
+[INFO] ===============================================
+[INFO] [EngineRegistry] Creating Engine instance: PD
+[INFO] [PDEngine] PD Engine instance created.
+[INFO] [EngineManager] Initializing solver: PD
+[INFO] [PDEngine] Initializing PD simulation context...
+[INFO] Model pre-processing...
+[INFO] [InitModel] grpd path: D:\Project_C++\GRPD\Examples\Engine\Engine.grpd
+[INFO] [InitModel] model name: Engine
+[INFO] Calling Python pre-processor to generate .grpd mesh...
+[INFO] Mesh generated successfully by Python.
+[INFO] [Context Manager] Formalized model name to: Engine
+[INFO] [Context Manager] Model dimension set to: 3D
+[INFO] Reading .grpd model file: D:\Project_C++\GRPD\Examples\Engine\Engine.grpd ...
+[INFO] [GrpdReader] Entering *PARTICLE section (Line 1)
+[INFO] [GrpdReader] Entering *LOAD section (Line 891928)
+[INFO] [GrpdReader] ============================================
+[INFO] [GrpdReader]    File reading complete!
+[INFO] [GrpdReader]    Total particles: 891925
+[INFO] [GrpdReader]    Total load entries: 156815
+[INFO] [GrpdReader] ============================================
+[INFO] Total particles loaded for model Engine: 891925
+[INFO]   Particle[0] Part=1 Pos=(286.713757, 40.740209, 0.050000) Vol=0.001000
+[INFO]   Particle[1] Part=1 Pos=(286.713757, 40.840209, 0.050000) Vol=0.001000
+[INFO]   Particle[2] Part=1 Pos=(286.713757, 40.940209, 0.050000) Vol=0.001000
+[INFO]   Particle[3] Part=1 Pos=(286.713757, 41.040209, 0.050000) Vol=0.001000
+[INFO]   Particle[4] Part=1 Pos=(286.713757, 41.140209, 0.050000) Vol=0.001000
+[INFO] Entering Material Initialization Phase...
+[INFO] Instantiating material [1] of type: FourierThermalMat
+[INFO] [MaterialRegistry] Using factory to create material: Steel_NmmTonne (type: FourierThermalMat)
+[INFO] [FourierThermalMat] Material 'Steel_NmmTonne' is initialized. Conductivity = 45.000000, HeatCapacity = 460000000.000000, Density = 0.000000
+[INFO] [MaterialManager] Successfully added material instance: Steel_NmmTonne
+[INFO] Successfully registered material ID 1 (Steel_NmmTonne)
+[INFO] Assigning material pointers to particles...
+[INFO] Successfully assigned materials to 891925 particles.
+[INFO] Entering Field Registration Phase...
+[INFO] [ThermalFields] Core fields registered: Temperature, TempRate, HeatFlux.
+[INFO] [InitFields] Auto-registered PhysicsFields module: Thermal
+[INFO] [FieldManager] Resized all 8 fields for 891925 particles.
+[INFO] [GrpdReader] Populated particle geometry fields into FieldManager for 891925 particles.
+[INFO] [InitFields] All fields allocated for 891925 particles. Total fields: 8.
+[INFO] Entering Conditions Initialization Phase...
+[INFO] [InitConditions] Reading load data from .grpd file: D:\Project_C++\GRPD\Examples\Engine\Engine.grpd
+[INFO] [GrpdReader::readLoads] Entering *PARTICLE section (Line 1)
+[INFO] [GrpdReader::readLoads] Entering *LOAD section (Line 891928)
+[INFO] [GrpdReader::readLoads] Load statistics:
+[INFO]   - Temperature (Dirichlet): 156815
+[INFO]   - Heat Flux (Neumann):    0
+[INFO]   - Convection (Robin):     0
+[INFO] [InitConditions] Boundary conditions initialization complete.
+[INFO] [InitNeighbors] Entering Neighbor Search Phase...
+[INFO] [InitNeighbors] Horizon radius: 0.301500
+[INFO] [NeighborList] Starting full-flat CSR search for 891925 particles, horizon = 0.301500
+[INFO] [NeighborList] Cell grid: 63 x 56 x 29 = 102312 cells
+[INFO] [NeighborList] Flat cell list built in 19.000053 ms
+[INFO] [NeighborList] Pass 1 (count) done in 170.000076 ms
+[INFO] [NeighborList] Total bonds: 103728208, Memory: 1187 MB
+[INFO] [NeighborList] Pass 2 (fill) done in 480.000019 ms
+[INFO] [NeighborList] Max neighbors: 122
+[INFO] [NeighborList] Total time: 669.000149 ms
+[INFO] [InitNeighbors] NeighborCount field populated for 891925 particles.
+[INFO] [InitNeighbors] BondDamage field registered, 103728208 bonds initialized to 1.0
+[INFO] [InitNeighbors] Neighbor search phase complete.
+[INFO] [PDEngine] Creating solver components (L1 + L2)...
+[INFO] [PDSolver] Algorithm: Explicit, PDType: NOSB, Physics: Thermal
+[INFO] [NOSB_Base] Applied KernelWeightType: Linear
+[INFO] [NOSB_Base] Applied ZeroEnergyG0: 1.000000
+[INFO] [NOSB_Base] Applied ZeroEnergyMethod: Silling
+[INFO] [PDEngine] L1: ExplicitEuler, L2: NOSB_Thermal - components ready.
+[INFO] [PDEngine] PD simulation context initialized successfully.
+[INFO] [EngineManager] All solvers initialized. Total: 1
+[INFO] [EngineManager] Entering Main Solver Phase
+[INFO] [EngineManager] Solving: PD
+[INFO] [PDEngine] Starting PD Engine Solve Phase...
+[INFO] [ExplicitEuler] Time loop: dt = 0.010000, totalSteps = 1000
+[INFO] [NOSB_Base] Computing InfluenceWeight + Shape Tensor Inverse (K^-1)...
+[INFO] [NOSB_Base] All NOSB base fields registered and Shape Tensor Inverse computed.
+[INFO] --- Step 0 / 1000  |  Pure Compute: 0.000000s  |  Total: 0.000000s  |  Pure Speed: 0.000000 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=0 t=0.000000
+[INFO] Fetching model context for export: Engine
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Engine\Result_20260323_153727\Result_step00000_t0.0000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Engine
+[INFO] --- Step 100 / 1000  |  Pure Compute: 22.467234s  |  Total: 22.514444s  |  Pure Speed: 4.450926 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=100 t=1.000000
+[INFO] Fetching model context for export: Engine
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Engine\Result_20260323_153727\Result_step00100_t1.0000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Engine
+[INFO] --- Step 200 / 1000  |  Pure Compute: 57.704020s  |  Total: 57.815161s  |  Pure Speed: 3.465963 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=200 t=2.000000
+[INFO] Fetching model context for export: Engine
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Engine\Result_20260323_153727\Result_step00200_t2.0000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Engine
+[INFO] ==================================================
+[INFO]    GRPD Solver Engine Initialized                 
+[INFO] ==================================================
+[INFO] ========== Registered Types Summary ===========
+[INFO]   FieldRegistry     : IntField, ScalarField, SymTensorField, VectorField
+[INFO]   PhysicsFields     : Mechanical, Thermal
+[INFO]   BCRegistry        : CONV, FLUX, T
+[INFO]   MaterialRegistry  : FourierThermalMat
+[INFO]   KernelRegistry    : NOSB_Thermal
+[INFO]   EngineRegistry    : PD
+[INFO] ===============================================
+[INFO] [EngineRegistry] Creating Engine instance: PD
+[INFO] [PDEngine] PD Engine instance created.
+[INFO] [EngineManager] Initializing solver: PD
+[INFO] [PDEngine] Initializing PD simulation context...
+[INFO] Model pre-processing...
+[INFO] [InitModel] grpd path: D:\Project_C++\GRPD\Examples\Engine\Engine.grpd
+[INFO] [InitModel] model name: Engine
+[INFO] Found existing .grpd mesh file at: D:\Project_C++\GRPD\Examples\Engine\Engine.grpd. Skipping generation.
+[INFO] [Context Manager] Formalized model name to: Engine
+[INFO] [Context Manager] Model dimension set to: 3D
+[INFO] Reading .grpd model file: D:\Project_C++\GRPD\Examples\Engine\Engine.grpd ...
+[INFO] [GrpdReader] Entering *PARTICLE section (Line 1)
+[INFO] [GrpdReader] Entering *LOAD section (Line 891928)
+[INFO] [GrpdReader] ============================================
+[INFO] [GrpdReader]    File reading complete!
+[INFO] [GrpdReader]    Total particles: 891925
+[INFO] [GrpdReader]    Total load entries: 156815
+[INFO] [GrpdReader] ============================================
+[INFO] Total particles loaded for model Engine: 891925
+[INFO]   Particle[0] Part=1 Pos=(286.713757, 40.740209, 0.050000) Vol=0.001000
+[INFO]   Particle[1] Part=1 Pos=(286.713757, 40.840209, 0.050000) Vol=0.001000
+[INFO]   Particle[2] Part=1 Pos=(286.713757, 40.940209, 0.050000) Vol=0.001000
+[INFO]   Particle[3] Part=1 Pos=(286.713757, 41.040209, 0.050000) Vol=0.001000
+[INFO]   Particle[4] Part=1 Pos=(286.713757, 41.140209, 0.050000) Vol=0.001000
+[INFO] Entering Material Initialization Phase...
+[INFO] Instantiating material [1] of type: FourierThermalMat
+[INFO] [MaterialRegistry] Using factory to create material: Steel_NmmTonne (type: FourierThermalMat)
+[INFO] [FourierThermalMat] Material 'Steel_NmmTonne' is initialized. Conductivity = 45.000000, HeatCapacity = 460000000.000000, Density = 0.000000
+[INFO] [MaterialManager] Successfully added material instance: Steel_NmmTonne
+[INFO] Successfully registered material ID 1 (Steel_NmmTonne)
+[INFO] Assigning material pointers to particles...
+[INFO] Successfully assigned materials to 891925 particles.
+[INFO] Entering Field Registration Phase...
+[INFO] [ThermalFields] Core fields registered: Temperature, TempRate, HeatFlux.
+[INFO] [InitFields] Auto-registered PhysicsFields module: Thermal
+[INFO] [FieldManager] Resized all 8 fields for 891925 particles.
+[INFO] [GrpdReader] Populated particle geometry fields into FieldManager for 891925 particles.
+[INFO] [InitFields] All fields allocated for 891925 particles. Total fields: 8.
+[INFO] Entering Conditions Initialization Phase...
+[INFO] [InitConditions] Reading load data from .grpd file: D:\Project_C++\GRPD\Examples\Engine\Engine.grpd
+[INFO] [GrpdReader::readLoads] Entering *PARTICLE section (Line 1)
+[INFO] [GrpdReader::readLoads] Entering *LOAD section (Line 891928)
+[INFO] [GrpdReader::readLoads] Load statistics:
+[INFO]   - Temperature (Dirichlet): 156815
+[INFO]   - Heat Flux (Neumann):    0
+[INFO]   - Convection (Robin):     0
+[INFO] [InitConditions] Boundary conditions initialization complete.
+[INFO] [InitNeighbors] Entering Neighbor Search Phase...
+[INFO] [InitNeighbors] Horizon radius: 0.401500
+[INFO] [NeighborList] Starting full-flat CSR search for 891925 particles, horizon = 0.401500
+[INFO] [NeighborList] Cell grid: 48 x 42 x 22 = 44352 cells
+[INFO] [NeighborList] Flat cell list built in 25.000095 ms
+[INFO] [NeighborList] Pass 1 (count) done in 465.999842 ms
+[INFO] [NeighborList] Total bonds: 214878988, Memory: 2459 MB
+[INFO] [NeighborList] Pass 2 (fill) done in 1461.000204 ms
+[INFO] [NeighborList] Max neighbors: 256
+[INFO] [NeighborList] Total time: 1952.000141 ms
+[INFO] [InitNeighbors] NeighborCount field populated for 891925 particles.
+[INFO] [InitNeighbors] BondDamage field registered, 214878988 bonds initialized to 1.0
+[INFO] [InitNeighbors] Neighbor search phase complete.
+[INFO] [PDEngine] Creating solver components (L1 + L2)...
+[INFO] [PDSolver] Algorithm: Explicit, PDType: NOSB, Physics: Thermal
+[INFO] [NOSB_Base] Applied KernelWeightType: Linear
+[INFO] [NOSB_Base] Applied ZeroEnergyG0: 1.000000
+[INFO] [NOSB_Base] Applied ZeroEnergyMethod: Silling
+[INFO] [PDEngine] L1: ExplicitEuler, L2: NOSB_Thermal - components ready.
+[INFO] [PDEngine] PD simulation context initialized successfully.
+[INFO] [EngineManager] All solvers initialized. Total: 1
+[INFO] [EngineManager] Entering Main Solver Phase
+[INFO] [EngineManager] Solving: PD
+[INFO] [PDEngine] Starting PD Engine Solve Phase...
+[INFO] [ExplicitEuler] Time loop: dt = 0.010000, totalSteps = 1000
+[INFO] [NOSB_Base] Computing InfluenceWeight + Shape Tensor Inverse (K^-1)...
+[INFO] [NOSB_Base] All NOSB base fields registered and Shape Tensor Inverse computed.
+[INFO] --- Step 0 / 1000  |  Pure Compute: 0.000000s  |  Total: 0.000000s  |  Pure Speed: 0.000000 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=0 t=0.000000
+[INFO] Fetching model context for export: Engine
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Engine\Result_20260323_153922\Result_step00000_t0.0000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Engine
+[INFO] --- Step 100 / 1000  |  Pure Compute: 65.809054s  |  Total: 65.873540s  |  Pure Speed: 1.519548 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=100 t=1.000000
+[INFO] Fetching model context for export: Engine
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Engine\Result_20260323_153922\Result_step00100_t1.0000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Engine
+[INFO] ==================================================
+[INFO]    GRPD Solver Engine Initialized                 
+[INFO] ==================================================
+[INFO] ========== Registered Types Summary ===========
+[INFO]   FieldRegistry     : IntField, ScalarField, SymTensorField, VectorField
+[INFO]   PhysicsFields     : Mechanical, Thermal
+[INFO]   BCRegistry        : CONV, FLUX, T
+[INFO]   MaterialRegistry  : FourierThermalMat
+[INFO]   KernelRegistry    : NOSB_Thermal
+[INFO]   EngineRegistry    : PD
+[INFO] ===============================================
+[INFO] [EngineRegistry] Creating Engine instance: PD
+[INFO] [PDEngine] PD Engine instance created.
+[INFO] [EngineManager] Initializing solver: PD
+[INFO] [PDEngine] Initializing PD simulation context...
+[INFO] Model pre-processing...
+[INFO] [InitModel] grpd path: D:\Project_C++\GRPD\Examples\Engine\Engine.grpd
+[INFO] [InitModel] model name: Engine
+[INFO] Found existing .grpd mesh file at: D:\Project_C++\GRPD\Examples\Engine\Engine.grpd. Skipping generation.
+[INFO] [Context Manager] Formalized model name to: Engine
+[INFO] [Context Manager] Model dimension set to: 3D
+[INFO] Reading .grpd model file: D:\Project_C++\GRPD\Examples\Engine\Engine.grpd ...
+[INFO] [GrpdReader] Entering *PARTICLE section (Line 1)
+[INFO] ==================================================
+[INFO]    GRPD Solver Engine Initialized                 
+[INFO] ==================================================
+[INFO] ========== Registered Types Summary ===========
+[INFO]   FieldRegistry     : IntField, ScalarField, SymTensorField, VectorField
+[INFO]   PhysicsFields     : Mechanical, Thermal
+[INFO]   BCRegistry        : CONV, FLUX, T
+[INFO]   MaterialRegistry  : FourierThermalMat
+[INFO]   KernelRegistry    : NOSB_Thermal
+[INFO]   EngineRegistry    : PD
+[INFO] ===============================================
+[INFO] [EngineRegistry] Creating Engine instance: PD
+[INFO] [PDEngine] PD Engine instance created.
+[INFO] [EngineManager] Initializing solver: PD
+[INFO] [PDEngine] Initializing PD simulation context...
+[INFO] Model pre-processing...
+[INFO] [InitModel] grpd path: D:\Project_C++\GRPD\Examples\Engine\Engine.grpd
+[INFO] [InitModel] model name: Engine
+[INFO] Found existing .grpd mesh file at: D:\Project_C++\GRPD\Examples\Engine\Engine.grpd. Skipping generation.
+[INFO] [Context Manager] Formalized model name to: Engine
+[INFO] [Context Manager] Model dimension set to: 3D
+[INFO] Reading .grpd model file: D:\Project_C++\GRPD\Examples\Engine\Engine.grpd ...
+[INFO] [GrpdReader] Entering *PARTICLE section (Line 1)
+[INFO] [GrpdReader] Entering *LOAD section (Line 891928)
+[INFO] [GrpdReader] ============================================
+[INFO] [GrpdReader]    File reading complete!
+[INFO] [GrpdReader]    Total particles: 891925
+[INFO] [GrpdReader]    Total load entries: 156815
+[INFO] [GrpdReader] ============================================
+[INFO] Total particles loaded for model Engine: 891925
+[INFO]   Particle[0] Part=1 Pos=(286.713757, 40.740209, 0.050000) Vol=0.001000
+[INFO]   Particle[1] Part=1 Pos=(286.713757, 40.840209, 0.050000) Vol=0.001000
+[INFO]   Particle[2] Part=1 Pos=(286.713757, 40.940209, 0.050000) Vol=0.001000
+[INFO]   Particle[3] Part=1 Pos=(286.713757, 41.040209, 0.050000) Vol=0.001000
+[INFO]   Particle[4] Part=1 Pos=(286.713757, 41.140209, 0.050000) Vol=0.001000
+[INFO] Entering Material Initialization Phase...
+[INFO] Instantiating material [1] of type: FourierThermalMat
+[INFO] [MaterialRegistry] Using factory to create material: Steel_NmmTonne (type: FourierThermalMat)
+[INFO] [FourierThermalMat] Material 'Steel_NmmTonne' is initialized. Conductivity = 45.000000, HeatCapacity = 460000000.000000, Density = 0.000000
+[INFO] [MaterialManager] Successfully added material instance: Steel_NmmTonne
+[INFO] Successfully registered material ID 1 (Steel_NmmTonne)
+[INFO] Assigning material pointers to particles...
+[INFO] Successfully assigned materials to 891925 particles.
+[INFO] Entering Field Registration Phase...
+[INFO] [ThermalFields] Core fields registered: Temperature, TempRate, HeatFlux.
+[INFO] [InitFields] Auto-registered PhysicsFields module: Thermal
+[INFO] [FieldManager] Resized all 8 fields for 891925 particles.
+[INFO] [GrpdReader] Populated particle geometry fields into FieldManager for 891925 particles.
+[INFO] [InitFields] All fields allocated for 891925 particles. Total fields: 8.
+[INFO] Entering Conditions Initialization Phase...
+[INFO] [InitConditions] Reading load data from .grpd file: D:\Project_C++\GRPD\Examples\Engine\Engine.grpd
+[INFO] [GrpdReader::readLoads] Entering *PARTICLE section (Line 1)
+[INFO] [GrpdReader::readLoads] Entering *LOAD section (Line 891928)
+[INFO] [GrpdReader::readLoads] Load statistics:
+[INFO]   - Temperature (Dirichlet): 156815
+[INFO]   - Heat Flux (Neumann):    0
+[INFO]   - Convection (Robin):     0
+[INFO] [InitConditions] Boundary conditions initialization complete.
+[INFO] [InitNeighbors] Entering Neighbor Search Phase...
+[INFO] [InitNeighbors] Horizon radius: 0.401500
+[INFO] [NeighborList] Starting full-flat CSR search for 891925 particles, horizon = 0.401500
+[INFO] [NeighborList] Cell grid: 48 x 42 x 22 = 44352 cells
+[INFO] [NeighborList] Flat cell list built in 20.999908 ms
+[INFO] [NeighborList] Pass 1 (count) done in 378.999949 ms
+[INFO] [NeighborList] Total bonds: 214878988, Memory: 2459 MB
+[INFO] [NeighborList] Pass 2 (fill) done in 1166.000128 ms
+[INFO] [NeighborList] Max neighbors: 256
+[INFO] [NeighborList] Total time: 1565.999985 ms
+[INFO] [InitNeighbors] NeighborCount field populated for 891925 particles.
+[INFO] [InitNeighbors] BondDamage field registered, 214878988 bonds initialized to 1.0
+[INFO] [InitNeighbors] Neighbor search phase complete.
+[INFO] [PDEngine] Creating solver components (L1 + L2)...
+[INFO] [PDSolver] Algorithm: Explicit, PDType: NOSB, Physics: Thermal
+[INFO] [NOSB_Base] Applied KernelWeightType: Linear
+[INFO] [NOSB_Base] Applied ZeroEnergyG0: 2.000000
+[INFO] [NOSB_Base] Applied ZeroEnergyMethod: Silling
+[INFO] [PDEngine] L1: ExplicitEuler, L2: NOSB_Thermal - components ready.
+[INFO] [PDEngine] PD simulation context initialized successfully.
+[INFO] [EngineManager] All solvers initialized. Total: 1
+[INFO] [EngineManager] Entering Main Solver Phase
+[INFO] [EngineManager] Solving: PD
+[INFO] [PDEngine] Starting PD Engine Solve Phase...
+[INFO] [ExplicitEuler] Time loop: dt = 0.010000, totalSteps = 1000
+[INFO] [NOSB_Base] Computing InfluenceWeight + Shape Tensor Inverse (K^-1)...
+[INFO] [NOSB_Base] All NOSB base fields registered and Shape Tensor Inverse computed.
+[INFO] --- Step 0 / 1000  |  Pure Compute: 0.000000s  |  Total: 0.000000s  |  Pure Speed: 0.000000 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=0 t=0.000000
+[INFO] Fetching model context for export: Engine
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Engine\Result_20260323_154212\Result_step00000_t0.0000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Engine
+[INFO] --- Step 100 / 1000  |  Pure Compute: 59.631940s  |  Total: 59.690766s  |  Pure Speed: 1.676954 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=100 t=1.000000
+[INFO] Fetching model context for export: Engine
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Engine\Result_20260323_154212\Result_step00100_t1.0000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Engine
+[INFO] ==================================================
+[INFO]    GRPD Solver Engine Initialized                 
+[INFO] ==================================================
+[INFO] ========== Registered Types Summary ===========
+[INFO]   FieldRegistry     : IntField, ScalarField, SymTensorField, VectorField
+[INFO]   PhysicsFields     : Mechanical, Thermal
+[INFO]   BCRegistry        : CONV, FLUX, T
+[INFO]   MaterialRegistry  : FourierThermalMat
+[INFO]   KernelRegistry    : NOSB_Thermal
+[INFO]   EngineRegistry    : PD
+[INFO] ===============================================
+[INFO] [EngineRegistry] Creating Engine instance: PD
+[INFO] [PDEngine] PD Engine instance created.
+[INFO] [EngineManager] Initializing solver: PD
+[INFO] [PDEngine] Initializing PD simulation context...
+[INFO] Model pre-processing...
+[INFO] [InitModel] grpd path: D:\Project_C++\GRPD\Examples\Engine\Engine.grpd
+[INFO] [InitModel] model name: Engine
+[INFO] Found existing .grpd mesh file at: D:\Project_C++\GRPD\Examples\Engine\Engine.grpd. Skipping generation.
+[INFO] [Context Manager] Formalized model name to: Engine
+[INFO] [Context Manager] Model dimension set to: 3D
+[INFO] Reading .grpd model file: D:\Project_C++\GRPD\Examples\Engine\Engine.grpd ...
+[INFO] [GrpdReader] Entering *PARTICLE section (Line 1)
+[INFO] [GrpdReader] Entering *LOAD section (Line 891928)
+[INFO] [GrpdReader] ============================================
+[INFO] [GrpdReader]    File reading complete!
+[INFO] [GrpdReader]    Total particles: 891925
+[INFO] [GrpdReader]    Total load entries: 156815
+[INFO] [GrpdReader] ============================================
+[INFO] Total particles loaded for model Engine: 891925
+[INFO]   Particle[0] Part=1 Pos=(286.713757, 40.740209, 0.050000) Vol=0.001000
+[INFO]   Particle[1] Part=1 Pos=(286.713757, 40.840209, 0.050000) Vol=0.001000
+[INFO]   Particle[2] Part=1 Pos=(286.713757, 40.940209, 0.050000) Vol=0.001000
+[INFO]   Particle[3] Part=1 Pos=(286.713757, 41.040209, 0.050000) Vol=0.001000
+[INFO]   Particle[4] Part=1 Pos=(286.713757, 41.140209, 0.050000) Vol=0.001000
+[INFO] Entering Material Initialization Phase...
+[INFO] Instantiating material [1] of type: FourierThermalMat
+[INFO] [MaterialRegistry] Using factory to create material: Steel_NmmTonne (type: FourierThermalMat)
+[INFO] [FourierThermalMat] Material 'Steel_NmmTonne' is initialized. Conductivity = 45.000000, HeatCapacity = 460000000.000000, Density = 0.000000
+[INFO] [MaterialManager] Successfully added material instance: Steel_NmmTonne
+[INFO] Successfully registered material ID 1 (Steel_NmmTonne)
+[INFO] Assigning material pointers to particles...
+[INFO] Successfully assigned materials to 891925 particles.
+[INFO] Entering Field Registration Phase...
+[INFO] [ThermalFields] Core fields registered: Temperature, TempRate, HeatFlux.
+[INFO] [InitFields] Auto-registered PhysicsFields module: Thermal
+[INFO] [FieldManager] Resized all 8 fields for 891925 particles.
+[INFO] [GrpdReader] Populated particle geometry fields into FieldManager for 891925 particles.
+[INFO] [InitFields] All fields allocated for 891925 particles. Total fields: 8.
+[INFO] Entering Conditions Initialization Phase...
+[INFO] [InitConditions] Reading load data from .grpd file: D:\Project_C++\GRPD\Examples\Engine\Engine.grpd
+[INFO] [GrpdReader::readLoads] Entering *PARTICLE section (Line 1)
+[INFO] [GrpdReader::readLoads] Entering *LOAD section (Line 891928)
+[INFO] [GrpdReader::readLoads] Load statistics:
+[INFO]   - Temperature (Dirichlet): 156815
+[INFO]   - Heat Flux (Neumann):    0
+[INFO]   - Convection (Robin):     0
+[INFO] [InitConditions] Boundary conditions initialization complete.
+[INFO] [InitNeighbors] Entering Neighbor Search Phase...
+[INFO] [InitNeighbors] Horizon radius: 0.401500
+[INFO] [NeighborList] Starting full-flat CSR search for 891925 particles, horizon = 0.401500
+[INFO] [NeighborList] Cell grid: 48 x 42 x 22 = 44352 cells
+[INFO] [NeighborList] Flat cell list built in 20.999908 ms
+[INFO] [NeighborList] Pass 1 (count) done in 394.000053 ms
+[INFO] [NeighborList] Total bonds: 214878988, Memory: 2459 MB
+[INFO] [NeighborList] Pass 2 (fill) done in 1220.999956 ms
+[INFO] [NeighborList] Max neighbors: 256
+[INFO] [NeighborList] Total time: 1635.999918 ms
+[INFO] [InitNeighbors] NeighborCount field populated for 891925 particles.
+[INFO] [InitNeighbors] BondDamage field registered, 214878988 bonds initialized to 1.0
+[INFO] [InitNeighbors] Neighbor search phase complete.
+[INFO] [PDEngine] Creating solver components (L1 + L2)...
+[INFO] [PDSolver] Algorithm: Explicit, PDType: NOSB, Physics: Thermal
+[INFO] [NOSB_Base] Applied KernelWeightType: Linear
+[INFO] [NOSB_Base] Applied ZeroEnergyG0: 1.000000
+[INFO] [NOSB_Base] Applied ZeroEnergyMethod: Silling
+[INFO] [PDEngine] L1: ExplicitEuler, L2: NOSB_Thermal - components ready.
+[INFO] [PDEngine] PD simulation context initialized successfully.
+[INFO] [EngineManager] All solvers initialized. Total: 1
+[INFO] [EngineManager] Entering Main Solver Phase
+[INFO] [EngineManager] Solving: PD
+[INFO] [PDEngine] Starting PD Engine Solve Phase...
+[INFO] [ExplicitEuler] Time loop: dt = 0.001000, totalSteps = 10000
+[INFO] [NOSB_Base] Computing InfluenceWeight + Shape Tensor Inverse (K^-1)...
+[INFO] [NOSB_Base] All NOSB base fields registered and Shape Tensor Inverse computed.
+[INFO] --- Step 0 / 10000  |  Pure Compute: 0.000000s  |  Total: 0.000000s  |  Pure Speed: 0.000000 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=0 t=0.000000
+[INFO] Fetching model context for export: Engine
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Engine\Result_20260323_154558\Result_step00000_t0.0000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Engine
+[INFO] --- Step 100 / 10000  |  Pure Compute: 61.593798s  |  Total: 61.649811s  |  Pure Speed: 1.623540 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=100 t=0.100000
+[INFO] Fetching model context for export: Engine
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Engine\Result_20260323_154558\Result_step00100_t0.1000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Engine
+[INFO] --- Step 200 / 10000  |  Pure Compute: 118.036612s  |  Total: 118.161715s  |  Pure Speed: 1.694390 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=200 t=0.200000
+[INFO] Fetching model context for export: Engine
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Engine\Result_20260323_154558\Result_step00200_t0.2000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Engine
+[INFO] ==================================================
+[INFO]    GRPD Solver Engine Initialized                 
+[INFO] ==================================================
+[INFO] ========== Registered Types Summary ===========
+[INFO]   FieldRegistry     : IntField, ScalarField, SymTensorField, VectorField
+[INFO]   PhysicsFields     : Mechanical, Thermal
+[INFO]   BCRegistry        : CONV, FLUX, T
+[INFO]   MaterialRegistry  : FourierThermalMat
+[INFO]   KernelRegistry    : NOSB_Thermal
+[INFO]   EngineRegistry    : PD
+[INFO] ===============================================
+[INFO] ==================================================
+[INFO]    GRPD Solver Engine Initialized                 
+[INFO] ==================================================
+[INFO] ========== Registered Types Summary ===========
+[INFO]   FieldRegistry     : IntField, ScalarField, SymTensorField, VectorField
+[INFO]   PhysicsFields     : Mechanical, Thermal
+[INFO]   BCRegistry        : CONV, FLUX, T
+[INFO]   MaterialRegistry  : FourierThermalMat
+[INFO]   KernelRegistry    : NOSB_Thermal
+[INFO]   EngineRegistry    : PD
+[INFO] ===============================================
+[INFO] ==================================================
+[INFO]    GRPD Solver Engine Initialized                 
+[INFO] ==================================================
+[INFO] ========== Registered Types Summary ===========
+[INFO]   FieldRegistry     : IntField, ScalarField, SymTensorField, VectorField
+[INFO]   PhysicsFields     : Mechanical, Thermal
+[INFO]   BCRegistry        : CONV, FLUX, T
+[INFO]   MaterialRegistry  : FourierThermalMat
+[INFO]   KernelRegistry    : NOSB_Thermal
+[INFO]   EngineRegistry    : PD
+[INFO] ===============================================
+[INFO] [EngineRegistry] Creating Engine instance: PD
+[INFO] [PDEngine] PD Engine instance created.
+[INFO] [EngineManager] Initializing solver: PD
+[INFO] [PDEngine] Initializing PD simulation context...
+[INFO] Model pre-processing...
+[INFO] [InitModel] grpd path: D:\Project_C++\GRPD\Examples\Engine\Engine.grpd
+[INFO] [InitModel] model name: Engine
+[INFO] Calling Python pre-processor to generate .grpd mesh...
+[INFO] Mesh generated successfully by Python.
+[INFO] [Context Manager] Formalized model name to: Engine
+[INFO] [Context Manager] Model dimension set to: 3D
+[INFO] Reading .grpd model file: D:\Project_C++\GRPD\Examples\Engine\Engine.grpd ...
+[INFO] [GrpdReader] Entering *PARTICLE section (Line 1)
+[INFO] [GrpdReader] Entering *LOAD section (Line 170947)
+[INFO] [GrpdReader] ============================================
+[INFO] [GrpdReader]    File reading complete!
+[INFO] [GrpdReader]    Total particles: 170944
+[INFO] [GrpdReader]    Total load entries: 14115
+[INFO] [GrpdReader] ============================================
+[INFO] Total particles loaded for model Engine: 170944
+[INFO]   Particle[0] Part=1 Pos=(286.763757, 40.690209, 0.100000) Vol=0.008000
+[INFO]   Particle[1] Part=1 Pos=(286.763757, 40.890209, 0.100000) Vol=0.008000
+[INFO]   Particle[2] Part=1 Pos=(286.763757, 41.090209, 0.100000) Vol=0.008000
+[INFO]   Particle[3] Part=1 Pos=(286.763757, 41.290209, 0.100000) Vol=0.008000
+[INFO]   Particle[4] Part=1 Pos=(286.963757, 40.290209, 0.100000) Vol=0.008000
+[INFO] Entering Material Initialization Phase...
+[INFO] Instantiating material [1] of type: FourierThermalMat
+[INFO] [MaterialRegistry] Using factory to create material: Steel_NmmTonne (type: FourierThermalMat)
+[INFO] [FourierThermalMat] Material 'Steel_NmmTonne' is initialized. Conductivity = 45.000000, HeatCapacity = 460000000.000000, Density = 0.000000
+[INFO] [MaterialManager] Successfully added material instance: Steel_NmmTonne
+[INFO] Successfully registered material ID 1 (Steel_NmmTonne)
+[INFO] Assigning material pointers to particles...
+[INFO] Successfully assigned materials to 170944 particles.
+[INFO] Entering Field Registration Phase...
+[INFO] [ThermalFields] Core fields registered: Temperature, TempRate, HeatFlux.
+[INFO] [InitFields] Auto-registered PhysicsFields module: Thermal
+[INFO] [FieldManager] Resized all 8 fields for 170944 particles.
+[INFO] [GrpdReader] Populated particle geometry fields into FieldManager for 170944 particles.
+[INFO] [InitFields] All fields allocated for 170944 particles. Total fields: 8.
+[INFO] Entering Conditions Initialization Phase...
+[INFO] [InitConditions] Reading load data from .grpd file: D:\Project_C++\GRPD\Examples\Engine\Engine.grpd
+[INFO] [GrpdReader::readLoads] Entering *PARTICLE section (Line 1)
+[INFO] [GrpdReader::readLoads] Entering *LOAD section (Line 170947)
+[INFO] [GrpdReader::readLoads] Load statistics:
+[INFO]   - Temperature (Dirichlet): 14115
+[INFO]   - Heat Flux (Neumann):    0
+[INFO]   - Convection (Robin):     0
+[INFO] [InitConditions] Boundary conditions initialization complete.
+[INFO] [InitNeighbors] Entering Neighbor Search Phase...
+[INFO] [InitNeighbors] Horizon radius: 0.601500
+[INFO] [NeighborList] Starting full-flat CSR search for 170944 particles, horizon = 0.601500
+[INFO] [NeighborList] Cell grid: 80 x 37 x 14 = 41440 cells
+[INFO] [NeighborList] Flat cell list built in 6.999969 ms
+[INFO] [NeighborList] Pass 1 (count) done in 48.000097 ms
+[INFO] [NeighborList] Total bonds: 18447782, Memory: 211 MB
+[INFO] [NeighborList] Pass 2 (fill) done in 112.999916 ms
+[INFO] [NeighborList] Max neighbors: 122
+[INFO] [NeighborList] Total time: 167.999983 ms
+[INFO] [InitNeighbors] NeighborCount field populated for 170944 particles.
+[INFO] [InitNeighbors] BondDamage field registered, 18447782 bonds initialized to 1.0
+[INFO] [InitNeighbors] Neighbor search phase complete.
+[INFO] [PDEngine] Creating solver components (L1 + L2)...
+[INFO] [PDSolver] Algorithm: Explicit, PDType: NOSB, Physics: Thermal
+[INFO] [NOSB_Base] Applied KernelWeightType: Linear
+[INFO] [NOSB_Base] Applied ZeroEnergyG0: 1.000000
+[INFO] [NOSB_Base] Applied ZeroEnergyMethod: Silling
+[INFO] [PDEngine] L1: ExplicitEuler, L2: NOSB_Thermal - components ready.
+[INFO] [PDEngine] PD simulation context initialized successfully.
+[INFO] [EngineManager] All solvers initialized. Total: 1
+[INFO] [EngineManager] Entering Main Solver Phase
+[INFO] [EngineManager] Solving: PD
+[INFO] [PDEngine] Starting PD Engine Solve Phase...
+[INFO] [ExplicitEuler] Time loop: dt = 0.001000, totalSteps = 10000
+[INFO] [NOSB_Base] Computing InfluenceWeight + Shape Tensor Inverse (K^-1)...
+[INFO] [NOSB_Base] All NOSB base fields registered and Shape Tensor Inverse computed.
+[INFO] --- Step 0 / 10000  |  Pure Compute: 0.000000s  |  Total: 0.000000s  |  Pure Speed: 0.000000 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=0 t=0.000000
+[INFO] Fetching model context for export: Engine
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Engine\Result_20260323_155127\Result_step00000_t0.0000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Engine
+[INFO] --- Step 100 / 10000  |  Pure Compute: 5.473827s  |  Total: 5.487889s  |  Pure Speed: 18.268754 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=100 t=0.100000
+[INFO] Fetching model context for export: Engine
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Engine\Result_20260323_155127\Result_step00100_t0.1000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Engine
+[INFO] --- Step 200 / 10000  |  Pure Compute: 12.030666s  |  Total: 12.063541s  |  Pure Speed: 16.624184 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=200 t=0.200000
+[INFO] Fetching model context for export: Engine
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Engine\Result_20260323_155127\Result_step00200_t0.2000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Engine
+[INFO] --- Step 300 / 10000  |  Pure Compute: 18.711717s  |  Total: 18.777654s  |  Pure Speed: 16.032735 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=300 t=0.300000
+[INFO] Fetching model context for export: Engine
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Engine\Result_20260323_155127\Result_step00300_t0.3000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Engine
+[INFO] --- Step 400 / 10000  |  Pure Compute: 23.748122s  |  Total: 23.834925s  |  Pure Speed: 16.843437 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=400 t=0.400000
+[INFO] Fetching model context for export: Engine
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Engine\Result_20260323_155127\Result_step00400_t0.4000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Engine
+[INFO] --- Step 500 / 10000  |  Pure Compute: 28.753545s  |  Total: 28.858851s  |  Pure Speed: 17.389160 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=500 t=0.500000
+[INFO] Fetching model context for export: Engine
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Engine\Result_20260323_155127\Result_step00500_t0.5000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Engine
+[INFO] --- Step 600 / 10000  |  Pure Compute: 34.073658s  |  Total: 34.203647s  |  Pure Speed: 17.608910 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=600 t=0.600000
+[INFO] Fetching model context for export: Engine
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Engine\Result_20260323_155127\Result_step00600_t0.6000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Engine
+[INFO] --- Step 700 / 10000  |  Pure Compute: 40.495122s  |  Total: 40.648439s  |  Pure Speed: 17.286033 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=700 t=0.700000
+[INFO] Fetching model context for export: Engine
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Engine\Result_20260323_155127\Result_step00700_t0.7000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Engine
+[INFO] --- Step 800 / 10000  |  Pure Compute: 47.218272s  |  Total: 47.398643s  |  Pure Speed: 16.942594 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=800 t=0.800000
+[INFO] Fetching model context for export: Engine
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Engine\Result_20260323_155127\Result_step00800_t0.8000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Engine
+[INFO] --- Step 900 / 10000  |  Pure Compute: 53.025918s  |  Total: 53.233342s  |  Pure Speed: 16.972832 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=900 t=0.900000
+[INFO] Fetching model context for export: Engine
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Engine\Result_20260323_155127\Result_step00900_t0.9000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Engine
+[INFO] --- Step 1000 / 10000  |  Pure Compute: 59.790125s  |  Total: 60.016352s  |  Pure Speed: 16.725170 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=1000 t=1.000000
+[INFO] Fetching model context for export: Engine
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Engine\Result_20260323_155127\Result_step01000_t1.0000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Engine

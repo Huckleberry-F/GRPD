@@ -1,0 +1,56 @@
+\doxysection{BC.\+h}
+\hypertarget{_b_c_8h_source}{}\label{_b_c_8h_source}\index{PDCommon/BC/include/BC.h@{PDCommon/BC/include/BC.h}}
+\mbox{\hyperlink{_b_c_8h}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\Hypertarget{_b_c_8h_source_l00001}00001\ \textcolor{preprocessor}{\#ifndef\ GRPD\_BC\_BC\_H}}
+\DoxyCodeLine{\Hypertarget{_b_c_8h_source_l00002}00002\ \textcolor{preprocessor}{\#define\ GRPD\_BC\_BC\_H}}
+\DoxyCodeLine{\Hypertarget{_b_c_8h_source_l00003}00003\ }
+\DoxyCodeLine{\Hypertarget{_b_c_8h_source_l00004}00004\ \textcolor{comment}{//\ ============================================================================}}
+\DoxyCodeLine{\Hypertarget{_b_c_8h_source_l00005}00005\ \textcolor{comment}{//\ BC.h\ -\/\ 边界条件\ (Boundary\ Condition)\ 基类}}
+\DoxyCodeLine{\Hypertarget{_b_c_8h_source_l00006}00006\ \textcolor{comment}{//\ 责任：}}
+\DoxyCodeLine{\Hypertarget{_b_c_8h_source_l00007}00007\ \textcolor{comment}{//\ 1.\ 定义边界条件的通用接口\ (apply,\ initialize)}}
+\DoxyCodeLine{\Hypertarget{_b_c_8h_source_l00008}00008\ \textcolor{comment}{//\ 2.\ 作为所有物理场边界条件（热、力等）的根基类}}
+\DoxyCodeLine{\Hypertarget{_b_c_8h_source_l00009}00009\ \textcolor{comment}{//\ 架构规约：对齐\ Material\ 基类设计，支持注册工厂\ +\ 多态调用}}
+\DoxyCodeLine{\Hypertarget{_b_c_8h_source_l00010}00010\ \textcolor{comment}{//\ ============================================================================}}
+\DoxyCodeLine{\Hypertarget{_b_c_8h_source_l00011}00011\ }
+\DoxyCodeLine{\Hypertarget{_b_c_8h_source_l00012}00012\ \textcolor{preprocessor}{\#include\ <string>}}
+\DoxyCodeLine{\Hypertarget{_b_c_8h_source_l00013}00013\ \textcolor{preprocessor}{\#include\ <vector>}}
+\DoxyCodeLine{\Hypertarget{_b_c_8h_source_l00014}00014\ }
+\DoxyCodeLine{\Hypertarget{_b_c_8h_source_l00015}00015\ \textcolor{comment}{//\ 前置声明，避免在基类头文件引入具体物理场依赖}}
+\DoxyCodeLine{\Hypertarget{_b_c_8h_source_l00016}\mbox{\hyperlink{namespace_g_r_p_d_1_1_field}{00016}}\ \textcolor{keyword}{namespace\ }\mbox{\hyperlink{namespace_g_r_p_d_1_1_field}{GRPD::Field}}\ \{}
+\DoxyCodeLine{\Hypertarget{_b_c_8h_source_l00017}00017\ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_g_r_p_d_1_1_field_1_1_field_manager}{FieldManager}};}
+\DoxyCodeLine{\Hypertarget{_b_c_8h_source_l00018}00018\ \}}
+\DoxyCodeLine{\Hypertarget{_b_c_8h_source_l00019}00019\ }
+\DoxyCodeLine{\Hypertarget{_b_c_8h_source_l00020}\mbox{\hyperlink{namespace_g_r_p_d_1_1_b_c}{00020}}\ \textcolor{keyword}{namespace\ }\mbox{\hyperlink{namespace_g_r_p_d_1_1_b_c}{GRPD::BC}}\ \{}
+\DoxyCodeLine{\Hypertarget{_b_c_8h_source_l00021}00021\ }
+\DoxyCodeLine{\Hypertarget{_b_c_8h_source_l00022}\mbox{\hyperlink{class_g_r_p_d_1_1_b_c_1_1_b_c}{00022}}\ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_g_r_p_d_1_1_b_c_1_1_b_c_aa0211101f7efeec45e2029a3cd02b848}{BC}}\ \{}
+\DoxyCodeLine{\Hypertarget{_b_c_8h_source_l00023}00023\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{\Hypertarget{_b_c_8h_source_l00026}00026\ \ \ \ \ \textcolor{keyword}{explicit}\ \mbox{\hyperlink{class_g_r_p_d_1_1_b_c_1_1_b_c_aa0211101f7efeec45e2029a3cd02b848}{BC}}(\textcolor{keyword}{const}\ std::string\ \&name\ =\ \textcolor{stringliteral}{"{}"{}});}
+\DoxyCodeLine{\Hypertarget{_b_c_8h_source_l00027}00027\ }
+\DoxyCodeLine{\Hypertarget{_b_c_8h_source_l00028}\mbox{\hyperlink{class_g_r_p_d_1_1_b_c_1_1_b_c_aee8c6fca374076d157d192e03f307c21}{00028}}\ \ \ \ \ \textcolor{keyword}{virtual}\ \mbox{\hyperlink{class_g_r_p_d_1_1_b_c_1_1_b_c_aee8c6fca374076d157d192e03f307c21}{\string~BC}}()\ =\ \textcolor{keywordflow}{default};}
+\DoxyCodeLine{\Hypertarget{_b_c_8h_source_l00029}00029\ }
+\DoxyCodeLine{\Hypertarget{_b_c_8h_source_l00030}00030\ \ \ \ \ \textcolor{comment}{//\ 禁用拷贝}}
+\DoxyCodeLine{\Hypertarget{_b_c_8h_source_l00031}\mbox{\hyperlink{class_g_r_p_d_1_1_b_c_1_1_b_c_a014b060ebacaa88da1aa273597e4c86e}{00031}}\ \ \ \ \ \mbox{\hyperlink{class_g_r_p_d_1_1_b_c_1_1_b_c_a014b060ebacaa88da1aa273597e4c86e}{BC}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{class_g_r_p_d_1_1_b_c_1_1_b_c_aa0211101f7efeec45e2029a3cd02b848}{BC}}\ \&)\ =\ \textcolor{keyword}{delete};}
+\DoxyCodeLine{\Hypertarget{_b_c_8h_source_l00032}\mbox{\hyperlink{class_g_r_p_d_1_1_b_c_1_1_b_c_ae9b9aaf85e30432a17bf1213a1ccafa9}{00032}}\ \ \ \ \ \mbox{\hyperlink{class_g_r_p_d_1_1_b_c_1_1_b_c_aa0211101f7efeec45e2029a3cd02b848}{BC}}\ \&\mbox{\hyperlink{class_g_r_p_d_1_1_b_c_1_1_b_c_ae9b9aaf85e30432a17bf1213a1ccafa9}{operator=}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{class_g_r_p_d_1_1_b_c_1_1_b_c_aa0211101f7efeec45e2029a3cd02b848}{BC}}\ \&)\ =\ \textcolor{keyword}{delete};}
+\DoxyCodeLine{\Hypertarget{_b_c_8h_source_l00033}00033\ }
+\DoxyCodeLine{\Hypertarget{_b_c_8h_source_l00035}00035\ \ \ \ \ \textcolor{keyword}{const}\ std::string\ \&\mbox{\hyperlink{class_g_r_p_d_1_1_b_c_1_1_b_c_a797ea90661c012eb7b0a0feb236d1cda}{getName}}()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{\Hypertarget{_b_c_8h_source_l00036}00036\ }
+\DoxyCodeLine{\Hypertarget{_b_c_8h_source_l00038}00038\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_g_r_p_d_1_1_b_c_1_1_b_c_ab641d5881e7db3342c0509daaaa475c3}{setName}}(\textcolor{keyword}{const}\ std::string\ \&name);}
+\DoxyCodeLine{\Hypertarget{_b_c_8h_source_l00039}00039\ }
+\DoxyCodeLine{\Hypertarget{_b_c_8h_source_l00044}\mbox{\hyperlink{class_g_r_p_d_1_1_b_c_1_1_b_c_a562a32e73850ba744b9cf1030e12cf6c}{00044}}\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_g_r_p_d_1_1_b_c_1_1_b_c_a562a32e73850ba744b9cf1030e12cf6c}{initialize}}(\mbox{\hyperlink{class_g_r_p_d_1_1_field_1_1_field_manager}{GRPD::Field::FieldManager}}\ \&fieldManager,}
+\DoxyCodeLine{\Hypertarget{_b_c_8h_source_l00045}00045\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ particleId,}
+\DoxyCodeLine{\Hypertarget{_b_c_8h_source_l00046}00046\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ std::vector<double>\ \&values)\ =\ 0;}
+\DoxyCodeLine{\Hypertarget{_b_c_8h_source_l00047}00047\ }
+\DoxyCodeLine{\Hypertarget{_b_c_8h_source_l00050}\mbox{\hyperlink{class_g_r_p_d_1_1_b_c_1_1_b_c_abe10a4d3335b873cb4ace3936c08a2c8}{00050}}\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_g_r_p_d_1_1_b_c_1_1_b_c_abe10a4d3335b873cb4ace3936c08a2c8}{apply}}()\ =\ 0;}
+\DoxyCodeLine{\Hypertarget{_b_c_8h_source_l00051}00051\ }
+\DoxyCodeLine{\Hypertarget{_b_c_8h_source_l00053}\mbox{\hyperlink{class_g_r_p_d_1_1_b_c_1_1_b_c_ad7088d2e4754f9c911b7a19c2b419795}{00053}}\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{class_g_r_p_d_1_1_b_c_1_1_b_c_ad7088d2e4754f9c911b7a19c2b419795}{isConstraint}}()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};\ \}}
+\DoxyCodeLine{\Hypertarget{_b_c_8h_source_l00054}00054\ }
+\DoxyCodeLine{\Hypertarget{_b_c_8h_source_l00055}00055\ \textcolor{keyword}{protected}:}
+\DoxyCodeLine{\Hypertarget{_b_c_8h_source_l00056}\mbox{\hyperlink{class_g_r_p_d_1_1_b_c_1_1_b_c_a95248c3cf003f55beccb286d589ff76c}{00056}}\ \ \ \ \ std::string\ \mbox{\hyperlink{class_g_r_p_d_1_1_b_c_1_1_b_c_a95248c3cf003f55beccb286d589ff76c}{name\_}};\ \textcolor{comment}{//\ 边界条件实例名称}}
+\DoxyCodeLine{\Hypertarget{_b_c_8h_source_l00057}00057\ \};}
+\DoxyCodeLine{\Hypertarget{_b_c_8h_source_l00058}00058\ }
+\DoxyCodeLine{\Hypertarget{_b_c_8h_source_l00059}00059\ \}\ \textcolor{comment}{//\ namespace\ GRPD::BC}}
+\DoxyCodeLine{\Hypertarget{_b_c_8h_source_l00060}00060\ }
+\DoxyCodeLine{\Hypertarget{_b_c_8h_source_l00061}00061\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{//\ GRPD\_BC\_BC\_H}}
+
+\end{DoxyCode}

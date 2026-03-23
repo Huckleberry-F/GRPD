@@ -6,7 +6,7 @@
 #include "Logger.h"
 #include <stdexcept>
 
-namespace GRPD::Material {
+namespace PDCommon::Material {
 
 // ---------------------------------------------------------------------------
 // 添加材料实例
@@ -49,4 +49,4 @@ bool MaterialManager::hasMaterial(const std::string &name) const {
   return materials_.find(name) != materials_.end();
 }
 
-} // namespace GRPD::Material
+} // namespace PDCommon::Material

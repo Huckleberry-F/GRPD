@@ -1,5 +1,5 @@
-#ifndef GRPD_FIELD_PHYSICS_FIELDS_H
-#define GRPD_FIELD_PHYSICS_FIELDS_H
+#ifndef PDCOMMON_FIELD_PHYSICS_FIELDS_H
+#define PDCOMMON_FIELD_PHYSICS_FIELDS_H
 
 // ============================================================================
 // PhysicsFields.h - 物理场配置器基类
@@ -12,11 +12,11 @@
 #include <string>
 
 // 前置声明
-namespace GRPD::Field {
+namespace PDCommon::Field {
 class FieldManager;
 }
 
-namespace GRPD::Field {
+namespace PDCommon::Field {
 
 class PhysicsFields {
 public:
@@ -39,6 +39,6 @@ protected:
     std::string typeName_;
 };
 
-} // namespace GRPD::Field
+} // namespace PDCommon::Field
 
-#endif // GRPD_FIELD_PHYSICS_FIELDS_H
+#endif // PDCOMMON_FIELD_PHYSICS_FIELDS_H

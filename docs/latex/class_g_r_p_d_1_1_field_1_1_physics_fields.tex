@@ -1,0 +1,192 @@
+\doxysection{GRPD\+::Field\+::Physics\+Fields Class Reference}
+\hypertarget{class_g_r_p_d_1_1_field_1_1_physics_fields}{}\label{class_g_r_p_d_1_1_field_1_1_physics_fields}\index{GRPD::Field::PhysicsFields@{GRPD::Field::PhysicsFields}}
+
+
+{\ttfamily \#include $<$Physics\+Fields.\+h$>$}
+
+
+
+Inheritance diagram for GRPD\+::Field\+::Physics\+Fields\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{class_g_r_p_d_1_1_field_1_1_physics_fields__inherit__graph}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{class_g_r_p_d_1_1_field_1_1_physics_fields_a3f71c3d0cc15932abb63df3b09173084}{Physics\+Fields}} (const std\+::string \&type\+Name="{}"{})
+\item 
+virtual \mbox{\hyperlink{class_g_r_p_d_1_1_field_1_1_physics_fields_afe920906f391dc4e325182f031ec4f1d}{\texorpdfstring{$\sim$}{\string~}\+Physics\+Fields}} ()
+\item 
+\mbox{\hyperlink{class_g_r_p_d_1_1_field_1_1_physics_fields_a216599889cbf6721a84cf5f6e48cd2c5}{Physics\+Fields}} (const \mbox{\hyperlink{class_g_r_p_d_1_1_field_1_1_physics_fields}{Physics\+Fields}} \&)=delete
+\item 
+\mbox{\hyperlink{class_g_r_p_d_1_1_field_1_1_physics_fields}{Physics\+Fields}} \& \mbox{\hyperlink{class_g_r_p_d_1_1_field_1_1_physics_fields_ad0020b522f12589a7adf7a207815296b}{operator=}} (const \mbox{\hyperlink{class_g_r_p_d_1_1_field_1_1_physics_fields}{Physics\+Fields}} \&)=delete
+\item 
+virtual void \mbox{\hyperlink{class_g_r_p_d_1_1_field_1_1_physics_fields_a0381f5a5578685ce9995a62bf42d60df}{register\+Fields}} (\mbox{\hyperlink{class_g_r_p_d_1_1_field_1_1_field_manager}{Field\+Manager}} \&fm)=0
+\begin{DoxyCompactList}\small\item\em 向 \doxylink{class_g_r_p_d_1_1_field_1_1_field_manager}{Field\+Manager} 注册此物理问题所需的所有核心场 \end{DoxyCompactList}\item 
+const std\+::string \& \mbox{\hyperlink{class_g_r_p_d_1_1_field_1_1_physics_fields_a7f9abddb37a996e8369ffe5006ed7303}{get\+Type\+Name}} () const
+\begin{DoxyCompactList}\small\item\em 获取类型名称 \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Protected Attributes}
+\begin{DoxyCompactItemize}
+\item 
+std\+::string \mbox{\hyperlink{class_g_r_p_d_1_1_field_1_1_physics_fields_a3e20eb01b4a83718c1933abc28782895}{type\+Name\+\_\+}}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+
+
+Definition at line \mbox{\hyperlink{_physics_fields_8h_source_l00021}{21}} of file \mbox{\hyperlink{_physics_fields_8h_source}{Physics\+Fields.\+h}}.
+
+
+
+\label{doc-constructors}
+\Hypertarget{class_g_r_p_d_1_1_field_1_1_physics_fields_doc-constructors}
+\doxysubsection{Constructor \& Destructor Documentation}
+\Hypertarget{class_g_r_p_d_1_1_field_1_1_physics_fields_a3f71c3d0cc15932abb63df3b09173084}\index{GRPD::Field::PhysicsFields@{GRPD::Field::PhysicsFields}!PhysicsFields@{PhysicsFields}}
+\index{PhysicsFields@{PhysicsFields}!GRPD::Field::PhysicsFields@{GRPD::Field::PhysicsFields}}
+\doxysubsubsection{\texorpdfstring{PhysicsFields()}{PhysicsFields()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \label{class_g_r_p_d_1_1_field_1_1_physics_fields_a3f71c3d0cc15932abb63df3b09173084} 
+GRPD\+::\+Field\+::\+Physics\+Fields\+::\+Physics\+Fields (\begin{DoxyParamCaption}\item[{const std\+::string \&}]{type\+Name}{ = {\ttfamily "{}"{}}}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [explicit]}}
+
+
+
+Definition at line \mbox{\hyperlink{_physics_fields_8cpp_source_l00009}{9}} of file \mbox{\hyperlink{_physics_fields_8cpp_source}{Physics\+Fields.\+cpp}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00010\ \ \ \ \ :\ \mbox{\hyperlink{class_g_r_p_d_1_1_field_1_1_physics_fields_a3e20eb01b4a83718c1933abc28782895}{typeName\_}}(typeName)\ \{\}}
+
+\end{DoxyCode}
+
+
+References \mbox{\hyperlink{_physics_fields_8h_source_l00039}{type\+Name\+\_\+}}.
+
+
+
+Referenced by \mbox{\hyperlink{_mechanical_fields_8h_source_l00015}{GRPD\+::\+Field\+::\+Mechanical\+Fields\+::\+Mechanical\+Fields()}}, \mbox{\hyperlink{class_g_r_p_d_1_1_field_1_1_physics_fields_ad0020b522f12589a7adf7a207815296b}{operator=()}}, \mbox{\hyperlink{class_g_r_p_d_1_1_field_1_1_physics_fields_a216599889cbf6721a84cf5f6e48cd2c5}{Physics\+Fields()}}, and \mbox{\hyperlink{_thermal_fields_8h_source_l00015}{GRPD\+::\+Field\+::\+Thermal\+Fields\+::\+Thermal\+Fields()}}.
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{class_g_r_p_d_1_1_field_1_1_physics_fields_a3f71c3d0cc15932abb63df3b09173084_icgraph}
+\end{center}
+\end{figure}
+\Hypertarget{class_g_r_p_d_1_1_field_1_1_physics_fields_afe920906f391dc4e325182f031ec4f1d}\index{GRPD::Field::PhysicsFields@{GRPD::Field::PhysicsFields}!````~PhysicsFields@{\texorpdfstring{$\sim$}{\string~}PhysicsFields}}
+\index{````~PhysicsFields@{\texorpdfstring{$\sim$}{\string~}PhysicsFields}!GRPD::Field::PhysicsFields@{GRPD::Field::PhysicsFields}}
+\doxysubsubsection{\texorpdfstring{\texorpdfstring{$\sim$}{\string~}PhysicsFields()}{\string~PhysicsFields()}}
+{\footnotesize\ttfamily \label{class_g_r_p_d_1_1_field_1_1_physics_fields_afe920906f391dc4e325182f031ec4f1d} 
+GRPD\+::\+Field\+::\+Physics\+Fields\+::\texorpdfstring{$\sim$}{\string~}\+Physics\+Fields (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [virtual]}, {\ttfamily [default]}}
+
+\Hypertarget{class_g_r_p_d_1_1_field_1_1_physics_fields_a216599889cbf6721a84cf5f6e48cd2c5}\index{GRPD::Field::PhysicsFields@{GRPD::Field::PhysicsFields}!PhysicsFields@{PhysicsFields}}
+\index{PhysicsFields@{PhysicsFields}!GRPD::Field::PhysicsFields@{GRPD::Field::PhysicsFields}}
+\doxysubsubsection{\texorpdfstring{PhysicsFields()}{PhysicsFields()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \label{class_g_r_p_d_1_1_field_1_1_physics_fields_a216599889cbf6721a84cf5f6e48cd2c5} 
+GRPD\+::\+Field\+::\+Physics\+Fields\+::\+Physics\+Fields (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{class_g_r_p_d_1_1_field_1_1_physics_fields}{Physics\+Fields}} \&}]{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [delete]}}
+
+
+
+References \mbox{\hyperlink{_physics_fields_8cpp_source_l00009}{Physics\+Fields()}}.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{class_g_r_p_d_1_1_field_1_1_physics_fields_a216599889cbf6721a84cf5f6e48cd2c5_cgraph}
+\end{center}
+\end{figure}
+
+
+\label{doc-func-members}
+\Hypertarget{class_g_r_p_d_1_1_field_1_1_physics_fields_doc-func-members}
+\doxysubsection{Member Function Documentation}
+\Hypertarget{class_g_r_p_d_1_1_field_1_1_physics_fields_a7f9abddb37a996e8369ffe5006ed7303}\index{GRPD::Field::PhysicsFields@{GRPD::Field::PhysicsFields}!getTypeName@{getTypeName}}
+\index{getTypeName@{getTypeName}!GRPD::Field::PhysicsFields@{GRPD::Field::PhysicsFields}}
+\doxysubsubsection{\texorpdfstring{getTypeName()}{getTypeName()}}
+{\footnotesize\ttfamily \label{class_g_r_p_d_1_1_field_1_1_physics_fields_a7f9abddb37a996e8369ffe5006ed7303} 
+const std\+::string \& GRPD\+::\+Field\+::\+Physics\+Fields\+::get\+Type\+Name (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+获取类型名称 
+
+
+
+Definition at line \mbox{\hyperlink{_physics_fields_8h_source_l00036}{36}} of file \mbox{\hyperlink{_physics_fields_8h_source}{Physics\+Fields.\+h}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00036\ \{\ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{class_g_r_p_d_1_1_field_1_1_physics_fields_a3e20eb01b4a83718c1933abc28782895}{typeName\_}};\ \}}
+
+\end{DoxyCode}
+
+
+References \mbox{\hyperlink{_physics_fields_8h_source_l00039}{type\+Name\+\_\+}}.
+
+\Hypertarget{class_g_r_p_d_1_1_field_1_1_physics_fields_ad0020b522f12589a7adf7a207815296b}\index{GRPD::Field::PhysicsFields@{GRPD::Field::PhysicsFields}!operator=@{operator=}}
+\index{operator=@{operator=}!GRPD::Field::PhysicsFields@{GRPD::Field::PhysicsFields}}
+\doxysubsubsection{\texorpdfstring{operator=()}{operator=()}}
+{\footnotesize\ttfamily \label{class_g_r_p_d_1_1_field_1_1_physics_fields_ad0020b522f12589a7adf7a207815296b} 
+\mbox{\hyperlink{class_g_r_p_d_1_1_field_1_1_physics_fields}{Physics\+Fields}} \& GRPD\+::\+Field\+::\+Physics\+Fields\+::operator= (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{class_g_r_p_d_1_1_field_1_1_physics_fields}{Physics\+Fields}} \&}]{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [delete]}}
+
+
+
+References \mbox{\hyperlink{_physics_fields_8cpp_source_l00009}{Physics\+Fields()}}.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{class_g_r_p_d_1_1_field_1_1_physics_fields_ad0020b522f12589a7adf7a207815296b_cgraph}
+\end{center}
+\end{figure}
+\Hypertarget{class_g_r_p_d_1_1_field_1_1_physics_fields_a0381f5a5578685ce9995a62bf42d60df}\index{GRPD::Field::PhysicsFields@{GRPD::Field::PhysicsFields}!registerFields@{registerFields}}
+\index{registerFields@{registerFields}!GRPD::Field::PhysicsFields@{GRPD::Field::PhysicsFields}}
+\doxysubsubsection{\texorpdfstring{registerFields()}{registerFields()}}
+{\footnotesize\ttfamily \label{class_g_r_p_d_1_1_field_1_1_physics_fields_a0381f5a5578685ce9995a62bf42d60df} 
+virtual void GRPD\+::\+Field\+::\+Physics\+Fields\+::register\+Fields (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{class_g_r_p_d_1_1_field_1_1_field_manager}{Field\+Manager}} \&}]{fm}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+向 \doxylink{class_g_r_p_d_1_1_field_1_1_field_manager}{Field\+Manager} 注册此物理问题所需的所有核心场 
+
+
+\begin{DoxyParams}{Parameters}
+{\em fm} & 物理场管理器引用 \\
+\hline
+\end{DoxyParams}
+
+
+Implemented in \mbox{\hyperlink{class_g_r_p_d_1_1_field_1_1_mechanical_fields_aaf6aa6ac7c9fcb6192daeff65b03d044}{GRPD\+::\+Field\+::\+Mechanical\+Fields}}, and \mbox{\hyperlink{class_g_r_p_d_1_1_field_1_1_thermal_fields_a182aefc585a2eb83c4d3039cdb2e43ab}{GRPD\+::\+Field\+::\+Thermal\+Fields}}.
+
+
+
+\label{doc-variable-members}
+\Hypertarget{class_g_r_p_d_1_1_field_1_1_physics_fields_doc-variable-members}
+\doxysubsection{Member Data Documentation}
+\Hypertarget{class_g_r_p_d_1_1_field_1_1_physics_fields_a3e20eb01b4a83718c1933abc28782895}\index{GRPD::Field::PhysicsFields@{GRPD::Field::PhysicsFields}!typeName\_@{typeName\_}}
+\index{typeName\_@{typeName\_}!GRPD::Field::PhysicsFields@{GRPD::Field::PhysicsFields}}
+\doxysubsubsection{\texorpdfstring{typeName\_}{typeName\_}}
+{\footnotesize\ttfamily \label{class_g_r_p_d_1_1_field_1_1_physics_fields_a3e20eb01b4a83718c1933abc28782895} 
+std\+::string GRPD\+::\+Field\+::\+Physics\+Fields\+::type\+Name\+\_\+\hspace{0.3cm}{\ttfamily [protected]}}
+
+
+
+Definition at line \mbox{\hyperlink{_physics_fields_8h_source_l00039}{39}} of file \mbox{\hyperlink{_physics_fields_8h_source}{Physics\+Fields.\+h}}.
+
+
+
+Referenced by \mbox{\hyperlink{_physics_fields_8h_source_l00036}{get\+Type\+Name()}}, and \mbox{\hyperlink{_physics_fields_8cpp_source_l00009}{Physics\+Fields()}}.
+
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+PDCommon/\+Field/include/\mbox{\hyperlink{_physics_fields_8h}{Physics\+Fields.\+h}}\item 
+PDCommon/\+Field/src/\mbox{\hyperlink{_physics_fields_8cpp}{Physics\+Fields.\+cpp}}\end{DoxyCompactItemize}

@@ -11,7 +11,7 @@
 #include <string>
 #include <unordered_map>
 
-namespace GRPD::Model {
+namespace PDCommon::Model {
 
 // ---------------------------------------------------------------------------
 // addParticle: Emplace-construct into the global array
@@ -132,4 +132,4 @@ bool ParticleManager::getModelVarInfo(const std::string &varName,
   return false;
 }
 
-} // namespace GRPD::Model
+} // namespace PDCommon::Model

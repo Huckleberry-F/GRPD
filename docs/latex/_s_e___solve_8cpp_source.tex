@@ -1,0 +1,181 @@
+\doxysection{SE\+\_\+\+Solve.\+cpp}
+\hypertarget{_s_e___solve_8cpp_source}{}\label{_s_e___solve_8cpp_source}\index{Src/Engine/src/SE\_Solve.cpp@{Src/Engine/src/SE\_Solve.cpp}}
+\mbox{\hyperlink{_s_e___solve_8cpp}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\Hypertarget{_s_e___solve_8cpp_source_l00001}00001\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{_b_c_manager_8h}{BCManager.h}}"{}}}
+\DoxyCodeLine{\Hypertarget{_s_e___solve_8cpp_source_l00002}00002\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{_typed_field_8h}{TypedField.h}}"{}}}
+\DoxyCodeLine{\Hypertarget{_s_e___solve_8cpp_source_l00003}00003\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{_field_manager_8h}{FieldManager.h}}"{}}}
+\DoxyCodeLine{\Hypertarget{_s_e___solve_8cpp_source_l00004}00004\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{_logger_8h}{Logger.h}}"{}}}
+\DoxyCodeLine{\Hypertarget{_s_e___solve_8cpp_source_l00005}00005\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{_neighbor_list_8h}{NeighborList.h}}"{}}}
+\DoxyCodeLine{\Hypertarget{_s_e___solve_8cpp_source_l00006}00006\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{_p_d_simulater_8h}{PDSimulater.h}}"{}}}
+\DoxyCodeLine{\Hypertarget{_s_e___solve_8cpp_source_l00007}00007\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{_particle_manager_8h}{ParticleManager.h}}"{}}}
+\DoxyCodeLine{\Hypertarget{_s_e___solve_8cpp_source_l00008}00008\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{_solver_engine_8h}{SolverEngine.h}}"{}}}
+\DoxyCodeLine{\Hypertarget{_s_e___solve_8cpp_source_l00009}00009\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{_thermal_mat_8h}{ThermalMat.h}}"{}}}
+\DoxyCodeLine{\Hypertarget{_s_e___solve_8cpp_source_l00010}00010\ \textcolor{preprocessor}{\#include\ <cmath>}}
+\DoxyCodeLine{\Hypertarget{_s_e___solve_8cpp_source_l00011}00011\ \textcolor{preprocessor}{\#include\ <omp.h>}}
+\DoxyCodeLine{\Hypertarget{_s_e___solve_8cpp_source_l00012}00012\ \textcolor{preprocessor}{\#include\ <yaml-\/cpp/yaml.h>}}
+\DoxyCodeLine{\Hypertarget{_s_e___solve_8cpp_source_l00013}00013\ }
+\DoxyCodeLine{\Hypertarget{_s_e___solve_8cpp_source_l00014}00014\ }
+\DoxyCodeLine{\Hypertarget{_s_e___solve_8cpp_source_l00015}00015\ \textcolor{keyword}{namespace\ }\mbox{\hyperlink{namespace_g_r_p_d_1_1_engine}{GRPD::Engine}}\ \{}
+\DoxyCodeLine{\Hypertarget{_s_e___solve_8cpp_source_l00016}00016\ }
+\DoxyCodeLine{\Hypertarget{_s_e___solve_8cpp_source_l00017}\mbox{\hyperlink{class_g_r_p_d_1_1_engine_1_1_solver_engine_a5403d5bb766d5404681478f3a0343355}{00017}}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_g_r_p_d_1_1_engine_1_1_solver_engine_a5403d5bb766d5404681478f3a0343355}{SolverEngine::SolvePD}}()\ \{}
+\DoxyCodeLine{\Hypertarget{_s_e___solve_8cpp_source_l00018}00018\ \ \ \textcolor{keyword}{auto}\ \&ctx\ =\ this-\/>\mbox{\hyperlink{class_g_r_p_d_1_1_engine_1_1_solver_engine_a50b0e47e530f8919fd25b501f7a15348}{pdContext\_}};}
+\DoxyCodeLine{\Hypertarget{_s_e___solve_8cpp_source_l00019}00019\ \ \ \mbox{\hyperlink{_logger_8h_ac8e803773221119947b55f6ae85a9c63}{LOG\_INFO}}(\textcolor{stringliteral}{"{}Starting\ PD\ Solver\ Loop..."{}});}
+\DoxyCodeLine{\Hypertarget{_s_e___solve_8cpp_source_l00020}00020\ }
+\DoxyCodeLine{\Hypertarget{_s_e___solve_8cpp_source_l00021}00021\ \ \ \textcolor{comment}{//\ =================================================================}}
+\DoxyCodeLine{\Hypertarget{_s_e___solve_8cpp_source_l00022}00022\ \ \ \textcolor{comment}{//\ 1.\ 获取仿真参数\ (从\ YAML)}}
+\DoxyCodeLine{\Hypertarget{_s_e___solve_8cpp_source_l00023}00023\ \ \ \textcolor{comment}{//\ =================================================================}}
+\DoxyCodeLine{\Hypertarget{_s_e___solve_8cpp_source_l00024}00024\ \ \ std::string\ yamlPath\ =\ \textcolor{stringliteral}{"{}../../Input/PD.yaml"{}};}
+\DoxyCodeLine{\Hypertarget{_s_e___solve_8cpp_source_l00025}00025\ \ \ YAML::Node\ config\ =\ YAML::LoadFile(yamlPath);}
+\DoxyCodeLine{\Hypertarget{_s_e___solve_8cpp_source_l00026}00026\ }
+\DoxyCodeLine{\Hypertarget{_s_e___solve_8cpp_source_l00027}00027\ \ \ \textcolor{keywordtype}{double}\ dt\ =\ 1e-\/4;}
+\DoxyCodeLine{\Hypertarget{_s_e___solve_8cpp_source_l00028}00028\ \ \ \textcolor{keywordtype}{double}\ totalTime\ =\ 1.0;}
+\DoxyCodeLine{\Hypertarget{_s_e___solve_8cpp_source_l00029}00029\ \ \ \textcolor{keywordtype}{int}\ outputInterval\ =\ 10;}
+\DoxyCodeLine{\Hypertarget{_s_e___solve_8cpp_source_l00030}00030\ }
+\DoxyCodeLine{\Hypertarget{_s_e___solve_8cpp_source_l00031}00031\ \ \ \textcolor{keywordflow}{if}\ (config[\textcolor{stringliteral}{"{}Solver"{}}])\ \{}
+\DoxyCodeLine{\Hypertarget{_s_e___solve_8cpp_source_l00032}00032\ \ \ \ \ \textcolor{keywordflow}{if}\ (config[\textcolor{stringliteral}{"{}Solver"{}}][\textcolor{stringliteral}{"{}TimeStep\_dt"{}}])}
+\DoxyCodeLine{\Hypertarget{_s_e___solve_8cpp_source_l00033}00033\ \ \ \ \ \ \ dt\ =\ config[\textcolor{stringliteral}{"{}Solver"{}}][\textcolor{stringliteral}{"{}TimeStep\_dt"{}}].as<\textcolor{keywordtype}{double}>();}
+\DoxyCodeLine{\Hypertarget{_s_e___solve_8cpp_source_l00034}00034\ \ \ \ \ \textcolor{keywordflow}{if}\ (config[\textcolor{stringliteral}{"{}Solver"{}}][\textcolor{stringliteral}{"{}TotalTime"{}}])}
+\DoxyCodeLine{\Hypertarget{_s_e___solve_8cpp_source_l00035}00035\ \ \ \ \ \ \ totalTime\ =\ config[\textcolor{stringliteral}{"{}Solver"{}}][\textcolor{stringliteral}{"{}TotalTime"{}}].as<\textcolor{keywordtype}{double}>();}
+\DoxyCodeLine{\Hypertarget{_s_e___solve_8cpp_source_l00036}00036\ \ \ \ \ \textcolor{keywordflow}{if}\ (config[\textcolor{stringliteral}{"{}Solver"{}}][\textcolor{stringliteral}{"{}OutputInterval"{}}])}
+\DoxyCodeLine{\Hypertarget{_s_e___solve_8cpp_source_l00037}00037\ \ \ \ \ \ \ outputInterval\ =\ config[\textcolor{stringliteral}{"{}Solver"{}}][\textcolor{stringliteral}{"{}OutputInterval"{}}].as<\textcolor{keywordtype}{int}>();}
+\DoxyCodeLine{\Hypertarget{_s_e___solve_8cpp_source_l00038}00038\ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_s_e___solve_8cpp_source_l00039}00039\ }
+\DoxyCodeLine{\Hypertarget{_s_e___solve_8cpp_source_l00040}00040\ \ \ \textcolor{keywordtype}{int}\ totalSteps\ =\ \textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{int}\textcolor{keyword}{>}(totalTime\ /\ dt);}
+\DoxyCodeLine{\Hypertarget{_s_e___solve_8cpp_source_l00041}00041\ }
+\DoxyCodeLine{\Hypertarget{_s_e___solve_8cpp_source_l00042}00042\ \ \ \textcolor{comment}{//\ =================================================================}}
+\DoxyCodeLine{\Hypertarget{_s_e___solve_8cpp_source_l00043}00043\ \ \ \textcolor{comment}{//\ 2.\ 获取物理场指针（从\ FieldManager）}}
+\DoxyCodeLine{\Hypertarget{_s_e___solve_8cpp_source_l00044}00044\ \ \ \textcolor{comment}{//\ =================================================================}}
+\DoxyCodeLine{\Hypertarget{_s_e___solve_8cpp_source_l00045}00045\ \ \ \textcolor{keyword}{auto}\ \&fieldManager\ =\ ctx.getFieldManager();}
+\DoxyCodeLine{\Hypertarget{_s_e___solve_8cpp_source_l00046}00046\ }
+\DoxyCodeLine{\Hypertarget{_s_e___solve_8cpp_source_l00047}00047\ \ \ \textcolor{keywordflow}{if}\ (!fieldManager.hasField(\textcolor{stringliteral}{"{}Temperature"{}}))\ \{}
+\DoxyCodeLine{\Hypertarget{_s_e___solve_8cpp_source_l00048}00048\ \ \ \ \ \mbox{\hyperlink{_logger_8h_a7ebf4c3b4fb05d6f9094089ded75cbdd}{LOG\_ERROR}}(\textcolor{stringliteral}{"{}No\ Temperature\ field\ found!\ Aborting\ solver."{}});}
+\DoxyCodeLine{\Hypertarget{_s_e___solve_8cpp_source_l00049}00049\ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{\Hypertarget{_s_e___solve_8cpp_source_l00050}00050\ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_s_e___solve_8cpp_source_l00051}00051\ }
+\DoxyCodeLine{\Hypertarget{_s_e___solve_8cpp_source_l00052}00052\ \ \ \textcolor{keyword}{auto}\ *tempField\ =\ fieldManager.getFieldAs<\textcolor{keywordtype}{double}>(\textcolor{stringliteral}{"{}Temperature"{}});}
+\DoxyCodeLine{\Hypertarget{_s_e___solve_8cpp_source_l00053}00053\ \ \ \textcolor{keyword}{auto}\ *rateField\ =\ fieldManager.getFieldAs<\textcolor{keywordtype}{double}>(\textcolor{stringliteral}{"{}TempRate"{}});}
+\DoxyCodeLine{\Hypertarget{_s_e___solve_8cpp_source_l00054}00054\ \ \ \textcolor{keyword}{auto}\ *fluxField\ =\ fieldManager.getFieldAs<\textcolor{keywordtype}{double}>(\textcolor{stringliteral}{"{}HeatFlux"{}});}
+\DoxyCodeLine{\Hypertarget{_s_e___solve_8cpp_source_l00055}00055\ }
+\DoxyCodeLine{\Hypertarget{_s_e___solve_8cpp_source_l00056}00056\ \ \ \textcolor{keyword}{auto}\ \&neighborList\ =\ ctx.getNeighborList();}
+\DoxyCodeLine{\Hypertarget{_s_e___solve_8cpp_source_l00057}00057\ \ \ \textcolor{keyword}{auto}\ \&manager\ =\ ctx.getParticleManager();}
+\DoxyCodeLine{\Hypertarget{_s_e___solve_8cpp_source_l00058}00058\ \ \ \textcolor{keyword}{auto}\ \&bcManager\ =\ ctx.getBCManager();}
+\DoxyCodeLine{\Hypertarget{_s_e___solve_8cpp_source_l00059}00059\ }
+\DoxyCodeLine{\Hypertarget{_s_e___solve_8cpp_source_l00060}00060\ \ \ \textcolor{keywordtype}{size\_t}\ numParticles\ =\ manager.getTotalParticles();}
+\DoxyCodeLine{\Hypertarget{_s_e___solve_8cpp_source_l00061}00061\ \ \ \textcolor{keywordtype}{double}\ horizon\ =\ neighborList.getHorizon();}
+\DoxyCodeLine{\Hypertarget{_s_e___solve_8cpp_source_l00062}00062\ }
+\DoxyCodeLine{\Hypertarget{_s_e___solve_8cpp_source_l00063}00063\ \ \ \textcolor{comment}{//\ 3D\ 微导率系数\ (Bobaru\ model):\ kappa\ =\ 6k\ /\ (pi\ *\ delta\string^4)}}
+\DoxyCodeLine{\Hypertarget{_s_e___solve_8cpp_source_l00064}00064\ \ \ \textcolor{comment}{//\ 注意：每个点的材料可能不同，需要在循环内获取\ k}}
+\DoxyCodeLine{\Hypertarget{_s_e___solve_8cpp_source_l00065}00065\ \ \ \textcolor{keywordtype}{double}\ PI\ =\ 3.14159265358979323846;}
+\DoxyCodeLine{\Hypertarget{_s_e___solve_8cpp_source_l00066}00066\ \ \ \textcolor{keywordtype}{double}\ horizon4\ =\ std::pow(horizon,\ 4.0);}
+\DoxyCodeLine{\Hypertarget{_s_e___solve_8cpp_source_l00067}00067\ }
+\DoxyCodeLine{\Hypertarget{_s_e___solve_8cpp_source_l00068}00068\ \ \ \textcolor{comment}{//\ 获取数据指针\ (SoA)}}
+\DoxyCodeLine{\Hypertarget{_s_e___solve_8cpp_source_l00069}00069\ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{double}\ *volumes\ =\ manager.getGeomDataPtr(\mbox{\hyperlink{namespace_g_r_p_d_1_1_model_a794e169a6b06cecc5757ae3bc52793d4abd7a9717d29c5ddcab1bc175eda1e298}{GRPD::Model::ModelVar::Volume}});}
+\DoxyCodeLine{\Hypertarget{_s_e___solve_8cpp_source_l00070}00070\ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{double}\ *coords\ =\ manager.getGeomDataPtr(\mbox{\hyperlink{namespace_g_r_p_d_1_1_model_a794e169a6b06cecc5757ae3bc52793d4ad3268a031987f18fd931b0859cc05074}{GRPD::Model::ModelVar::Coords}});}
+\DoxyCodeLine{\Hypertarget{_s_e___solve_8cpp_source_l00071}00071\ }
+\DoxyCodeLine{\Hypertarget{_s_e___solve_8cpp_source_l00072}00072\ \ \ \textcolor{comment}{//\ 获取\ Field\ 的裸指针（用于\ OpenMP\ 高性能循环）}}
+\DoxyCodeLine{\Hypertarget{_s_e___solve_8cpp_source_l00073}00073\ \ \ \textcolor{keywordtype}{double}\ *tempPtr\ =\ tempField-\/>dataPtr();}
+\DoxyCodeLine{\Hypertarget{_s_e___solve_8cpp_source_l00074}00074\ \ \ \textcolor{keywordtype}{double}\ *ratePtr\ =\ rateField-\/>dataPtr();}
+\DoxyCodeLine{\Hypertarget{_s_e___solve_8cpp_source_l00075}00075\ \ \ \textcolor{keywordtype}{double}\ *fluxPtr\ =\ fluxField-\/>dataPtr();}
+\DoxyCodeLine{\Hypertarget{_s_e___solve_8cpp_source_l00076}00076\ }
+\DoxyCodeLine{\Hypertarget{_s_e___solve_8cpp_source_l00077}00077\ \ \ \mbox{\hyperlink{_logger_8h_ac8e803773221119947b55f6ae85a9c63}{LOG\_INFO}}(\textcolor{stringliteral}{"{}Time\ loop:\ Dt\ =\ "{}}\ +\ std::to\_string(dt)\ +}
+\DoxyCodeLine{\Hypertarget{_s_e___solve_8cpp_source_l00078}00078\ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{},\ TotalSteps\ =\ "{}}\ +\ std::to\_string(totalSteps));}
+\DoxyCodeLine{\Hypertarget{_s_e___solve_8cpp_source_l00079}00079\ }
+\DoxyCodeLine{\Hypertarget{_s_e___solve_8cpp_source_l00080}00080\ \ \ \textcolor{comment}{//\ =================================================================}}
+\DoxyCodeLine{\Hypertarget{_s_e___solve_8cpp_source_l00081}00081\ \ \ \textcolor{comment}{//\ 3.\ 时间步循环}}
+\DoxyCodeLine{\Hypertarget{_s_e___solve_8cpp_source_l00082}00082\ \ \ \textcolor{comment}{//\ =================================================================}}
+\DoxyCodeLine{\Hypertarget{_s_e___solve_8cpp_source_l00083}00083\ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ step\ =\ 0;\ step\ <=\ totalSteps;\ ++step)\ \{}
+\DoxyCodeLine{\Hypertarget{_s_e___solve_8cpp_source_l00084}00084\ }
+\DoxyCodeLine{\Hypertarget{_s_e___solve_8cpp_source_l00085}00085\ \ \ \ \ \textcolor{comment}{//\ (A)\ 输出结果}}
+\DoxyCodeLine{\Hypertarget{_s_e___solve_8cpp_source_l00086}00086\ \ \ \ \ \textcolor{keywordflow}{if}\ (step\ \%\ outputInterval\ ==\ 0)\ \{}
+\DoxyCodeLine{\Hypertarget{_s_e___solve_8cpp_source_l00087}00087\ \ \ \ \ \ \ \mbox{\hyperlink{_logger_8h_ac8e803773221119947b55f6ae85a9c63}{LOG\_INFO}}(\textcolor{stringliteral}{"{}-\/-\/-\/\ Outputting\ Step:\ "{}}\ +\ std::to\_string(step));}
+\DoxyCodeLine{\Hypertarget{_s_e___solve_8cpp_source_l00088}00088\ \ \ \ \ \ \ this-\/>\mbox{\hyperlink{class_g_r_p_d_1_1_engine_1_1_solver_engine_ae0ddc963dbdac522caa5757af29a5b61}{OutputPD}}();}
+\DoxyCodeLine{\Hypertarget{_s_e___solve_8cpp_source_l00089}00089\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_s_e___solve_8cpp_source_l00090}00090\ \ \ \ \ \textcolor{keywordflow}{if}\ (step\ ==\ totalSteps)}
+\DoxyCodeLine{\Hypertarget{_s_e___solve_8cpp_source_l00091}00091\ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{\Hypertarget{_s_e___solve_8cpp_source_l00092}00092\ }
+\DoxyCodeLine{\Hypertarget{_s_e___solve_8cpp_source_l00093}00093\ \ \ \ \ \textcolor{comment}{//\ (B)\ 清零变化率}}
+\DoxyCodeLine{\Hypertarget{_s_e___solve_8cpp_source_l00094}00094\ \ \ \ \ rateField-\/>clearToZero();}
+\DoxyCodeLine{\Hypertarget{_s_e___solve_8cpp_source_l00095}00095\ \ \ \ \ fluxField-\/>clearToZero();}
+\DoxyCodeLine{\Hypertarget{_s_e___solve_8cpp_source_l00096}00096\ }
+\DoxyCodeLine{\Hypertarget{_s_e___solve_8cpp_source_l00097}00097\ \ \ \ \ \textcolor{comment}{//\ (C)\ 施加所有边界条件中的源项\ (含热流、对流)}}
+\DoxyCodeLine{\Hypertarget{_s_e___solve_8cpp_source_l00098}00098\ \ \ \ \ \textcolor{comment}{//\ 源项会累加至\ TempRate\ 和\ HeatFlux}}
+\DoxyCodeLine{\Hypertarget{_s_e___solve_8cpp_source_l00099}00099\ \ \ \ \ bcManager.applySources();}
+\DoxyCodeLine{\Hypertarget{_s_e___solve_8cpp_source_l00100}00100\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{_s_e___solve_8cpp_source_l00101}00101\ \ \ \ \ \textcolor{comment}{//\ (C2)\ 施加强制约束\ (Dirichlet)\ -\/\ 第一次施加用于更新初值}}
+\DoxyCodeLine{\Hypertarget{_s_e___solve_8cpp_source_l00102}00102\ \ \ \ \ bcManager.applyConstraints();}
+\DoxyCodeLine{\Hypertarget{_s_e___solve_8cpp_source_l00103}00103\ }
+\DoxyCodeLine{\Hypertarget{_s_e___solve_8cpp_source_l00104}00104\ \textcolor{comment}{//\ (D)\ 计算\ PD\ 键相互作用\ (并行的热传导内核)}}
+\DoxyCodeLine{\Hypertarget{_s_e___solve_8cpp_source_l00105}00105\ \textcolor{preprocessor}{\#pragma\ omp\ parallel\ for\ schedule(dynamic,\ 64)}}
+\DoxyCodeLine{\Hypertarget{_s_e___solve_8cpp_source_l00106}00106\ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <\ static\_cast<int>(numParticles);\ ++i)\ \{}
+\DoxyCodeLine{\Hypertarget{_s_e___solve_8cpp_source_l00107}00107\ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keyword}{auto}\ \&neighbors\ =\ neighborList.getNeighbors(i);}
+\DoxyCodeLine{\Hypertarget{_s_e___solve_8cpp_source_l00108}00108\ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (neighbors.empty())}
+\DoxyCodeLine{\Hypertarget{_s_e___solve_8cpp_source_l00109}00109\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{continue};}
+\DoxyCodeLine{\Hypertarget{_s_e___solve_8cpp_source_l00110}00110\ }
+\DoxyCodeLine{\Hypertarget{_s_e___solve_8cpp_source_l00111}00111\ \ \ \ \ \ \ \textcolor{comment}{//\ 获取当前粒子材料属性}}
+\DoxyCodeLine{\Hypertarget{_s_e___solve_8cpp_source_l00112}00112\ \ \ \ \ \ \ \textcolor{keyword}{auto}\ *mat\ =\ \textcolor{keyword}{dynamic\_cast<}\mbox{\hyperlink{class_g_r_p_d_1_1_material_1_1_thermal_mat}{GRPD::Material::ThermalMat}}\ *\textcolor{keyword}{>}(}
+\DoxyCodeLine{\Hypertarget{_s_e___solve_8cpp_source_l00113}00113\ \ \ \ \ \ \ \ \ \ \ manager.getParticle(i).getMaterial());}
+\DoxyCodeLine{\Hypertarget{_s_e___solve_8cpp_source_l00114}00114\ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!mat)}
+\DoxyCodeLine{\Hypertarget{_s_e___solve_8cpp_source_l00115}00115\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{continue};}
+\DoxyCodeLine{\Hypertarget{_s_e___solve_8cpp_source_l00116}00116\ }
+\DoxyCodeLine{\Hypertarget{_s_e___solve_8cpp_source_l00117}00117\ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ k\ =\ mat-\/>\mbox{\hyperlink{class_g_r_p_d_1_1_material_1_1_thermal_mat_a507448c96505babc0153e5d15c693de1}{getConductivity}}();}
+\DoxyCodeLine{\Hypertarget{_s_e___solve_8cpp_source_l00118}00118\ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ kappa\_base\ =\ (6.0\ *\ k)\ /\ (PI\ *\ horizon4);}
+\DoxyCodeLine{\Hypertarget{_s_e___solve_8cpp_source_l00119}00119\ }
+\DoxyCodeLine{\Hypertarget{_s_e___solve_8cpp_source_l00120}00120\ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ Ti\ =\ tempPtr[i];}
+\DoxyCodeLine{\Hypertarget{_s_e___solve_8cpp_source_l00121}00121\ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{double}\ *pos\_i\ =\ \&coords[3\ *\ i];}
+\DoxyCodeLine{\Hypertarget{_s_e___solve_8cpp_source_l00122}00122\ }
+\DoxyCodeLine{\Hypertarget{_s_e___solve_8cpp_source_l00123}00123\ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ totalContribution\ =\ 0.0;}
+\DoxyCodeLine{\Hypertarget{_s_e___solve_8cpp_source_l00124}00124\ }
+\DoxyCodeLine{\Hypertarget{_s_e___solve_8cpp_source_l00125}00125\ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ j\ :\ neighbors)\ \{}
+\DoxyCodeLine{\Hypertarget{_s_e___solve_8cpp_source_l00126}00126\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ Tj\ =\ tempPtr[j];}
+\DoxyCodeLine{\Hypertarget{_s_e___solve_8cpp_source_l00127}00127\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{double}\ *pos\_j\ =\ \&coords[3\ *\ j];}
+\DoxyCodeLine{\Hypertarget{_s_e___solve_8cpp_source_l00128}00128\ }
+\DoxyCodeLine{\Hypertarget{_s_e___solve_8cpp_source_l00129}00129\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ dx\ =\ pos\_j[0]\ -\/\ pos\_i[0];}
+\DoxyCodeLine{\Hypertarget{_s_e___solve_8cpp_source_l00130}00130\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ dy\ =\ pos\_j[1]\ -\/\ pos\_i[1];}
+\DoxyCodeLine{\Hypertarget{_s_e___solve_8cpp_source_l00131}00131\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ dz\ =\ pos\_j[2]\ -\/\ pos\_i[2];}
+\DoxyCodeLine{\Hypertarget{_s_e___solve_8cpp_source_l00132}00132\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ dist\ =\ std::sqrt(dx\ *\ dx\ +\ dy\ *\ dy\ +\ dz\ *\ dz);}
+\DoxyCodeLine{\Hypertarget{_s_e___solve_8cpp_source_l00133}00133\ }
+\DoxyCodeLine{\Hypertarget{_s_e___solve_8cpp_source_l00134}00134\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (dist\ <\ 1e-\/12)}
+\DoxyCodeLine{\Hypertarget{_s_e___solve_8cpp_source_l00135}00135\ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{continue};\ \textcolor{comment}{//\ 避免自耦合或重合点}}
+\DoxyCodeLine{\Hypertarget{_s_e___solve_8cpp_source_l00136}00136\ }
+\DoxyCodeLine{\Hypertarget{_s_e___solve_8cpp_source_l00137}00137\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ PD\ 传导公式：kappa\ *\ (Tj\ -\/\ Ti)\ /\ dist\ *\ Vj}}
+\DoxyCodeLine{\Hypertarget{_s_e___solve_8cpp_source_l00138}00138\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ 注意：有些公式是\ /\ dist\string^2，这里按\ Bobaru\ (2012)}}
+\DoxyCodeLine{\Hypertarget{_s_e___solve_8cpp_source_l00139}00139\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ 积分项为\ \(\backslash\)int\ kappa\ *\ (Tj\ -\/\ Ti)/dist\ dVj}}
+\DoxyCodeLine{\Hypertarget{_s_e___solve_8cpp_source_l00140}00140\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ bondContribution\ =\ kappa\_base\ *\ ((Tj\ -\/\ Ti)\ /\ dist)\ *\ volumes[j];}
+\DoxyCodeLine{\Hypertarget{_s_e___solve_8cpp_source_l00141}00141\ \ \ \ \ \ \ \ \ totalContribution\ +=\ bondContribution;}
+\DoxyCodeLine{\Hypertarget{_s_e___solve_8cpp_source_l00142}00142\ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_s_e___solve_8cpp_source_l00143}00143\ }
+\DoxyCodeLine{\Hypertarget{_s_e___solve_8cpp_source_l00144}00144\ \ \ \ \ \ \ rateField-\/>add(i,\ totalContribution);}
+\DoxyCodeLine{\Hypertarget{_s_e___solve_8cpp_source_l00145}00145\ \ \ \ \ \ \ fluxField-\/>add(i,\ totalContribution);}
+\DoxyCodeLine{\Hypertarget{_s_e___solve_8cpp_source_l00146}00146\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_s_e___solve_8cpp_source_l00147}00147\ }
+\DoxyCodeLine{\Hypertarget{_s_e___solve_8cpp_source_l00148}00148\ \textcolor{comment}{//\ (E)\ 显式时间积分：T\_new\ =\ T\_old\ +\ (Rate\ /\ (rho\ *\ Cp))\ *\ dt}}
+\DoxyCodeLine{\Hypertarget{_s_e___solve_8cpp_source_l00149}00149\ \textcolor{preprocessor}{\#pragma\ omp\ parallel\ for}}
+\DoxyCodeLine{\Hypertarget{_s_e___solve_8cpp_source_l00150}00150\ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <\ static\_cast<int>(numParticles);\ ++i)\ \{}
+\DoxyCodeLine{\Hypertarget{_s_e___solve_8cpp_source_l00151}00151\ \ \ \ \ \ \ \textcolor{keyword}{auto}\ *mat\ =\ \textcolor{keyword}{dynamic\_cast<}\mbox{\hyperlink{class_g_r_p_d_1_1_material_1_1_thermal_mat}{GRPD::Material::ThermalMat}}\ *\textcolor{keyword}{>}(}
+\DoxyCodeLine{\Hypertarget{_s_e___solve_8cpp_source_l00152}00152\ \ \ \ \ \ \ \ \ \ \ manager.getParticle(i).getMaterial());}
+\DoxyCodeLine{\Hypertarget{_s_e___solve_8cpp_source_l00153}00153\ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!mat)}
+\DoxyCodeLine{\Hypertarget{_s_e___solve_8cpp_source_l00154}00154\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{continue};}
+\DoxyCodeLine{\Hypertarget{_s_e___solve_8cpp_source_l00155}00155\ }
+\DoxyCodeLine{\Hypertarget{_s_e___solve_8cpp_source_l00156}00156\ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ rho\ =\ mat-\/>\mbox{\hyperlink{class_g_r_p_d_1_1_material_1_1_thermal_mat_a98256740ba8528e397014c32852856ff}{getDensity}}();}
+\DoxyCodeLine{\Hypertarget{_s_e___solve_8cpp_source_l00157}00157\ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ cp\ =\ mat-\/>getHeatCapacity();}
+\DoxyCodeLine{\Hypertarget{_s_e___solve_8cpp_source_l00158}00158\ }
+\DoxyCodeLine{\Hypertarget{_s_e___solve_8cpp_source_l00159}00159\ \ \ \ \ \ \ \textcolor{comment}{//\ 注意：bcManager\ 施加的\ Flux\ 是\ Q\ (功率)，}}
+\DoxyCodeLine{\Hypertarget{_s_e___solve_8cpp_source_l00160}00160\ \ \ \ \ \ \ \textcolor{comment}{//\ PD\ Kernel\ 计算出的也是源项率}}
+\DoxyCodeLine{\Hypertarget{_s_e___solve_8cpp_source_l00161}00161\ \ \ \ \ \ \ \textcolor{comment}{//\ dT/dt\ =\ Net\_Rate\ /\ (rho\ *\ Cp)}}
+\DoxyCodeLine{\Hypertarget{_s_e___solve_8cpp_source_l00162}00162\ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ heatRate\ =\ ratePtr[i];}
+\DoxyCodeLine{\Hypertarget{_s_e___solve_8cpp_source_l00163}00163\ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ deltaT\ =\ (heatRate\ /\ (rho\ *\ cp))\ *\ dt;}
+\DoxyCodeLine{\Hypertarget{_s_e___solve_8cpp_source_l00164}00164\ }
+\DoxyCodeLine{\Hypertarget{_s_e___solve_8cpp_source_l00165}00165\ \ \ \ \ \ \ tempPtr[i]\ +=\ deltaT;}
+\DoxyCodeLine{\Hypertarget{_s_e___solve_8cpp_source_l00166}00166\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_s_e___solve_8cpp_source_l00167}00167\ }
+\DoxyCodeLine{\Hypertarget{_s_e___solve_8cpp_source_l00168}00168\ \ \ \ \ \textcolor{comment}{//\ (F)\ 施加固定温度约束\ (Dirichlet)\ -\/\ 时间积分后重新强制覆盖}}
+\DoxyCodeLine{\Hypertarget{_s_e___solve_8cpp_source_l00169}00169\ \ \ \ \ bcManager.applyConstraints();}
+\DoxyCodeLine{\Hypertarget{_s_e___solve_8cpp_source_l00170}00170\ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_s_e___solve_8cpp_source_l00171}00171\ }
+\DoxyCodeLine{\Hypertarget{_s_e___solve_8cpp_source_l00172}00172\ \ \ \mbox{\hyperlink{_logger_8h_ac8e803773221119947b55f6ae85a9c63}{LOG\_INFO}}(\textcolor{stringliteral}{"{}PD\ Solver\ Simulation\ Finished."{}});}
+\DoxyCodeLine{\Hypertarget{_s_e___solve_8cpp_source_l00173}00173\ \}}
+\DoxyCodeLine{\Hypertarget{_s_e___solve_8cpp_source_l00174}00174\ }
+\DoxyCodeLine{\Hypertarget{_s_e___solve_8cpp_source_l00175}00175\ \}\ \textcolor{comment}{//\ namespace\ GRPD::Engine}}
+
+\end{DoxyCode}

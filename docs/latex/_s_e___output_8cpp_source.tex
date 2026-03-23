@@ -1,0 +1,188 @@
+\doxysection{SE\+\_\+\+Output.\+cpp}
+\hypertarget{_s_e___output_8cpp_source}{}\label{_s_e___output_8cpp_source}\index{Src/Engine/src/SE\_Output.cpp@{Src/Engine/src/SE\_Output.cpp}}
+\mbox{\hyperlink{_s_e___output_8cpp}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\Hypertarget{_s_e___output_8cpp_source_l00001}00001\ \textcolor{comment}{//\ ============================================================================}}
+\DoxyCodeLine{\Hypertarget{_s_e___output_8cpp_source_l00002}00002\ \textcolor{comment}{//\ SE\_Output.cpp\ -\/\ Output\ module}}
+\DoxyCodeLine{\Hypertarget{_s_e___output_8cpp_source_l00003}00003\ \textcolor{comment}{//\ Responsibility:\ Extract\ the\ correct\ ParticleManager\ context\ and\ export}}
+\DoxyCodeLine{\Hypertarget{_s_e___output_8cpp_source_l00004}00004\ \textcolor{comment}{//\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ simulation\ data\ to\ files\ (e.g.\ VTK).}}
+\DoxyCodeLine{\Hypertarget{_s_e___output_8cpp_source_l00005}00005\ \textcolor{comment}{//\ ============================================================================}}
+\DoxyCodeLine{\Hypertarget{_s_e___output_8cpp_source_l00006}00006\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{_field_manager_8h}{FieldManager.h}}"{}}}
+\DoxyCodeLine{\Hypertarget{_s_e___output_8cpp_source_l00007}00007\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{_typed_field_8h}{TypedField.h}}"{}}}
+\DoxyCodeLine{\Hypertarget{_s_e___output_8cpp_source_l00008}00008\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{_logger_8h}{Logger.h}}"{}}}
+\DoxyCodeLine{\Hypertarget{_s_e___output_8cpp_source_l00009}00009\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{_p_d_simulater_8h}{PDSimulater.h}}"{}}}
+\DoxyCodeLine{\Hypertarget{_s_e___output_8cpp_source_l00010}00010\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{_solver_engine_8h}{SolverEngine.h}}"{}}}
+\DoxyCodeLine{\Hypertarget{_s_e___output_8cpp_source_l00011}00011\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{_vtk_writer_8h}{VtkWriter.h}}"{}}}
+\DoxyCodeLine{\Hypertarget{_s_e___output_8cpp_source_l00012}00012\ \textcolor{preprocessor}{\#include\ <string>}}
+\DoxyCodeLine{\Hypertarget{_s_e___output_8cpp_source_l00013}00013\ \textcolor{preprocessor}{\#include\ <vector>}}
+\DoxyCodeLine{\Hypertarget{_s_e___output_8cpp_source_l00014}00014\ \textcolor{preprocessor}{\#include\ <yaml-\/cpp/yaml.h>}}
+\DoxyCodeLine{\Hypertarget{_s_e___output_8cpp_source_l00015}00015\ }
+\DoxyCodeLine{\Hypertarget{_s_e___output_8cpp_source_l00016}00016\ \textcolor{keyword}{namespace\ }\mbox{\hyperlink{namespace_g_r_p_d_1_1_engine}{GRPD::Engine}}\ \{}
+\DoxyCodeLine{\Hypertarget{_s_e___output_8cpp_source_l00017}00017\ }
+\DoxyCodeLine{\Hypertarget{_s_e___output_8cpp_source_l00018}\mbox{\hyperlink{class_g_r_p_d_1_1_engine_1_1_solver_engine_ae0ddc963dbdac522caa5757af29a5b61}{00018}}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_g_r_p_d_1_1_engine_1_1_solver_engine_ae0ddc963dbdac522caa5757af29a5b61}{SolverEngine::OutputPD}}()\ \{}
+\DoxyCodeLine{\Hypertarget{_s_e___output_8cpp_source_l00019}00019\ \ \ \textcolor{keyword}{const}\ \textcolor{keyword}{auto}\ \&currentModel\ =\ this-\/>\mbox{\hyperlink{class_g_r_p_d_1_1_engine_1_1_solver_engine_a50b0e47e530f8919fd25b501f7a15348}{pdContext\_}};}
+\DoxyCodeLine{\Hypertarget{_s_e___output_8cpp_source_l00020}00020\ \ \ \mbox{\hyperlink{_logger_8h_ac8e803773221119947b55f6ae85a9c63}{LOG\_INFO}}(\textcolor{stringliteral}{"{}Starting\ data\ export\ process..."{}});}
+\DoxyCodeLine{\Hypertarget{_s_e___output_8cpp_source_l00021}00021\ }
+\DoxyCodeLine{\Hypertarget{_s_e___output_8cpp_source_l00022}00022\ \ \ \textcolor{comment}{//\ =================================================================}}
+\DoxyCodeLine{\Hypertarget{_s_e___output_8cpp_source_l00023}00023\ \ \ \textcolor{comment}{//\ 1.\ Parse\ YAML\ to\ find\ the\ current\ model\ context\ name}}
+\DoxyCodeLine{\Hypertarget{_s_e___output_8cpp_source_l00024}00024\ \ \ \textcolor{comment}{//\ =================================================================}}
+\DoxyCodeLine{\Hypertarget{_s_e___output_8cpp_source_l00025}00025\ \ \ std::string\ yamlPath\ =\ \textcolor{stringliteral}{"{}../../Input/PD.yaml"{}};}
+\DoxyCodeLine{\Hypertarget{_s_e___output_8cpp_source_l00026}00026\ \ \ std::string\ grpdPath\ =\ \textcolor{stringliteral}{"{}"{}};}
+\DoxyCodeLine{\Hypertarget{_s_e___output_8cpp_source_l00027}00027\ \ \ std::string\ currentModelName\ =\ currentModel.getName();}
+\DoxyCodeLine{\Hypertarget{_s_e___output_8cpp_source_l00028}00028\ \ \ \mbox{\hyperlink{namespace_g_r_p_d_1_1_i_o_a3dbb3fd59d7d870c0e344d7b8f8025dd}{GRPD::IO::fileFormat}}\ format\ =\ \mbox{\hyperlink{namespace_g_r_p_d_1_1_i_o_a3dbb3fd59d7d870c0e344d7b8f8025ddad0698ce615af90f105776edb019166e7}{GRPD::IO::ascii}};\ \textcolor{comment}{//\ default\ to\ ascii}}
+\DoxyCodeLine{\Hypertarget{_s_e___output_8cpp_source_l00029}00029\ \ \ std::string\ customWriterName\ =\ \textcolor{stringliteral}{"{}"{}};}
+\DoxyCodeLine{\Hypertarget{_s_e___output_8cpp_source_l00030}00030\ \ \ std::vector<std::pair<std::string,\ int>>}
+\DoxyCodeLine{\Hypertarget{_s_e___output_8cpp_source_l00031}00031\ \ \ \ \ \ \ variablesToOutput;\ \textcolor{comment}{//\ \{Name,\ Dimension\}}}
+\DoxyCodeLine{\Hypertarget{_s_e___output_8cpp_source_l00032}00032\ }
+\DoxyCodeLine{\Hypertarget{_s_e___output_8cpp_source_l00033}00033\ \ \ \textcolor{keywordflow}{try}\ \{}
+\DoxyCodeLine{\Hypertarget{_s_e___output_8cpp_source_l00034}00034\ \ \ \ \ YAML::Node\ config\ =\ YAML::LoadFile(yamlPath);}
+\DoxyCodeLine{\Hypertarget{_s_e___output_8cpp_source_l00035}00035\ }
+\DoxyCodeLine{\Hypertarget{_s_e___output_8cpp_source_l00036}00036\ \ \ \ \ \textcolor{keywordflow}{if}\ (config[\textcolor{stringliteral}{"{}Assembly"{}}]\ \&\&\ config[\textcolor{stringliteral}{"{}Assembly"{}}][\textcolor{stringliteral}{"{}OutputGrpd"{}}])\ \{}
+\DoxyCodeLine{\Hypertarget{_s_e___output_8cpp_source_l00037}00037\ \ \ \ \ \ \ \textcolor{comment}{//\ We\ already\ have\ the\ model\ name\ from\ the\ passed\ object}}
+\DoxyCodeLine{\Hypertarget{_s_e___output_8cpp_source_l00038}00038\ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
+\DoxyCodeLine{\Hypertarget{_s_e___output_8cpp_source_l00039}00039\ \ \ \ \ \ \ \mbox{\hyperlink{_logger_8h_a7ebf4c3b4fb05d6f9094089ded75cbdd}{LOG\_ERROR}}(\textcolor{stringliteral}{"{}Key\ [Assembly][OutputGrpd]\ not\ found\ in\ YAML\ file!"{}});}
+\DoxyCodeLine{\Hypertarget{_s_e___output_8cpp_source_l00040}00040\ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{\Hypertarget{_s_e___output_8cpp_source_l00041}00041\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_s_e___output_8cpp_source_l00042}00042\ }
+\DoxyCodeLine{\Hypertarget{_s_e___output_8cpp_source_l00043}00043\ \ \ \ \ \textcolor{keywordflow}{if}\ (config[\textcolor{stringliteral}{"{}Writer"{}}])\ \{}
+\DoxyCodeLine{\Hypertarget{_s_e___output_8cpp_source_l00044}00044\ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (config[\textcolor{stringliteral}{"{}Writer"{}}][\textcolor{stringliteral}{"{}Name"{}}])\ \{}
+\DoxyCodeLine{\Hypertarget{_s_e___output_8cpp_source_l00045}00045\ \ \ \ \ \ \ \ \ customWriterName\ =\ config[\textcolor{stringliteral}{"{}Writer"{}}][\textcolor{stringliteral}{"{}Name"{}}].as<std::string>();}
+\DoxyCodeLine{\Hypertarget{_s_e___output_8cpp_source_l00046}00046\ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_s_e___output_8cpp_source_l00047}00047\ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (config[\textcolor{stringliteral}{"{}Writer"{}}][\textcolor{stringliteral}{"{}Type"{}}])\ \{}
+\DoxyCodeLine{\Hypertarget{_s_e___output_8cpp_source_l00048}00048\ \ \ \ \ \ \ \ \ std::string\ typeStr\ =\ config[\textcolor{stringliteral}{"{}Writer"{}}][\textcolor{stringliteral}{"{}Type"{}}].as<std::string>();}
+\DoxyCodeLine{\Hypertarget{_s_e___output_8cpp_source_l00049}00049\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (typeStr\ ==\ \textcolor{stringliteral}{"{}BINARY"{}}\ ||\ typeStr\ ==\ \textcolor{stringliteral}{"{}binary"{}})\ \{}
+\DoxyCodeLine{\Hypertarget{_s_e___output_8cpp_source_l00050}00050\ \ \ \ \ \ \ \ \ \ \ format\ =\ \mbox{\hyperlink{namespace_g_r_p_d_1_1_i_o_a3dbb3fd59d7d870c0e344d7b8f8025dda390c91eccc92288763de8caee553ca49}{GRPD::IO::binary}};}
+\DoxyCodeLine{\Hypertarget{_s_e___output_8cpp_source_l00051}00051\ \ \ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}\ (typeStr\ ==\ \textcolor{stringliteral}{"{}ASCII"{}}\ ||\ typeStr\ ==\ \textcolor{stringliteral}{"{}ascii"{}})\ \{}
+\DoxyCodeLine{\Hypertarget{_s_e___output_8cpp_source_l00052}00052\ \ \ \ \ \ \ \ \ \ \ format\ =\ \mbox{\hyperlink{namespace_g_r_p_d_1_1_i_o_a3dbb3fd59d7d870c0e344d7b8f8025ddad0698ce615af90f105776edb019166e7}{GRPD::IO::ascii}};}
+\DoxyCodeLine{\Hypertarget{_s_e___output_8cpp_source_l00053}00053\ \ \ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
+\DoxyCodeLine{\Hypertarget{_s_e___output_8cpp_source_l00054}00054\ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{_logger_8h_ac8e803773221119947b55f6ae85a9c63}{LOG\_INFO}}(\textcolor{stringliteral}{"{}Unknown\ Writer\ Type:\ "{}}\ +\ typeStr\ +}
+\DoxyCodeLine{\Hypertarget{_s_e___output_8cpp_source_l00055}00055\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}.\ Using\ default\ ASCII."{}});}
+\DoxyCodeLine{\Hypertarget{_s_e___output_8cpp_source_l00056}00056\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_s_e___output_8cpp_source_l00057}00057\ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_s_e___output_8cpp_source_l00058}00058\ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (config[\textcolor{stringliteral}{"{}Writer"{}}][\textcolor{stringliteral}{"{}Variables"{}}])\ \{}
+\DoxyCodeLine{\Hypertarget{_s_e___output_8cpp_source_l00059}00059\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keyword}{auto}\ it\ :\ config[\textcolor{stringliteral}{"{}Writer"{}}][\textcolor{stringliteral}{"{}Variables"{}}])\ \{}
+\DoxyCodeLine{\Hypertarget{_s_e___output_8cpp_source_l00060}00060\ \ \ \ \ \ \ \ \ \ \ std::string\ varName\ =\ it[\textcolor{stringliteral}{"{}Name"{}}].as<std::string>();}
+\DoxyCodeLine{\Hypertarget{_s_e___output_8cpp_source_l00061}00061\ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ varDim\ =\ it[\textcolor{stringliteral}{"{}Dimension"{}}]\ ?\ it[\textcolor{stringliteral}{"{}Dimension"{}}].as<\textcolor{keywordtype}{int}>()\ :\ 1;}
+\DoxyCodeLine{\Hypertarget{_s_e___output_8cpp_source_l00062}00062\ \ \ \ \ \ \ \ \ \ \ variablesToOutput.push\_back(\{varName,\ varDim\});}
+\DoxyCodeLine{\Hypertarget{_s_e___output_8cpp_source_l00063}00063\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_s_e___output_8cpp_source_l00064}00064\ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
+\DoxyCodeLine{\Hypertarget{_s_e___output_8cpp_source_l00065}00065\ \ \ \ \ \ \ \ \ variablesToOutput.push\_back(\{\textcolor{stringliteral}{"{}Coords"{}},\ 3\});}
+\DoxyCodeLine{\Hypertarget{_s_e___output_8cpp_source_l00066}00066\ \ \ \ \ \ \ \ \ variablesToOutput.push\_back(\{\textcolor{stringliteral}{"{}PartID"{}},\ 1\});}
+\DoxyCodeLine{\Hypertarget{_s_e___output_8cpp_source_l00067}00067\ \ \ \ \ \ \ \ \ variablesToOutput.push\_back(\{\textcolor{stringliteral}{"{}Volume"{}},\ 1\});}
+\DoxyCodeLine{\Hypertarget{_s_e___output_8cpp_source_l00068}00068\ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_s_e___output_8cpp_source_l00069}00069\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_s_e___output_8cpp_source_l00070}00070\ \ \ \}\ \textcolor{keywordflow}{catch}\ (\textcolor{keyword}{const}\ YAML::Exception\ \&e)\ \{}
+\DoxyCodeLine{\Hypertarget{_s_e___output_8cpp_source_l00071}00071\ \ \ \ \ \mbox{\hyperlink{_logger_8h_a7ebf4c3b4fb05d6f9094089ded75cbdd}{LOG\_ERROR}}(\textcolor{stringliteral}{"{}Failed\ to\ parse\ YAML\ file\ in\ Write():\ "{}}\ +\ std::string(e.what()));}
+\DoxyCodeLine{\Hypertarget{_s_e___output_8cpp_source_l00072}00072\ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{\Hypertarget{_s_e___output_8cpp_source_l00073}00073\ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_s_e___output_8cpp_source_l00074}00074\ }
+\DoxyCodeLine{\Hypertarget{_s_e___output_8cpp_source_l00075}00075\ \ \ \textcolor{comment}{//\ =================================================================}}
+\DoxyCodeLine{\Hypertarget{_s_e___output_8cpp_source_l00076}00076\ \ \ \textcolor{comment}{//\ 2.\ Fetch\ the\ corresponding\ ParticleManager\ from\ model\ context}}
+\DoxyCodeLine{\Hypertarget{_s_e___output_8cpp_source_l00077}00077\ \ \ \textcolor{comment}{//\ =================================================================}}
+\DoxyCodeLine{\Hypertarget{_s_e___output_8cpp_source_l00078}00078\ \ \ \mbox{\hyperlink{_logger_8h_ac8e803773221119947b55f6ae85a9c63}{LOG\_INFO}}(\textcolor{stringliteral}{"{}Fetching\ model\ context\ for\ export:\ "{}}\ +\ currentModelName);}
+\DoxyCodeLine{\Hypertarget{_s_e___output_8cpp_source_l00079}00079\ }
+\DoxyCodeLine{\Hypertarget{_s_e___output_8cpp_source_l00080}00080\ \ \ \textcolor{keywordflow}{try}\ \{}
+\DoxyCodeLine{\Hypertarget{_s_e___output_8cpp_source_l00081}00081\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keyword}{auto}\ \&manager\ =\ currentModel.getParticleManager();}
+\DoxyCodeLine{\Hypertarget{_s_e___output_8cpp_source_l00082}00082\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keyword}{auto}\ \&fieldManager\ =\ currentModel.getFieldManager();}
+\DoxyCodeLine{\Hypertarget{_s_e___output_8cpp_source_l00083}00083\ }
+\DoxyCodeLine{\Hypertarget{_s_e___output_8cpp_source_l00084}00084\ \ \ \ \ \textcolor{comment}{//\ =================================================================}}
+\DoxyCodeLine{\Hypertarget{_s_e___output_8cpp_source_l00085}00085\ \ \ \ \ \textcolor{comment}{//\ 3.\ Export\ data\ using\ VtkWriter}}
+\DoxyCodeLine{\Hypertarget{_s_e___output_8cpp_source_l00086}00086\ \ \ \ \ \textcolor{comment}{//\ =================================================================}}
+\DoxyCodeLine{\Hypertarget{_s_e___output_8cpp_source_l00087}00087\ \ \ \ \ std::string\ finalOutputName\ =}
+\DoxyCodeLine{\Hypertarget{_s_e___output_8cpp_source_l00088}00088\ \ \ \ \ \ \ \ \ customWriterName.empty()\ ?\ currentModelName\ :\ customWriterName;}
+\DoxyCodeLine{\Hypertarget{_s_e___output_8cpp_source_l00089}00089\ \ \ \ \ std::string\ vtkOutputPath\ =}
+\DoxyCodeLine{\Hypertarget{_s_e___output_8cpp_source_l00090}00090\ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}../../Output/"{}}\ +\ finalOutputName\ +\ \textcolor{stringliteral}{"{}\_output.vtk"{}};}
+\DoxyCodeLine{\Hypertarget{_s_e___output_8cpp_source_l00091}00091\ \ \ \ \ \mbox{\hyperlink{_logger_8h_ac8e803773221119947b55f6ae85a9c63}{LOG\_INFO}}(\textcolor{stringliteral}{"{}Exporting\ to\ VTK\ format:\ "{}}\ +\ vtkOutputPath);}
+\DoxyCodeLine{\Hypertarget{_s_e___output_8cpp_source_l00092}00092\ }
+\DoxyCodeLine{\Hypertarget{_s_e___output_8cpp_source_l00093}00093\ \ \ \ \ \textcolor{keywordtype}{int}\ numParticles\ =\ \textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{int}\textcolor{keyword}{>}(manager.getTotalParticles());}
+\DoxyCodeLine{\Hypertarget{_s_e___output_8cpp_source_l00094}00094\ }
+\DoxyCodeLine{\Hypertarget{_s_e___output_8cpp_source_l00095}00095\ \ \ \ \ \textcolor{keywordflow}{if}\ (numParticles\ ==\ 0)\ \{}
+\DoxyCodeLine{\Hypertarget{_s_e___output_8cpp_source_l00096}00096\ \ \ \ \ \ \ \mbox{\hyperlink{_logger_8h_ac8e803773221119947b55f6ae85a9c63}{LOG\_INFO}}(\textcolor{stringliteral}{"{}No\ particles\ to\ export\ for\ model:\ "{}}\ +\ currentModelName);}
+\DoxyCodeLine{\Hypertarget{_s_e___output_8cpp_source_l00097}00097\ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{\Hypertarget{_s_e___output_8cpp_source_l00098}00098\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_s_e___output_8cpp_source_l00099}00099\ }
+\DoxyCodeLine{\Hypertarget{_s_e___output_8cpp_source_l00100}00100\ \ \ \ \ \mbox{\hyperlink{class_g_r_p_d_1_1_i_o_1_1_vtk_writer}{GRPD::IO::VtkWriter}}\ writer(vtkOutputPath,\ numParticles,\ format);}
+\DoxyCodeLine{\Hypertarget{_s_e___output_8cpp_source_l00101}00101\ }
+\DoxyCodeLine{\Hypertarget{_s_e___output_8cpp_source_l00102}00102\ \ \ \ \ \textcolor{comment}{//\ Set\ points\ geometry}}
+\DoxyCodeLine{\Hypertarget{_s_e___output_8cpp_source_l00103}00103\ \ \ \ \ \textcolor{keywordtype}{double}\ *coordsPtr\ =\ manager.getGeomDataPtr(\mbox{\hyperlink{namespace_g_r_p_d_1_1_model_a794e169a6b06cecc5757ae3bc52793d4ad3268a031987f18fd931b0859cc05074}{GRPD::Model::ModelVar::Coords}});}
+\DoxyCodeLine{\Hypertarget{_s_e___output_8cpp_source_l00104}00104\ \ \ \ \ \textcolor{keywordflow}{if}\ (coordsPtr)\ \{}
+\DoxyCodeLine{\Hypertarget{_s_e___output_8cpp_source_l00105}00105\ \ \ \ \ \ \ writer.\mbox{\hyperlink{class_g_r_p_d_1_1_i_o_1_1_writer_af482fb76eaa2ca4d205fda7ace1f652e}{setPointsInfo}}(\mbox{\hyperlink{namespace_g_r_p_d_1_1_i_o_ac02b9ed53894eed3b697e717746593f5adf27674b56bf48063092c2f046b76e48}{GRPD::IO::Float64}},\ coordsPtr,\ \textcolor{stringliteral}{"{}Coordinates"{}},\ 3);}
+\DoxyCodeLine{\Hypertarget{_s_e___output_8cpp_source_l00106}00106\ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
+\DoxyCodeLine{\Hypertarget{_s_e___output_8cpp_source_l00107}00107\ \ \ \ \ \ \ \mbox{\hyperlink{_logger_8h_a7ebf4c3b4fb05d6f9094089ded75cbdd}{LOG\_ERROR}}(\textcolor{stringliteral}{"{}Failed\ to\ extract\ Coordinates.\ Aborting\ write."{}});}
+\DoxyCodeLine{\Hypertarget{_s_e___output_8cpp_source_l00108}00108\ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{\Hypertarget{_s_e___output_8cpp_source_l00109}00109\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_s_e___output_8cpp_source_l00110}00110\ }
+\DoxyCodeLine{\Hypertarget{_s_e___output_8cpp_source_l00111}00111\ \ \ \ \ \textcolor{comment}{//\ Set\ physical\ variables\ dynamically\ based\ on\ user\ config}}
+\DoxyCodeLine{\Hypertarget{_s_e___output_8cpp_source_l00112}00112\ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keyword}{const}\ \textcolor{keyword}{auto}\ \&[varName,\ yamlDim]\ :\ variablesToOutput)\ \{}
+\DoxyCodeLine{\Hypertarget{_s_e___output_8cpp_source_l00113}00113\ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (varName\ ==\ \textcolor{stringliteral}{"{}Coords"{}})\ \{}
+\DoxyCodeLine{\Hypertarget{_s_e___output_8cpp_source_l00114}00114\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{continue};\ \textcolor{comment}{//\ Coordinates\ are\ handled\ separately\ above}}
+\DoxyCodeLine{\Hypertarget{_s_e___output_8cpp_source_l00115}00115\ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_s_e___output_8cpp_source_l00116}00116\ }
+\DoxyCodeLine{\Hypertarget{_s_e___output_8cpp_source_l00117}00117\ \ \ \ \ \ \ \textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{\Hypertarget{_s_e___output_8cpp_source_l00118}00118\ \ \ \ \ \ \ \textcolor{comment}{//\ 优先从\ FieldManager\ 查询物理场变量}}
+\DoxyCodeLine{\Hypertarget{_s_e___output_8cpp_source_l00119}00119\ \ \ \ \ \ \ \textcolor{comment}{//\ FieldManager\ 统一存储所有物理场（Temperature,\ HeatFlux\ 等）}}
+\DoxyCodeLine{\Hypertarget{_s_e___output_8cpp_source_l00120}00120\ \ \ \ \ \ \ \textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{\Hypertarget{_s_e___output_8cpp_source_l00121}00121\ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (fieldManager.hasField(varName))\ \{}
+\DoxyCodeLine{\Hypertarget{_s_e___output_8cpp_source_l00122}00122\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keyword}{auto}\ *field\ =\ fieldManager.getField(varName);}
+\DoxyCodeLine{\Hypertarget{_s_e___output_8cpp_source_l00123}00123\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (field\ \&\&\ field-\/>rawPtr())\ \{}
+\DoxyCodeLine{\Hypertarget{_s_e___output_8cpp_source_l00124}00124\ \ \ \ \ \ \ \ \ \ \ writer.\mbox{\hyperlink{class_g_r_p_d_1_1_i_o_1_1_writer_a7e4a72eaf9341956ce6345a37606270d}{setPointsVariable}}(\mbox{\hyperlink{namespace_g_r_p_d_1_1_i_o_ac02b9ed53894eed3b697e717746593f5adf27674b56bf48063092c2f046b76e48}{GRPD::IO::Float64}},}
+\DoxyCodeLine{\Hypertarget{_s_e___output_8cpp_source_l00125}00125\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const\_cast<}\textcolor{keywordtype}{double}\ *\textcolor{keyword}{>}(field-\/>rawPtr()),}
+\DoxyCodeLine{\Hypertarget{_s_e___output_8cpp_source_l00126}00126\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ varName.c\_str(),\ yamlDim);}
+\DoxyCodeLine{\Hypertarget{_s_e___output_8cpp_source_l00127}00127\ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{_logger_8h_ac8e803773221119947b55f6ae85a9c63}{LOG\_INFO}}(\textcolor{stringliteral}{"{}Exported\ field\ '"{}}\ +\ varName\ +\ \textcolor{stringliteral}{"{}'\ from\ FieldManager."{}});}
+\DoxyCodeLine{\Hypertarget{_s_e___output_8cpp_source_l00128}00128\ \ \ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
+\DoxyCodeLine{\Hypertarget{_s_e___output_8cpp_source_l00129}00129\ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{_logger_8h_a0c53e5566a3b790db039421523dd4637}{LOG\_WARNING}}(\textcolor{stringliteral}{"{}Field\ '"{}}\ +\ varName\ +\ \textcolor{stringliteral}{"{}'\ data\ pointer\ is\ null.\ Skipping."{}});}
+\DoxyCodeLine{\Hypertarget{_s_e___output_8cpp_source_l00130}00130\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_s_e___output_8cpp_source_l00131}00131\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{continue};}
+\DoxyCodeLine{\Hypertarget{_s_e___output_8cpp_source_l00132}00132\ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_s_e___output_8cpp_source_l00133}00133\ }
+\DoxyCodeLine{\Hypertarget{_s_e___output_8cpp_source_l00134}00134\ \ \ \ \ \ \ \textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{\Hypertarget{_s_e___output_8cpp_source_l00135}00135\ \ \ \ \ \ \ \textcolor{comment}{//\ 通用路由：来自\ ParticleManager\ 的几何/拓扑变量}}
+\DoxyCodeLine{\Hypertarget{_s_e___output_8cpp_source_l00136}00136\ \ \ \ \ \ \ \textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{\Hypertarget{_s_e___output_8cpp_source_l00137}00137\ \ \ \ \ \ \ \mbox{\hyperlink{namespace_g_r_p_d_1_1_model_a794e169a6b06cecc5757ae3bc52793d4}{GRPD::Model::ModelVar}}\ enumName;}
+\DoxyCodeLine{\Hypertarget{_s_e___output_8cpp_source_l00138}00138\ \ \ \ \ \ \ \mbox{\hyperlink{class_g_r_p_d_1_1_model_1_1_particle_manager_ab3bc0a37ca3475c2ee4748483620cd2f}{GRPD::Model::ParticleManager::VarDataType}}\ dataType;}
+\DoxyCodeLine{\Hypertarget{_s_e___output_8cpp_source_l00139}00139\ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ managerDim\ =\ 1;}
+\DoxyCodeLine{\Hypertarget{_s_e___output_8cpp_source_l00140}00140\ }
+\DoxyCodeLine{\Hypertarget{_s_e___output_8cpp_source_l00141}00141\ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{class_g_r_p_d_1_1_model_1_1_particle_manager_a8a0367cb867ef47dbf420c8f1cdb9ed4}{GRPD::Model::ParticleManager::getModelVarInfo}}(varName,\ enumName,}
+\DoxyCodeLine{\Hypertarget{_s_e___output_8cpp_source_l00142}00142\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ dataType,\ managerDim))\ \{}
+\DoxyCodeLine{\Hypertarget{_s_e___output_8cpp_source_l00143}00143\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ *dataPtr\ =\ \textcolor{keyword}{nullptr};}
+\DoxyCodeLine{\Hypertarget{_s_e___output_8cpp_source_l00144}00144\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespace_g_r_p_d_1_1_i_o_ac02b9ed53894eed3b697e717746593f5}{GRPD::IO::dataType}}\ vtkType\ =\ \mbox{\hyperlink{namespace_g_r_p_d_1_1_i_o_ac02b9ed53894eed3b697e717746593f5adf27674b56bf48063092c2f046b76e48}{GRPD::IO::Float64}};}
+\DoxyCodeLine{\Hypertarget{_s_e___output_8cpp_source_l00145}00145\ }
+\DoxyCodeLine{\Hypertarget{_s_e___output_8cpp_source_l00146}00146\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Fetch\ the\ corresponding\ data\ pointer\ based\ on\ its\ specific\ type}}
+\DoxyCodeLine{\Hypertarget{_s_e___output_8cpp_source_l00147}00147\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (dataType\ ==\ \mbox{\hyperlink{class_g_r_p_d_1_1_model_1_1_particle_manager_ab3bc0a37ca3475c2ee4748483620cd2fad909d38d705ce75386dd86e611a82f5b}{GRPD::Model::ParticleManager::VarDataType::Double}})\ \{}
+\DoxyCodeLine{\Hypertarget{_s_e___output_8cpp_source_l00148}00148\ \ \ \ \ \ \ \ \ \ \ dataPtr\ =\ manager.getGeomDataPtr(enumName);}
+\DoxyCodeLine{\Hypertarget{_s_e___output_8cpp_source_l00149}00149\ \ \ \ \ \ \ \ \ \ \ vtkType\ =\ \mbox{\hyperlink{namespace_g_r_p_d_1_1_i_o_ac02b9ed53894eed3b697e717746593f5adf27674b56bf48063092c2f046b76e48}{GRPD::IO::Float64}};}
+\DoxyCodeLine{\Hypertarget{_s_e___output_8cpp_source_l00150}00150\ \ \ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}\ (dataType\ ==\ \mbox{\hyperlink{class_g_r_p_d_1_1_model_1_1_particle_manager_ab3bc0a37ca3475c2ee4748483620cd2fa1686a6c336b71b36d77354cea19a8b52}{GRPD::Model::ParticleManager::VarDataType::Int}})\ \{}
+\DoxyCodeLine{\Hypertarget{_s_e___output_8cpp_source_l00151}00151\ \ \ \ \ \ \ \ \ \ \ dataPtr\ =\ manager.getIntDataPtr(enumName);}
+\DoxyCodeLine{\Hypertarget{_s_e___output_8cpp_source_l00152}00152\ \ \ \ \ \ \ \ \ \ \ vtkType\ =\ \mbox{\hyperlink{namespace_g_r_p_d_1_1_i_o_ac02b9ed53894eed3b697e717746593f5a2b41606c776d022f84af65b9fecdecf3}{GRPD::IO::Int32}};}
+\DoxyCodeLine{\Hypertarget{_s_e___output_8cpp_source_l00153}00153\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_s_e___output_8cpp_source_l00154}00154\ }
+\DoxyCodeLine{\Hypertarget{_s_e___output_8cpp_source_l00155}00155\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Use\ the\ dimension\ specified\ in\ YAML\ configuration}}
+\DoxyCodeLine{\Hypertarget{_s_e___output_8cpp_source_l00156}00156\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ finalDim\ =\ yamlDim;}
+\DoxyCodeLine{\Hypertarget{_s_e___output_8cpp_source_l00157}00157\ }
+\DoxyCodeLine{\Hypertarget{_s_e___output_8cpp_source_l00158}00158\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ If\ pointer\ extraction\ was\ successful,\ pass\ it\ to\ VTK\ Writer}}
+\DoxyCodeLine{\Hypertarget{_s_e___output_8cpp_source_l00159}00159\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (dataPtr)\ \{}
+\DoxyCodeLine{\Hypertarget{_s_e___output_8cpp_source_l00160}00160\ \ \ \ \ \ \ \ \ \ \ writer.\mbox{\hyperlink{class_g_r_p_d_1_1_i_o_1_1_writer_a7e4a72eaf9341956ce6345a37606270d}{setPointsVariable}}(vtkType,\ dataPtr,\ varName.c\_str(),\ finalDim);}
+\DoxyCodeLine{\Hypertarget{_s_e___output_8cpp_source_l00161}00161\ \ \ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
+\DoxyCodeLine{\Hypertarget{_s_e___output_8cpp_source_l00162}00162\ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{_logger_8h_a0c53e5566a3b790db039421523dd4637}{LOG\_WARNING}}(\textcolor{stringliteral}{"{}Data\ array\ for\ "{}}\ +\ varName\ +}
+\DoxyCodeLine{\Hypertarget{_s_e___output_8cpp_source_l00163}00163\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}\ is\ empty\ or\ null.\ Skipping."{}});}
+\DoxyCodeLine{\Hypertarget{_s_e___output_8cpp_source_l00164}00164\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_s_e___output_8cpp_source_l00165}00165\ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
+\DoxyCodeLine{\Hypertarget{_s_e___output_8cpp_source_l00166}00166\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{_logger_8h_a0c53e5566a3b790db039421523dd4637}{LOG\_WARNING}}(\textcolor{stringliteral}{"{}Unknown\ output\ variable\ requested:\ "{}}\ +\ varName\ +}
+\DoxyCodeLine{\Hypertarget{_s_e___output_8cpp_source_l00167}00167\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}.\ Skipping."{}});}
+\DoxyCodeLine{\Hypertarget{_s_e___output_8cpp_source_l00168}00168\ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_s_e___output_8cpp_source_l00169}00169\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_s_e___output_8cpp_source_l00170}00170\ \ \ \ \ \textcolor{comment}{//\ =================================================================}}
+\DoxyCodeLine{\Hypertarget{_s_e___output_8cpp_source_l00171}00171\ \ \ \ \ \textcolor{comment}{//\ 4.\ Execute\ writing}}
+\DoxyCodeLine{\Hypertarget{_s_e___output_8cpp_source_l00172}00172\ \ \ \ \ \textcolor{comment}{//\ =================================================================}}
+\DoxyCodeLine{\Hypertarget{_s_e___output_8cpp_source_l00173}00173\ \ \ \ \ writer.\mbox{\hyperlink{class_g_r_p_d_1_1_i_o_1_1_vtk_writer_a1b8dd5580a1982fc4790d1125cad864d}{write}}();}
+\DoxyCodeLine{\Hypertarget{_s_e___output_8cpp_source_l00174}00174\ }
+\DoxyCodeLine{\Hypertarget{_s_e___output_8cpp_source_l00175}00175\ \ \ \ \ \mbox{\hyperlink{_logger_8h_ac8e803773221119947b55f6ae85a9c63}{LOG\_INFO}}(\textcolor{stringliteral}{"{}Successfully\ exported\ data\ for\ model:\ "{}}\ +\ currentModelName);}
+\DoxyCodeLine{\Hypertarget{_s_e___output_8cpp_source_l00176}00176\ }
+\DoxyCodeLine{\Hypertarget{_s_e___output_8cpp_source_l00177}00177\ \ \ \}\ \textcolor{keywordflow}{catch}\ (\textcolor{keyword}{const}\ std::exception\ \&e)\ \{}
+\DoxyCodeLine{\Hypertarget{_s_e___output_8cpp_source_l00178}00178\ \ \ \ \ \mbox{\hyperlink{_logger_8h_a7ebf4c3b4fb05d6f9094089ded75cbdd}{LOG\_ERROR}}(\textcolor{stringliteral}{"{}Write\ process\ aborted:\ "{}}\ +\ std::string(e.what()));}
+\DoxyCodeLine{\Hypertarget{_s_e___output_8cpp_source_l00179}00179\ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_s_e___output_8cpp_source_l00180}00180\ \}}
+\DoxyCodeLine{\Hypertarget{_s_e___output_8cpp_source_l00181}00181\ }
+\DoxyCodeLine{\Hypertarget{_s_e___output_8cpp_source_l00182}00182\ \}\ \textcolor{comment}{//\ namespace\ GRPD::Engine}}
+
+\end{DoxyCode}

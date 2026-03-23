@@ -1,0 +1,87 @@
+<map id="main" name="main">
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,408,55,435"/>
+<area shape="rect" id="Node000002" href="$class_g_r_p_d_1_1_engine_1_1_solver_engine.html#ae2358165487a99020cc545ce52f06db2" title="初始化整个仿真工程（解析参数、生成网格、分配材料等）" alt="" coords="103,256,352,283"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="47,405,195,290,199,294,51,410"/>
+<area shape="rect" id="Node000023" href="$class_g_r_p_d_1_1_engine_1_1_solver_engine.html#ab2c03bf4a799a34fc311f2feeb122c23" title="将当前步的结果导出到文件" alt="" coords="107,408,348,435"/>
+<area shape="poly" id="edge27_Node000001_Node000023" title=" " alt="" coords="55,419,92,419,92,424,55,424"/>
+<area shape="rect" id="Node000036" href="$_start_8cpp.html#a07aaf1227e4d645f15e0a964f54ef291" title=" " alt="" coords="203,459,252,485"/>
+<area shape="poly" id="edge49_Node000001_Node000036" title=" " alt="" coords="56,428,103,444,188,463,187,468,102,449,54,433"/>
+<area shape="rect" id="Node000003" href="$class_g_r_p_d_1_1_engine_1_1_solver_engine.html#a052fb154b8437e3e0524fc66564bf8cf" title=" " alt="" coords="400,256,700,283"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="352,267,384,267,384,272,352,272"/>
+<area shape="rect" id="Node000013" href="$class_g_r_p_d_1_1_engine_1_1_solver_engine.html#ac2c98ee81cbbe31eba2bee2039ce6d8a" title=" " alt="" coords="414,104,687,131"/>
+<area shape="poly" id="edge14_Node000002_Node000013" title=" " alt="" coords="248,253,313,211,399,166,484,133,486,138,401,170,316,216,250,258"/>
+<area shape="rect" id="Node000016" href="$class_g_r_p_d_1_1_engine_1_1_solver_engine.html#a9fc81bb7535e7b58853ce0ad152b8832" title=" " alt="" coords="408,180,692,207"/>
+<area shape="poly" id="edge18_Node000002_Node000016" title=" " alt="" coords="287,253,475,208,476,213,288,258"/>
+<area shape="rect" id="Node000020" href="$class_g_r_p_d_1_1_engine_1_1_solver_engine.html#a0722c25a978ae0c5d314ab534c7c16eb" title=" " alt="" coords="414,332,687,359"/>
+<area shape="poly" id="edge23_Node000002_Node000020" title=" " alt="" coords="288,281,476,325,475,330,287,286"/>
+<area shape="rect" id="Node000004" href="$class_g_r_p_d_1_1_i_o_1_1_grpd_reader.html#a63f482039d38ccdffcb1ebb56d5d795f" title=" " alt="" coords="788,256,1016,283"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="701,267,772,267,772,272,701,272"/>
+<area shape="rect" id="Node000005" href="$class_g_r_p_d_1_1_b_c_1_1_b_c_registry.html#a3a54e461fc4431c434b746ec1d233f1a" title="使用注册的工厂函数创建边界条件实例" alt="" coords="1171,256,1397,283"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="1017,267,1155,267,1155,272,1017,272"/>
+<area shape="rect" id="Node000006" href="$class_g_r_p_d_1_1_core_1_1_p_d_simulater.html#a489fefd1c143eae35c1ed4fadb9922d4" title=" " alt="" coords="1147,307,1420,333"/>
+<area shape="poly" id="edge5_Node000004_Node000006" title=" " alt="" coords="1008,281,1163,301,1163,307,1008,286"/>
+<area shape="rect" id="Node000007" href="$class_g_r_p_d_1_1_core_1_1_p_d_simulater.html#a7be7e26d7c073283b7ca162eb8ab4ed3" title="获取物理场管理器引用" alt="" coords="1143,155,1425,181"/>
+<area shape="poly" id="edge6_Node000004_Node000007" title=" " alt="" coords="951,253,1055,216,1078,203,1103,191,1132,183,1134,188,1105,196,1081,208,1057,221,953,258"/>
+<area shape="rect" id="Node000008" href="$class_g_r_p_d_1_1_b_c_1_1_b_c_registry.html#a6cfc2f64f5427ff15db172217c81c5a6" title=" " alt="" coords="1164,205,1404,232"/>
+<area shape="poly" id="edge7_Node000004_Node000008" title=" " alt="" coords="1008,253,1163,232,1163,237,1008,258"/>
+<area shape="rect" id="Node000010" href="$class_g_r_p_d_1_1_i_o_1_1_grpd_reader.html#addce73bde28df30151f834abb4883aad" title=" " alt="" coords="1175,357,1392,384"/>
+<area shape="poly" id="edge10_Node000004_Node000010" title=" " alt="" coords="934,281,1010,312,1104,343,1160,354,1159,360,1103,348,1009,317,932,286"/>
+<area shape="rect" id="Node000009" href="$class_g_r_p_d_1_1_b_c_1_1_b_c_registry.html#a439b4293713a062dc0a4f467e423e15d" title=" " alt="" coords="1513,205,1752,232"/>
+<area shape="poly" id="edge8_Node000008_Node000009" title=" " alt="" coords="1404,216,1498,216,1498,221,1404,221"/>
+<area shape="poly" id="edge9_Node000009_Node000009" title=" " alt="" coords="1589,207,1581,197,1586,187,1604,181,1633,179,1664,181,1681,188,1679,193,1663,187,1633,184,1605,186,1589,191,1586,196,1593,203"/>
+<area shape="rect" id="Node000011" href="$class_g_r_p_d_1_1_i_o_1_1_grpd_reader.html#a17b521c3c8cf019fc84bcb483caef248" title="将逗号分隔的一行文本分割为修剪后的字段数组" alt="" coords="1512,383,1753,409"/>
+<area shape="poly" id="edge11_Node000010_Node000011" title=" " alt="" coords="1393,376,1497,383,1496,389,1393,381"/>
+<area shape="rect" id="Node000012" href="$class_g_r_p_d_1_1_i_o_1_1_grpd_reader.html#ad1d8c861446c6db8b22cec01bb971aef" title="去除字符串首尾空白字符" alt="" coords="1801,357,1992,384"/>
+<area shape="poly" id="edge13_Node000010_Node000012" title=" " alt="" coords="1393,368,1786,368,1786,373,1393,373"/>
+<area shape="poly" id="edge12_Node000011_Node000012" title=" " alt="" coords="1754,382,1786,379,1786,384,1754,387"/>
+<area shape="rect" id="Node000014" href="$class_g_r_p_d_1_1_field_1_1_physics_field_registry.html#a6bcfcb6ee9bf8138e1a13bcc46827849" title="获取单例" alt="" coords="750,48,1054,75"/>
+<area shape="poly" id="edge15_Node000013_Node000014" title=" " alt="" coords="638,101,799,75,800,80,639,106"/>
+<area shape="rect" id="Node000015" href="$class_g_r_p_d_1_1_field_1_1_physics_field_registry.html#a8e413d3fbed8bd784a7fd5ebe61db3e6" title=" " alt="" coords="1104,29,1464,56"/>
+<area shape="poly" id="edge16_Node000014_Node000015" title=" " alt="" coords="1055,51,1088,50,1088,55,1055,57"/>
+<area shape="poly" id="edge17_Node000015_Node000015" title=" " alt="" coords="1226,31,1216,20,1223,10,1246,5,1284,3,1327,6,1348,13,1346,18,1326,11,1284,8,1247,10,1226,15,1221,20,1230,27"/>
+<area shape="rect" id="Node000017" href="$class_g_r_p_d_1_1_material_1_1_material_registry.html#a285734d56128a301e45b8cccfcae077e" title="Create a material instance using the registered creator function." alt="" coords="748,180,1056,207"/>
+<area shape="poly" id="edge19_Node000016_Node000017" title=" " alt="" coords="693,191,733,191,733,196,693,196"/>
+<area shape="rect" id="Node000018" href="$class_g_r_p_d_1_1_material_1_1_material_registry.html#a56dfb719cd07d41839dd6b1539951b31" title=" " alt="" coords="755,117,1049,144"/>
+<area shape="poly" id="edge20_Node000016_Node000018" title=" " alt="" coords="629,177,808,145,809,150,630,182"/>
+<area shape="rect" id="Node000019" href="$class_g_r_p_d_1_1_material_1_1_material_registry.html#af7d23b701a1ddf210a943f06c854eaff" title=" " alt="" coords="1124,104,1444,131"/>
+<area shape="poly" id="edge21_Node000018_Node000019" title=" " alt="" coords="1049,123,1108,121,1108,126,1049,128"/>
+<area shape="poly" id="edge22_Node000019_Node000019" title=" " alt="" coords="1226,105,1216,95,1223,85,1246,79,1284,77,1327,80,1348,87,1346,93,1326,85,1284,83,1247,85,1226,90,1221,95,1230,101"/>
+<area shape="rect" id="Node000021" href="$class_g_r_p_d_1_1_i_o_1_1_grpd_reader.html#acb78b0d0f156c100e18690733e77c00f" title=" " alt="" coords="805,357,999,384"/>
+<area shape="poly" id="edge24_Node000020_Node000021" title=" " alt="" coords="688,353,790,360,790,365,687,358"/>
+<area shape="poly" id="edge26_Node000021_Node000010" title=" " alt="" coords="999,368,1160,368,1160,373,999,373"/>
+<area shape="rect" id="Node000022" href="$class_g_r_p_d_1_1_model_1_1_particle_manager.html#a7eff63be683fc494e88dc63c2b0a0d4a" title=" " alt="" coords="1145,408,1423,435"/>
+<area shape="poly" id="edge25_Node000021_Node000022" title=" " alt="" coords="999,381,1163,403,1162,408,999,386"/>
+<area shape="rect" id="Node000024" href="$class_g_r_p_d_1_1_engine_1_1_solver_engine.html#ae0ddc963dbdac522caa5757af29a5b61" title=" " alt="" coords="420,509,680,536"/>
+<area shape="poly" id="edge28_Node000023_Node000024" title=" " alt="" coords="307,433,353,444,434,472,505,500,503,505,432,477,351,449,305,438"/>
+<area shape="rect" id="Node000025" href="$class_g_r_p_d_1_1_model_1_1_particle_manager.html#a8a0367cb867ef47dbf420c8f1cdb9ed4" title="Get the ModelVar enum and data type for a given variable string name." alt="" coords="748,560,1056,587"/>
+<area shape="poly" id="edge29_Node000024_Node000025" title=" " alt="" coords="648,534,790,555,789,560,647,539"/>
+<area shape="rect" id="Node000026" href="$class_g_r_p_d_1_1_i_o_1_1_writer.html#af482fb76eaa2ca4d205fda7ace1f652e" title=" " alt="" coords="797,611,1007,637"/>
+<area shape="poly" id="edge30_Node000024_Node000026" title=" " alt="" coords="583,534,658,565,749,596,785,605,783,610,748,601,656,570,581,539"/>
+<area shape="rect" id="Node000027" href="$class_g_r_p_d_1_1_i_o_1_1_writer.html#a7e4a72eaf9341956ce6345a37606270d" title=" " alt="" coords="785,459,1019,485"/>
+<area shape="poly" id="edge31_Node000024_Node000027" title=" " alt="" coords="647,506,789,485,790,491,648,511"/>
+<area shape="rect" id="Node000028" href="$class_g_r_p_d_1_1_i_o_1_1_vtk_writer.html#a1b8dd5580a1982fc4790d1125cad864d" title=" " alt="" coords="812,509,992,536"/>
+<area shape="poly" id="edge32_Node000024_Node000028" title=" " alt="" coords="680,520,796,520,796,525,680,525"/>
+<area shape="rect" id="Node000029" href="$class_g_r_p_d_1_1_i_o_1_1_vtk_writer.html#a7c9480d24256a0d76573ecd293f4061c" title=" " alt="" coords="1179,459,1389,485"/>
+<area shape="poly" id="edge33_Node000028_Node000029" title=" " alt="" coords="992,508,1163,485,1164,491,993,513"/>
+<area shape="rect" id="Node000033" href="$class_g_r_p_d_1_1_i_o_1_1_vtk_writer.html#aeb1dff64cbed6913962b5aefd6a3a8e5" title=" " alt="" coords="1165,509,1403,536"/>
+<area shape="poly" id="edge37_Node000028_Node000033" title=" " alt="" coords="993,520,1149,520,1149,525,993,525"/>
+<area shape="rect" id="Node000034" href="$class_g_r_p_d_1_1_i_o_1_1_vtk_writer.html#a767b2794d14b6f8f23d7c02bf94e0e5e" title=" " alt="" coords="1175,560,1392,587"/>
+<area shape="poly" id="edge41_Node000028_Node000034" title=" " alt="" coords="993,532,1163,555,1163,560,992,537"/>
+<area shape="rect" id="Node000035" href="$class_g_r_p_d_1_1_i_o_1_1_vtk_writer.html#a77ccb911a0204bd7910ac9e5f4664368" title=" " alt="" coords="1152,611,1416,637"/>
+<area shape="poly" id="edge45_Node000028_Node000035" title=" " alt="" coords="993,525,1026,533,1057,546,1073,558,1082,572,1090,585,1105,596,1138,609,1136,614,1102,601,1086,589,1077,575,1069,562,1054,550,1024,538,992,530"/>
+<area shape="rect" id="Node000030" href="$class_g_r_p_d_1_1_i_o_1_1_vtk_writer.html#a7c29560e76873133809fa2d245f6cb49" title=" " alt="" coords="1515,535,1750,561"/>
+<area shape="poly" id="edge34_Node000029_Node000030" title=" " alt="" coords="1390,478,1465,495,1489,507,1513,520,1537,528,1535,533,1511,525,1487,512,1463,500,1389,483"/>
+<area shape="rect" id="Node000031" href="$class_g_r_p_d_1_1_i_o_1_1_vtk_writer.html#a7090e6a3309a6fb4565fd5636fd3873e" title=" " alt="" coords="1528,585,1737,612"/>
+<area shape="poly" id="edge35_Node000029_Node000031" title=" " alt="" coords="1390,469,1429,478,1466,495,1483,514,1491,534,1498,554,1514,571,1521,576,1518,580,1510,575,1493,556,1486,536,1479,517,1462,499,1427,483,1389,474"/>
+<area shape="rect" id="Node000032" href="$class_g_r_p_d_1_1_i_o_1_1_vtk_writer.html#a034983e7a530bf7f918eb7f1ddc5fac2" title=" " alt="" coords="1524,484,1741,511"/>
+<area shape="poly" id="edge36_Node000029_Node000032" title=" " alt="" coords="1390,477,1509,486,1508,491,1389,482"/>
+<area shape="poly" id="edge38_Node000033_Node000030" title=" " alt="" coords="1404,529,1500,536,1500,541,1403,534"/>
+<area shape="poly" id="edge39_Node000033_Node000031" title=" " alt="" coords="1404,531,1465,545,1489,558,1513,571,1537,578,1535,583,1511,576,1487,563,1463,551,1403,536"/>
+<area shape="poly" id="edge40_Node000033_Node000032" title=" " alt="" coords="1403,511,1508,504,1509,509,1404,517"/>
+<area shape="poly" id="edge42_Node000034_Node000030" title=" " alt="" coords="1393,563,1500,555,1500,560,1393,568"/>
+<area shape="poly" id="edge43_Node000034_Node000031" title=" " alt="" coords="1393,579,1513,587,1512,593,1393,584"/>
+<area shape="poly" id="edge44_Node000034_Node000032" title=" " alt="" coords="1392,562,1463,545,1487,533,1511,520,1535,513,1537,518,1513,525,1489,538,1465,551,1394,567"/>
+<area shape="poly" id="edge46_Node000035_Node000030" title=" " alt="" coords="1415,608,1463,596,1487,584,1511,571,1535,563,1537,568,1513,576,1489,589,1465,601,1416,613"/>
+<area shape="poly" id="edge47_Node000035_Node000031" title=" " alt="" coords="1416,612,1513,605,1513,610,1416,617"/>
+<area shape="poly" id="edge48_Node000035_Node000032" title=" " alt="" coords="1415,616,1440,608,1462,597,1479,579,1486,560,1493,540,1510,521,1518,516,1521,520,1514,525,1498,542,1491,562,1483,582,1466,601,1442,613,1417,622"/>
+</map>

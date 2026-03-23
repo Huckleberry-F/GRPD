@@ -1,5 +1,5 @@
-#ifndef GRPD_FIELD_PHYSICS_FIELD_REGISTRY_H
-#define GRPD_FIELD_PHYSICS_FIELD_REGISTRY_H
+#ifndef PDCOMMON_FIELD_PHYSICS_FIELD_REGISTRY_H
+#define PDCOMMON_FIELD_PHYSICS_FIELD_REGISTRY_H
 
 // ============================================================================
 // PhysicsFieldRegistry.h - 物理场配置器注册中心 (单例)
@@ -14,8 +14,9 @@
 #include <map>
 #include <memory>
 #include <string>
+#include <vector>
 
-namespace GRPD::Field {
+namespace PDCommon::Field {
 
 typedef std::function<std::unique_ptr<PhysicsFields>()> PhysicsFieldsCreatorFunc;
 
@@ -41,6 +42,9 @@ public:
     /// @brief 检查是否已注册某类型
     bool hasType(const std::string &type) const;
 
+    /// @brief 获取所有已注册的类型名列表
+    std::vector<std::string> getRegisteredTypes() const;
+
 private:
     PhysicsFieldRegistry() = default;
     ~PhysicsFieldRegistry() = default;
@@ -57,13 +61,13 @@ private:
     namespace {                                                                \
     struct PhysicsFieldsRegistrar_##Type {                                      \
         PhysicsFieldsRegistrar_##Type() {                                      \
-            GRPD::Field::PhysicsFieldRegistry::getInstance().registerType(      \
+            PDCommon::Field::PhysicsFieldRegistry::getInstance().registerType(      \
                 #Type, []() { return std::make_unique<Class>(); });             \
         }                                                                      \
     };                                                                         \
     static PhysicsFieldsRegistrar_##Type global_PhysicsFieldsRegistrar_##Type;  \
     }
 
-} // namespace GRPD::Field
+} // namespace PDCommon::Field
 
-#endif // GRPD_FIELD_PHYSICS_FIELD_REGISTRY_H
+#endif // PDCOMMON_FIELD_PHYSICS_FIELD_REGISTRY_H

@@ -4,7 +4,7 @@
 
 #include "Material.h"
 
-namespace GRPD::Material {
+namespace PDCommon::Material {
 
 // 基础类实现
 Material::Material(const std::string &name) : name_(name), matId_(-1) {}
@@ -21,9 +21,13 @@ void Material::initialize(const YAML::Node &matNode) {
   // 默认空实现，子类可覆盖以处理具体的 YAML 数据
 }
 
-void Material::allocateStateVariables(GRPD::Field::FieldManager &fm) {
-  // 默认空实现，子类覆盖以注册材料私有的状态变量场
-  // 例如：ThermalMat 注册 HeatFlux, ElasticMat 注册 Stress/Strain
+void Material::allocateStateVariables(PDCommon::Field::FieldManager &fm) {
+  // 默认空实现，子类覆盖以注册材料私有的特定场（非 SDV 池模式）
 }
 
-} // namespace GRPD::Material
+size_t Material::getNumStateVariables() const {
+  // 默认返回 0，不需要池化状态变量
+  return 0;
+}
+
+} // namespace PDCommon::Material

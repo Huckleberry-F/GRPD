@@ -6,7 +6,7 @@
 #include "FieldRegistry.h"
 #include "Logger.h"
 
-namespace GRPD::Field {
+namespace PDCommon::Field {
 
 // ---------------------------------------------------------------------------
 // 查询接口
@@ -75,4 +75,4 @@ void FieldManager::resizeAll(size_t numParticles) {
              " fields for " + std::to_string(numParticles) + " particles.");
 }
 
-} // namespace GRPD::Field
+} // namespace PDCommon::Field

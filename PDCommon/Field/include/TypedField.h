@@ -1,5 +1,5 @@
-#ifndef GRPD_FIELD_TYPED_FIELD_H
-#define GRPD_FIELD_TYPED_FIELD_H
+#ifndef PDCOMMON_FIELD_TYPED_FIELD_H
+#define PDCOMMON_FIELD_TYPED_FIELD_H
 
 // ============================================================================
 // TypedField.h - 模板物理场类 (原 Field<T>，纯头文件)
@@ -13,7 +13,7 @@
 #include <algorithm>
 #include <vector>
 
-namespace GRPD::Field {
+namespace PDCommon::Field {
 
 /// @brief 模板物理场类
 /// @tparam T 数据类型，默认为 double（支持 int 等扩展）
@@ -103,6 +103,6 @@ private:
     std::vector<T> data_; // SoA 连续内存存储：长度 = numParticles * dim_
 };
 
-} // namespace GRPD::Field
+} // namespace PDCommon::Field
 
-#endif // GRPD_FIELD_TYPED_FIELD_H
+#endif // PDCOMMON_FIELD_TYPED_FIELD_H

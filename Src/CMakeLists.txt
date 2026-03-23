@@ -20,17 +20,19 @@ target_include_directories(${PROJECT_NAME} PRIVATE
 target_link_libraries(${PROJECT_NAME} PRIVATE 
     PDCommon 
     Engine_Obj 
+    PDSolve_Obj
     Material_Obj 
     BC_Obj 
     IO_Obj 
     Model_Obj 
-    Initial_Obj
+    Neighbor_Obj
     Core_Obj
+    Field_Obj
+    Kernel_Obj
+    Integration_Obj
 )
 
 
 # 3. Add Engine component
 add_subdirectory(Engine)
-
-# 4. (Solve directory no longer explicitly needed here if moved to Engine, or keep if other files exist)
-add_subdirectory(Solve)
+add_subdirectory(Integration)

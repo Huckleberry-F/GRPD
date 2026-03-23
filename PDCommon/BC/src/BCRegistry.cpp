@@ -6,7 +6,7 @@
 #include "Logger.h"
 #include <stdexcept>
 
-namespace GRPD::BC {
+namespace PDCommon::BC {
 
 // ---------------------------------------------------------------------------
 // 单例实例获取
@@ -24,8 +24,6 @@ void BCRegistry::registerBCType(const std::string &type,
     if (registryMap_.find(type) != registryMap_.end()) {
         LOG_WARNING("[BCRegistry] BC type '" + type +
                     "' already registered, overwriting.");
-    } else {
-        LOG_INFO("[BCRegistry] BC type '" + type + "' registered.");
     }
     registryMap_[type] = creator;
 }
@@ -43,4 +41,13 @@ std::unique_ptr<BC> BCRegistry::createBC(const std::string &type,
     return it->second(name);
 }
 
-} // namespace GRPD::BC
+std::vector<std::string> BCRegistry::getRegisteredTypes() const {
+    std::vector<std::string> types;
+    types.reserve(registryMap_.size());
+    for (const auto &[key, _] : registryMap_) {
+        types.push_back(key);
+    }
+    return types;
+}
+
+} // namespace PDCommon::BC

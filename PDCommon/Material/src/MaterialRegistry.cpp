@@ -6,7 +6,7 @@
 #include "Logger.h"
 #include <stdexcept>
 
-namespace GRPD::Material {
+namespace PDCommon::Material {
 
 // ---------------------------------------------------------------------------
 // 单例实例获取
@@ -24,9 +24,6 @@ void MaterialRegistry::registerMaterialType(const std::string &type,
   if (registryMap_.find(type) != registryMap_.end()) {
     LOG_WARNING("[MaterialRegistry] Material type '" + type +
                 "' has been registry, overwrite it.");
-  } else {
-    LOG_INFO("[MaterialRegistry] Material type '" + type +
-             "' has been registry.");
   }
   registryMap_[type] = creator;
 }
@@ -49,4 +46,13 @@ MaterialRegistry::createMaterial(const std::string &type,
   return it->second(name);
 }
 
-} // namespace GRPD::Material
+std::vector<std::string> MaterialRegistry::getRegisteredTypes() const {
+  std::vector<std::string> types;
+  types.reserve(registryMap_.size());
+  for (const auto &[key, _] : registryMap_) {
+    types.push_back(key);
+  }
+  return types;
+}
+
+} // namespace PDCommon::Material

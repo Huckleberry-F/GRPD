@@ -1,5 +1,5 @@
-#ifndef GRPD_BC_BC_MANAGER_H
-#define GRPD_BC_BC_MANAGER_H
+#ifndef PDCOMMON_BC_BC_MANAGER_H
+#define PDCOMMON_BC_BC_MANAGER_H
 
 // ============================================================================
 // BCManager.h - 边界条件实例管理器 (非单例，每个模型一个)
@@ -13,7 +13,7 @@
 #include <memory>
 #include <vector>
 
-namespace GRPD::BC {
+namespace PDCommon::BC {
 
 class BCManager {
 public:
@@ -54,6 +54,6 @@ private:
     std::vector<std::unique_ptr<BC>> bcs_;
 };
 
-} // namespace GRPD::BC
+} // namespace PDCommon::BC
 
-#endif // GRPD_BC_BC_MANAGER_H
+#endif // PDCOMMON_BC_BC_MANAGER_H

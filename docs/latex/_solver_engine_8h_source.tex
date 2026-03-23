@@ -1,0 +1,62 @@
+\doxysection{Solver\+Engine.\+h}
+\hypertarget{_solver_engine_8h_source}{}\label{_solver_engine_8h_source}\index{Src/Engine/include/SolverEngine.h@{Src/Engine/include/SolverEngine.h}}
+\mbox{\hyperlink{_solver_engine_8h}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\Hypertarget{_solver_engine_8h_source_l00001}00001\ \textcolor{preprocessor}{\#ifndef\ SOLVERENGINE\_H}}
+\DoxyCodeLine{\Hypertarget{_solver_engine_8h_source_l00002}00002\ \textcolor{preprocessor}{\#define\ SOLVERENGINE\_H}}
+\DoxyCodeLine{\Hypertarget{_solver_engine_8h_source_l00003}00003\ }
+\DoxyCodeLine{\Hypertarget{_solver_engine_8h_source_l00004}00004\ \textcolor{comment}{//\ ============================================================================}}
+\DoxyCodeLine{\Hypertarget{_solver_engine_8h_source_l00005}00005\ \textcolor{comment}{//\ SolverEngine.h\ -\/\ 仿真引擎主控类}}
+\DoxyCodeLine{\Hypertarget{_solver_engine_8h_source_l00006}00006\ \textcolor{comment}{//\ 责任：}}
+\DoxyCodeLine{\Hypertarget{_solver_engine_8h_source_l00007}00007\ \textcolor{comment}{//\ 1.\ 作为整个控制台应用程序\ (Src)\ 的最高级生命周期管家}}
+\DoxyCodeLine{\Hypertarget{_solver_engine_8h_source_l00008}00008\ \textcolor{comment}{//\ 2.\ 调度底层物理世界的初始化、求解大循环和结果输出}}
+\DoxyCodeLine{\Hypertarget{_solver_engine_8h_source_l00009}00009\ \textcolor{comment}{//\ 3.\ 未来扩展\ FEM\ 等其他物理场时，将在这里进行模型组装和耦合调度}}
+\DoxyCodeLine{\Hypertarget{_solver_engine_8h_source_l00010}00010\ \textcolor{comment}{//\ ============================================================================}}
+\DoxyCodeLine{\Hypertarget{_solver_engine_8h_source_l00011}00011\ }
+\DoxyCodeLine{\Hypertarget{_solver_engine_8h_source_l00012}00012\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{_p_d_simulater_8h}{PDSimulater.h}}"{}}}
+\DoxyCodeLine{\Hypertarget{_solver_engine_8h_source_l00013}00013\ }
+\DoxyCodeLine{\Hypertarget{_solver_engine_8h_source_l00014}\mbox{\hyperlink{namespace_g_r_p_d}{00014}}\ \textcolor{keyword}{namespace\ }\mbox{\hyperlink{namespace_g_r_p_d_1_1_engine}{GRPD::Engine}}\ \{}
+\DoxyCodeLine{\Hypertarget{_solver_engine_8h_source_l00015}00015\ }
+\DoxyCodeLine{\Hypertarget{_solver_engine_8h_source_l00016}\mbox{\hyperlink{class_g_r_p_d_1_1_engine_1_1_solver_engine}{00016}}\ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_g_r_p_d_1_1_engine_1_1_solver_engine_a9e93565ca1a9b72b12e982379a8ef9e2}{SolverEngine}}\ \{}
+\DoxyCodeLine{\Hypertarget{_solver_engine_8h_source_l00017}00017\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{\Hypertarget{_solver_engine_8h_source_l00018}00018\ \ \ \mbox{\hyperlink{class_g_r_p_d_1_1_engine_1_1_solver_engine_a9e93565ca1a9b72b12e982379a8ef9e2}{SolverEngine}}();}
+\DoxyCodeLine{\Hypertarget{_solver_engine_8h_source_l00019}\mbox{\hyperlink{class_g_r_p_d_1_1_engine_1_1_solver_engine_a3d1f8f2bc4589b1980ace18b52a38274}{00019}}\ \ \ \mbox{\hyperlink{class_g_r_p_d_1_1_engine_1_1_solver_engine_a3d1f8f2bc4589b1980ace18b52a38274}{\string~SolverEngine}}()\ =\ \textcolor{keywordflow}{default};}
+\DoxyCodeLine{\Hypertarget{_solver_engine_8h_source_l00020}00020\ }
+\DoxyCodeLine{\Hypertarget{_solver_engine_8h_source_l00021}00021\ \ \ \textcolor{comment}{//\ 禁用拷贝}}
+\DoxyCodeLine{\Hypertarget{_solver_engine_8h_source_l00022}\mbox{\hyperlink{class_g_r_p_d_1_1_engine_1_1_solver_engine_a55a9089df3924703175fd373fe97f1e0}{00022}}\ \ \ \mbox{\hyperlink{class_g_r_p_d_1_1_engine_1_1_solver_engine_a55a9089df3924703175fd373fe97f1e0}{SolverEngine}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{class_g_r_p_d_1_1_engine_1_1_solver_engine_a9e93565ca1a9b72b12e982379a8ef9e2}{SolverEngine}}\ \&)\ =\ \textcolor{keyword}{delete};}
+\DoxyCodeLine{\Hypertarget{_solver_engine_8h_source_l00023}\mbox{\hyperlink{class_g_r_p_d_1_1_engine_1_1_solver_engine_a48303c6771f6d8181cd45d073ba9c829}{00023}}\ \ \ \mbox{\hyperlink{class_g_r_p_d_1_1_engine_1_1_solver_engine_a9e93565ca1a9b72b12e982379a8ef9e2}{SolverEngine}}\ \&\mbox{\hyperlink{class_g_r_p_d_1_1_engine_1_1_solver_engine_a48303c6771f6d8181cd45d073ba9c829}{operator=}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{class_g_r_p_d_1_1_engine_1_1_solver_engine_a9e93565ca1a9b72b12e982379a8ef9e2}{SolverEngine}}\ \&)\ =\ \textcolor{keyword}{delete};}
+\DoxyCodeLine{\Hypertarget{_solver_engine_8h_source_l00024}00024\ }
+\DoxyCodeLine{\Hypertarget{_solver_engine_8h_source_l00026}00026\ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_g_r_p_d_1_1_engine_1_1_solver_engine_ae2358165487a99020cc545ce52f06db2}{Initialize}}(\textcolor{keyword}{const}\ std::string\ \&yamlPath\ =\ \textcolor{stringliteral}{"{}../../Input/PD.yaml"{}});}
+\DoxyCodeLine{\Hypertarget{_solver_engine_8h_source_l00027}00027\ }
+\DoxyCodeLine{\Hypertarget{_solver_engine_8h_source_l00029}00029\ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_g_r_p_d_1_1_engine_1_1_solver_engine_ace63dd9a680b0bf8e5eb143c4e59dba6}{Solve}}();}
+\DoxyCodeLine{\Hypertarget{_solver_engine_8h_source_l00030}00030\ }
+\DoxyCodeLine{\Hypertarget{_solver_engine_8h_source_l00032}00032\ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_g_r_p_d_1_1_engine_1_1_solver_engine_ab2c03bf4a799a34fc311f2feeb122c23}{Output}}();}
+\DoxyCodeLine{\Hypertarget{_solver_engine_8h_source_l00033}00033\ }
+\DoxyCodeLine{\Hypertarget{_solver_engine_8h_source_l00034}00034\ \ \ \textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{\Hypertarget{_solver_engine_8h_source_l00035}00035\ \ \ \textcolor{comment}{//\ 【未来扩展预留接口示例】}}
+\DoxyCodeLine{\Hypertarget{_solver_engine_8h_source_l00036}00036\ \ \ \textcolor{comment}{//\ void\ InitializeFEM(const\ std::string\&\ femInpPath);}}
+\DoxyCodeLine{\Hypertarget{_solver_engine_8h_source_l00037}00037\ \ \ \textcolor{comment}{//\ void\ CoupledSolve();\ //\ 执行\ PD-\/FEM\ 耦合时间积分}}
+\DoxyCodeLine{\Hypertarget{_solver_engine_8h_source_l00038}00038\ \ \ \textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{\Hypertarget{_solver_engine_8h_source_l00039}00039\ }
+\DoxyCodeLine{\Hypertarget{_solver_engine_8h_source_l00040}00040\ \textcolor{keyword}{private}:}
+\DoxyCodeLine{\Hypertarget{_solver_engine_8h_source_l00041}00041\ \ \ \textcolor{comment}{//\ 分步初始化辅助函数}}
+\DoxyCodeLine{\Hypertarget{_solver_engine_8h_source_l00042}00042\ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_g_r_p_d_1_1_engine_1_1_solver_engine_a0722c25a978ae0c5d314ab534c7c16eb}{InitModelPD}}();}
+\DoxyCodeLine{\Hypertarget{_solver_engine_8h_source_l00043}00043\ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_g_r_p_d_1_1_engine_1_1_solver_engine_a9fc81bb7535e7b58853ce0ad152b8832}{InitMaterialPD}}();}
+\DoxyCodeLine{\Hypertarget{_solver_engine_8h_source_l00044}00044\ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_g_r_p_d_1_1_engine_1_1_solver_engine_ac2c98ee81cbbe31eba2bee2039ce6d8a}{InitFieldsPD}}();\ \ \ \ \ \ \textcolor{comment}{//\ 物理场与状态变量注册}}
+\DoxyCodeLine{\Hypertarget{_solver_engine_8h_source_l00045}00045\ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_g_r_p_d_1_1_engine_1_1_solver_engine_a052fb154b8437e3e0524fc66564bf8cf}{InitConditionsPD}}();\ \ \textcolor{comment}{//\ 载荷与边界条件读取}}
+\DoxyCodeLine{\Hypertarget{_solver_engine_8h_source_l00046}00046\ }
+\DoxyCodeLine{\Hypertarget{_solver_engine_8h_source_l00047}00047\ \ \ \textcolor{comment}{//\ PDE求解和输出的内部具体实现}}
+\DoxyCodeLine{\Hypertarget{_solver_engine_8h_source_l00048}00048\ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_g_r_p_d_1_1_engine_1_1_solver_engine_a5403d5bb766d5404681478f3a0343355}{SolvePD}}();}
+\DoxyCodeLine{\Hypertarget{_solver_engine_8h_source_l00049}00049\ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_g_r_p_d_1_1_engine_1_1_solver_engine_ae0ddc963dbdac522caa5757af29a5b61}{OutputPD}}();}
+\DoxyCodeLine{\Hypertarget{_solver_engine_8h_source_l00050}00050\ }
+\DoxyCodeLine{\Hypertarget{_solver_engine_8h_source_l00051}\mbox{\hyperlink{class_g_r_p_d_1_1_engine_1_1_solver_engine_a50b0e47e530f8919fd25b501f7a15348}{00051}}\ \ \ \mbox{\hyperlink{class_g_r_p_d_1_1_core_1_1_p_d_simulater}{GRPD::Core::PDSimulater}}\ \mbox{\hyperlink{class_g_r_p_d_1_1_engine_1_1_solver_engine_a50b0e47e530f8919fd25b501f7a15348}{pdContext\_}};}
+\DoxyCodeLine{\Hypertarget{_solver_engine_8h_source_l00052}00052\ }
+\DoxyCodeLine{\Hypertarget{_solver_engine_8h_source_l00053}00053\ \ \ \textcolor{comment}{//\ 【未来扩展】}}
+\DoxyCodeLine{\Hypertarget{_solver_engine_8h_source_l00054}00054\ \ \ \textcolor{comment}{//\ std::unique\_ptr<GRPD::Core::FEMSimulater>\ femContext\_;}}
+\DoxyCodeLine{\Hypertarget{_solver_engine_8h_source_l00055}00055\ \};}
+\DoxyCodeLine{\Hypertarget{_solver_engine_8h_source_l00056}00056\ }
+\DoxyCodeLine{\Hypertarget{_solver_engine_8h_source_l00057}00057\ \}\ \textcolor{comment}{//\ namespace\ GRPD::Engine}}
+\DoxyCodeLine{\Hypertarget{_solver_engine_8h_source_l00058}00058\ }
+\DoxyCodeLine{\Hypertarget{_solver_engine_8h_source_l00059}00059\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{//\ SOLVERENGINE\_H}}
+
+\end{DoxyCode}
