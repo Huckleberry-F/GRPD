@@ -1,0 +1,8 @@
+# Generate_py 文件夹：只保留脚本和配置模板
+# 排除大型 STL 几何文件和临时文件
+*.stl
+*.grpd
+*.bak
+Result_*/
+__pycache__/
+*.pyc

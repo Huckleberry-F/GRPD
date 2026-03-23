@@ -1,0 +1,6 @@
+# Examples 文件夹：只保留 YAML 配置和 STL 几何文件
+# 排除运行时生成的文件
+*.grpd
+Result_*/
+__pycache__/
+*.pyc

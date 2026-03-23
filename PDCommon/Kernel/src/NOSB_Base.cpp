@@ -98,6 +98,9 @@ void NOSB_Base::ComputeShapeTensors(PDContext &ctx) {
   double *omegaPtr = neighborList.getBondFieldPtr("InfluenceWeight");
   const double horizon = neighborList.getHorizon();
 
+  // 从上下文获取模型维度
+  const int dim = ctx.getDimension();
+
   LOG_INFO(
       "[NOSB_Base] Computing InfluenceWeight + Shape Tensor Inverse (K^-1)...");
 
@@ -135,8 +138,15 @@ void NOSB_Base::ComputeShapeTensors(PDContext &ctx) {
 
     mmPtr[i] = mm_sum;
 
-    // 正则化：防止 2D 粒子（z=0 平面）导致 K 矩阵奇异
-    K += 1e-20 * Matrix3d::Identity();
+    // 2D 降维保护：强制 Z 轴满秩，使 K_inv(2,2) = 1.0，
+    // 从而严格消除 Z 方向数值噪音（deltaZ 严格为 0，乘 1.0 结果仍为 0）
+    if (dim == 2) {
+      K(2, 2) = 1.0;
+    }
+
+    // 通用正则化：基于迹(Trace)的动态小参量，防止 3D 畸形边界节点导致逆矩阵爆炸
+    double trace_K = K.trace();
+    K += (trace_K * 1e-6 + 1e-15) * Matrix3d::Identity();
 
     Matrix3d K_inv = K.inverse();
     Map<Matrix<double, 3, 3, RowMajor>> K_inv_map(&shapeInvPtr[i * 9]);

@@ -86,8 +86,19 @@ public:
   PDCommon::BC::BCManager &getBCManager() { return bcManager_; }
   const PDCommon::BC::BCManager &getBCManager() const { return bcManager_; }
 
+  // -----------------------------------------------------------------------
+  // 模型维度 (2D / 3D)
+  // -----------------------------------------------------------------------
+
+  /// @brief 获取模型维度 (2 或 3)
+  int getDimension() const { return dimension_; }
+
+  /// @brief 设置模型维度 (2 或 3)
+  void setDimension(int dim) { dimension_ = dim; }
+
 private:
   std::string name_;                                    ///< 模型名称
+  int dimension_ = 3;                                   ///< 模型维度 (默认 3D)
   PDCommon::Model::ParticleManager particleManager_;    ///< 粒子管理器
   PDCommon::Material::MaterialManager materialManager_; ///< 材料管理器
   PDCommon::Field::FieldManager fieldManager_;          ///< 物理场管理器

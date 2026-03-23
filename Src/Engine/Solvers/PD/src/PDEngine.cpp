@@ -6,6 +6,7 @@
 #include "PDEngineInitializer.h"
 #include "EngineRegistry.h"
 #include "FieldManager.h"
+#include "IOManager.h"
 #include "Logger.h"
 #include "Outputer.h"
 #include <string>
@@ -65,11 +66,6 @@ void PDEngine::Output(int step, double physicalTime) {
   try {
     YAML::Node config = YAML::LoadFile(yamlPath_);
 
-    if (!(config["Assembly"] && config["Assembly"]["OutputGrpd"])) {
-      LOG_ERROR("Key [Assembly][OutputGrpd] not found in YAML file!");
-      return;
-    }
-
     if (config["Writer"]) {
       if (config["Writer"]["Name"]) {
         customWriterName = config["Writer"]["Name"].as<std::string>();
@@ -120,13 +116,13 @@ void PDEngine::Output(int step, double physicalTime) {
     std::string finalOutputName =
         customWriterName.empty() ? currentModelName : customWriterName;
         
+    // 通过 IOManager 生成 VTK 输出路径（自动放入 Result_时间戳 文件夹）
+    auto &ioManager = PDCommon::IO::IOManager::getInstance();
     std::string vtkOutputPath;
     if (step >= 0) {
-      char timeBuffer[32];
-      snprintf(timeBuffer, sizeof(timeBuffer), "%.4f", physicalTime);
-      vtkOutputPath = "../../Output/" + finalOutputName + "_t" + std::string(timeBuffer) + ".vtk";
+      vtkOutputPath = ioManager.buildVtkPath(finalOutputName, step, physicalTime);
     } else {
-      vtkOutputPath = "../../Output/" + finalOutputName + "_output.vtk";
+      vtkOutputPath = ioManager.buildResultPath(finalOutputName + "_output.vtk");
     }
     LOG_INFO("Exporting to VTK format: " + vtkOutputPath);
 
