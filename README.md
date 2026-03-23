@@ -1,154 +1,182 @@
-# GRPD (General Rectangular Peridynamics) 🚀
+# General Peridynamics 🚀
 
-GRPD 是一个基于**现代 C++ (C++17)** 编写的高性能、高扩展性近场动力学 (Peridynamics) 求解引擎。目前主要实现了基于**非常规态基近场动力学 (NOSB-PD)** 的**各向同性热传导**求解。
-
-本项目在架构设计上追求**极致的模块化与解耦**，核心模块全部遵循 **"接口驱动 + Registry (注册中心) + Factory (工厂) + Singleton (单例)"** 的工业级设计模式。
+General Peridynamics (即原 GRPD) 是一个基于 **现代 C++ (C++17)** 编写的高性能、高扩展性近场动力学求解引擎。采用完全面向数据的设计和多态工厂架构，该引擎能够以极致的内存局部性和高度的模块化去处理多物理场（如各向同性热传导、动量方程）的非局部积分运算。其核心理论脱胎于 **非常规态基近场动力学 (NOSB-PD)**，为复杂域内的破裂与跨尺度问题提供强劲底层计算力。
 
 ---
 
-## 📌 版本更新日志
+## ✨ 核心特性与架构亮点
 
-### v1.3 — 彻底纯化 IO 多态架构 (当前版本)
-- **剔除遗留工具类**：完全删除了早期的硬编码神器 `GrpdReader`。
-- **解析逻辑内聚**：所有的文件解析操作（状态机、行分割）已完美融入 `GrpdMeshReader` 派生类实体中，实现了读取器的彻底自洽。
-- **提炼通用数据结构**：分离出 `MeshData` 静态数据泵方法，专门负责将格式无关的数据结构归一化并源源不断地压入底层的 `ParticleManager` 和 `FieldManager` 中。
+General Peridynamics 坚持极简的依赖项、严苛的性能优化以及面向工业级扩展的架构准则：
 
-### v1.2 — 多格式网格支持与 NOSB 表面修正
-- **MeshReader 体系**：引入了 `MeshReader` 抽象接口与 `MeshData` 通用中间数据结构。通过 `ReaderRegistry`（单例工厂）宏注册机制，支持按文件后缀名全自动静态注册网格解析器。
-- **NOSB 表面体积修正**：实现了基于实际邻域体积的表面修正因子，解决表面粒子因邻域截断导致的形状张量 $\mathbf{K}$ 不可逆缺陷，并加入孤立粒子防跳闸保护。
-- **孤岛切除手术**：预处理脚本当中引入 Open3D 空间结构树聚类扫描，前置过滤并抹除脱离大部队的游离死点。
+1. 🚀 **纯粹的面向数据设计 (Data-Oriented Design)**
+   抛弃传统“大对象裹挟数据”的重度封装。所有物理量按需经由 `FieldManager` 转化为连续的 SoA（结构体数组转数组结构体）存储（即成百上千个长度为 `NUM_PARTICLES` 的 `double*` 一级指针）。对计算核直接暴露连续数组，完全消灭指针追逐 (Pointer Chasing)，榨干 L1 高速缓存。
 
-### v1.1 — 全局路径管理与工作流重构
-- **智能上下文**：`IOManager` 单例接管全局路径，废除硬编码配置文件。用户在终端任意位置挂载 `PD.yaml` 即可唤醒程序。
-- **自动化结果归档**：建立 `Result_YYYYMMDD_HHMMSS/` 时间戳仓库机制。
+2. 🧩 **高度解耦的多态隔离与注册中心 (Registry & Factory)**
+   从底层的材料本构 (`Material`)、物理场清单 (`PhysicsFields`)，到边界解析器 (`MeshReader`)，全部采用单例工厂加编译期注册设计。只要新增一个对应类并调用注册宏，即可自动注入内核逻辑，无需对求解器本身进行任何硬编码修改，实现了功能“插拔”和极致解耦。
 
-### v1.0 — 初始核心版本
-- NOSB 架构抽象分离，多态核构建。
-- Silling 等多种非常规零能模式校正式的精准落装。
+3. ⚡ **全面并发指令驱动 (Parallel Native)**
+   利用 OpenMP 进行细粒度共享大数组并发调度。无论是巨量的距离和影响系数运算，还是状态张量的内部还原、断键惩罚以及积分方程的主循环，全链路铺满 `#pragma omp parallel for`，且无任何锁开销风险带来的竞争。
 
----
+4. 📂 **泛用型多格式无缝对接工作流**
+   从上游点云/网格到下游计算的入口已实现了标准化。内置 Python 工具集支持使用 Open3D 高速扫描构建含表面精修的百万级体素测试物，而内核 IO 则拥有解析自定义文本 (`.grpd`) 乃至经典分析网格 (`.inp`) 等多模态提取能力。
 
-## 🏗️ 核心架构体系深入剖析
-
-GRPD 在架构思路上，彻底摒弃了传统面向对象中“一个超级大对象管到底”的面条代码，而是实施了极致的**分层解耦**和**数据驱动**。
-
-整个项目按照数据和控制的流向，切分为以下四大层级领域：
-
-### 1. 📂 边界数据接入层 (IO Gateway)
-本层是外界数据进入内存宇宙的唯一关隘。
-- `IOManager`：总揽全局的雷达系统。它侦测工作目录、指明 `PD.yaml`、STL 与 `.grpd` 的位置。
-- `ReaderRegistry` & `MeshReader`：**多态翻译官**。任何外部文件格式（.grpd, .inp），都能在这里找到它的专属解码派生类，且无需修改核心源码。
-- `MeshData`：**万能中转站**。无论外界是点云还是 FEM 网格，读进来统统塞进这个标准扁平化的数据中枢大厅，供下游随意取用。
-
-### 2. 🏭 内存沙盒装砌层 (Assembly Factory)
-`PDEngineInitializer` 在第一步接管大局，它是掌控从混乱走向秩序的上帝之手：
-- `InitModel`：抽取 `MeshData` 并注入 `ParticleManager`。这是归一化步骤，将世界统一定义为无连接的散点池。
-- `InitMaterial`：给各个点注入物理灵魂属性。
-- `InitFields`：**大动脉开辟**。从 `PhysicsFieldRegistry` 获取场清单，并在 `FieldManager` 中分配百万级别的连续存储空间。
-- `InitConditions`：读取 `MeshData.loads`，转化为约束实体锁链。
-- `InitNeighbors`：计算构建并拉网形成百万级的 CRS 稀疏邻里映射表 `NeighborList`。
-
-### 3. 📦 高性能核心数据层 (Data Core)
-这是整个游戏的心脏数据仓库。PD 最大的敌人是内存跳跃，这里实现了**从 AoS 向 SoA（结构体数组转数组结构体）的极致革命**。
-- `PDContext`：上下文收纳盒。
-- `ParticleManager`：保留最基础的点拓扑学特征表。
-- **`FieldManager`（绝对核心）**：摒弃对象的封装幻觉，直接掌管成吨的 `double*` 裸指针连续大数组（如 Coords、Volume、Temperature）。这些大数组是喂给 L1 缓存狂飙突进的终极炮弹。
-
-### 4. ⚡ 狂暴求解运算层 (Solve Engine)
-数据集结完毕后，进入疯狂的时域迭代大回环！
-- `TimeIntegrator (ExplicitEuler)`：节拍器，推动时间滚轮，执行外层状态更新与边界条件压制。
-- `PDKernel (NOSB_Base & NOSB_T)`：**核心公式撕裂者**。在这个双层遍历深渊里，计算影响函数、组装形状张量、展开非局部积分与零能惩罚散度。
-- `Material (FourierThermalMat)`：计算法则裁定者。在极小尺度下裁决节点间状态演化的热力学响应定律。
-
-### 🛠️ 工作流图示
-
-```mermaid
-graph TB
-    %% IO 层
-    subgraph IOLayer ["📂 边界数据接入层"]
-        File[(".grpd / .inp File")] -->|ReaderRegistry 多态分发| MR(MeshReader)
-        MR -->|统一格式化提取| MD((MeshData))
-    end
-
-    %% 装砌层
-    subgraph InitLayer ["🏭 内存沙盒装砌层 (PDEngineInitializer)"]
-        MD --> InitM[InitModel]
-        InitM --> InitF[InitFields]
-        MD --> InitC[InitConditions\n处理 loads]
-    end
-
-    %% 数据层
-    subgraph DataCore ["📦 高性能核心数据层"]
-        InitM --> PM[(ParticleManager)]
-        InitF --> FM[(FieldManager \n SoA 纯指针群)]
-        InitC --> BCM[BCManager]
-        PM --> NL[NeighborList \n CSR稀疏邻域图]
-    end
-
-    %% 求解层
-    subgraph SolveEngine ["⚡ 狂暴求解运算层"]
-        TI[TimeIntegrator \n 驱动循环]
-        BCM -.强行覆写.-> TI
-        TI ==>|内循环并发| Ker[PDKernel \n 物理方程积分]
-        FM <==高速缓存打击==> Ker
-        NL -->|提供作用图谱| Ker
-        Ker <==调用本构==> Mat[Material \n 本构律法则]
-    end
-
-    IOLayer ===> InitLayer
-    InitLayer ===> DataCore
-    DataCore ===> SolveEngine
-```
+5. 🛡️ **表面体积修正与零能震荡抑制**
+   内嵌高精度非常规态基模型的体积补偿计算，彻底解决材料表面粒子因积分域被截断带来的非物理“软化”与形状张量不可逆缺陷；同时集成了高效抑制点阵空间零阶伪能震荡的算法模块机制。
 
 ---
 
-## ⚡ 性能优化与 HPC 技艺
+## 📸 效果演示
 
-1. **全面并发 (OpenMP)**: 底层所有沉重计算的双向循环均由 `#pragma omp parallel for` 进行高并发指令分发。
-2. **纯血 SoA 内存连续化**: 通过 `FieldManager` 统一接管连续大数组，对算法核心层暴露出原始 `double*`，换取 L1 缓存的极致利用率，粉碎传统大对象包裹带来的解引用开销。
-3. **消除动态虚表分派**: 大规模密集的频繁调用（如核距和影响系数），转为硬编码的偏特化匹配；避免多态成本阻断流水线。
-4. **表面截断预修正驻留**: 复杂的 $K^{-1}$ 形状张量和修正系数全部在 `Init` 阶段单次压制到邻域 CSR 的伴随 BondField 储存空间中。狂暴的计算态只需只读免算。
+> _(提示: 您可以在此处插入使用 ParaView 渲染的热传导、裂纹扩展、应力云图等动画或高质量截图。一张直观的结果图将是吸引使用者的最好招牌)_
 
 ---
 
-## 🚀 快速上手 (Setup & Trial)
+## 🚀 快速上手 (Quick Start)
 
-### 1. 环境准备
-- **Python (3.10+)**: 必须拥有 `pip install open3d numpy pyyaml pydantic`。
-- **C++ 17 编译器**: 推荐采用带有原生 OpenMP 的 TDM-GCC 或 Visual Studio 2019/2022+。
+让引擎跑起来只需简单几步！我们的计算管线通过 `PD.yaml` 灵活调度。
 
-### 2. 获取代码 (含有子模块！)
-必须带上 `--recurse-submodules` 指令拉取依赖！
+**1. 基本依赖准备**
+*   **C++17 编译器**（需支持 OpenMP）：例如 TDM-GCC 或 Visual Studio 2019/2022+。
+*   **CMake** (3.15+) 及 **Python** (3.10+)。Python 端依赖库请通过以下命令装载：
+    ```bash
+    pip install open3d numpy pyyaml pydantic
+    ```
+
+**2. 获取源码与编译**
+务必使用 `--recurse-submodules` 拉取第三方子模块（如 yaml-cpp）：
 ```bash
 git clone -b v1.1 --recurse-submodules https://github.com/Huckleberry-F/GRPD.git
 cd GRPD
-```
-
-### 3. 构建编译
-```bash
 mkdir build && cd build
-cmake -G "MinGW Makefiles" ..   # (Visual Studio 用户只需 cmake ..)
+# 生成工程 (Windows 环境使用 VS 则可以直接 cmake ..)
+cmake -G "MinGW Makefiles" ..   
+# 执行最终多线程构建
 cmake --build . --config Release -j 12
 ```
 
-### 4. 点火运行！
-1. 你的终端 `cd` 到任意有业务资料的目录，如 `cd Examples\Plate`
-2. 根据参数设定文件 `PD.yaml` 打造点云世界：`python ..\..\Generate_py\generate_model.py PD.yaml` 
-3. 一键出鞘，执行计算引擎：`..\..\bin\release\GRPD.exe`
-4. 爽快结算，目录里新增加的 `Result_XXXXXX/` 就是最终答卷，拖进 ParaView 尽情赏析。
+**3. 执行第一个算例**
+程序编译生成至 `bin/release/` 下。让我们以自带的 Box 测试用例为例：
+```bash
+# 1. 移步业务运行目录
+cd Examples\Box
+
+# 2. 调用 Python 前处理脚本引擎，根据 YAML 将 STL 立体离散化生成初始节点网络
+python ..\..\Generate_py\generate_model.py PD.yaml
+
+# 3. 轰鸣起动机，调用 C++ 引擎（它会自动拾取本目录的 PD.yaml）
+..\..\bin\release\GRPD.exe
+```
+计算结束后，当前目录下将自动生成形如 `Result_YYYYMMDD_HHMMSS/` 的时间戳数据包，直接向 ParaView 中一拉，即可探索分析您的模拟数据。
 
 ---
 
-## 📋 功能演进与未来路线
+## 🏗️ 引擎工作流与多层体系深入概览
 
-| 优先级 | 模块核心靶向 | 开发状态 |
-|--------|--------------|----------|
-| 🟢 P0 | **NOSB 核心架构分离重组，纯净热传导系统贯通** | ✅ 完成 |
-| 🟢 P1 | **IO 解析多态架构重建，格式归一化清洗** | ✅ 完成 |
-| 🔴 P1 | `NOSB_Mechanical` 与 `LinearElastic` **(力学心脏植入)** | 🏃 进行中 |
-| 🟡 P2 | 力学物理场 (`Displacement`, `Velocity`) 与动力学 `Velocity-Verlet` | 待启 |
-| 🟡 P2 | 位移锁喉和动量冲击边界 (`DisplacementBC`, `ForceBC`) | 待启 |
-| ⚪ P3 | `ThermoMechanical` 跨界大一统：冷热热应力耦合狂潮 | 待启 |
-| ⚪ P3 | `ADR` 动能衰减减震系统以及强非线性 `J2` 塑性本构 | 待启 |
+引擎的每一次“点火”，均按照以下 **6个核心层级** 依次激活与演化，每一层严格执行单一职责：
 
-> 👨‍💻 **领航员简报**: 我们刚刚在版本 `v1.3` 中对老旧的僵化代码进行了粉碎性的解耦革命。彻底分离的文件分析器与高度标准化的 `MeshData` 中转池不仅确保了热核系统的澄澈，更是打造出了足以支撑未来巨大扩展的强固地基。现在，向着深沉且艰难的大位移与形变领域的进军钟声，已经敲响！
+### 第 1 层：输入解析控制层 (IO & Parsing Gateway) 
+这是外部世界与引擎握手的接驳点。
+*   由 `IOManager` 自动寻获当前运行环境下的 `PD.yaml` 并转换为引擎参数结构。
+*   调用 `ReaderRegistry` 获取当前环境最适配的 `MeshReader` 派生类。不管是点云结构还是 FEM 网格拓扑，统一翻译剥离并存储为高度扁平化、脱水的 `MeshData` 对象。
+
+### 第 2 层：预处理与内存初始化池 (Initialization Pool)
+从混沌进入有序状态。主导权交由 `PDEngineInitializer`：
+*   由 `InitModel` 将 `MeshData` 的点数据转换为粒子抽象身份 (`ParticleManager`)。
+*   由 `InitNeighbors` 计算邻域范围并压紧生成数以百万计的稀疏映射池 (`NeighborList`)，并一次性进行体积修复计算。至此，拓扑连接完成建立并固化。
+
+### 第 3 层：大容量连续场接管层 (Core Data Fields)
+整个底层的高性能命脉。
+*   基于给定的 `Physics Type` 和材料种类，工厂会唤醒对应的注册器。随即，`FieldManager` 会向内存开辟大块的线性连续存储区 (即 `double*`)，作为 `Temperature`、`Volume`，乃至 `State Variables` 的最终宿主，为下一步的指针狂潮做准备。
+
+### 第 4 层：时间积分与外力驱动器 (Time Integration & Drivers)
+引擎大循环的节拍器。
+*   这层主要承接 `TimeIntegrator` 显式或混合步进（例如 Explicit Euler, Velocity-Verlet）。
+*   在每次循环起步时下发外力和边界条件约束锁 (`BCManager`)。
+
+### 第 5 层：物理积分核方程体系 (Physics Integral Kernel)
+真正的数学计算深渊：非常规态基 (`NOSB_Base`) 内部架构处理。
+*   使用最高频的 OMP 并发大循环调取相邻空间相互作用系数。组装形状张量表观 $\mathbf{K}$ 并执行它的精确求逆；处理广义状态力和零能控制模式衰减惩罚并将其平铺。此层计算结果将回传直接影响粒子的运动状态更新。
+
+### 第 6 层：力学和物理本构层 (Material Constitutive)
+极微观尺度的裁决官。
+*   如 `FourierThermalMat` (傅立叶热传导法则) 等均以无状态类的单例形态存在。`PDKernel` 积分时仅负责传参下发，材料层计算应力、热通量响应值并回传反馈。两者完全解耦，绝不互相知晓各自内存结构。
+
+---
+
+## 📁 目录结构与功能注解
+
+```text
+General-Peridynamics/
+├── PDCommon/          # 核心底层通用架构与各类计算基底构件 (Core Base)
+│   ├── BC/            # → 边界约束容器：位移锁定/载荷外力管理
+│   ├── Core/          # → 全局类型定义与内存配置抽象基类
+│   ├── Field/         # → 数据大动脉：连续内存场(SoA)生态与分配池
+│   ├── IO/            # → 多态接驳口：结构化 YAML分析与多模态模型写入接口
+│   ├── Kernel/        # → 物理内循环组件：自定义惩罚与积分用工具箱
+│   ├── Material/      # → 本构计算枢纽：单实例材料法则模块与状态存储表
+│   ├── Model/         # → 模型构架图谱：承载网格转化信息的 ParticleManager
+│   ├── Neighbor/      # → 邻域搜索引擎：CSR大容量索引建设及表面截断修正库
+│   └── Utils/         # → 底层服务体系：日志打印系统、错误溯源捕手
+├── Src/               # 主求解核心与全生命周期组装厂
+│   ├── Engine/        # → 求解引擎多态池：定义Engine抽象机制与注册工厂
+│   │   └── Solvers/   #   └── 具体的求解机实现仓库 (如 PDEngine 及特供的初始化器)
+│   ├── Integration/   # → 时间演化推进器：多态的时间积分组件 (如 ExplicitEuler)
+│   └── main.cpp       # 引擎最高时序控制主点火程序入口
+├── Generate_py/       # 辅助 Python 前处理与网格体素工厂
+│   └── generate_model.py # → 使用 Open3D 构建高密度实体微元模型的瑞士军刀
+├── Examples/          # 工程应用与测试基准全解靶场
+│   ├── Box/           # → 均质长方体空间导热 Benchmark
+│   ├── Sphere/        # → 标准球体径向扩展 Benchmark
+│   ├── bone/          # → 特异性曲面网格 (如骨骼) 分析 Benchmark
+│   └── Engine/        # → 复杂装配体级仿真案例
+└── CMakeLists.txt     # 各平台编译一键流水线蓝本
+```
+
+
+---
+
+## 📌 版本更新日志 (Changelog)
+
+### v1.3 — 彻底纯化 IO 多态架构 (当前版本)
+- **剔除遗留硬编码**：完全删除了早期的粗暴读取类 `GrpdReader`。
+- **解析逻辑闭环**：全格式多态解码均已融入 `GrpdMeshReader` 及新派生体系内。
+- **提炼通用数据引擎**：实现了 `MeshData` 解耦数据泵，专门负责将外部点云拓扑无缝输送灌入底层物理场。
+
+### v1.2 — 多态网格接入与 NOSB 表面补偿
+- **自动 `MeshReader` 体系**：确立了基于文件后缀双向识别的多态工厂。
+- **空间孤岛切除**：前置 Python 脚本引入了基于 Open3D 树扫描的筛选器，前置抹除了脱离主体大部队的游离死点。
+- **NOSB 表面体积修正落地**：实现了基于实际邻域体积的修正补偿，抑制了表面截断引发的张量病态。
+
+### v1.1 — 全局路径接管与无锁化迭代
+- **智能工作目录**：`IOManager` 单例诞生，废除一切路径硬编码，程序开始基于本地 `PD.yaml` 机动执行。
+- **全局并发矩阵**：极限线程发掘的大规模稀疏邻接映射池构建完成。
+
+---
+
+## 📅 未来研究方向与学术计划 (Roadmap)
+
+当前的重构与开发已完成了 **底层架构极度提纯**，未来项目将沿着多物理耦合与防断裂机制的深水区全速推进。
+
+### ✅ Phase 0. 稳态/瞬态纯热场算法闭环与零能抑制补测 (Completed)
+- **热零能模式抑制 (Zero-Energy Mode Suppression) 多态实施**: 彻底完成了对点阵积分由于畸变/截面断裂所引发的虚假零能空间震荡进行多态化的补偿抑制。
+- **基准标定与 ANSYS 仿真校验**: 热传导全解模型的数据结果已与顶级商软 ANSYS 在同平台网格下完成了深度映射校验，核心算法结果分毫不差。
+
+### 🏃 Phase 1. 结构大变形内核扩张 (In Progress)
+- **`NOSB_Mechanical` 与弹性基础落地**: 为引擎实装力学内核基类，解算形变梯度张量。
+- **微观材料库搭建**: 植入可调的线弹性基元 (`LinearElastic`) 以及基本应力张量的相互转化链路，使系统具备基础的“抗力”。
+
+### 🔍 Phase 2. 高阶边界条件钳制与动态本领强化
+- **力学专属驱动**: 引入专用的边界条件（如位移死锁 `DisplacementBC` 和动量加压载荷 `ForceBC`）。
+- **动态加载场与时域查表加载机制**: 将原本单一的时不变边界条件全面升级拓展为依赖物理时间 `t`、实时函数或者多段数据表格 (Table Curve) 动态输入的前向演变载荷体系。
+- **动态循环增强**: 为 `TimeIntegrator` 装配动量计算引擎（如 `Velocity-Verlet`），实现波的精确传递。
+- **刚体接触判定**: 实现多独立物件间的空间排斥距离接触算法。
+
+### 🌌 Phase 3. 破裂损伤行为与耦合大业
+- **断键力学 (Damage & Failure)**: 给相邻键赋值临界伸长率，引入裂纹动态分叉与表面能量失效机制。彻底打开近场动力学处理非连续介质破坏的“杀手锏”功能。
+- **大耦合体系 (`ThermoMechanical`)**: 开放跨架构的数据交互通道，计算由于瞬时温度梯度引发的内部热应力形变，以及因塑性剧变而逆向产生的激波与聚热。
+- **强非线性降伏模块**: 开发包含 J2 等向强化效应等复杂塑性本构法则演算插件。
+
+### ⚡ Phase 4. 高性能力量跃迁计算架构
+- 向前探索基于 CUDA 的异构大规模并行核 `Gpu_PDKernel`，将局部积分加速率再次抬升量级尺度。探索与隐式时间迭代 `Implicit Integrator` 的底层联用设计。
+
+> 👨‍💻 **项目哲学**: 计算科学的代码架构应如其推导的微分算式一样——**严密、纯粹、互不冗余且无处不展现高度的数学秩序**。这就是 General Peridynamics 永远的追求目标。
