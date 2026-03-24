@@ -68,18 +68,18 @@ void NOSB_Base::ComputeShapeTensors(PDContext &ctx) {
   // 集中注册 NOSB 算法框架所需的工作场（仅此一次）
   // ===================================================================
   auto *shapeInvField = fieldManager.registerField<double>("ShapeTensorInv", 9);
-  auto *weightedVolField =
-      fieldManager.registerField<double>("WeightedVolume", 1);
+  auto *vHorizonField =
+      fieldManager.registerField<double>("VHorizon", 1);
 
   shapeInvField->resize(numParticles);
-  weightedVolField->resize(numParticles);
+  vHorizonField->resize(numParticles);
 
   shapeInvField->clearToZero();
-  weightedVolField->clearToZero();
+  vHorizonField->clearToZero();
 
   // 提取高性能 SoA 裸指针
   double *shapeInvPtr = shapeInvField->dataPtr();
-  double *mmPtr = weightedVolField->dataPtr();
+  double *vvPtr = vHorizonField->dataPtr();
   auto *coordsField = fieldManager.getFieldAs<double>("Coords");
   auto *volumeField = fieldManager.getFieldAs<double>("Volume");
   if (!coordsField || !volumeField) {
@@ -105,37 +105,7 @@ void NOSB_Base::ComputeShapeTensors(PDContext &ctx) {
       "[NOSB_Base] Computing InfluenceWeight + Shape Tensor Inverse (K^-1)...");
 
   // ===================================================================
-  // [PASS 0] 预计算每个粒子的邻域实际体积和，用于表面修正因子
-  // ===================================================================
-  const double PI = 3.14159265358979323846;
-  // 完整邻域体积：3D = (4/3)πδ³，2D = πδ²·dx
-  double dx_ref = std::cbrt(volumes[0]); // 参考粒子尺寸
-  double V_complete;
-  if (dim == 2) {
-    V_complete = PI * horizon * horizon * dx_ref; // 圆盘面积 × 厚度
-  } else {
-    V_complete = (4.0 / 3.0) * PI * horizon * horizon * horizon; // 球体积
-  }
-
-  // 计算每个粒子的实际邻域体积和
-  std::vector<double> volActual(numParticles, 0.0);
-
-#pragma omp parallel for schedule(static)
-  for (int i = 0; i < static_cast<int>(numParticles); ++i) {
-    double vSum = 0.0;
-    const int numNeighbors = neighborList.getNeighborCount(i);
-    const int *neighbors = neighborList.getNeighborIds(i);
-    for (int k = 0; k < numNeighbors; ++k) {
-      int j = neighbors[k];
-      if (j == -1)
-        continue;
-      vSum += volumes[j];
-    }
-    volActual[i] = vSum;
-  }
-
-  // ===================================================================
-  // [PASS 1] 计算影响函数权重 + 体积修正 K 累加 + K⁻¹
+  // [PASS 1] 计算影响函数权重 + 形状张量 K 累加 + K⁻¹
   // ===================================================================
   // 孤立粒子保护阈值：3D 至少需要 dim+1=4 个非共面邻居，2D 需要 3 个
   const int minNeighborsRequired = dim + 1;
@@ -164,26 +134,22 @@ void NOSB_Base::ComputeShapeTensors(PDContext &ctx) {
             GetInfluenceWeight(bondLens[k], horizon, kernelType_);
         double radij = std::cbrt(volumes[i]) * 0.5;
         double fac = GetPartialVolumeFactor(bondLens[k], horizon, radij);
-        omegaPtr[offset + k] = omega_raw * fac;
+        double omega = omega_raw * fac;
+        omegaPtr[offset + k] = omega;
       }
-      mmPtr[i] = 1.0; // 防止除零
+      vvPtr[i] = 1.0; // 防止除零
       Map<Matrix<double, 3, 3, RowMajor>> K_inv_map(&shapeInvPtr[i * 9]);
       K_inv_map = Matrix3d::Identity();
       continue;
     }
 
     // ---------------------------------------------------------------
-    // 正常粒子：带表面修正的 K 累加
+    // 正常粒子：标准的 K 累加 (NOSB中无需基于体积的表面刚度修正)
     // ---------------------------------------------------------------
     Vector3d xi(coords[i * 3], coords[i * 3 + 1], coords[i * 3 + 2]);
     Matrix3d K = Matrix3d::Zero();
-    double mm_sum = 0.0; // 加权体积累加器
-
-    // 粒子 i 的表面修正因子 g_i
-    double g_i = (volActual[i] > 1e-30) ? (V_complete / volActual[i]) : 1.0;
-    // 限幅：避免极端孤立粒子造成的修正过大
-    if (g_i > 5.0)
-      g_i = 5.0;
+    double sum_fac = 0.0;       // Σ fac_ij（部分体积因子之和）
+    double sum_omega_raw = 0.0; // Σ omega_raw_ij（原始核函数之和）
 
     for (int k = 0; k < numNeighbors; ++k) {
       int j = neighbors[k];
@@ -198,22 +164,19 @@ void NOSB_Base::ComputeShapeTensors(PDContext &ctx) {
       if (j == -1)
         continue;
 
-      // 粒子 j 的表面修正因子 g_j，取几何平均 g_ij
-      double g_j =
-          (volActual[j] > 1e-30) ? (V_complete / volActual[j]) : 1.0;
-      if (g_j > 5.0)
-        g_j = 5.0;
-      double g_ij = std::sqrt(g_i * g_j);
+      // 累加 VHorizon 分子分母
+      sum_fac += fac;
+      sum_omega_raw += omega_raw;
 
       Vector3d xj(coords[j * 3], coords[j * 3 + 1], coords[j * 3 + 2]);
       Vector3d deltaX = xj - xi;
 
       double vj = volumes[j];
-      K += omega * g_ij * (deltaX * deltaX.transpose()) * vj;
-      mm_sum += omega * g_ij * vj; // 修正后的加权体积
+      K += omega * (deltaX * deltaX.transpose()) * vj;
     }
 
-    mmPtr[i] = mm_sum;
+    // v_horizon = Σfac / Σω_raw（邻域部分体积修正比）
+    vvPtr[i] = (sum_omega_raw > 1e-30) ? (sum_fac / sum_omega_raw) : 1.0;
 
     // 2D 降维保护：强制 Z 轴满秩，使 K_inv(2,2) = 1.0，
     // 从而严格消除 Z 方向数值噪音（deltaZ 严格为 0，乘 1.0 结果仍为 0）

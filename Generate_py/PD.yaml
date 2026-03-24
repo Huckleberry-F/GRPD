@@ -12,16 +12,22 @@
 # 1. 全局设置
 Assembly: {}
 
-  # 2. 多模型几何定义
 Parts:
   - PartID: 1
-    MatID: 1
+    MatID: 1         # 默认底层材质：Steel (1号材质)
     Dimension: 3
     Thickness: 1.0
     Source: "Low_Res_Box.stl"
     RepairMesh: false
     dx: 1.0          # 先用较大的 dx 快速测试
-    Scale: 1.0     # Stanford Bunny 原始尺寸很小，需要放大
+    Scale: 1.0
+
+    # 【全新多材质粘合结构】
+    # 以这种方式，你可以把一半几何强制改成其它材质。
+    # 因为它们属于同一个 PartID，所以两类材质交界处会自动连通无物理裂缝！
+    MatRegions:
+      - MatID: 2     # 将坐标 X > 5 的半区覆盖为铝材 (2号材质)
+        Box: [5.0, 999.0, -999.0, 999.0, -999.0, 999.0]
 
     # 3. 边界条件
     # 左端面固定 500K，右端面绝热
@@ -50,6 +56,13 @@ Materials:
     Density: 7.85e-9         # tonne/mm³
     Conductivity: 45.0       # tonne·mm/(s³·K)
     HeatCapacity: 4.6e8      # mm²/(s²·K)
+
+  - MatID: 2
+    Name: "Aluminum_NmmTonne"
+    Type: "FourierThermalMat"
+    Density: 2.7e-9          # 铝的密度比钢轻得多
+    Conductivity: 237.0      # 铝的导热块得多
+    HeatCapacity: 9.0e8      # mm²/(s²·K)
 
 # 5. 求解器控制
 # dt_crit ≈ ρ·cp·dx² / (6k) = 7.85e-9 * 4.6e8 * 25 / 270 ≈ 0.334 s

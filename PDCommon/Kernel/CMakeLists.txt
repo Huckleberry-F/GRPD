@@ -4,12 +4,14 @@
 
 add_library(Kernel_Obj OBJECT 
     src/KernelRegistry.cpp
+    src/BB_Base.cpp
     src/NOSB_Base.cpp
     src/NOSB_T.cpp
 )
 
 target_sources(Kernel_Obj PRIVATE
     include/PDKernel.h
+    include/BB_Base.h
     include/NOSB_T.h
 )
 

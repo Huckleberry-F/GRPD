@@ -274,12 +274,21 @@ def generate_from_yaml(yaml_path):
 
         num_part_particles = len(x_flat)
         
+        # [NEW] 矢量化计算单 Part 内多材料区域
+        mat_flat = np.full(num_part_particles, mat_id, dtype=int)
+        if 'MatRegions' in part:
+            for region in part['MatRegions']:
+                box = region['Box']
+                r_mat = region.get('MatID', mat_id)
+                mask = in_box(x_flat, y_flat, z_flat, box)
+                mat_flat[mask] = r_mat
+
         # 将当前 Part 的点推入全局数组
         for i in range(num_part_particles):
             global_particles.append({
                 'ID': global_id,
                 'PartID': part_id,
-                'MatID': mat_id,
+                'MatID': mat_flat[i],
                 'X': x_flat[i],
                 'Y': y_flat[i],
                 'Z': z_flat[i],

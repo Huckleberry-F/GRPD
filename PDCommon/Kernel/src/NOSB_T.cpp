@@ -57,9 +57,15 @@ void NOSB_T::ComputeThermalState(PDContext &ctx) {
     return;
   }
 
-  // 2. 获取 NOSB 专属的工作场（已在 ComputeShapeTensors 中统一注册）
+  // 2. 获取 NOSB 专属的工作场
   auto *tempGradField = fieldManager.getFieldAs<double>("TempGradient");
   auto *heatFluxField = fieldManager.getFieldAs<double>("HeatFluxVec");
+  
+  double *ktPtr = nullptr;
+  if (zeroEnergyMethod_ == ZeroEnergyMethod::Zhang) {
+    auto *ktField = fieldManager.getFieldAs<double>("KT_Tensor");
+    if (ktField) ktPtr = ktField->dataPtr();
+  }
 
   if (!tempGradField || !heatFluxField) {
     LOG_ERROR("[NOSB_T] 'TempGradient' or 'HeatFluxVec' not found! Please run "
@@ -91,9 +97,9 @@ void NOSB_T::ComputeThermalState(PDContext &ctx) {
   // 获取预计算的影响函数权重 BondField
   const double *omegaPtr = neighborList.getBondFieldPtr("InfluenceWeight");
 
-  // 获取预计算的加权体积和邻域半径
-  auto *weightedVolField = fieldManager.getFieldAs<double>("WeightedVolume");
-  const double *mmPtr = weightedVolField->dataPtr();
+  // 获取预计算的部分体积因子比例
+  auto *vHorizonField = fieldManager.getFieldAs<double>("VHorizon");
+  const double *vvPtr = vHorizonField->dataPtr();
   const double horizon = neighborList.getHorizon();
 
   // 用于访问每颗粒子的绑定的具体 ThermalMaterial
@@ -187,8 +193,27 @@ void NOSB_T::ComputeThermalState(PDContext &ctx) {
       continue;
     double thermal_coeff = 1.0 / (rho * cp);
 
-    double G0 = zeroEnergyG0_ * k; // Silling 方法中 G = G0 * k
-    double mm_i = mmPtr[i];
+    double vv_i = vvPtr[i];
+
+    // --- Zhang 方法的 K_T 张量读取 ---
+    double KT_00 = 0, KT_01 = 0, KT_02 = 0;
+    double KT_10 = 0, KT_11 = 0, KT_12 = 0;
+    double KT_20 = 0, KT_21 = 0, KT_22 = 0;
+
+    int idx9_i = i * 9;
+    double i_k00 = shapeInvPtr[idx9_i], i_k01 = shapeInvPtr[idx9_i + 1],
+           i_k02 = shapeInvPtr[idx9_i + 2];
+    double i_k10 = shapeInvPtr[idx9_i + 3], i_k11 = shapeInvPtr[idx9_i + 4],
+           i_k12 = shapeInvPtr[idx9_i + 5];
+    double i_k20 = shapeInvPtr[idx9_i + 6], i_k21 = shapeInvPtr[idx9_i + 7],
+           i_k22 = shapeInvPtr[idx9_i + 8];
+
+    // 如果是 Zhang 方法，直接从内存中读取预计算好的各向异性惩罚刚度阵
+    if (zeroEnergyMethod_ == ZeroEnergyMethod::Zhang && ktPtr) {
+      KT_00 = ktPtr[idx9_i];     KT_01 = ktPtr[idx9_i + 1]; KT_02 = ktPtr[idx9_i + 2];
+      KT_10 = ktPtr[idx9_i + 3]; KT_11 = ktPtr[idx9_i + 4]; KT_12 = ktPtr[idx9_i + 5];
+      KT_20 = ktPtr[idx9_i + 6]; KT_21 = ktPtr[idx9_i + 7]; KT_22 = ktPtr[idx9_i + 8];
+    }
 
     double xi_x = coords[i * 3];
     double xi_y = coords[i * 3 + 1];
@@ -203,13 +228,7 @@ void NOSB_T::ComputeThermalState(PDContext &ctx) {
     double qi_y = fluxPtr[i * 3 + 1];
     double qi_z = fluxPtr[i * 3 + 2];
 
-    int idx9_i = i * 9;
-    double i_k00 = shapeInvPtr[idx9_i], i_k01 = shapeInvPtr[idx9_i + 1],
-           i_k02 = shapeInvPtr[idx9_i + 2];
-    double i_k10 = shapeInvPtr[idx9_i + 3], i_k11 = shapeInvPtr[idx9_i + 4],
-           i_k12 = shapeInvPtr[idx9_i + 5];
-    double i_k20 = shapeInvPtr[idx9_i + 6], i_k21 = shapeInvPtr[idx9_i + 7],
-           i_k22 = shapeInvPtr[idx9_i + 8];
+    // 已经在前面提取过了 i_k00 ... i_k22
 
     // KQ_i = K_i^-1 * q_i
     double KQi_x = i_k00 * qi_x + i_k01 * qi_y + i_k02 * qi_z;
@@ -270,10 +289,47 @@ void NOSB_T::ComputeThermalState(PDContext &ctx) {
       double deltaT_res_plus = deltaT_actual - deltaT_predicted_plus;
       double deltaT_res_minus = deltaT_actual - deltaT_predicted_minus;
 
-      rate_sum_ze += ComputeZeroEnergyModePenalty(
-          omega, deltaT_res_plus, bondLens[k_nb], vj, G0, mm_i, horizon);
-      rate_sum_ze += ComputeZeroEnergyModePenalty(
-          omega, deltaT_res_minus, bondLens[k_nb], vj, G0, mm_i, horizon);
+      if (zeroEnergyMethod_ == ZeroEnergyMethod::Zhang) {
+        // T_i 惩罚项
+        double xi_KT_x = KT_00 * dx + KT_01 * dy + KT_02 * dz;
+        double xi_KT_y = KT_10 * dx + KT_11 * dy + KT_12 * dz;
+        double xi_KT_z = KT_20 * dx + KT_21 * dy + KT_22 * dz;
+        double Z_i = omega * omega * (dx * xi_KT_x + dy * xi_KT_y + dz * xi_KT_z);
+        double G_Zhang_i = Z_i * vj * vvPtr[j];
+        
+        // T_j 惩罚项 (局部读取 KT_j)
+        int idx9_j = j * 9;
+        double KT_j_00 = ktPtr[idx9_j];
+        double KT_j_01 = ktPtr[idx9_j + 1];
+        double KT_j_02 = ktPtr[idx9_j + 2];
+        
+        double KT_j_10 = ktPtr[idx9_j + 3];
+        double KT_j_11 = ktPtr[idx9_j + 4];
+        double KT_j_12 = ktPtr[idx9_j + 5];
+        
+        double KT_j_20 = ktPtr[idx9_j + 6];
+        double KT_j_21 = ktPtr[idx9_j + 7];
+        double KT_j_22 = ktPtr[idx9_j + 8];
+
+        double j_xi_KT_x = KT_j_00 * dx + KT_j_01 * dy + KT_j_02 * dz;
+        double j_xi_KT_y = KT_j_10 * dx + KT_j_11 * dy + KT_j_12 * dz;
+        double j_xi_KT_z = KT_j_20 * dx + KT_j_21 * dy + KT_j_22 * dz;
+        double Z_j = omega * omega * (dx * j_xi_KT_x + dy * j_xi_KT_y + dz * j_xi_KT_z);
+        
+        double G_Zhang_j = Z_j * vj * vv_i;
+        
+        rate_sum_ze += zeroEnergyG0_ * G_Zhang_i * deltaT_res_plus;
+        rate_sum_ze += zeroEnergyG0_ * G_Zhang_j * deltaT_res_minus;
+      } else {
+        rate_sum_ze += ComputeZeroEnergyModePenalty(
+            omega, deltaT_res_plus, bondLens[k_nb], vj, zeroEnergyG0_ * kArr[i],
+            vv_i, horizon,
+            zeroEnergyG0_ * kArr[i] *
+                (i_k00 + i_k11 + i_k22)); // Silling G = G0*k; Wan G = G0*k*Tr(K)
+        rate_sum_ze += ComputeZeroEnergyModePenalty(
+            omega, deltaT_res_minus, bondLens[k_nb], vj, zeroEnergyG0_ * kArr[j],
+            vvPtr[j], horizon, zeroEnergyG0_ * kArr[j] * (j_k00 + j_k11 + j_k22));
+      }
     }
 
     double external_Q = ratePtr[i]; // 取出当前累加在里面的外部边界体积热源
@@ -300,6 +356,46 @@ void NOSB_T::preCompute(PDCommon::Core::PDContext &ctx) {
 
   tempGradField->resize(numParticles);
   heatFluxField->resize(numParticles);
+  tempGradField->clearToZero();
+  heatFluxField->clearToZero();
+
+  // 3. 在初始化阶段预计算 Zhang 方法的常数惩罚刚度张量 KT
+  if (zeroEnergyMethod_ == ZeroEnergyMethod::Zhang) {
+    auto *ktField = fieldManager.registerField<double>("KT_Tensor", 9);
+    ktField->resize(numParticles);
+    ktField->clearToZero();
+    
+    double *ktPtr = ktField->dataPtr();
+    auto *shapeInvField = fieldManager.getFieldAs<double>("ShapeTensorInv");
+    const double *shapeInvPtr = shapeInvField->dataPtr();
+    const auto &particles = manager.getAllParticles();
+    
+    #pragma omp parallel for schedule(static)
+    for (int i = 0; i < static_cast<int>(numParticles); ++i) {
+      auto *mat = dynamic_cast<PDCommon::Material::ThermalMaterial *>(particles[i].getMaterial());
+      if (!mat) continue;
+      double k = mat->getConductivity(); // 热传导系数
+      
+      int idx9 = i * 9;
+      double i_k00 = shapeInvPtr[idx9],     i_k01 = shapeInvPtr[idx9 + 1], i_k02 = shapeInvPtr[idx9 + 2];
+      double i_k10 = shapeInvPtr[idx9 + 3], i_k11 = shapeInvPtr[idx9 + 4], i_k12 = shapeInvPtr[idx9 + 5];
+      double i_k20 = shapeInvPtr[idx9 + 6], i_k21 = shapeInvPtr[idx9 + 7], i_k22 = shapeInvPtr[idx9 + 8];
+      
+      // KT_i = k_i * K_i^-1 * K_i^-1
+      ktPtr[idx9]     = k * (i_k00 * i_k00 + i_k01 * i_k10 + i_k02 * i_k20);
+      ktPtr[idx9 + 1] = k * (i_k00 * i_k01 + i_k01 * i_k11 + i_k02 * i_k21);
+      ktPtr[idx9 + 2] = k * (i_k00 * i_k02 + i_k01 * i_k12 + i_k02 * i_k22);
+      
+      ktPtr[idx9 + 3] = k * (i_k10 * i_k00 + i_k11 * i_k10 + i_k12 * i_k20);
+      ktPtr[idx9 + 4] = k * (i_k10 * i_k01 + i_k11 * i_k11 + i_k12 * i_k21);
+      ktPtr[idx9 + 5] = k * (i_k10 * i_k02 + i_k11 * i_k12 + i_k12 * i_k22);
+      
+      ktPtr[idx9 + 6] = k * (i_k20 * i_k00 + i_k21 * i_k10 + i_k22 * i_k20);
+      ktPtr[idx9 + 7] = k * (i_k20 * i_k01 + i_k21 * i_k11 + i_k22 * i_k21);
+      ktPtr[idx9 + 8] = k * (i_k20 * i_k02 + i_k21 * i_k12 + i_k22 * i_k22);
+    }
+    LOG_INFO("[NOSB_T] Precomputed KT_Tensor (Zhang penalty stiffness) globally in Phase 0.");
+  }
 }
 
 void NOSB_T::computeForceState(PDCommon::Core::PDContext &ctx) {

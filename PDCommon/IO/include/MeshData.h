@@ -15,6 +15,14 @@
 #include <string>
 #include <vector>
 
+// 前置声明（避免头文件循环依赖）
+namespace PDCommon::Field {
+class FieldManager;
+}
+namespace PDCommon::Model {
+class ParticleManager;
+}
+
 namespace PDCommon::IO {
 
 /// @brief 单元类型枚举（未来 FEM 扩展使用）
@@ -87,6 +95,18 @@ struct MeshData {
     elemTypes.clear();
     loads.clear();
   }
+  // =======================================================================
+  // 格式无关工具（从原 GrpdReader 迁入）
+  // =======================================================================
+
+  /// @brief 注册粒子基础几何场到 FieldManager (ID, PartID, MatID, Coords, Volume)
+  static void
+  ensureParticleFields(PDCommon::Field::FieldManager &fm);
+
+  /// @brief 将 ParticleManager 中的粒子几何数据回填到 FieldManager
+  static bool
+  populateParticleFields(const PDCommon::Model::ParticleManager &pm,
+                         PDCommon::Field::FieldManager &fm);
 };
 
 } // namespace PDCommon::IO

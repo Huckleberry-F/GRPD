@@ -6,7 +6,9 @@
 #include "PDEngineInitializer.h"
 #include "ExplicitEuler.h"
 #include "FieldManager.h"
-#include "GrpdReader.h"
+#include "MeshData.h"
+#include "BCManager.h"
+#include "BCRegistry.h"
 #include "IOManager.h"
 #include "ReaderRegistry.h"
 #include "KernelRegistry.h"
@@ -22,6 +24,7 @@
 #include <filesystem>
 #include <memory>
 #include <string>
+#include <map>
 #include <yaml-cpp/yaml.h>
 
 namespace Src::Engine::Solvers::PD {
@@ -288,7 +291,7 @@ void PDEngineInitializer::InitFields(PDCommon::Core::PDContext &ctx,
   }
 
   // 注册粒子基础几何场 (Coords, Volume, PartID 等)
-  PDCommon::IO::GrpdReader::ensureParticleFields(fieldManager);
+  PDCommon::IO::MeshData::ensureParticleFields(fieldManager);
 
   // 状态变量池 (SDV Pool) 初始化
   auto &matManager = ctx.getMaterialManager();
@@ -316,7 +319,7 @@ void PDEngineInitializer::InitFields(PDCommon::Core::PDContext &ctx,
   size_t numParticles = ctx.getParticleManager().getTotalParticles();
   fieldManager.resizeAll(numParticles);
 
-  if (!PDCommon::IO::GrpdReader::populateParticleFields(
+  if (!PDCommon::IO::MeshData::populateParticleFields(
           ctx.getParticleManager(), fieldManager)) {
     LOG_ERROR("[InitFields] Failed to populate particle fields from "
               "ParticleManager.");
@@ -329,7 +332,7 @@ void PDEngineInitializer::InitFields(PDCommon::Core::PDContext &ctx,
 }
 
 // ============================================================================
-// 4. 初始化边界条件：从 .grpd 文件读取并加载载荷
+// 4. 初始化边界条件：通过 MeshReader 读取载荷并施加
 // ============================================================================
 void PDEngineInitializer::InitConditions(PDCommon::Core::PDContext &ctx,
                                          const std::string &yamlPath) {
@@ -344,16 +347,58 @@ void PDEngineInitializer::InitConditions(PDCommon::Core::PDContext &ctx,
     exit(EXIT_FAILURE);
   }
 
-  // 从 .grpd 文件的 *LOAD 段读取载荷并施加到物理场
-  // 通过 IOManager 获取 .grpd 路径
-  std::string grpdPath =
-      PDCommon::IO::IOManager::getInstance().getGrpdPath().string();
+  // 通过多态 Reader 读取网格文件（包含 *LOAD 段）
+  auto &ioMgr = PDCommon::IO::IOManager::getInstance();
+  std::string grpdPath = ioMgr.getGrpdPath().string();
+  namespace fs = std::filesystem;
+  std::string ext = fs::path(grpdPath).extension().string();
 
-  LOG_INFO("[InitConditions] Reading load data from .grpd file: " + grpdPath);
-
-  if (!PDCommon::IO::GrpdReader::readLoads(grpdPath, ctx)) {
-    LOG_ERROR("[InitConditions] Failed to read loads from .grpd file!");
+  auto reader = PDCommon::IO::ReaderRegistry::getInstance().createReader(
+      ext, "LoadReader");
+  if (!reader || !reader->read(grpdPath)) {
+    LOG_ERROR("[InitConditions] Failed to read loads from file: " + grpdPath);
     return;
+  }
+
+  // 从 meshData_.loads 中施加边界条件
+  const auto &loads = reader->getMeshData().loads;
+  auto &fieldManager = ctx.getFieldManager();
+  auto &bcManager = ctx.getBCManager();
+
+  std::map<std::string, int> bcStats;
+
+  for (const auto &entry : loads) {
+    std::string bcName = entry.type + "_BC" + std::to_string(entry.bcID) +
+                         "_P" + std::to_string(entry.nodeID);
+
+    auto bc =
+        PDCommon::BC::BCRegistry::getInstance().createBC(entry.type, bcName);
+    if (!bc) {
+      LOG_WARNING("[InitConditions] Unknown BC type: " + entry.type);
+      bcStats["Unknown"]++;
+      continue;
+    }
+
+    std::vector<double> values = {entry.value};
+    // initialize 由各自的具体类型 (如 HeatFluxBC) 内部去获取自己专属的物理场并缓存换算系数
+    bc->initialize(fieldManager, entry.nodeID, values);
+
+    bcStats[entry.type]++;
+    bcManager.addBC(std::move(bc));
+  }
+
+  // ==================== 【基于多态的初始状态赋值】 ====================
+  // 不再硬编码检查 Temperature 或 Displacement。
+  // 通过统一调用 bcManager 驱动多态下的 apply()。
+  // 1. applySources: 初始化并换算由于边界带入的率场 (如 TempRate, HeatFlux, ForceDensity)
+  // 2. applyConstraints: 初始化约束场状态 (如设定 t=0 时的位移边界和恒温边界)
+  bcManager.applySources();
+  bcManager.applyConstraints();
+  // ====================================================================
+
+  LOG_INFO("[InitConditions] Load statistics:");
+  for (const auto &[type, count] : bcStats) {
+      LOG_INFO("  - " + type + " : " + std::to_string(count));
   }
 
   LOG_INFO("[InitConditions] Boundary conditions initialization complete.");

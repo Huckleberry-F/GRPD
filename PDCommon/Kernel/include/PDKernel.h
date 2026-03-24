@@ -23,6 +23,17 @@
 
 namespace PDCommon::Kernel {
 
+/// @brief 影响函数（核函数）权重类型
+enum class InfluenceKernelType {
+  Constant,
+  InverseDistance,
+  Linear,
+  Quadratic,
+  Cubic,
+  Quartic,
+  Gaussian
+};
+
 class PDKernel {
 public:
   virtual ~PDKernel() = default;
@@ -63,6 +74,39 @@ public:
 
 protected:
   PDKernel() = default; // 只允许子类构造
+  
+  InfluenceKernelType kernelType_{InfluenceKernelType::Constant};
+
+  /// @brief 获取指定核函数（影响函数）的权重值
+  inline double GetInfluenceWeight(double xi, double horizon,
+                            InfluenceKernelType type) const {
+    switch (type) {
+    case InfluenceKernelType::InverseDistance:
+      return (xi > 1e-16) ? (1.0 / xi) : 0.0;
+    case InfluenceKernelType::Constant:
+      return 1.0;
+    case InfluenceKernelType::Linear: {
+      double r = 1.0 - xi / horizon;
+      return (r > 0.0) ? r : 0.0;
+    }
+    case InfluenceKernelType::Quadratic: {
+      double r = 1.0 - xi / horizon;
+      return (r > 0.0) ? r * r : 0.0;
+    }
+    case InfluenceKernelType::Cubic: {
+      double r = 1.0 - xi / horizon;
+      return (r > 0.0) ? r * r * r : 0.0;
+    }
+    case InfluenceKernelType::Quartic: {
+      double r = 1.0 - xi / horizon;
+      return (r > 0.0) ? r * r * r * r : 0.0;
+    }
+    case InfluenceKernelType::Gaussian:
+      return std::exp(-(xi * xi) / (horizon * horizon));
+    default:
+      return 1.0;
+    }
+  }
 };
 
 } // namespace PDCommon::Kernel

@@ -8,22 +8,11 @@
 
 namespace PDCommon::Kernel {
 
-/// @brief 影响函数（核函数）类型
-enum class InfluenceKernelType {
-  Constant,        ///< 常数核：omega = 1.0
-  InverseDistance, ///< 经典倒数核：omega = 1.0 / xi
-  Linear,          ///< 线性核：omega = (1 - xi/delta)
-  Quadratic,       ///< 二次核：omega = (1 - xi/delta)^2
-  Cubic,           ///< 三次核：omega = (1 - xi/delta)^3
-  Quartic,         ///< 四次核：omega = (1 - xi/delta)^4
-  Gaussian         ///< 高斯核：omega = exp(-(xi/delta)^2)
-};
-
 /// @brief 零能模式修正方案
 enum class ZeroEnergyMethod {
-  Silling, ///< Silling 方法: G0 * omega * (deltaRes / |xi|^2) * Vj
-  Wan,     ///< Wan 方法: (TODO: 待填入公式)
-  Zhang    ///< Zhang 方法: (TODO: 待填入公式)
+  Silling, ///< Silling 方法: G0 * ω * (6k / πδ⁴) * (ΔTres / vv) * Vj
+  Wan,     ///< Wan 方法: G0 * k * trace(K⁻¹) * ω * ΔTres * Vj
+  Zhang    ///< Zhang 方法: 基于 KT = K⁻¹·D·K⁻¹ 二次型的各向异性惩罚
 };
 
 /// @brief 非常规态基近场动力学 (NOSB-PD) 通用基类
@@ -37,46 +26,10 @@ public:
   void configure(const YAML::Node &solverNode) override;
 
 protected:
-  InfluenceKernelType kernelType_{InfluenceKernelType::InverseDistance};
   ZeroEnergyMethod zeroEnergyMethod_{ZeroEnergyMethod::Silling};
   double zeroEnergyG0_{1.0};
 
-  /// @brief 获取指定核函数（影响函数）的权重值（内联：热路径百万级调用）
-  double GetInfluenceWeight(double xi, double horizon,
-                            InfluenceKernelType type) const {
-    switch (type) {
-    case InfluenceKernelType::InverseDistance:
-      return (xi > 1e-16) ? (1.0 / xi) : 0.0;
-    case InfluenceKernelType::Constant:
-      return 1.0;
-    case InfluenceKernelType::Linear: {
-      double r = 1.0 - xi / horizon;
-      return (r > 0.0) ? r : 0.0;
-    }
-    case InfluenceKernelType::Quadratic: {
-      double r = 1.0 - xi / horizon;
-      return (r > 0.0) ? r * r : 0.0;
-    }
-    case InfluenceKernelType::Cubic: {
-      double r = 1.0 - xi / horizon;
-      return (r > 0.0) ? r * r * r : 0.0;
-    }
-    case InfluenceKernelType::Quartic: {
-      double r = 1.0 - xi / horizon;
-      return (r > 0.0) ? r * r * r * r : 0.0;
-    }
-    case InfluenceKernelType::Gaussian:
-      return std::exp(-(xi * xi) / (horizon * horizon));
-    default:
-      return 1.0;
-    }
-  }
-
   /// @brief 计算物质点部分体积截断修正因子
-  /// 邻域边界处的粒子只有部分体积位于邻域球内，需要线性过渡修正
-  /// @param xi 键长 |ξ|
-  /// @param horizon 邻域半径 δ
-  /// @param radij 粒子半径 (通常 = dx/2 = cbrt(V)/2)
   double GetPartialVolumeFactor(double xi, double horizon, double radij) const {
     if (xi < horizon - radij)
       return 1.0;
@@ -86,36 +39,38 @@ protected:
       return 0.0;
   }
 
-  /// @brief 计算零能模式单键惩罚积分项（内联：热路径高频调用）
+  /// @brief 计算零能模式单键惩罚积分项（Silling / Wan 方法专用）
+  /// Zhang 方法因依赖键向量二次型，在 NOSB_T.cpp 内循环中直接展开
   /// @param omega 影响函数权重
   /// @param deltaState_res 非局部与局部状态差值
   /// @param xi 初始键长 |ξ|
   /// @param vj 邻居粒子体积
-  /// @param G 惩罚系数 (Silling 方法中 G = G0 * k)
-  /// @param mm 粒子 i 的加权体积 mi = Σ(ω * Vj)
+  /// @param G 惩罚系数 (Silling: G0 * k)
+  /// @param vv 粒子的邻域体积修正比 v_horizon = Σfac / Σω_raw
   /// @param horizon 邻域半径 δ
+  /// @param G_Wan Wan 方法惩罚系数 (G0 * k * trace(K⁻¹))
   double ComputeZeroEnergyModePenalty(double omega, double deltaState_res,
-                                      double xi, double vj, double G,
-                                      double mm, double horizon) const {
+                                      double xi, double vj, double G, double vv,
+                                      double horizon, double G_Wan) const {
     double xi2 = xi * xi;
     if (xi2 < 1e-16)
       return 0.0;
 
     switch (zeroEnergyMethod_) {
     case ZeroEnergyMethod::Silling: {
-      // Silling: G0 * ω * (6k / πδ⁴) * (ΔTres / mi) * Vj
+      // Silling: G0 * ω * (6k / πδ⁴) * (ΔTres / vv) * Vj
       double delta4 = horizon * horizon * horizon * horizon;
       double coeff = 6.0 * G / (3.141592653589793 * delta4);
-      return omega * coeff * (deltaState_res / mm) * vj;
+      return omega * coeff * (deltaState_res / vv) * vj;
     }
     case ZeroEnergyMethod::Wan:
-      // TODO: 填入 Wan 方法的公式
-      return omega * G * (deltaState_res / xi2) * vj;
+      return omega * G_Wan * deltaState_res * vj;
     case ZeroEnergyMethod::Zhang:
-      // TODO: 填入 Zhang 方法的公式
-      return omega * G * (deltaState_res / xi2) * vj;
+      // Zhang 方法在 NOSB_T.cpp 步骤 3 的内循环中直接展开（依赖键向量二次型）
+      // 此处 fallback：使用类似 Silling 的标量形式
+      return omega * G * deltaState_res * vj;
     default:
-      return omega * G * (deltaState_res / xi2) * vj;
+      return omega * G * deltaState_res * vj;
     }
   }
 
