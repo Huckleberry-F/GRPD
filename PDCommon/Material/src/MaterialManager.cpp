@@ -11,8 +11,12 @@ namespace PDCommon::Material {
 // ---------------------------------------------------------------------------
 // 添加材料实例
 // ---------------------------------------------------------------------------
-void MaterialManager::addMaterial(const std::string &name,
-                                  std::unique_ptr<Material> material) {
+void MaterialManager::addMaterial(std::unique_ptr<Material> material) {
+  if (!material) {
+    LOG_ERROR("[MaterialManager] Cannot add null material.");
+    return;
+  }
+  const std::string &name = material->getName();
   if (materials_.find(name) != materials_.end()) {
     LOG_WARNING("[MaterialManager] Material '" + name +
                 "' has been exist, overwriting.");

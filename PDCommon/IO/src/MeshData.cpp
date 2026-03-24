@@ -1,5 +1,6 @@
 #include "MeshData.h"
 #include "FieldManager.h"
+#include "FieldRegistry.h"
 #include "Logger.h"
 #include "ParticleManager.h"
 #include "TypedField.h"
@@ -19,11 +20,17 @@ constexpr const char *kVolumeFieldName = "Volume";
 // ensureParticleFields: 注册粒子基础几何场
 // ---------------------------------------------------------------------------
 void MeshData::ensureParticleFields(PDCommon::Field::FieldManager &fm) {
-  fm.registerField<int>(kIdFieldName, 1);
-  fm.registerField<int>(kPartIdFieldName, 1);
-  fm.registerField<int>(kMatIdFieldName, 1);
-  fm.registerField<double>(kCoordsFieldName, 3);
-  fm.registerField<double>(kVolumeFieldName, 1);
+  auto &reg = PDCommon::Field::FieldRegistry::getInstance();
+  auto idField     = reg.createField("IntField", kIdFieldName, 1);
+  auto partIdField = reg.createField("IntField", kPartIdFieldName, 1);
+  auto matIdField  = reg.createField("IntField", kMatIdFieldName, 1);
+  auto coordsField = reg.createField("DoubleField", kCoordsFieldName, 3);
+  auto volumeField = reg.createField("DoubleField", kVolumeFieldName, 1);
+  fm.addField(std::move(idField));
+  fm.addField(std::move(partIdField));
+  fm.addField(std::move(matIdField));
+  fm.addField(std::move(coordsField));
+  fm.addField(std::move(volumeField));
 }
 
 // ---------------------------------------------------------------------------

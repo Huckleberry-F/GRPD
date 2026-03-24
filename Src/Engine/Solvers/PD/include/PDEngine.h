@@ -47,6 +47,9 @@ public:
   /// @brief 返回求解器类型名
   std::string getName() const override { return "PD"; }
 
+  /// @brief 打印 PD 引擎使用的所有注册表信息
+  void printRegistrySummary() const override;
+
 private:
 
   // -----------------------------------------------------------------------

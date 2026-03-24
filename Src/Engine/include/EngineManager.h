@@ -26,16 +26,16 @@ public:
   EngineManager(const EngineManager &) = delete;
   EngineManager &operator=(const EngineManager &) = delete;
 
-  /// @brief 初始化仿真工程
-  /// @details 解析 YAML 中的 Solver.Type，通过 EngineRegistry 创建对应的
-  ///          求解器实例，然后依次调用每个求解器的 Initialize()
-  void Initialize(const std::string &yamlPath = "../../Input/PD.yaml");
+  /// @brief 启动仿真工程
+  /// @details 解析 YAML 中的 Solver.Engine，通过 EngineRegistry 创建对应的
+  ///          求解器实例，打印注册表信息，然后依次调用每个求解器的 Initialize()
+  void Setup(const std::string &yamlPath = "../../Input/PD.yaml");
 
   /// @brief 启动主求解循环（遍历所有求解器）
-  void Solve();
+  void RunAll();
 
   /// @brief 导出计算结果（遍历所有求解器）
-  void Output();
+  void ExportAll();
 
 private:
   /// @brief 持有所有激活的求解器实例

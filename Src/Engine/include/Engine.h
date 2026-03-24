@@ -31,6 +31,10 @@ public:
 
   /// @brief 获取求解器类型名称（如 "PD", "FEM"）
   virtual std::string getName() const = 0;
+
+  /// @brief 打印该引擎使用的注册表信息（可选覆盖）
+  /// @details 由 EngineManager 在 Setup 阶段调用，各子类自行决定打印内容
+  virtual void printRegistrySummary() const {}
 };
 
 } // namespace Src::Engine

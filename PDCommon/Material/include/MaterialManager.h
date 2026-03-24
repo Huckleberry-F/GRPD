@@ -32,9 +32,8 @@ public:
   // -----------------------------------------------------------------------
 
   /// @brief 添加一个已创建好的材料实例到当前管理器中
-  /// @param name 材料实例名称（如 "Steel", "Aluminum"）
-  /// @param material 材料实例的所有权（unique_ptr）
-  void addMaterial(const std::string &name, std::unique_ptr<Material> material);
+  /// @param material 材料实例的所有权（名称自动从 Material::getName() 提取）
+  void addMaterial(std::unique_ptr<Material> material);
 
   /// @brief 获取已实例化的材料对象指针
   /// @param name 材料实例名称

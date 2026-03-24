@@ -21,7 +21,7 @@ namespace PDCommon::Field {
 // ---------------------------------------------------------------------------
 // 工厂函数定义：根据名称返回一个具体 Field 的 unique_ptr
 // ---------------------------------------------------------------------------
-typedef std::function<std::unique_ptr<Field>(const std::string &)>
+typedef std::function<std::unique_ptr<Field>(const std::string &, int)>
     FieldCreatorFunc;
 
 class FieldRegistry {
@@ -45,11 +45,13 @@ public:
     void registerFieldType(const std::string &type, FieldCreatorFunc creator);
 
     /// @brief 使用注册的工厂函数创建物理场实例
-    /// @param type 已注册的类型名
+    /// @param type 已注册的类型名（如 "DoubleField", "IntField"）
     /// @param name 新实例名称
+    /// @param dim  每个粒子的分量数（标量=1, 矢量=3, 张量=9）
     /// @return 创建的 Field 智能指针
     std::unique_ptr<Field> createField(const std::string &type,
-                                        const std::string &name);
+                                        const std::string &name,
+                                        int dim);
 
     /// @brief 获取所有已注册的类型名列表
     std::vector<std::string> getRegisteredTypes() const;

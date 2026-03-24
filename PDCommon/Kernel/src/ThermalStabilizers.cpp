@@ -1,5 +1,6 @@
 #include "ThermalStabilizers.h"
 #include "FieldManager.h"
+#include "FieldRegistry.h"
 #include "ParticleManager.h"
 #include "NeighborList.h"
 #include "ThermalMaterial.h"
@@ -197,10 +198,13 @@ void ZhangStabilizer::preCompute(PDContext &ctx) {
 
   std::vector<double> kArr = ExtractConductivityArray(manager);
 
-  auto *ktField = fieldManager.registerField<double>("KT_Tensor", 9);
+  auto &reg = PDCommon::Field::FieldRegistry::getInstance();
+  auto ktFieldNew = reg.createField("DoubleField", "KT_Tensor", 9);
+  fieldManager.addField(std::move(ktFieldNew));
+  auto *ktField = fieldManager.getFieldAs<double>("KT_Tensor");
   ktField->resize(numParticles);
   ktField->clearToZero();
-  
+
   double *ktPtr = ktField->dataPtr();
   const double *shapeInvPtr = fieldManager.getFieldAs<double>("ShapeTensorInv")->dataPtr();
   

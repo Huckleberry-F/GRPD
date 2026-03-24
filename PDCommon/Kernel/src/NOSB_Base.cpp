@@ -1,5 +1,6 @@
 #include "NOSB_Base.h"
 #include "FieldManager.h"
+#include "FieldRegistry.h"
 #include "Logger.h"
 #include "NeighborList.h"
 #include "ParticleManager.h"
@@ -61,9 +62,13 @@ void NOSB_Base::ComputeShapeTensors(PDContext &ctx) {
   // ===================================================================
   // 集中注册 NOSB 算法框架所需的工作场（仅此一次）
   // ===================================================================
-  auto *shapeInvField = fieldManager.registerField<double>("ShapeTensorInv", 9);
-  auto *vHorizonField =
-      fieldManager.registerField<double>("VHorizon", 1);
+  auto &reg = FieldRegistry::getInstance();
+  auto shapeField = reg.createField("DoubleField", "ShapeTensorInv", 9);
+  auto vhField    = reg.createField("DoubleField", "VHorizon", 1);
+  fieldManager.addField(std::move(shapeField));
+  fieldManager.addField(std::move(vhField));
+  auto *shapeInvField = fieldManager.getFieldAs<double>("ShapeTensorInv");
+  auto *vHorizonField = fieldManager.getFieldAs<double>("VHorizon");
 
   shapeInvField->resize(numParticles);
   vHorizonField->resize(numParticles);

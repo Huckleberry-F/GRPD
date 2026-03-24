@@ -7,7 +7,6 @@
 #include "TypedField.h"
 #include <stdexcept>
 
-
 namespace PDCommon::Field {
 
 // ---------------------------------------------------------------------------
@@ -34,14 +33,15 @@ void FieldRegistry::registerFieldType(const std::string &type,
 // 通过工厂创建物理场实例
 // ---------------------------------------------------------------------------
 std::unique_ptr<Field> FieldRegistry::createField(const std::string &type,
-                                                  const std::string &name) {
+                                                  const std::string &name,
+                                                  int dim) {
   auto it = registryMap_.find(type);
   if (it == registryMap_.end()) {
     LOG_ERROR("[FieldRegistry] Create Field failed: unknown type '" + type +
               "'!");
     throw std::runtime_error("Unknown Field type: " + type);
   }
-  return it->second(name);
+  return it->second(name, dim);
 }
 
 std::vector<std::string> FieldRegistry::getRegisteredTypes() const {
@@ -54,27 +54,17 @@ std::vector<std::string> FieldRegistry::getRegisteredTypes() const {
 }
 
 // ============================================================================
-// 标准场类型的编译期静态注册（对标 BC/Material 的 REGISTER 宏）
+// 标准场类型的编译期静态注册
 // ============================================================================
 
-// 标量场 (dim=1)：用于温度、损伤、压力等单分量变量
-REGISTER_FIELD_TYPE(ScalarField, [](const std::string &name) {
-  return std::make_unique<TypedField<double>>(name, 1);
+// 双精度场：支持任意维度（标量/矢量/张量/SDV 等）
+REGISTER_FIELD_TYPE(DoubleField, [](const std::string &name, int dim) {
+  return std::make_unique<TypedField<double>>(name, dim);
 });
 
-// 三维矢量场 (dim=3)：用于位移、速度、加速度、热流矢量等
-REGISTER_FIELD_TYPE(VectorField, [](const std::string &name) {
-  return std::make_unique<TypedField<double>>(name, 3);
-});
-
-// 对称张量场 (dim=6)：用于应力、应变（Voigt 记法：xx yy zz xy xz yz）
-REGISTER_FIELD_TYPE(SymTensorField, [](const std::string &name) {
-  return std::make_unique<TypedField<double>>(name, 6);
-});
-
-// 整数标量场 (dim=1)：用于损伤标记、材料状态标志等离散变量
-REGISTER_FIELD_TYPE(IntField, [](const std::string &name) {
-  return std::make_unique<TypedField<int>>(name, 1);
+// 整数场：支持任意维度（ID、PartID 等离散变量）
+REGISTER_FIELD_TYPE(IntField, [](const std::string &name, int dim) {
+  return std::make_unique<TypedField<int>>(name, dim);
 });
 
 } // namespace PDCommon::Field

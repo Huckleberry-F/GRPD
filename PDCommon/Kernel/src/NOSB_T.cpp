@@ -14,6 +14,7 @@
 
 #include "NOSB_T.h"
 #include "FieldManager.h"
+#include "FieldRegistry.h"
 #include "KernelRegistry.h"
 #include "Logger.h"
 #include "NeighborList.h"
@@ -296,8 +297,18 @@ void NOSB_T::preCompute(PDCommon::Core::PDContext &ctx) {
   auto &manager = ctx.getParticleManager();
   const size_t numParticles = manager.getTotalParticles();
 
-  auto *tempGradField = fieldManager.registerField<double>("TempGradient", 3);
-  auto *heatFluxField = fieldManager.registerField<double>("HeatFluxVec", 3);
+  auto &reg = FieldRegistry::getInstance();
+  auto gradField = reg.createField("DoubleField", "TempGradient", 3);
+  auto fluxField = reg.createField("DoubleField", "HeatFluxVec", 3);
+  fieldManager.addField(std::move(gradField));
+  fieldManager.addField(std::move(fluxField));
+  auto *tempGradField = fieldManager.getFieldAs<double>("TempGradient");
+  auto *heatFluxField = fieldManager.getFieldAs<double>("HeatFluxVec");
+
+  if (!tempGradField || !heatFluxField) {
+    LOG_ERROR("[NOSB_T] Failed to create TempGradient or HeatFluxVec fields.");
+    return;
+  }
 
   tempGradField->resize(numParticles);
   heatFluxField->resize(numParticles);

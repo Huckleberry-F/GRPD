@@ -6,6 +6,7 @@
 #include "PDEngineInitializer.h"
 #include "ExplicitEuler.h"
 #include "FieldManager.h"
+#include "FieldRegistry.h"
 #include "MeshData.h"
 #include "BCManager.h"
 #include "BCRegistry.h"
@@ -205,7 +206,7 @@ void PDEngineInitializer::InitMaterial(PDCommon::Core::PDContext &ctx,
           matPtr->setMatId(matId);
 
           idToMatMap[matId] = matPtr.get();
-          matManager.addMaterial(keyName, std::move(matPtr));
+          matManager.addMaterial(std::move(matPtr));
 
           LOG_INFO("Successfully registered material ID " +
                    std::to_string(matId) + " (" + keyName + ")");
@@ -303,7 +304,9 @@ void PDEngineInitializer::InitFields(PDCommon::Core::PDContext &ctx,
   }
 
   if (maxSDVs > 0) {
-    fieldManager.registerField("SDV", static_cast<int>(maxSDVs));
+    auto sdvField = PDCommon::Field::FieldRegistry::getInstance()
+        .createField("DoubleField", "SDV", static_cast<int>(maxSDVs));
+    fieldManager.addField(std::move(sdvField));
     LOG_INFO("[InitFields] SDV Pool registered with dimension: " +
              std::to_string(maxSDVs));
   }
@@ -441,7 +444,9 @@ void PDEngineInitializer::InitNeighbors(PDCommon::Core::PDContext &ctx,
   auto &neighborList = ctx.getNeighborList();
   size_t numParticles = mgr.getTotalParticles();
 
-  fieldManager.registerField("NeighborCount", 1);
+  auto ncFieldNew = PDCommon::Field::FieldRegistry::getInstance()
+      .createField("DoubleField", "NeighborCount", 1);
+  fieldManager.addField(std::move(ncFieldNew));
   auto *ncField = fieldManager.getFieldAs<double>("NeighborCount");
 
   if (ncField) {

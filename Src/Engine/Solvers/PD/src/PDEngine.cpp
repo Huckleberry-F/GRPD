@@ -4,19 +4,58 @@
 
 #include "PDEngine.h"
 #include "PDEngineInitializer.h"
+#include "BCRegistry.h"
 #include "EngineRegistry.h"
 #include "FieldManager.h"
+#include "FieldRegistry.h"
 #include "IOManager.h"
+#include "KernelRegistry.h"
 #include "Logger.h"
+#include "MaterialRegistry.h"
 #include "Outputer.h"
+#include "PhysicsFieldRegistry.h"
 #include <string>
 #include <vector>
 #include <yaml-cpp/yaml.h>
 
 namespace Src::Engine::Solvers::PD {
 
+// ---------------------------------------------------------------------------
+// 辅助：将注册表类型列表拼接为逗号分隔的字符串
+// ---------------------------------------------------------------------------
+static std::string joinTypes(const std::vector<std::string> &types) {
+  std::string result;
+  for (const auto &t : types) {
+    result += t + ", ";
+  }
+  if (!result.empty()) {
+    result.erase(result.size() - 2);
+  }
+  return result;
+}
+
 PDEngine::PDEngine() { 
   LOG_INFO("[PDEngine] PD Engine instance created."); 
+}
+
+// ---------------------------------------------------------------------------
+// printRegistrySummary: 打印 PD 引擎使用的所有注册表信息
+// ---------------------------------------------------------------------------
+void PDEngine::printRegistrySummary() const {
+  LOG_INFO("========== Registered Types Summary ===========");
+  LOG_INFO("  FieldRegistry     : " +
+           joinTypes(PDCommon::Field::FieldRegistry::getInstance().getRegisteredTypes()));
+  LOG_INFO("  PhysicsFields     : " +
+           joinTypes(PDCommon::Field::PhysicsFieldRegistry::getInstance().getRegisteredTypes()));
+  LOG_INFO("  BCRegistry        : " +
+           joinTypes(PDCommon::BC::BCRegistry::getInstance().getRegisteredTypes()));
+  LOG_INFO("  MaterialRegistry  : " +
+           joinTypes(PDCommon::Material::MaterialRegistry::getInstance().getRegisteredTypes()));
+  LOG_INFO("  KernelRegistry    : " +
+           joinTypes(PDCommon::Kernel::KernelRegistry::getInstance().getRegisteredTypes()));
+  LOG_INFO("  EngineRegistry    : " +
+           joinTypes(Src::Engine::EngineRegistry::getInstance().getRegisteredTypes()));
+  LOG_INFO("===============================================");
 }
 
 void PDEngine::Initialize(const std::string &yamlPath) {

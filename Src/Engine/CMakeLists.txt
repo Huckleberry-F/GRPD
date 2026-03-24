@@ -20,8 +20,6 @@ target_sources(Engine_Obj PRIVATE
 target_include_directories(Engine_Obj PRIVATE
     include
     ${PROJECT_SOURCE_DIR}/PDCommon/Utils/include
-    ${PROJECT_SOURCE_DIR}/PDCommon/Material/include
-    ${PROJECT_SOURCE_DIR}/PDCommon/BC/include
     ${PROJECT_SOURCE_DIR}/PDCommon/Core/include
     ${PROJECT_SOURCE_DIR}/Src
 )
