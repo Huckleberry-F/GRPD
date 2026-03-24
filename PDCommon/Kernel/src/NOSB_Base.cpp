@@ -41,16 +41,10 @@ void NOSB_Base::configure(const YAML::Node &solverNode) {
     LOG_INFO("[NOSB_Base] Applied ZeroEnergyG0: " +
              std::to_string(zeroEnergyG0_));
   }
-  // 3. 零能修正方案
+  // 3. 零能修正方案配置字符串
   if (solverNode["ZeroEnergyMethod"]) {
-    std::string zm = solverNode["ZeroEnergyMethod"].as<std::string>();
-    if (zm == "Wan")
-      zeroEnergyMethod_ = ZeroEnergyMethod::Wan;
-    else if (zm == "Zhang")
-      zeroEnergyMethod_ = ZeroEnergyMethod::Zhang;
-    else
-      zeroEnergyMethod_ = ZeroEnergyMethod::Silling;
-    LOG_INFO("[NOSB_Base] Applied ZeroEnergyMethod: " + zm);
+    zeroEnergyMethodStr_ = solverNode["ZeroEnergyMethod"].as<std::string>();
+    LOG_INFO("[NOSB_Base] Applied ZeroEnergyMethod string: " + zeroEnergyMethodStr_);
   }
 }
 

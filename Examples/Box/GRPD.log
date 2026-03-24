@@ -2746,3 +2746,184 @@
 [INFO] Output format set to BINARY.
 [INFO] Successfully exported data for model: Box
 [INFO] [EngineManager] Post-processing Phase finished.
+[INFO] ==================================================
+[INFO]    GRPD Solver Engine Initialized                 
+[INFO] ==================================================
+[INFO] ========== Registered Types Summary ===========
+[INFO]   FieldRegistry     : IntField, ScalarField, SymTensorField, VectorField
+[INFO]   PhysicsFields     : Mechanical, Thermal
+[INFO]   BCRegistry        : CONV, FLUX, T
+[INFO]   MaterialRegistry  : FourierThermalMat
+[INFO]   KernelRegistry    : NOSB_Thermal
+[INFO]   EngineRegistry    : PD
+[INFO] ===============================================
+[INFO] [EngineRegistry] Creating Engine instance: PD
+[INFO] [PDEngine] PD Engine instance created.
+[INFO] [EngineManager] Initializing solver: PD
+[INFO] [PDEngine] Initializing PD simulation context...
+[INFO] Model pre-processing...
+[INFO] [InitModel] grpd path: D:\Project_C++\GRPD\Examples\Box\Box.grpd
+[INFO] [InitModel] model name: Box
+[INFO] Found existing .grpd mesh file at: D:\Project_C++\GRPD\Examples\Box\Box.grpd. Skipping generation.
+[INFO] [Context Manager] Formalized model name to: Box
+[INFO] [Context Manager] Model dimension set to: 2D
+[INFO] [ReaderRegistry] Creating reader for: .grpd (name: Box)
+[INFO] [InitModel] Reading mesh file: D:\Project_C++\GRPD\Examples\Box\Box.grpd (reader: .grpd)
+[INFO] [GrpdMeshReader] Reading file: D:\Project_C++\GRPD\Examples\Box\Box.grpd
+[INFO] [GrpdMeshReader] Entering *PARTICLE section (Line 1)
+[INFO] [GrpdMeshReader] Entering *LOAD section (Line 10003)
+[INFO] [GrpdMeshReader] ============================================
+[INFO] [GrpdMeshReader]    File reading complete!
+[INFO] [GrpdMeshReader]    Total particles: 10000
+[INFO] [GrpdMeshReader]    Total load entries: 100
+[INFO] [GrpdMeshReader] ============================================
+[INFO] [InitModel] Total particles loaded for model Box: 10000
+[INFO]   Particle[0] Part=1 Pos=(-24.750000, -24.750000, 0.000000) Vol=0.125000
+[INFO]   Particle[1] Part=1 Pos=(-24.750000, -24.250000, 0.000000) Vol=0.125000
+[INFO]   Particle[2] Part=1 Pos=(-24.750000, -23.750000, 0.000000) Vol=0.125000
+[INFO]   Particle[3] Part=1 Pos=(-24.750000, -23.250000, 0.000000) Vol=0.125000
+[INFO]   Particle[4] Part=1 Pos=(-24.750000, -22.750000, 0.000000) Vol=0.125000
+[INFO] Entering Material Initialization Phase...
+[INFO] Instantiating material [1] of type: FourierThermalMat
+[INFO] [MaterialRegistry] Using factory to create material: Steel_NmmTonne (type: FourierThermalMat)
+[INFO] [FourierThermalMat] Material 'Steel_NmmTonne' is initialized. Conductivity = 45.000000, HeatCapacity = 460000000.000000, Density = 0.000000
+[INFO] [MaterialManager] Successfully added material instance: Steel_NmmTonne
+[INFO] Successfully registered material ID 1 (Steel_NmmTonne)
+[INFO] Assigning material pointers to particles...
+[INFO] Successfully assigned materials to 10000 particles.
+[INFO] Entering Field Registration Phase...
+[INFO] [ThermalFields] Core fields registered: Temperature, TempRate, HeatFlux.
+[INFO] [InitFields] Auto-registered PhysicsFields module: Thermal
+[INFO] [FieldManager] Resized all 8 fields for 10000 particles.
+[INFO] [MeshData] Populated particle geometry fields into FieldManager for 10000 particles.
+[INFO] [InitFields] All fields allocated for 10000 particles. Total fields: 8.
+[INFO] Entering Conditions Initialization Phase...
+[INFO] [ReaderRegistry] Creating reader for: .grpd (name: LoadReader)
+[INFO] [GrpdMeshReader] Reading file: D:\Project_C++\GRPD\Examples\Box\Box.grpd
+[INFO] [GrpdMeshReader] Entering *PARTICLE section (Line 1)
+[INFO] [GrpdMeshReader] Entering *LOAD section (Line 10003)
+[INFO] [GrpdMeshReader] ============================================
+[INFO] [GrpdMeshReader]    File reading complete!
+[INFO] [GrpdMeshReader]    Total particles: 10000
+[INFO] [GrpdMeshReader]    Total load entries: 100
+[INFO] [GrpdMeshReader] ============================================
+[INFO] [InitConditions] Load statistics:
+[INFO]   - FLUX : 100
+[INFO] [InitConditions] Boundary conditions initialization complete.
+[INFO] [InitNeighbors] Entering Neighbor Search Phase...
+[INFO] [InitNeighbors] Horizon radius: 1.605000
+[INFO] [NeighborList] Starting full-flat CSR search for 10000 particles, horizon = 1.605000
+[INFO] [NeighborList] Cell grid: 31 x 31 x 1 = 961 cells
+[INFO] [NeighborList] Flat cell list built in 0.000000 ms
+[INFO] [NeighborList] Pass 1 (count) done in 1.999855 ms
+[INFO] [NeighborList] Total bonds: 349660, Memory: 4 MB
+[INFO] [NeighborList] Pass 2 (fill) done in 1.000166 ms
+[INFO] [NeighborList] Max neighbors: 36
+[INFO] [NeighborList] Total time: 3.000021 ms
+[INFO] [InitNeighbors] NeighborCount field populated for 10000 particles.
+[INFO] [InitNeighbors] BondDamage field registered, 349660 bonds initialized to 1.0
+[INFO] [InitNeighbors] Neighbor search phase complete.
+[INFO] [PDEngine] Creating solver components (L1 + L2)...
+[INFO] [PDSolver] Algorithm: Explicit, PDType: NOSB, Physics: Thermal
+[INFO] [NOSB_Base] Applied KernelWeightType: Linear
+[INFO] [NOSB_Base] Applied ZeroEnergyG0: 0.100000
+[INFO] [NOSB_Base] Applied ZeroEnergyMethod string: Zhang
+[INFO] [PDEngine] L1: ExplicitEuler, L2: NOSB_Thermal - components ready.
+[INFO] [PDEngine] PD simulation context initialized successfully.
+[INFO] [EngineManager] All solvers initialized. Total: 1
+[INFO] [EngineManager] Entering Main Solver Phase
+[INFO] [EngineManager] Solving: PD
+[INFO] [PDEngine] Starting PD Engine Solve Phase...
+[INFO] [ExplicitEuler] Time loop: dt = 0.010000, totalSteps = 1000
+[INFO] [NOSB_Base] Computing InfluenceWeight + Shape Tensor Inverse (K^-1)...
+[INFO] [NOSB_Base] All NOSB base fields registered and Shape Tensor Inverse computed.
+[INFO] [ZhangStabilizer] Precomputed KT_Tensor globally.
+[INFO] [NOSB_T] Instantiated ThermalStabilizer globally in Phase 0 using strategy: Zhang
+[INFO] --- Step 0 / 1000  |  Pure Compute: 0.000000s  |  Total: 0.000000s  |  Pure Speed: 0.000000 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=0 t=0.000000
+[INFO] Fetching model context for export: Box
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box\Result_20260324_165339\Result_step00000_t0.0000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box
+[INFO] --- Step 100 / 1000  |  Pure Compute: 0.145114s  |  Total: 0.148082s  |  Pure Speed: 689.115761 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=100 t=1.000000
+[INFO] Fetching model context for export: Box
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box\Result_20260324_165339\Result_step00100_t1.0000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box
+[INFO] --- Step 200 / 1000  |  Pure Compute: 0.293141s  |  Total: 0.300805s  |  Pure Speed: 682.265298 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=200 t=2.000000
+[INFO] Fetching model context for export: Box
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box\Result_20260324_165339\Result_step00200_t2.0000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box
+[INFO] --- Step 300 / 1000  |  Pure Compute: 0.440667s  |  Total: 0.451860s  |  Pure Speed: 680.786326 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=300 t=3.000000
+[INFO] Fetching model context for export: Box
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box\Result_20260324_165339\Result_step00300_t3.0000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box
+[INFO] --- Step 400 / 1000  |  Pure Compute: 0.595212s  |  Total: 0.610349s  |  Pure Speed: 672.029123 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=400 t=4.000000
+[INFO] Fetching model context for export: Box
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box\Result_20260324_165339\Result_step00400_t4.0000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box
+[INFO] --- Step 500 / 1000  |  Pure Compute: 0.747138s  |  Total: 0.766810s  |  Pure Speed: 669.220591 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=500 t=5.000000
+[INFO] Fetching model context for export: Box
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box\Result_20260324_165339\Result_step00500_t5.0000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box
+[INFO] --- Step 600 / 1000  |  Pure Compute: 0.903460s  |  Total: 0.928181s  |  Pure Speed: 664.113225 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=600 t=6.000000
+[INFO] Fetching model context for export: Box
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box\Result_20260324_165339\Result_step00600_t6.0000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box
+[INFO] --- Step 700 / 1000  |  Pure Compute: 1.066790s  |  Total: 1.094512s  |  Pure Speed: 656.174191 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=700 t=7.000000
+[INFO] Fetching model context for export: Box
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box\Result_20260324_165339\Result_step00700_t7.0000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box
+[INFO] --- Step 800 / 1000  |  Pure Compute: 1.206309s  |  Total: 1.239019s  |  Pure Speed: 663.179888 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=800 t=8.000000
+[INFO] Fetching model context for export: Box
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box\Result_20260324_165339\Result_step00800_t8.0000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box
+[INFO] --- Step 900 / 1000  |  Pure Compute: 1.345529s  |  Total: 1.382753s  |  Pure Speed: 668.881706 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=900 t=9.000000
+[INFO] Fetching model context for export: Box
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box\Result_20260324_165339\Result_step00900_t9.0000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box
+[INFO] --- Step 1000 / 1000  |  Pure Compute: 1.491148s  |  Total: 1.532546s  |  Pure Speed: 670.624334 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=1000 t=10.000000
+[INFO] Fetching model context for export: Box
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box\Result_20260324_165339\Result_step01000_t10.0000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box
+[INFO] [ExplicitEuler] Finished. Total: 1.536080s  |  Pure Compute avg: 0.001491 s/step
+[INFO] [PDEngine] PD Engine Solve Phase Finished.
+[INFO] [EngineManager] Main Solver Phase finished.
+[INFO] [EngineManager] Entering Post-processing Phase
+[INFO] [EngineManager] Outputting: PD
+[INFO] Starting data export process step=-1 t=0.000000
+[INFO] Fetching model context for export: Box
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box\Result_20260324_165339\Result_output.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box
+[INFO] [EngineManager] Post-processing Phase finished.

@@ -27,6 +27,8 @@
 // ============================================================================
 
 #include "NOSB_Base.h"
+#include "Stabilizer.h"
+#include <memory>
 #include <Eigen/Dense>
 
 namespace PDCommon::Kernel {
@@ -51,6 +53,8 @@ public:
   std::vector<IntegrationTarget> getIntegrationTargets() const override;
 
 private:
+  std::unique_ptr<Stabilizer> stabilizer_;
+
   // -----------------------------------------------------------------------
   // 内部实现方法
   // -----------------------------------------------------------------------

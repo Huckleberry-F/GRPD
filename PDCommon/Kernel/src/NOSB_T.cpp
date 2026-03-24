@@ -19,6 +19,7 @@
 #include "NeighborList.h"
 #include "ParticleManager.h"
 #include "ThermalMaterial.h"
+#include "StabilizerRegistry.h"
 #include <cmath>
 #include <omp.h>
 
@@ -60,13 +61,6 @@ void NOSB_T::ComputeThermalState(PDContext &ctx) {
   // 2. 获取 NOSB 专属的工作场
   auto *tempGradField = fieldManager.getFieldAs<double>("TempGradient");
   auto *heatFluxField = fieldManager.getFieldAs<double>("HeatFluxVec");
-  
-  double *ktPtr = nullptr;
-  if (zeroEnergyMethod_ == ZeroEnergyMethod::Zhang) {
-    auto *ktField = fieldManager.getFieldAs<double>("KT_Tensor");
-    if (ktField) ktPtr = ktField->dataPtr();
-  }
-
   if (!tempGradField || !heatFluxField) {
     LOG_ERROR("[NOSB_T] 'TempGradient' or 'HeatFluxVec' not found! Please run "
               "ComputeShapeTensors() first.");
@@ -195,11 +189,6 @@ void NOSB_T::ComputeThermalState(PDContext &ctx) {
 
     double vv_i = vvPtr[i];
 
-    // --- Zhang 方法的 K_T 张量读取 ---
-    double KT_00 = 0, KT_01 = 0, KT_02 = 0;
-    double KT_10 = 0, KT_11 = 0, KT_12 = 0;
-    double KT_20 = 0, KT_21 = 0, KT_22 = 0;
-
     int idx9_i = i * 9;
     double i_k00 = shapeInvPtr[idx9_i], i_k01 = shapeInvPtr[idx9_i + 1],
            i_k02 = shapeInvPtr[idx9_i + 2];
@@ -207,13 +196,6 @@ void NOSB_T::ComputeThermalState(PDContext &ctx) {
            i_k12 = shapeInvPtr[idx9_i + 5];
     double i_k20 = shapeInvPtr[idx9_i + 6], i_k21 = shapeInvPtr[idx9_i + 7],
            i_k22 = shapeInvPtr[idx9_i + 8];
-
-    // 如果是 Zhang 方法，直接从内存中读取预计算好的各向异性惩罚刚度阵
-    if (zeroEnergyMethod_ == ZeroEnergyMethod::Zhang && ktPtr) {
-      KT_00 = ktPtr[idx9_i];     KT_01 = ktPtr[idx9_i + 1]; KT_02 = ktPtr[idx9_i + 2];
-      KT_10 = ktPtr[idx9_i + 3]; KT_11 = ktPtr[idx9_i + 4]; KT_12 = ktPtr[idx9_i + 5];
-      KT_20 = ktPtr[idx9_i + 6]; KT_21 = ktPtr[idx9_i + 7]; KT_22 = ktPtr[idx9_i + 8];
-    }
 
     double xi_x = coords[i * 3];
     double xi_y = coords[i * 3 + 1];
@@ -277,64 +259,27 @@ void NOSB_T::ComputeThermalState(PDContext &ctx) {
       double dot_val =
           (KQi_x + KQj_x) * dx + (KQi_y + KQj_y) * dy + (KQi_z + KQj_z) * dz;
       rate_sum_nosb += omega * dot_val * vj;
-
-      // --- 零能模式修正 ---
-      double grad_xj = gradPtr[j * 3];
-      double grad_yj = gradPtr[j * 3 + 1];
-      double grad_zj = gradPtr[j * 3 + 2];
-      double deltaT_actual = tempPtr[j] - ti;
-      double deltaT_predicted_plus = grad_x * dx + grad_y * dy + grad_z * dz;
-      double deltaT_predicted_minus =
-          grad_xj * dx + grad_yj * dy + grad_zj * dz;
-      double deltaT_res_plus = deltaT_actual - deltaT_predicted_plus;
-      double deltaT_res_minus = deltaT_actual - deltaT_predicted_minus;
-
-      if (zeroEnergyMethod_ == ZeroEnergyMethod::Zhang) {
-        // T_i 惩罚项
-        double xi_KT_x = KT_00 * dx + KT_01 * dy + KT_02 * dz;
-        double xi_KT_y = KT_10 * dx + KT_11 * dy + KT_12 * dz;
-        double xi_KT_z = KT_20 * dx + KT_21 * dy + KT_22 * dz;
-        double Z_i = omega * omega * (dx * xi_KT_x + dy * xi_KT_y + dz * xi_KT_z);
-        double G_Zhang_i = Z_i * vj * vvPtr[j];
-        
-        // T_j 惩罚项 (局部读取 KT_j)
-        int idx9_j = j * 9;
-        double KT_j_00 = ktPtr[idx9_j];
-        double KT_j_01 = ktPtr[idx9_j + 1];
-        double KT_j_02 = ktPtr[idx9_j + 2];
-        
-        double KT_j_10 = ktPtr[idx9_j + 3];
-        double KT_j_11 = ktPtr[idx9_j + 4];
-        double KT_j_12 = ktPtr[idx9_j + 5];
-        
-        double KT_j_20 = ktPtr[idx9_j + 6];
-        double KT_j_21 = ktPtr[idx9_j + 7];
-        double KT_j_22 = ktPtr[idx9_j + 8];
-
-        double j_xi_KT_x = KT_j_00 * dx + KT_j_01 * dy + KT_j_02 * dz;
-        double j_xi_KT_y = KT_j_10 * dx + KT_j_11 * dy + KT_j_12 * dz;
-        double j_xi_KT_z = KT_j_20 * dx + KT_j_21 * dy + KT_j_22 * dz;
-        double Z_j = omega * omega * (dx * j_xi_KT_x + dy * j_xi_KT_y + dz * j_xi_KT_z);
-        
-        double G_Zhang_j = Z_j * vj * vv_i;
-        
-        rate_sum_ze += zeroEnergyG0_ * G_Zhang_i * deltaT_res_plus;
-        rate_sum_ze += zeroEnergyG0_ * G_Zhang_j * deltaT_res_minus;
-      } else {
-        rate_sum_ze += ComputeZeroEnergyModePenalty(
-            omega, deltaT_res_plus, bondLens[k_nb], vj, zeroEnergyG0_ * kArr[i],
-            vv_i, horizon,
-            zeroEnergyG0_ * kArr[i] *
-                (i_k00 + i_k11 + i_k22)); // Silling G = G0*k; Wan G = G0*k*Tr(K)
-        rate_sum_ze += ComputeZeroEnergyModePenalty(
-            omega, deltaT_res_minus, bondLens[k_nb], vj, zeroEnergyG0_ * kArr[j],
-            vvPtr[j], horizon, zeroEnergyG0_ * kArr[j] * (j_k00 + j_k11 + j_k22));
-      }
     }
 
-    double external_Q = ratePtr[i]; // 取出当前累加在里面的外部边界体积热源
-                                    // (Boundary condition source Q_v)
-    ratePtr[i] = thermal_coeff * (external_Q - rate_sum_nosb + rate_sum_ze);
+    // 累加非局部截断热流散度项（量纲为 W/m^3，进入内部的为正，此处公式 q_nosb 表示外部，所以减去）
+    ratePtr[i] -= rate_sum_nosb;
+  }
+
+  // 4. 应用独立解耦的零能模式数值修正！
+  // 4. 应用独立解耦的零能模式数值修正
+  if (stabilizer_) {
+    // 稳定器内部会将零能修正热功率 (W/m^3) 直接 += 累加进 ratePtr[i] 中
+    stabilizer_->applyPenalty(ctx);
+  }
+
+  // 5. 最终统一转化量纲：将总热功率密度转化为温度的时间变化率 dT/dt = Q_total / (rho * cp)
+  #pragma omp parallel for schedule(static)
+  for (int i = 0; i < static_cast<int>(numParticles); ++i) {
+    double rho = rhoArr[i];
+    double cp = cpArr[i];
+    if (rho > 1e-12 && cp > 1e-12) {
+      ratePtr[i] /= (rho * cp);
+    }
   }
 }
 
@@ -359,42 +304,22 @@ void NOSB_T::preCompute(PDCommon::Core::PDContext &ctx) {
   tempGradField->clearToZero();
   heatFluxField->clearToZero();
 
-  // 3. 在初始化阶段预计算 Zhang 方法的常数惩罚刚度张量 KT
-  if (zeroEnergyMethod_ == ZeroEnergyMethod::Zhang) {
-    auto *ktField = fieldManager.registerField<double>("KT_Tensor", 9);
-    ktField->resize(numParticles);
-    ktField->clearToZero();
-    
-    double *ktPtr = ktField->dataPtr();
-    auto *shapeInvField = fieldManager.getFieldAs<double>("ShapeTensorInv");
-    const double *shapeInvPtr = shapeInvField->dataPtr();
-    const auto &particles = manager.getAllParticles();
-    
-    #pragma omp parallel for schedule(static)
-    for (int i = 0; i < static_cast<int>(numParticles); ++i) {
-      auto *mat = dynamic_cast<PDCommon::Material::ThermalMaterial *>(particles[i].getMaterial());
-      if (!mat) continue;
-      double k = mat->getConductivity(); // 热传导系数
-      
-      int idx9 = i * 9;
-      double i_k00 = shapeInvPtr[idx9],     i_k01 = shapeInvPtr[idx9 + 1], i_k02 = shapeInvPtr[idx9 + 2];
-      double i_k10 = shapeInvPtr[idx9 + 3], i_k11 = shapeInvPtr[idx9 + 4], i_k12 = shapeInvPtr[idx9 + 5];
-      double i_k20 = shapeInvPtr[idx9 + 6], i_k21 = shapeInvPtr[idx9 + 7], i_k22 = shapeInvPtr[idx9 + 8];
-      
-      // KT_i = k_i * K_i^-1 * K_i^-1
-      ktPtr[idx9]     = k * (i_k00 * i_k00 + i_k01 * i_k10 + i_k02 * i_k20);
-      ktPtr[idx9 + 1] = k * (i_k00 * i_k01 + i_k01 * i_k11 + i_k02 * i_k21);
-      ktPtr[idx9 + 2] = k * (i_k00 * i_k02 + i_k01 * i_k12 + i_k02 * i_k22);
-      
-      ktPtr[idx9 + 3] = k * (i_k10 * i_k00 + i_k11 * i_k10 + i_k12 * i_k20);
-      ktPtr[idx9 + 4] = k * (i_k10 * i_k01 + i_k11 * i_k11 + i_k12 * i_k21);
-      ktPtr[idx9 + 5] = k * (i_k10 * i_k02 + i_k11 * i_k12 + i_k12 * i_k22);
-      
-      ktPtr[idx9 + 6] = k * (i_k20 * i_k00 + i_k21 * i_k10 + i_k22 * i_k20);
-      ktPtr[idx9 + 7] = k * (i_k20 * i_k01 + i_k21 * i_k11 + i_k22 * i_k21);
-      ktPtr[idx9 + 8] = k * (i_k20 * i_k02 + i_k21 * i_k12 + i_k22 * i_k22);
-    }
-    LOG_INFO("[NOSB_T] Precomputed KT_Tensor (Zhang penalty stiffness) globally in Phase 0.");
+  // 3. 实例化零能模式策略工厂：根据 zeroEnergyMethodStr_ 创建多态稳定化对象
+  if (!zeroEnergyMethodStr_.empty() && zeroEnergyMethodStr_ != "None") {
+    // 根据老配置映射：如果填"Zhang"，映射为 "Thermal_Zhang" 
+    std::string regName = "Thermal_" + zeroEnergyMethodStr_;
+    stabilizer_ = PDCommon::Kernel::StabilizerRegistry::getInstance().create(regName);
+  } else {
+    stabilizer_ = nullptr; // 可选的关闭修正
+  }
+
+  if (stabilizer_) {
+    stabilizer_->setG0(zeroEnergyG0_);
+
+    // [工厂延伸] 对于类似 Zhang 方法，要求初始化阶预计算罚函数刚度张量，多态执行：
+    stabilizer_->preCompute(ctx);
+
+    LOG_INFO("[NOSB_T] Instantiated ThermalStabilizer globally in Phase 0 using strategy: " + zeroEnergyMethodStr_);
   }
 }
 
