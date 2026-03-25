@@ -24,7 +24,6 @@ public:
 
   /// @brief 执行显式欧拉时间推进循环
   void run(PDCommon::Core::PDContext &ctx, PDKernel &kernel,
-           const SolverConfig &config,
            std::function<void(int, double)> outputCallback) override;
 
   std::string getName() const override { return "ExplicitEuler"; }

@@ -17,12 +17,11 @@
 namespace Src::Integration {
 
 void ExplicitEuler::run(PDCommon::Core::PDContext &ctx, PDKernel &kernel,
-                        const SolverConfig &config,
                         std::function<void(int, double)> outputCallback) {
 
-  const double dt = config.dt;
-  const int totalSteps = static_cast<int>(config.totalTime / dt);
-  const int outputInterval = config.outputInterval;
+  const double dt = dt_;
+  const int totalSteps = static_cast<int>(totalTime_ / dt_);
+  const int outputInterval = outputInterval_;
 
   auto &fieldManager = ctx.getFieldManager();
   auto &bcManager = ctx.getBCManager();
@@ -135,3 +134,7 @@ void ExplicitEuler::run(PDCommon::Core::PDContext &ctx, PDKernel &kernel,
 }
 
 } // namespace Src::Integration
+
+#include "TimeIntegratorRegistry.h"
+
+REGISTER_TIME_INTEGRATOR(Explicit, Src::Integration::ExplicitEuler)

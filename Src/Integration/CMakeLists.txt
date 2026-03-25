@@ -4,11 +4,15 @@
 
 add_library(Integration_Obj OBJECT 
     src/ExplicitEuler.cpp
+    src/TimeIntegratorRegistry.cpp
+    src/CentralDifference.cpp
 )
 
 target_sources(Integration_Obj PRIVATE
     include/TimeIntegrator.h
     include/ExplicitEuler.h
+    include/TimeIntegratorRegistry.h
+    include/CentralDifference.h
 )
 
 target_include_directories(Integration_Obj PUBLIC include)

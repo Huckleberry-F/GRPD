@@ -26,12 +26,7 @@ namespace Src::Integration {
 // 前置声明
 using PDCommon::Kernel::PDKernel;
 
-/// @brief 求解器配置参数（从 YAML 解析后传入）
-struct SolverConfig {
-  double dt = 1.0;          ///< 时间步长
-  double totalTime = 100.0; ///< 总求解时间
-  int outputInterval = 10;  ///< 输出间隔（步数）
-};
+#include <yaml-cpp/yaml.h>
 
 /// @brief 时间推进策略抽象基类
 class TimeIntegrator {
@@ -46,19 +41,31 @@ public:
   // 核心接口
   // -----------------------------------------------------------------------
 
+  /// @brief 从 YAML 读取控制参数（子类可 override 追加私有参数）
+  virtual void configure(const YAML::Node &solverNode) {
+    if (solverNode["TimeStep_dt"])
+      dt_ = solverNode["TimeStep_dt"].as<double>();
+    if (solverNode["TotalTime"])
+      totalTime_ = solverNode["TotalTime"].as<double>();
+    if (solverNode["OutputInterval"])
+      outputInterval_ = solverNode["OutputInterval"].as<int>();
+  }
+
   /// @brief 执行完整的时间推进循环
   /// @param ctx            PD 仿真上下文
   /// @param kernel         PD 积分核心 (L2)
-  /// @param config         求解器配置参数
   /// @param outputCallback 输出回调（由 PDSolver 提供）
   virtual void run(PDCommon::Core::PDContext &ctx, PDKernel &kernel,
-                   const SolverConfig &config,
                    std::function<void(int, double)> outputCallback) = 0;
 
   /// @brief 获取算法名称（如 "ExplicitEuler", "ADR"）
   virtual std::string getName() const = 0;
 
 protected:
+  double dt_ = 1.0;
+  double totalTime_ = 100.0;
+  int outputInterval_ = 10;
+
   TimeIntegrator() = default; // 只允许子类构造
 };
 

@@ -12,6 +12,7 @@
 #include "KernelRegistry.h"
 #include "Logger.h"
 #include "MaterialRegistry.h"
+#include "TimeIntegratorRegistry.h"
 #include "Outputer.h"
 #include "PhysicsFieldRegistry.h"
 #include <string>
@@ -43,6 +44,9 @@ PDEngine::PDEngine() {
 // ---------------------------------------------------------------------------
 void PDEngine::printRegistrySummary() const {
   LOG_INFO("========== Registered Types Summary ===========");
+  LOG_INFO("  TimeIntegrator    : " +
+           joinTypes(Src::Integration::TimeIntegratorRegistry::getInstance()
+                         .getRegisteredTypes()));
   LOG_INFO("  FieldRegistry     : " +
            joinTypes(PDCommon::Field::FieldRegistry::getInstance().getRegisteredTypes()));
   LOG_INFO("  PhysicsFields     : " +
@@ -62,12 +66,14 @@ void PDEngine::Initialize(const std::string &yamlPath) {
   LOG_INFO("[PDEngine] Initializing PD simulation context...");
   yamlPath_ = yamlPath;
 
-  PDEngineInitializer::InitModel(pdContext_, yamlPath_);
-  PDEngineInitializer::InitMaterial(pdContext_, yamlPath_);
-  PDEngineInitializer::InitFields(pdContext_, yamlPath_);
-  PDEngineInitializer::InitConditions(pdContext_, yamlPath_);
-  PDEngineInitializer::InitNeighbors(pdContext_, yamlPath_);
-  PDEngineInitializer::InitSolverComponents(yamlPath_, integrator_, kernel_, solverConfig_);
+  YAML::Node config = YAML::LoadFile(yamlPath_);
+
+  PDEngineInitializer::InitModel(pdContext_, config, yamlPath_);
+  PDEngineInitializer::InitMaterial(pdContext_, config);
+  PDEngineInitializer::InitFields(pdContext_, config);
+  PDEngineInitializer::InitConditions(pdContext_, config);
+  PDEngineInitializer::InitNeighbors(pdContext_, config);
+  PDEngineInitializer::InitSolverComponents(config, integrator_, kernel_);
 
   LOG_INFO("[PDEngine] PD simulation context initialized successfully.");
 }
@@ -83,7 +89,7 @@ void PDEngine::Solve() {
 
   auto outputCallback = [this](int step, double time) { this->Output(step, time); };
 
-  integrator_->run(pdContext_, *kernel_, solverConfig_, outputCallback);
+  integrator_->run(pdContext_, *kernel_, outputCallback);
 
   LOG_INFO("[PDEngine] PD Engine Solve Phase Finished.");
 }

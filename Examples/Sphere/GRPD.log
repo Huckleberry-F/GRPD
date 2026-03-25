@@ -897,3 +897,426 @@
 [INFO] Output format set to BINARY.
 [INFO] Successfully exported data for model: Sphere
 [INFO] [EngineManager] Post-processing Phase finished.
+[INFO] ==================================================
+[INFO]    GRPD Solver Engine Initialized                 
+[INFO] ==================================================
+[INFO] [EngineRegistry] Creating Engine instance: PD
+[INFO] [PDEngine] PD Engine instance created.
+[INFO] ========== Registered Types Summary ===========
+[INFO]   TimeIntegrator    : Explicit
+[INFO]   FieldRegistry     : DoubleField, IntField
+[INFO]   PhysicsFields     : Mechanical, Thermal
+[INFO]   BCRegistry        : CONV, FLUX, T
+[INFO]   MaterialRegistry  : FourierThermalMat
+[INFO]   KernelRegistry    : NOSB_Thermal
+[INFO]   EngineRegistry    : PD
+[INFO] ===============================================
+[INFO] [EngineManager] Initializing solver: PD
+[INFO] [PDEngine] Initializing PD simulation context...
+[INFO] Model pre-processing...
+[INFO] [InitModel] grpd path: D:\Project_C++\GRPD\Examples\Sphere\Sphere.grpd
+[INFO] [InitModel] model name: Sphere
+[INFO] Found existing .grpd mesh file at: D:\Project_C++\GRPD\Examples\Sphere\Sphere.grpd. Skipping generation.
+[INFO] [Context Manager] Formalized model name to: Sphere
+[INFO] [Context Manager] Model dimension set to: 3D
+[INFO] [ReaderRegistry] Creating reader for: .grpd (name: Sphere)
+[INFO] [InitModel] Reading mesh file: D:\Project_C++\GRPD\Examples\Sphere\Sphere.grpd (reader: .grpd)
+[INFO] [GrpdMeshReader] Reading file: D:\Project_C++\GRPD\Examples\Sphere\Sphere.grpd
+[INFO] [GrpdMeshReader] Entering *PARTICLE section (Line 1)
+[INFO] [GrpdMeshReader] Entering *LOAD section (Line 109290)
+[INFO] [GrpdMeshReader] ============================================
+[INFO] [GrpdMeshReader]    File reading complete!
+[INFO] [GrpdMeshReader]    Total particles: 109287
+[INFO] [GrpdMeshReader]    Total load entries: 57411
+[INFO] [GrpdMeshReader] ============================================
+[INFO] [InitModel] Total particles loaded for model Sphere: 109287
+[INFO]   Particle[0] Part=1 Pos=(-2.500000, -1.500000, -29.500000) Vol=1.000000
+[INFO]   Particle[1] Part=1 Pos=(-2.500000, -0.500000, -29.500000) Vol=1.000000
+[INFO]   Particle[2] Part=1 Pos=(-2.500000, 0.500000, -29.500000) Vol=1.000000
+[INFO]   Particle[3] Part=1 Pos=(-2.500000, 1.500000, -29.500000) Vol=1.000000
+[INFO]   Particle[4] Part=1 Pos=(-1.500000, -2.500000, -29.500000) Vol=1.000000
+[INFO] Entering Material Initialization Phase...
+[INFO] Instantiating material [1] of type: FourierThermalMat
+[INFO] [MaterialRegistry] Using factory to create material: Steel_NmmTonne (type: FourierThermalMat)
+[INFO] [FourierThermalMat] Material 'Steel_NmmTonne' is initialized. Conductivity = 45.000000, HeatCapacity = 460000000.000000, Density = 0.000000
+[INFO] [MaterialManager] Successfully added material instance: Steel_NmmTonne
+[INFO] Successfully registered material ID 1 (Steel_NmmTonne)
+[INFO] Assigning material pointers to particles...
+[INFO] Successfully assigned materials to 109287 particles.
+[INFO] Entering Field Registration Phase...
+[INFO] [FieldManager] Added field 'Temperature'.
+[INFO] [FieldManager] Added field 'TempRate'.
+[INFO] [FieldManager] Added field 'HeatFlux'.
+[INFO] [ThermalFields] Core fields registered: Temperature, TempRate, HeatFlux.
+[INFO] [InitFields] Auto-registered PhysicsFields module: Thermal
+[INFO] [FieldManager] Added field 'ID'.
+[INFO] [FieldManager] Added field 'PartID'.
+[INFO] [FieldManager] Added field 'MatID'.
+[INFO] [FieldManager] Added field 'Coords'.
+[INFO] [FieldManager] Added field 'Volume'.
+[INFO] [FieldManager] Resized all 8 fields for 109287 particles.
+[INFO] [MeshData] Populated particle geometry fields into FieldManager for 109287 particles.
+[INFO] [InitFields] All fields allocated for 109287 particles. Total fields: 8.
+[INFO] Entering Conditions Initialization Phase...
+[INFO] [ReaderRegistry] Creating reader for: .grpd (name: LoadReader)
+[INFO] [GrpdMeshReader] Reading file: D:\Project_C++\GRPD\Examples\Sphere\Sphere.grpd
+[INFO] [GrpdMeshReader] Entering *PARTICLE section (Line 1)
+[INFO] [GrpdMeshReader] Entering *LOAD section (Line 109290)
+[INFO] [GrpdMeshReader] ============================================
+[INFO] [GrpdMeshReader]    File reading complete!
+[INFO] [GrpdMeshReader]    Total particles: 109287
+[INFO] [GrpdMeshReader]    Total load entries: 57411
+[INFO] [GrpdMeshReader] ============================================
+[INFO] [InitConditions] Load statistics:
+[INFO]   - T : 57411
+[INFO] [InitConditions] Boundary conditions initialization complete.
+[INFO] [InitNeighbors] Entering Neighbor Search Phase...
+[INFO] [InitNeighbors] Horizon radius: 3.015000
+[INFO] [NeighborList] Starting full-flat CSR search for 109287 particles, horizon = 3.015000
+[INFO] [NeighborList] Cell grid: 20 x 20 x 20 = 8000 cells
+[INFO] [NeighborList] Flat cell list built in 3.999949 ms
+[INFO] [NeighborList] Pass 1 (count) done in 32.000065 ms
+[INFO] [NeighborList] Total bonds: 12544700, Memory: 143 MB
+[INFO] [NeighborList] Pass 2 (fill) done in 82.999945 ms
+[INFO] [NeighborList] Max neighbors: 122
+[INFO] [NeighborList] Total time: 118.999958 ms
+[INFO] [FieldManager] Added field 'NeighborCount'.
+[INFO] [InitNeighbors] NeighborCount field populated for 109287 particles.
+[INFO] [InitNeighbors] BondDamage field registered, 12544700 bonds initialized to 1.0
+[INFO] [InitNeighbors] Neighbor search phase complete.
+[INFO] [PDEngine] Creating solver components (L1 + L2)...
+[INFO] [PDSolver] Algorithm: Explicit, PDType: NOSB, Physics: Thermal
+[INFO] [NOSB_Base] Applied KernelWeightType: Linear
+[INFO] [NOSB_Base] Applied ZeroEnergyG0: 0.100000
+[INFO] [NOSB_Base] Applied ZeroEnergyMethod string: Zhang
+[INFO] [PDEngine] L1: ExplicitEuler, L2: NOSB_Thermal - components ready.
+[INFO] [PDEngine] PD simulation context initialized successfully.
+[INFO] [EngineManager] All solvers initialized. Total: 1
+[INFO] [EngineManager] Entering Main Solver Phase
+[INFO] [EngineManager] Solving: PD
+[INFO] [PDEngine] Starting PD Engine Solve Phase...
+[INFO] [ExplicitEuler] Time loop: dt = 0.010000, totalSteps = 1000
+[INFO] [FieldManager] Added field 'ShapeTensorInv'.
+[INFO] [FieldManager] Added field 'VHorizon'.
+[INFO] [NOSB_Base] Computing InfluenceWeight + Shape Tensor Inverse (K^-1)...
+[INFO] [NOSB_Base] All NOSB base fields registered and Shape Tensor Inverse computed.
+[INFO] [FieldManager] Added field 'TempGradient'.
+[INFO] [FieldManager] Added field 'HeatFluxVec'.
+[INFO] [FieldManager] Added field 'KT_Tensor'.
+[INFO] [ZhangStabilizer] Precomputed KT_Tensor globally.
+[INFO] [NOSB_T] Instantiated ThermalStabilizer globally in Phase 0 using strategy: Zhang
+[INFO] --- Step 0 / 1000  |  Pure Compute: 0.000000s  |  Total: 0.000000s  |  Pure Speed: 0.000000 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=0 t=0.000000
+[INFO] Fetching model context for export: Sphere
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Sphere\Result_20260325_154838\Result_step00000_t0.0000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Sphere
+[INFO] --- Step 100 / 1000  |  Pure Compute: 5.647432s  |  Total: 5.664606s  |  Pure Speed: 17.707164 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=100 t=1.000000
+[INFO] Fetching model context for export: Sphere
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Sphere\Result_20260325_154838\Result_step00100_t1.0000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Sphere
+[INFO] --- Step 200 / 1000  |  Pure Compute: 10.450238s  |  Total: 10.491678s  |  Pure Speed: 19.138321 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=200 t=2.000000
+[INFO] Fetching model context for export: Sphere
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Sphere\Result_20260325_154838\Result_step00200_t2.0000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Sphere
+[INFO] --- Step 300 / 1000  |  Pure Compute: 15.020121s  |  Total: 15.073178s  |  Pure Speed: 19.973208 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=300 t=3.000000
+[INFO] Fetching model context for export: Sphere
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Sphere\Result_20260325_154838\Result_step00300_t3.0000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Sphere
+[INFO] --- Step 400 / 1000  |  Pure Compute: 19.403459s  |  Total: 19.475200s  |  Pure Speed: 20.614881 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=400 t=4.000000
+[INFO] Fetching model context for export: Sphere
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Sphere\Result_20260325_154838\Result_step00400_t4.0000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Sphere
+[INFO] --- Step 500 / 1000  |  Pure Compute: 23.977069s  |  Total: 24.067483s  |  Pure Speed: 20.853258 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=500 t=5.000000
+[INFO] Fetching model context for export: Sphere
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Sphere\Result_20260325_154838\Result_step00500_t5.0000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Sphere
+[INFO] --- Step 600 / 1000  |  Pure Compute: 29.128072s  |  Total: 29.231963s  |  Pure Speed: 20.598686 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=600 t=6.000000
+[INFO] Fetching model context for export: Sphere
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Sphere\Result_20260325_154838\Result_step00600_t6.0000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Sphere
+[INFO] --- Step 700 / 1000  |  Pure Compute: 34.609350s  |  Total: 34.737704s  |  Pure Speed: 20.225748 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=700 t=7.000000
+[INFO] Fetching model context for export: Sphere
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Sphere\Result_20260325_154838\Result_step00700_t7.0000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Sphere
+[INFO] ==================================================
+[INFO]    GRPD Solver Engine Initialized                 
+[INFO] ==================================================
+[INFO] [EngineRegistry] Creating Engine instance: PD
+[INFO] [PDEngine] PD Engine instance created.
+[INFO] ========== Registered Types Summary ===========
+[INFO]   TimeIntegrator    : Explicit
+[INFO]   FieldRegistry     : DoubleField, IntField
+[INFO]   PhysicsFields     : Mechanical, Thermal
+[INFO]   BCRegistry        : CONV, FLUX, T
+[INFO]   MaterialRegistry  : FourierThermalMat
+[INFO]   KernelRegistry    : NOSB_Thermal
+[INFO]   EngineRegistry    : PD
+[INFO] ===============================================
+[INFO] [EngineManager] Initializing solver: PD
+[INFO] [PDEngine] Initializing PD simulation context...
+[INFO] Model pre-processing...
+[INFO] [InitModel] grpd path: D:\Project_C++\GRPD\Examples\Sphere\Sphere.grpd
+[INFO] [InitModel] model name: Sphere
+[INFO] Found existing .grpd mesh file at: D:\Project_C++\GRPD\Examples\Sphere\Sphere.grpd. Skipping generation.
+[INFO] [Context Manager] Formalized model name to: Sphere
+[INFO] [Context Manager] Model dimension set to: 3D
+[INFO] [ReaderRegistry] Creating reader for: .grpd (name: Sphere)
+[INFO] [InitModel] Reading mesh file: D:\Project_C++\GRPD\Examples\Sphere\Sphere.grpd (reader: .grpd)
+[INFO] [GrpdMeshReader] Reading file: D:\Project_C++\GRPD\Examples\Sphere\Sphere.grpd
+[INFO] [GrpdMeshReader] Entering *PARTICLE section (Line 1)
+[INFO] [GrpdMeshReader] Entering *LOAD section (Line 109290)
+[INFO] [GrpdMeshReader] ============================================
+[INFO] [GrpdMeshReader]    File reading complete!
+[INFO] [GrpdMeshReader]    Total particles: 109287
+[INFO] [GrpdMeshReader]    Total load entries: 57411
+[INFO] [GrpdMeshReader] ============================================
+[INFO] [InitModel] Total particles loaded for model Sphere: 109287
+[INFO]   Particle[0] Part=1 Pos=(-2.500000, -1.500000, -29.500000) Vol=1.000000
+[INFO]   Particle[1] Part=1 Pos=(-2.500000, -0.500000, -29.500000) Vol=1.000000
+[INFO]   Particle[2] Part=1 Pos=(-2.500000, 0.500000, -29.500000) Vol=1.000000
+[INFO]   Particle[3] Part=1 Pos=(-2.500000, 1.500000, -29.500000) Vol=1.000000
+[INFO]   Particle[4] Part=1 Pos=(-1.500000, -2.500000, -29.500000) Vol=1.000000
+[INFO] Entering Material Initialization Phase...
+[INFO] Instantiating material [1] of type: FourierThermalMat
+[INFO] [MaterialRegistry] Using factory to create material: Steel_NmmTonne (type: FourierThermalMat)
+[INFO] [FourierThermalMat] Material 'Steel_NmmTonne' is initialized. Conductivity = 45.000000, HeatCapacity = 460000000.000000, Density = 0.000000
+[INFO] [MaterialManager] Successfully added material instance: Steel_NmmTonne
+[INFO] Successfully registered material ID 1 (Steel_NmmTonne)
+[INFO] Assigning material pointers to particles...
+[INFO] Successfully assigned materials to 109287 particles.
+[INFO] Entering Field Registration Phase...
+[INFO] [FieldManager] Added field 'Temperature'.
+[INFO] [FieldManager] Added field 'TempRate'.
+[INFO] [FieldManager] Added field 'HeatFlux'.
+[INFO] [ThermalFields] Core fields registered: Temperature, TempRate, HeatFlux.
+[INFO] [InitFields] Auto-registered PhysicsFields module: Thermal
+[INFO] [FieldManager] Added field 'ID'.
+[INFO] [FieldManager] Added field 'PartID'.
+[INFO] [FieldManager] Added field 'MatID'.
+[INFO] [FieldManager] Added field 'Coords'.
+[INFO] [FieldManager] Added field 'Volume'.
+[INFO] [FieldManager] Resized all 8 fields for 109287 particles.
+[INFO] [MeshData] Populated particle geometry fields into FieldManager for 109287 particles.
+[INFO] [InitFields] All fields allocated for 109287 particles. Total fields: 8.
+[INFO] Entering Conditions Initialization Phase...
+[INFO] [ReaderRegistry] Creating reader for: .grpd (name: LoadReader)
+[INFO] [GrpdMeshReader] Reading file: D:\Project_C++\GRPD\Examples\Sphere\Sphere.grpd
+[INFO] [GrpdMeshReader] Entering *PARTICLE section (Line 1)
+[INFO] [GrpdMeshReader] Entering *LOAD section (Line 109290)
+[INFO] [GrpdMeshReader] ============================================
+[INFO] [GrpdMeshReader]    File reading complete!
+[INFO] [GrpdMeshReader]    Total particles: 109287
+[INFO] [GrpdMeshReader]    Total load entries: 57411
+[INFO] [GrpdMeshReader] ============================================
+[INFO] [InitConditions] Load statistics:
+[INFO]   - T : 57411
+[INFO] [InitConditions] Boundary conditions initialization complete.
+[INFO] [InitNeighbors] Entering Neighbor Search Phase...
+[INFO] [InitNeighbors] Horizon radius: 1.507500
+[INFO] [NeighborList] Starting full-flat CSR search for 109287 particles, horizon = 1.507500
+[INFO] [NeighborList] Cell grid: 40 x 40 x 40 = 64000 cells
+[INFO] [NeighborList] Flat cell list built in 2.000093 ms
+[INFO] [NeighborList] Pass 1 (count) done in 4.999876 ms
+[INFO] [NeighborList] Total bonds: 1903644, Memory: 21 MB
+[INFO] [NeighborList] Pass 2 (fill) done in 9.999990 ms
+[INFO] [NeighborList] Max neighbors: 18
+[INFO] [NeighborList] Total time: 16.999960 ms
+[INFO] [FieldManager] Added field 'NeighborCount'.
+[INFO] [InitNeighbors] NeighborCount field populated for 109287 particles.
+[INFO] [InitNeighbors] BondDamage field registered, 1903644 bonds initialized to 1.0
+[INFO] [InitNeighbors] Neighbor search phase complete.
+[INFO] [PDEngine] Creating solver components (L1 + L2)...
+[INFO] [PDSolver] Algorithm: Explicit, PDType: NOSB, Physics: Thermal
+[INFO] [NOSB_Base] Applied KernelWeightType: Linear
+[INFO] [NOSB_Base] Applied ZeroEnergyG0: 0.100000
+[INFO] [NOSB_Base] Applied ZeroEnergyMethod string: Zhang
+[INFO] [PDEngine] L1: ExplicitEuler, L2: NOSB_Thermal - components ready.
+[INFO] [PDEngine] PD simulation context initialized successfully.
+[INFO] [EngineManager] All solvers initialized. Total: 1
+[INFO] [EngineManager] Entering Main Solver Phase
+[INFO] [EngineManager] Solving: PD
+[INFO] [PDEngine] Starting PD Engine Solve Phase...
+[INFO] [ExplicitEuler] Time loop: dt = 0.010000, totalSteps = 1000
+[INFO] [FieldManager] Added field 'ShapeTensorInv'.
+[INFO] [FieldManager] Added field 'VHorizon'.
+[INFO] [NOSB_Base] Computing InfluenceWeight + Shape Tensor Inverse (K^-1)...
+[INFO] [NOSB_Base] All NOSB base fields registered and Shape Tensor Inverse computed.
+[INFO] [FieldManager] Added field 'TempGradient'.
+[INFO] [FieldManager] Added field 'HeatFluxVec'.
+[INFO] [FieldManager] Added field 'KT_Tensor'.
+[INFO] [ZhangStabilizer] Precomputed KT_Tensor globally.
+[INFO] [NOSB_T] Instantiated ThermalStabilizer globally in Phase 0 using strategy: Zhang
+[INFO] --- Step 0 / 1000  |  Pure Compute: 0.000000s  |  Total: 0.000000s  |  Pure Speed: 0.000000 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=0 t=0.000000
+[INFO] Fetching model context for export: Sphere
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Sphere\Result_20260325_155107\Result_step00000_t0.0000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Sphere
+[INFO] --- Step 100 / 1000  |  Pure Compute: 1.218942s  |  Total: 1.225086s  |  Pure Speed: 82.038385 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=100 t=1.000000
+[INFO] Fetching model context for export: Sphere
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Sphere\Result_20260325_155107\Result_step00100_t1.0000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Sphere
+[INFO] ==================================================
+[INFO]    GRPD Solver Engine Initialized                 
+[INFO] ==================================================
+[INFO] [EngineRegistry] Creating Engine instance: PD
+[INFO] [PDEngine] PD Engine instance created.
+[INFO] ========== Registered Types Summary ===========
+[INFO]   TimeIntegrator    : Explicit
+[INFO]   FieldRegistry     : DoubleField, IntField
+[INFO]   PhysicsFields     : Mechanical, Thermal
+[INFO]   BCRegistry        : CONV, FLUX, T
+[INFO]   MaterialRegistry  : FourierThermalMat
+[INFO]   KernelRegistry    : NOSB_Thermal
+[INFO]   EngineRegistry    : PD
+[INFO] ===============================================
+[INFO] [EngineManager] Initializing solver: PD
+[INFO] [PDEngine] Initializing PD simulation context...
+[INFO] Model pre-processing...
+[INFO] [InitModel] grpd path: D:\Project_C++\GRPD\Examples\Sphere\Sphere.grpd
+[INFO] [InitModel] model name: Sphere
+[INFO] Calling Python pre-processor to generate .grpd mesh...
+[INFO] Mesh generated successfully by Python.
+[INFO] [Context Manager] Formalized model name to: Sphere
+[INFO] [Context Manager] Model dimension set to: 3D
+[INFO] [ReaderRegistry] Creating reader for: .grpd (name: Sphere)
+[INFO] [InitModel] Reading mesh file: D:\Project_C++\GRPD\Examples\Sphere\Sphere.grpd (reader: .grpd)
+[INFO] [GrpdMeshReader] Reading file: D:\Project_C++\GRPD\Examples\Sphere\Sphere.grpd
+[INFO] [GrpdMeshReader] Entering *PARTICLE section (Line 1)
+[INFO] [GrpdMeshReader] Entering *LOAD section (Line 874163)
+[INFO] [GrpdMeshReader] ============================================
+[INFO] [GrpdMeshReader]    File reading complete!
+[INFO] [GrpdMeshReader]    Total particles: 874160
+[INFO] [GrpdMeshReader]    Total load entries: 459216
+[INFO] [GrpdMeshReader] ============================================
+[INFO] [InitModel] Total particles loaded for model Sphere: 874160
+[INFO]   Particle[0] Part=1 Pos=(-1.250000, -0.750000, -29.750000) Vol=0.125000
+[INFO]   Particle[1] Part=1 Pos=(-1.250000, -0.250000, -29.750000) Vol=0.125000
+[INFO]   Particle[2] Part=1 Pos=(-1.250000, 0.250000, -29.750000) Vol=0.125000
+[INFO]   Particle[3] Part=1 Pos=(-1.250000, 0.750000, -29.750000) Vol=0.125000
+[INFO]   Particle[4] Part=1 Pos=(-0.750000, -1.250000, -29.750000) Vol=0.125000
+[INFO] Entering Material Initialization Phase...
+[INFO] Instantiating material [1] of type: FourierThermalMat
+[INFO] [MaterialRegistry] Using factory to create material: Steel_NmmTonne (type: FourierThermalMat)
+[INFO] [FourierThermalMat] Material 'Steel_NmmTonne' is initialized. Conductivity = 45.000000, HeatCapacity = 460000000.000000, Density = 0.000000
+[INFO] [MaterialManager] Successfully added material instance: Steel_NmmTonne
+[INFO] Successfully registered material ID 1 (Steel_NmmTonne)
+[INFO] Assigning material pointers to particles...
+[INFO] Successfully assigned materials to 874160 particles.
+[INFO] Entering Field Registration Phase...
+[INFO] [FieldManager] Added field 'Temperature'.
+[INFO] [FieldManager] Added field 'TempRate'.
+[INFO] [FieldManager] Added field 'HeatFlux'.
+[INFO] [ThermalFields] Core fields registered: Temperature, TempRate, HeatFlux.
+[INFO] [InitFields] Auto-registered PhysicsFields module: Thermal
+[INFO] [FieldManager] Added field 'ID'.
+[INFO] [FieldManager] Added field 'PartID'.
+[INFO] [FieldManager] Added field 'MatID'.
+[INFO] [FieldManager] Added field 'Coords'.
+[INFO] [FieldManager] Added field 'Volume'.
+[INFO] [FieldManager] Resized all 8 fields for 874160 particles.
+[INFO] [MeshData] Populated particle geometry fields into FieldManager for 874160 particles.
+[INFO] [InitFields] All fields allocated for 874160 particles. Total fields: 8.
+[INFO] Entering Conditions Initialization Phase...
+[INFO] [ReaderRegistry] Creating reader for: .grpd (name: LoadReader)
+[INFO] [GrpdMeshReader] Reading file: D:\Project_C++\GRPD\Examples\Sphere\Sphere.grpd
+[INFO] [GrpdMeshReader] Entering *PARTICLE section (Line 1)
+[INFO] [GrpdMeshReader] Entering *LOAD section (Line 874163)
+[INFO] [GrpdMeshReader] ============================================
+[INFO] [GrpdMeshReader]    File reading complete!
+[INFO] [GrpdMeshReader]    Total particles: 874160
+[INFO] [GrpdMeshReader]    Total load entries: 459216
+[INFO] [GrpdMeshReader] ============================================
+[INFO] [InitConditions] Load statistics:
+[INFO]   - T : 459216
+[INFO] [InitConditions] Boundary conditions initialization complete.
+[INFO] [InitNeighbors] Entering Neighbor Search Phase...
+[INFO] [InitNeighbors] Horizon radius: 1.507500
+[INFO] [NeighborList] Starting full-flat CSR search for 874160 particles, horizon = 1.507500
+[INFO] [NeighborList] Cell grid: 40 x 40 x 40 = 64000 cells
+[INFO] [NeighborList] Flat cell list built in 18.999815 ms
+[INFO] [NeighborList] Pass 1 (count) done in 210.999966 ms
+[INFO] [NeighborList] Total bonds: 103488824, Memory: 1184 MB
+[INFO] [NeighborList] Pass 2 (fill) done in 656.000137 ms
+[INFO] [NeighborList] Max neighbors: 122
+[INFO] [NeighborList] Total time: 885.999918 ms
+[INFO] [FieldManager] Added field 'NeighborCount'.
+[INFO] [InitNeighbors] NeighborCount field populated for 874160 particles.
+[INFO] [InitNeighbors] BondDamage field registered, 103488824 bonds initialized to 1.0
+[INFO] [InitNeighbors] Neighbor search phase complete.
+[INFO] [PDEngine] Creating solver components (L1 + L2)...
+[INFO] [PDSolver] Algorithm: Explicit, PDType: NOSB, Physics: Thermal
+[INFO] [NOSB_Base] Applied KernelWeightType: Linear
+[INFO] [NOSB_Base] Applied ZeroEnergyG0: 0.100000
+[INFO] [NOSB_Base] Applied ZeroEnergyMethod string: Zhang
+[INFO] [PDEngine] L1: ExplicitEuler, L2: NOSB_Thermal - components ready.
+[INFO] [PDEngine] PD simulation context initialized successfully.
+[INFO] [EngineManager] All solvers initialized. Total: 1
+[INFO] [EngineManager] Entering Main Solver Phase
+[INFO] [EngineManager] Solving: PD
+[INFO] [PDEngine] Starting PD Engine Solve Phase...
+[INFO] [ExplicitEuler] Time loop: dt = 0.010000, totalSteps = 1000
+[INFO] [FieldManager] Added field 'ShapeTensorInv'.
+[INFO] [FieldManager] Added field 'VHorizon'.
+[INFO] [NOSB_Base] Computing InfluenceWeight + Shape Tensor Inverse (K^-1)...
+[INFO] [NOSB_Base] All NOSB base fields registered and Shape Tensor Inverse computed.
+[INFO] [FieldManager] Added field 'TempGradient'.
+[INFO] [FieldManager] Added field 'HeatFluxVec'.
+[INFO] [FieldManager] Added field 'KT_Tensor'.
+[INFO] [ZhangStabilizer] Precomputed KT_Tensor globally.
+[INFO] [NOSB_T] Instantiated ThermalStabilizer globally in Phase 0 using strategy: Zhang
+[INFO] --- Step 0 / 1000  |  Pure Compute: 0.000000s  |  Total: 0.000000s  |  Pure Speed: 0.000000 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=0 t=0.000000
+[INFO] Fetching model context for export: Sphere
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Sphere\Result_20260325_155119\Result_step00000_t0.0000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Sphere
+[INFO] --- Step 100 / 1000  |  Pure Compute: 42.415558s  |  Total: 42.466351s  |  Pure Speed: 2.357625 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=100 t=1.000000
+[INFO] Fetching model context for export: Sphere
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Sphere\Result_20260325_155119\Result_step00100_t1.0000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Sphere
+[INFO] --- Step 200 / 1000  |  Pure Compute: 90.345952s  |  Total: 90.474213s  |  Pure Speed: 2.213713 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=200 t=2.000000
+[INFO] Fetching model context for export: Sphere
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Sphere\Result_20260325_155119\Result_step00200_t2.0000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Sphere
+[INFO] --- Step 300 / 1000  |  Pure Compute: 144.188031s  |  Total: 144.391757s  |  Pure Speed: 2.080617 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=300 t=3.000000
+[INFO] Fetching model context for export: Sphere
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Sphere\Result_20260325_155119\Result_step00300_t3.0000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Sphere

@@ -59,7 +59,6 @@ private:
   std::string yamlPath_;                                            ///< YAML 配置文件路径
   std::unique_ptr<Src::Integration::TimeIntegrator> integrator_;    ///< L1: 时间推进策略
   std::unique_ptr<PDCommon::Kernel::PDKernel> kernel_;              ///< L2: PD 积分核心
-  Src::Integration::SolverConfig solverConfig_;                     ///< 求解器配置参数
 };
 
 } // namespace Src::Engine::Solvers::PD

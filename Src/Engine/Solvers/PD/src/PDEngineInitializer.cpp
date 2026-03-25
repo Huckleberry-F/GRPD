@@ -22,6 +22,7 @@
 #include "ParticleManager.h"
 #include "PhysicsFieldRegistry.h"
 #include <cstdlib>
+#include "TimeIntegratorRegistry.h"
 #include <filesystem>
 #include <memory>
 #include <string>
@@ -34,6 +35,7 @@ namespace Src::Engine::Solvers::PD {
 // 1. 初始化模型：调用 Python 脚本生成网格并读取
 // ============================================================================
 void PDEngineInitializer::InitModel(PDCommon::Core::PDContext &ctx,
+                                    const YAML::Node &config,
                                     const std::string &yamlPath) {
   LOG_INFO("Model pre-processing...");
 
@@ -76,7 +78,6 @@ void PDEngineInitializer::InitModel(PDCommon::Core::PDContext &ctx,
 
   // 从 YAML 解析模型维度 (Parts[0].Dimension)，默认 3D
   try {
-    YAML::Node config = YAML::LoadFile(yamlPath);
     if (config["Parts"] && config["Parts"].IsSequence() &&
         config["Parts"].size() > 0) {
       int dim = config["Parts"][0]["Dimension"]
@@ -148,17 +149,8 @@ void PDEngineInitializer::InitModel(PDCommon::Core::PDContext &ctx,
 // 2. 初始化材料：从 YAML 读取材料定义并分配给粒子
 // ============================================================================
 void PDEngineInitializer::InitMaterial(PDCommon::Core::PDContext &ctx,
-                                       const std::string &yamlPath) {
+                                       const YAML::Node &config) {
   LOG_INFO("Entering Material Initialization Phase...");
-
-  YAML::Node config;
-  try {
-    config = YAML::LoadFile(yamlPath);
-  } catch (const YAML::BadFile &e) {
-    LOG_ERROR("Failed to load YAML file in InitMaterial: " +
-              std::string(e.what()));
-    exit(EXIT_FAILURE);
-  }
 
   auto &matManager = ctx.getMaterialManager();
   std::unordered_map<int, PDCommon::Material::Material *> idToMatMap;
@@ -250,17 +242,8 @@ void PDEngineInitializer::InitMaterial(PDCommon::Core::PDContext &ctx,
 // 3. 初始化物理场：根据 Solver.Type 注册核心场及材料状态变量场
 // ============================================================================
 void PDEngineInitializer::InitFields(PDCommon::Core::PDContext &ctx,
-                                     const std::string &yamlPath) {
+                                     const YAML::Node &config) {
   LOG_INFO("Entering Field Registration Phase...");
-
-  YAML::Node config;
-  try {
-    config = YAML::LoadFile(yamlPath);
-  } catch (const YAML::BadFile &e) {
-    LOG_ERROR("Failed to load YAML file in InitFields: " +
-              std::string(e.what()));
-    exit(EXIT_FAILURE);
-  }
 
   std::string solverType = "";
   if (config["Solver"] && config["Solver"]["Type"]) {
@@ -338,17 +321,8 @@ void PDEngineInitializer::InitFields(PDCommon::Core::PDContext &ctx,
 // 4. 初始化边界条件：通过 MeshReader 读取载荷并施加
 // ============================================================================
 void PDEngineInitializer::InitConditions(PDCommon::Core::PDContext &ctx,
-                                         const std::string &yamlPath) {
+                                         const YAML::Node &config) {
   LOG_INFO("Entering Conditions Initialization Phase...");
-
-  YAML::Node config;
-  try {
-    config = YAML::LoadFile(yamlPath);
-  } catch (const YAML::BadFile &e) {
-    LOG_ERROR("Failed to load YAML file in InitConditions: " +
-              std::string(e.what()));
-    exit(EXIT_FAILURE);
-  }
 
   // 通过多态 Reader 读取网格文件（包含 *LOAD 段）
   auto &ioMgr = PDCommon::IO::IOManager::getInstance();
@@ -412,16 +386,8 @@ void PDEngineInitializer::InitConditions(PDCommon::Core::PDContext &ctx,
 // 键场
 // ============================================================================
 void PDEngineInitializer::InitNeighbors(PDCommon::Core::PDContext &ctx,
-                                        const std::string &yamlPath) {
+                                        const YAML::Node &config) {
   LOG_INFO("[InitNeighbors] Entering Neighbor Search Phase...");
-
-  YAML::Node config;
-  try {
-    config = YAML::LoadFile(yamlPath);
-  } catch (const YAML::BadFile &e) {
-    LOG_ERROR("[InitNeighbors] Failed to load YAML: " + std::string(e.what()));
-    exit(EXIT_FAILURE);
-  }
 
   // 从 YAML 读取 Solver.Horizon
   double horizon = 0.0;
@@ -476,24 +442,10 @@ void PDEngineInitializer::InitNeighbors(PDCommon::Core::PDContext &ctx,
 // 6. 初始化核心求解组件：从 YAML 创建 L1 (时间积分器) + L2 (PD 空间核)
 // ============================================================================
 void PDEngineInitializer::InitSolverComponents(
-    const std::string &yamlPath,
+    const YAML::Node &config,
     std::unique_ptr<Src::Integration::TimeIntegrator> &integrator,
-    std::unique_ptr<PDCommon::Kernel::PDKernel> &kernel,
-    Src::Integration::SolverConfig &solverConfig) {
+    std::unique_ptr<PDCommon::Kernel::PDKernel> &kernel) {
   LOG_INFO("[PDEngine] Creating solver components (L1 + L2)...");
-
-  YAML::Node config = YAML::LoadFile(yamlPath);
-
-  // 初始化求解器配置参数
-  if (config["Solver"]) {
-    auto solverNode = config["Solver"];
-    if (solverNode["TimeStep_dt"])
-      solverConfig.dt = solverNode["TimeStep_dt"].as<double>();
-    if (solverNode["TotalTime"])
-      solverConfig.totalTime = solverNode["TotalTime"].as<double>();
-    if (solverNode["OutputInterval"])
-      solverConfig.outputInterval = solverNode["OutputInterval"].as<int>();
-  }
 
   // 读取算法类型和 PD 理论类型
   std::string algorithm = "Explicit"; // 默认显式集成
@@ -517,14 +469,22 @@ void PDEngineInitializer::InitSolverComponents(
   LOG_INFO("[PDSolver] Algorithm: " + algorithm + ", PDType: " + pdType +
            ", Physics: " + physics);
 
-  // 创建 L1: 时间推进系统 (TimeIntegrator)
-  if (algorithm == "Explicit") {
-    integrator = std::make_unique<Src::Integration::ExplicitEuler>();
-  } else {
+  // 创建 L1: 时间推进系统 (TimeIntegrator) — 反射工厂，零 if-else
+  integrator = Src::Integration::TimeIntegratorRegistry::getInstance()
+                   .create(algorithm);
+  if (!integrator) {
     LOG_ERROR("[PDEngine] Unknown algorithm type: '" + algorithm +
-              "'. Supported: Explicit");
-    integrator =
-        std::make_unique<Src::Integration::ExplicitEuler>(); // fallback
+              "'. Registered types: ");
+    for (const auto &t : Src::Integration::TimeIntegratorRegistry::getInstance()
+                             .getRegisteredTypes()) {
+      LOG_ERROR("  - " + t);
+    }
+    exit(EXIT_FAILURE);
+  }
+
+  // 多态配置：积分器自己从 YAML 中提取属于自己的参数
+  if (config["Solver"]) {
+    integrator->configure(config["Solver"]);
   }
 
   // 创建 L2: PD 积分核心 (PDKernel) — 反射工厂，零 if-else
