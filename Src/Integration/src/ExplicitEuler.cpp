@@ -1,7 +1,9 @@
 // ============================================================================
-// ExplicitEuler.cpp - 显式欧拉时间积分器实现
+// ExplicitEuler.cpp - 显式欧拉时间积分器实现（多核协同版本）
 //
 // 从原 Solve.cpp 中抽取时间循环逻辑，通过 PDKernel 接口通用化。
+// 支持同时驱动多个物理场内核（如 Thermal + Mechanical），
+// 在每个时间步统一遍历触发 preCompute / computeForceState / postCompute。
 // ============================================================================
 
 #include "ExplicitEuler.h"
@@ -16,7 +18,8 @@
 
 namespace Src::Integration {
 
-void ExplicitEuler::run(PDCommon::Core::PDContext &ctx, PDKernel &kernel,
+void ExplicitEuler::run(PDCommon::Core::PDContext &ctx,
+                        std::vector<std::unique_ptr<PDKernel>> &kernels,
                         std::function<void(int, double)> outputCallback) {
 
   const double dt = dt_;
@@ -28,41 +31,43 @@ void ExplicitEuler::run(PDCommon::Core::PDContext &ctx, PDKernel &kernel,
   const size_t numParticles = ctx.getParticleManager().getTotalParticles();
 
   // =================================================================
-  // 获取积分目标场（由 PDKernel 声明需要更新的场）
+  // 汇总所有内核声明的积分目标场（多核场合并）
   // =================================================================
-  auto targets = kernel.getIntegrationTargets();
-
-  // 预先获取场指针，避免每步查找
   struct FieldPtrs {
     double *primaryPtr;
     double *ratePtr;
     size_t totalComponents; // numParticles * dimension
   };
   std::vector<FieldPtrs> fieldPtrs;
-  fieldPtrs.reserve(targets.size());
 
-  for (const auto &target : targets) {
-    auto *primaryField =
-        fieldManager.getFieldAs<double>(target.primaryField);
-    auto *rateField = fieldManager.getFieldAs<double>(target.rateField);
+  for (auto &kernel : kernels) {
+    auto targets = kernel->getIntegrationTargets();
+    for (const auto &target : targets) {
+      auto *primaryField =
+          fieldManager.getFieldAs<double>(target.primaryField);
+      auto *rateField = fieldManager.getFieldAs<double>(target.rateField);
 
-    if (!primaryField || !rateField) {
-      LOG_ERROR("[ExplicitEuler] Field '" + target.primaryField + "' or '" +
-                target.rateField + "' not found!");
-      return;
+      if (!primaryField || !rateField) {
+        LOG_ERROR("[ExplicitEuler] Field '" + target.primaryField + "' or '" +
+                  target.rateField + "' not found!");
+        return;
+      }
+
+      fieldPtrs.push_back({primaryField->dataPtr(), rateField->dataPtr(),
+                           numParticles * target.dimension});
     }
-
-    fieldPtrs.push_back({primaryField->dataPtr(), rateField->dataPtr(),
-                         numParticles * target.dimension});
   }
 
   LOG_INFO("[ExplicitEuler] Time loop: dt = " + std::to_string(dt) +
-           ", totalSteps = " + std::to_string(totalSteps));
+           ", totalSteps = " + std::to_string(totalSteps) +
+           ", kernels = " + std::to_string(kernels.size()));
 
   // =================================================================
-  // 预计算（形状张量等，仅调用一次）
+  // 预计算（形状张量等，遍历所有内核各调用一次）
   // =================================================================
-  kernel.preCompute(ctx);
+  for (auto &kernel : kernels) {
+    kernel->preCompute(ctx);
+  }
 
   // =================================================================
   // 时间步循环
@@ -97,17 +102,22 @@ void ExplicitEuler::run(PDCommon::Core::PDContext &ctx, PDKernel &kernel,
     auto tComputeStart = std::chrono::high_resolution_clock::now();
 
     // (B) 清零所有变化率场
-    for (const auto &target : targets) {
-      auto *rateField = fieldManager.getFieldAs<double>(target.rateField);
-      rateField->clearToZero();
+    for (auto &kernel : kernels) {
+      auto targets = kernel->getIntegrationTargets();
+      for (const auto &target : targets) {
+        auto *rateField = fieldManager.getFieldAs<double>(target.rateField);
+        rateField->clearToZero();
+      }
     }
 
     // (C) 施加边界条件源项 + 约束
     bcManager.applySources();
     bcManager.applyConstraints();
 
-    // (D) PD 核心积分（黑盒调用 L2）
-    kernel.computeForceState(ctx);
+    // (D) PD 核心积分（遍历所有内核，多场协同调度）
+    for (auto &kernel : kernels) {
+      kernel->computeForceState(ctx);
+    }
 
     // (E) 显式时间积分：primary += rate * dt
     for (auto &fp : fieldPtrs) {
@@ -119,6 +129,11 @@ void ExplicitEuler::run(PDCommon::Core::PDContext &ctx, PDKernel &kernel,
 
     // (F) 约束覆盖（Dirichlet 条件积分后重新施加）
     bcManager.applyConstraints();
+
+    // (G) 后处理钩子：遍历所有内核执行 postCompute（状态变量演化等）
+    for (auto &kernel : kernels) {
+      kernel->postCompute(ctx);
+    }
 
     // 累加纯计算时间
     auto tComputeEnd = std::chrono::high_resolution_clock::now();

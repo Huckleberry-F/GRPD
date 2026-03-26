@@ -17,7 +17,9 @@
 
 #include "PDContext.h"
 #include <functional>
+#include <memory>
 #include <string>
+#include <vector>
 
 namespace PDCommon::Kernel { class PDKernel; }
 
@@ -51,11 +53,12 @@ public:
       outputInterval_ = solverNode["OutputInterval"].as<int>();
   }
 
-  /// @brief 执行完整的时间推进循环
+  /// @brief 执行完整的时间推进循环（多核协同版本）
   /// @param ctx            PD 仿真上下文
-  /// @param kernel         PD 积分核心 (L2)
+  /// @param kernels        PD 积分核心集合 (L2)，支持多场多核协同推进
   /// @param outputCallback 输出回调（由 PDSolver 提供）
-  virtual void run(PDCommon::Core::PDContext &ctx, PDKernel &kernel,
+  virtual void run(PDCommon::Core::PDContext &ctx,
+                   std::vector<std::unique_ptr<PDKernel>> &kernels,
                    std::function<void(int, double)> outputCallback) = 0;
 
   /// @brief 获取算法名称（如 "ExplicitEuler", "ADR"）

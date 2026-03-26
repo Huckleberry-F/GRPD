@@ -6,6 +6,8 @@
 #define SRC_SOLVE_PD_CENTRAL_DIFFERENCE_H
 
 #include "TimeIntegrator.h"
+#include <memory>
+#include <vector>
 
 namespace PDCommon::Kernel { class PDKernel; }
 
@@ -28,8 +30,9 @@ public:
   CentralDifference() = default;
   ~CentralDifference() override = default;
 
-  /// @brief 执行中心差分时间推进循环
-  void run(PDCommon::Core::PDContext &ctx, PDKernel &kernel,
+  /// @brief 执行中心差分时间推进循环（多核版本）
+  void run(PDCommon::Core::PDContext &ctx,
+           std::vector<std::unique_ptr<PDKernel>> &kernels,
            std::function<void(int, double)> outputCallback) override;
 
   std::string getName() const override { return "CentralDifference"; }

@@ -6,6 +6,7 @@ add_library(Integration_Obj OBJECT
     src/ExplicitEuler.cpp
     src/TimeIntegratorRegistry.cpp
     src/CentralDifference.cpp
+    src/StaggeredIntegrator.cpp
 )
 
 target_sources(Integration_Obj PRIVATE
@@ -13,6 +14,7 @@ target_sources(Integration_Obj PRIVATE
     include/ExplicitEuler.h
     include/TimeIntegratorRegistry.h
     include/CentralDifference.h
+    include/StaggeredIntegrator.h
 )
 
 target_include_directories(Integration_Obj PUBLIC include)

@@ -174,8 +174,10 @@ General-Peridynamics/
 - **基准标定与 ANSYS 仿真校验**: 热传导全解模型的数据结果已与顶级商软 ANSYS 在同平台网格下完成了深度映射校验，核心算法结果分毫不差。
 
 ### 🏃 Phase 1. 结构大变形内核扩张 (In Progress)
-- **`NOSB_Mechanical` 与弹性基础落地**: 为引擎实装力学内核基类，解算形变梯度张量。
-- **微观材料库搭建**: 植入可调的线弹性基元 (`LinearElastic`) 以及基本应力张量的相互转化链路，使系统具备基础的“抗力”。
+- **`MechanicalFields` 基础就绪**: 完成力学位移、速度、加速度三维矢量场的底层注册。
+- **`CentralDifference` 与多场协同**: 已实现适合动量方程的二阶显式中心差分求解器及异阶交错积分编排器 (`StaggeredIntegrator`)。
+- **`NOSB_Mechanical` 与弹性基础落地 (Upcoming)**: 即将为引擎实装力学内核基类，解算形变梯度张量与应力状态更新。
+- **微观材料库搭建 (Upcoming)**: 即将植入可调的线弹性基元 (`LinearElasticMat`) 以及基本应力张量的相互转化链路，使系统具备基础的“抗力”。
 
 ### 🔍 Phase 2. 高阶边界条件钳制与动态本领强化
 - **力学专属驱动**: 引入专用的边界条件（如位移死锁 `DisplacementBC` 和动量加压载荷 `ForceBC`）。

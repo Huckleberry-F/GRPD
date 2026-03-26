@@ -1,105 +1,17 @@
-// ============================================================================
-// PDEngine.cpp - PD 求解引擎 (整合自 Initialize, Solve, Output)
-// ============================================================================
-
-#include "PDEngine.h"
-#include "PDEngineInitializer.h"
-#include "BCRegistry.h"
-#include "EngineRegistry.h"
-#include "FieldManager.h"
-#include "FieldRegistry.h"
+#include "PDEnginePost.h"
 #include "IOManager.h"
-#include "KernelRegistry.h"
-#include "Logger.h"
-#include "MaterialRegistry.h"
-#include "TimeIntegratorRegistry.h"
 #include "Outputer.h"
-#include "PhysicsFieldRegistry.h"
-#include <string>
-#include <vector>
+#include "FieldManager.h"
+#include "Logger.h"
 #include <yaml-cpp/yaml.h>
+#include <vector>
 
-namespace Src::Engine::Solvers::PD {
+namespace Src::Engine::Solvers::PD::Post {
 
-// ---------------------------------------------------------------------------
-// 辅助：将注册表类型列表拼接为逗号分隔的字符串
-// ---------------------------------------------------------------------------
-static std::string joinTypes(const std::vector<std::string> &types) {
-  std::string result;
-  for (const auto &t : types) {
-    result += t + ", ";
-  }
-  if (!result.empty()) {
-    result.erase(result.size() - 2);
-  }
-  return result;
-}
-
-PDEngine::PDEngine() { 
-  LOG_INFO("[PDEngine] PD Engine instance created."); 
-}
-
-// ---------------------------------------------------------------------------
-// printRegistrySummary: 打印 PD 引擎使用的所有注册表信息
-// ---------------------------------------------------------------------------
-void PDEngine::printRegistrySummary() const {
-  LOG_INFO("========== Registered Types Summary ===========");
-  LOG_INFO("  TimeIntegrator    : " +
-           joinTypes(Src::Integration::TimeIntegratorRegistry::getInstance()
-                         .getRegisteredTypes()));
-  LOG_INFO("  FieldRegistry     : " +
-           joinTypes(PDCommon::Field::FieldRegistry::getInstance().getRegisteredTypes()));
-  LOG_INFO("  PhysicsFields     : " +
-           joinTypes(PDCommon::Field::PhysicsFieldRegistry::getInstance().getRegisteredTypes()));
-  LOG_INFO("  BCRegistry        : " +
-           joinTypes(PDCommon::BC::BCRegistry::getInstance().getRegisteredTypes()));
-  LOG_INFO("  MaterialRegistry  : " +
-           joinTypes(PDCommon::Material::MaterialRegistry::getInstance().getRegisteredTypes()));
-  LOG_INFO("  KernelRegistry    : " +
-           joinTypes(PDCommon::Kernel::KernelRegistry::getInstance().getRegisteredTypes()));
-  LOG_INFO("  EngineRegistry    : " +
-           joinTypes(Src::Engine::EngineRegistry::getInstance().getRegisteredTypes()));
-  LOG_INFO("===============================================");
-}
-
-void PDEngine::Initialize(const std::string &yamlPath) {
-  LOG_INFO("[PDEngine] Initializing PD simulation context...");
-  yamlPath_ = yamlPath;
-
-  YAML::Node config = YAML::LoadFile(yamlPath_);
-
-  PDEngineInitializer::InitModel(pdContext_, config, yamlPath_);
-  PDEngineInitializer::InitMaterial(pdContext_, config);
-  PDEngineInitializer::InitFields(pdContext_, config);
-  PDEngineInitializer::InitConditions(pdContext_, config);
-  PDEngineInitializer::InitNeighbors(pdContext_, config);
-  PDEngineInitializer::InitSolverComponents(config, integrator_, kernel_);
-
-  LOG_INFO("[PDEngine] PD simulation context initialized successfully.");
-}
-
-void PDEngine::Solve() {
-  LOG_INFO("[PDEngine] Starting PD Engine Solve Phase...");
-
-  if (!integrator_ || !kernel_) {
-    LOG_ERROR("[PDEngine] Solver components not initialized! "
-              "Call Initialize() before Solve().");
-    return;
-  }
-
-  auto outputCallback = [this](int step, double time) { this->Output(step, time); };
-
-  integrator_->run(pdContext_, *kernel_, outputCallback);
-
-  LOG_INFO("[PDEngine] PD Engine Solve Phase Finished.");
-}
-
-void PDEngine::Output() {
-  Output(-1, 0.0);
-}
-
-void PDEngine::Output(int step, double physicalTime) {
-  const auto &currentModel = pdContext_;
+void ExportVTK(const PDCommon::Core::PDContext &ctx,
+               const std::string &yamlPath,
+               int step, double physicalTime) {
+  const auto &currentModel = ctx;
   LOG_INFO("Starting data export process step=" + std::to_string(step) + 
            " t=" + std::to_string(physicalTime));
 
@@ -109,8 +21,9 @@ void PDEngine::Output(int step, double physicalTime) {
   std::vector<std::pair<std::string, int>> variablesToOutput;
 
   try {
-    YAML::Node config = YAML::LoadFile(yamlPath_);
+    YAML::Node config = YAML::LoadFile(yamlPath);
 
+    // [解析配置] 用户可自由筛选 Writer 名下的待导出自定义场，若无给定将应用自带三项兜底。
     if (config["Writer"]) {
       if (config["Writer"]["Name"]) {
         customWriterName = config["Writer"]["Name"].as<std::string>();
@@ -161,7 +74,7 @@ void PDEngine::Output(int step, double physicalTime) {
     std::string finalOutputName =
         customWriterName.empty() ? currentModelName : customWriterName;
         
-    // 通过 IOManager 生成 VTK 输出路径（自动放入 Result_时间戳 文件夹）
+    // [文件系装配] 通过 IOManager 生成标准规范的 VTK 输出路径（自动放入 Result_生成时间戳 文件夹内部）
     auto &ioManager = PDCommon::IO::IOManager::getInstance();
     std::string vtkOutputPath;
     if (step >= 0) {
@@ -185,6 +98,7 @@ void PDEngine::Output(int step, double physicalTime) {
       LOG_INFO("Output format set to ASCII.");
     }
 
+    // [遍历写出白名单] 按要求进行过滤组装。对于一维场执行 addScalarField，而对 3 维场执行 addVectorField。
     for (const auto &[varName, yamlDim] : variablesToOutput) {
       if (varName == "Coords") {
         continue;
@@ -229,8 +143,4 @@ void PDEngine::Output(int step, double physicalTime) {
   }
 }
 
-} // namespace Src::Engine::Solvers::PD
-
-REGISTER_ENGINE_TYPE(PD, []() {
-  return std::make_unique<Src::Engine::Solvers::PD::PDEngine>();
-});
+} // namespace Src::Engine::Solvers::PD::Post

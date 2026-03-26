@@ -3,9 +3,9 @@
 // 继承 Src::Engine::Engine，封装完整的 PD 仿真生命周期
 //
 // 架构：三层多态组装器
-//   L1 TimeIntegrator (integrator_) — 求解算法
-//   L2 PDKernel       (kernel_)     — PD 积分框架
-//   L3 Material                     — 本构模型（由 PDContext 持有）
+//   L1 TimeIntegrator (integrator_)  — 求解算法
+//   L2 PDKernel       (kernels_)     — PD 积分框架（支持多核协同）
+//   L3 Material                      — 本构模型（由 PDContext 持有）
 // ============================================================================
 
 #ifndef SRC_ENGINE_SOLVERS_PD_PDENGINE_H
@@ -16,6 +16,7 @@
 #include "PDKernel.h"
 #include "TimeIntegrator.h"
 #include <memory>
+#include <vector>
 
 namespace Src::Engine::Solvers::PD {
 
@@ -58,7 +59,7 @@ private:
   PDCommon::Core::PDContext pdContext_;              ///< PD 数据容器
   std::string yamlPath_;                                            ///< YAML 配置文件路径
   std::unique_ptr<Src::Integration::TimeIntegrator> integrator_;    ///< L1: 时间推进策略
-  std::unique_ptr<PDCommon::Kernel::PDKernel> kernel_;              ///< L2: PD 积分核心
+  std::vector<std::unique_ptr<PDCommon::Kernel::PDKernel>> kernels_; ///< L2: PD 积分核心集合（多核协同）
 };
 
 } // namespace Src::Engine::Solvers::PD

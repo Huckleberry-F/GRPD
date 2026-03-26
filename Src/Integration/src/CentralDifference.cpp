@@ -15,7 +15,8 @@
 
 namespace Src::Integration {
 
-void CentralDifference::run(PDCommon::Core::PDContext &ctx, PDKernel &kernel,
+void CentralDifference::run(PDCommon::Core::PDContext &ctx,
+                            std::vector<std::unique_ptr<PDKernel>> &kernels,
                             std::function<void(int, double)> outputCallback) {
 
   const double dt = dt_;
@@ -26,7 +27,12 @@ void CentralDifference::run(PDCommon::Core::PDContext &ctx, PDKernel &kernel,
   auto &bcManager = ctx.getBCManager();
   const size_t numParticles = ctx.getParticleManager().getTotalParticles();
 
-  auto targets = kernel.getIntegrationTargets();
+  // 从所有内核支持汇总的分量场中搜索二阶 ODE
+  std::vector<PDKernel::IntegrationTarget> targets;
+  for (auto &kernel : kernels) {
+    auto t = kernel->getIntegrationTargets();
+    targets.insert(targets.end(), t.begin(), t.end());
+  }
 
   // 定义泛型二阶场指针结构体
   struct SecondOrderTarget {
@@ -71,8 +77,10 @@ void CentralDifference::run(PDCommon::Core::PDContext &ctx, PDKernel &kernel,
   LOG_INFO("[CentralDifference] Time loop: dt = " + std::to_string(dt) +
            ", totalSteps = " + std::to_string(totalSteps));
 
-  // 预计算（形状张量等，仅调用一次）
-  kernel.preCompute(ctx);
+  // 预计算（形状张量等，遍历所有内核各调用一次）
+  for (auto &kernel : kernels) {
+    kernel->preCompute(ctx);
+  }
 
   // 初始化步：清零所有加速度场(最高阶率场)，计算 a_0
   for (auto &so : soTargets) {
@@ -81,7 +89,9 @@ void CentralDifference::run(PDCommon::Core::PDContext &ctx, PDKernel &kernel,
   }
   bcManager.applySources();
   bcManager.applyConstraints();
-  kernel.computeForceState(ctx);
+  for (auto &kernel : kernels) {
+    kernel->computeForceState(ctx);
+  }
 
   auto tStart = std::chrono::high_resolution_clock::now();
   double pureComputeTime = 0.0;
@@ -131,7 +141,9 @@ void CentralDifference::run(PDCommon::Core::PDContext &ctx, PDKernel &kernel,
     // 3. Evaluate forces (Updates a_{n+1})
     bcManager.applySources();
     bcManager.applyConstraints();
-    kernel.computeForceState(ctx);
+    for (auto &kernel : kernels) {
+      kernel->computeForceState(ctx);
+    }
 
     // 4. v_{n+1} = v_{n+1/2} + 0.5 * a_{n+1} * dt
     for (auto &so : soTargets) {
@@ -143,6 +155,11 @@ void CentralDifference::run(PDCommon::Core::PDContext &ctx, PDKernel &kernel,
 
     // 约束覆盖
     bcManager.applyConstraints();
+
+    // 后处理钩子：遍历所有内核执行 postCompute（状态变量演化等）
+    for (auto &kernel : kernels) {
+      kernel->postCompute(ctx);
+    }
 
     auto tComputeEnd = std::chrono::high_resolution_clock::now();
     pureComputeTime += std::chrono::duration<double>(tComputeEnd - tComputeStart).count();

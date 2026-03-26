@@ -1,7 +1,6 @@
-// ============================================================================
-// PDEngineInitializer.cpp - PD 求解引擎各组件初始化实现
-// 整合了模型加载、材料分配、物理场注册、边界条件加载、邻域搜索及组件初始化
-// ============================================================================
+﻿// ============================================================================
+// PDEngineInitializer.cpp - PD 姹傝В寮曟搸鍚勭粍浠跺垵濮嬪寲瀹炵幇
+// 鏁村悎浜嗘ā鍨嬪姞杞姐€佹潗鏂欏垎閰嶃€佺墿鐞嗗満娉ㄥ唽銆佽竟鐣屾潯浠跺姞杞姐€侀偦鍩熸悳绱㈠強缁勪欢鍒濆鍖?// ============================================================================
 
 #include "PDEngineInitializer.h"
 #include "ExplicitEuler.h"
@@ -32,15 +31,13 @@
 namespace Src::Engine::Solvers::PD {
 
 // ============================================================================
-// 1. 初始化模型：调用 Python 脚本生成网格并读取
-// ============================================================================
+// 1. 鍒濆鍖栨ā鍨嬶細璋冪敤 Python 鑴氭湰鐢熸垚缃戞牸骞惰鍙?// ============================================================================
 void PDEngineInitializer::InitModel(PDCommon::Core::PDContext &ctx,
                                     const YAML::Node &config,
                                     const std::string &yamlPath) {
   LOG_INFO("Model pre-processing...");
 
-  // 通过 IOManager 自动推导 .grpd 路径和模型名（无需 YAML 中指定 OutputGrpd）
-  auto &ioMgr = PDCommon::IO::IOManager::getInstance();
+  // 閫氳繃 IOManager 鑷姩鎺ㄥ .grpd 璺緞鍜屾ā鍨嬪悕锛堟棤闇€ YAML 涓寚瀹?OutputGrpd锛?  auto &ioMgr = PDCommon::IO::IOManager::getInstance();
   std::string grpdPath = ioMgr.getGrpdPath().string();
   std::string currentModelName = ioMgr.getModelName();
   LOG_INFO("[InitModel] grpd path: " + grpdPath);
@@ -52,7 +49,7 @@ void PDEngineInitializer::InitModel(PDCommon::Core::PDContext &ctx,
   } else {
     LOG_INFO("Calling Python pre-processor to generate .grpd mesh...");
 
-    // 通过 IOManager 从软件安装目录定位 generate_model.py
+    // 閫氳繃 IOManager 浠庤蒋浠跺畨瑁呯洰褰曞畾浣?generate_model.py
     auto &ioMgr = PDCommon::IO::IOManager::getInstance();
     std::filesystem::path scriptPath =
         ioMgr.getScriptPath("generate_model.py");
@@ -71,12 +68,11 @@ void PDEngineInitializer::InitModel(PDCommon::Core::PDContext &ctx,
     LOG_INFO("Mesh generated successfully by Python.");
   }
 
-  // 设置模型上下文名称
-  ctx.setName(currentModelName);
+  // 璁剧疆妯″瀷涓婁笅鏂囧悕绉?  ctx.setName(currentModelName);
   LOG_INFO(std::string("[Context Manager] Formalized model name to: ") +
            ctx.getName());
 
-  // 从 YAML 解析模型维度 (Parts[0].Dimension)，默认 3D
+  // 浠?YAML 瑙ｆ瀽妯″瀷缁村害 (Parts[0].Dimension)锛岄粯璁?3D
   try {
     if (config["Parts"] && config["Parts"].IsSequence() &&
         config["Parts"].size() > 0) {
@@ -95,8 +91,8 @@ void PDEngineInitializer::InitModel(PDCommon::Core::PDContext &ctx,
   auto &manager = ctx.getParticleManager();
 
   // ================================================================
-  // 多态读取：通过 ReaderRegistry 按文件后缀名自动调度读取器
-  // 新增格式只需注册对应 Reader，此处零修改
+  // 澶氭€佽鍙栵細閫氳繃 ReaderRegistry 鎸夋枃浠跺悗缂€鍚嶈嚜鍔ㄨ皟搴﹁鍙栧櫒
+  // 鏂板鏍煎紡鍙渶娉ㄥ唽瀵瑰簲 Reader锛屾澶勯浂淇敼
   // ================================================================
   namespace fs = std::filesystem;
   std::string ext = fs::path(grpdPath).extension().string();
@@ -116,7 +112,7 @@ void PDEngineInitializer::InitModel(PDCommon::Core::PDContext &ctx,
     exit(EXIT_FAILURE);
   }
 
-  // 从 MeshData 中间结构填充 ParticleManager
+  // 浠?MeshData 涓棿缁撴瀯濉厖 ParticleManager
   const auto &meshData = reader->getMeshData();
   size_t numPts = meshData.nodeIDs.size();
 
@@ -131,8 +127,7 @@ void PDEngineInitializer::InitModel(PDCommon::Core::PDContext &ctx,
            currentModelName + ": " +
            std::to_string(manager.getTotalParticles()));
 
-  // 验证：打印前 5 个粒子信息
-  size_t previewCount =
+  // 楠岃瘉锛氭墦鍗板墠 5 涓矑瀛愪俊鎭?  size_t previewCount =
       std::min(static_cast<size_t>(5), manager.getTotalParticles());
   for (size_t i = 0; i < previewCount; i++) {
     const auto &p = manager.getParticle(static_cast<int>(i));
@@ -146,7 +141,7 @@ void PDEngineInitializer::InitModel(PDCommon::Core::PDContext &ctx,
 }
 
 // ============================================================================
-// 2. 初始化材料：从 YAML 读取材料定义并分配给粒子
+// 2. 鍒濆鍖栨潗鏂欙細浠?YAML 璇诲彇鏉愭枡瀹氫箟骞跺垎閰嶇粰绮掑瓙
 // ============================================================================
 void PDEngineInitializer::InitMaterial(PDCommon::Core::PDContext &ctx,
                                        const YAML::Node &config) {
@@ -155,7 +150,7 @@ void PDEngineInitializer::InitMaterial(PDCommon::Core::PDContext &ctx,
   auto &matManager = ctx.getMaterialManager();
   std::unordered_map<int, PDCommon::Material::Material *> idToMatMap;
 
-  // 获取材料配置节点 (支持单数 Material 或复数 Materials)
+  // 鑾峰彇鏉愭枡閰嶇疆鑺傜偣 (鏀寔鍗曟暟 Material 鎴栧鏁?Materials)
   YAML::Node materialsNode;
   if (config["Materials"]) {
     materialsNode = config["Materials"];
@@ -164,8 +159,7 @@ void PDEngineInitializer::InitMaterial(PDCommon::Core::PDContext &ctx,
   }
 
   if (materialsNode) {
-    // 统一转换为列表处理
-    std::vector<YAML::Node> nodes;
+    // 缁熶竴杞崲涓哄垪琛ㄥ鐞?    std::vector<YAML::Node> nodes;
     if (materialsNode.IsSequence()) {
       for (const auto &n : materialsNode) {
         nodes.push_back(n);
@@ -174,7 +168,7 @@ void PDEngineInitializer::InitMaterial(PDCommon::Core::PDContext &ctx,
       nodes.push_back(materialsNode);
     }
 
-    // 循环实例化所有定义的材料
+    // 寰幆瀹炰緥鍖栨墍鏈夊畾涔夌殑鏉愭枡
     for (const auto &matNode : nodes) {
       try {
         int matId = matNode["MatID"] ? matNode["MatID"].as<int>() : 1;
@@ -187,7 +181,7 @@ void PDEngineInitializer::InitMaterial(PDCommon::Core::PDContext &ctx,
         std::string keyName =
             name.empty() ? "Mat_" + std::to_string(matId) : name;
 
-        // 调用工厂模式创建实例
+        // 璋冪敤宸ュ巶妯″紡鍒涘缓瀹炰緥
         auto matPtr =
             PDCommon::Material::MaterialRegistry::getInstance().createMaterial(
                 type, keyName);
@@ -211,7 +205,7 @@ void PDEngineInitializer::InitMaterial(PDCommon::Core::PDContext &ctx,
     LOG_WARNING("No 'Material' or 'Materials' section found in PD.yaml!");
   }
 
-  // 将材料指针分配给各个粒子
+  // 灏嗘潗鏂欐寚閽堝垎閰嶇粰鍚勪釜绮掑瓙
   LOG_INFO("Assigning material pointers to particles...");
   auto &particleArray = ctx.getParticleManager().getAllParticles();
   int assignCount = 0;
@@ -239,7 +233,7 @@ void PDEngineInitializer::InitMaterial(PDCommon::Core::PDContext &ctx,
 }
 
 // ============================================================================
-// 3. 初始化物理场：根据 Solver.Type 注册核心场及材料状态变量场
+// 3. 鍒濆鍖栫墿鐞嗗満锛氭牴鎹?Solver.Type 娉ㄥ唽鏍稿績鍦哄強鏉愭枡鐘舵€佸彉閲忓満
 // ============================================================================
 void PDEngineInitializer::InitFields(PDCommon::Core::PDContext &ctx,
                                      const YAML::Node &config) {
@@ -252,8 +246,7 @@ void PDEngineInitializer::InitFields(PDCommon::Core::PDContext &ctx,
 
   auto &fieldManager = ctx.getFieldManager();
 
-  // 通过 PhysicsFieldRegistry 多态注册核心物理场 (支持组合类型如
-  // "ThermalMechanical")
+  // 閫氳繃 PhysicsFieldRegistry 澶氭€佹敞鍐屾牳蹇冪墿鐞嗗満 (鏀寔缁勫悎绫诲瀷濡?  // "ThermalMechanical")
   auto &registry = PDCommon::Field::PhysicsFieldRegistry::getInstance();
   bool anyMatch = false;
 
@@ -274,11 +267,10 @@ void PDEngineInitializer::InitFields(PDCommon::Core::PDContext &ctx,
                 "' did not match any registered PhysicsFields types.");
   }
 
-  // 注册粒子基础几何场 (Coords, Volume, PartID 等)
+  // 娉ㄥ唽绮掑瓙鍩虹鍑犱綍鍦?(Coords, Volume, PartID 绛?
   PDCommon::IO::MeshData::ensureParticleFields(fieldManager);
 
-  // 状态变量池 (SDV Pool) 初始化
-  auto &matManager = ctx.getMaterialManager();
+  // 鐘舵€佸彉閲忔睜 (SDV Pool) 鍒濆鍖?  auto &matManager = ctx.getMaterialManager();
   size_t maxSDVs = 0;
   for (const auto &[matName, matPtr] : matManager.getMaterials()) {
     if (matPtr) {
@@ -294,14 +286,14 @@ void PDEngineInitializer::InitFields(PDCommon::Core::PDContext &ctx,
              std::to_string(maxSDVs));
   }
 
-  // 遍历所有材料，执行材料私有状态变量场注册
+  // 閬嶅巻鎵€鏈夋潗鏂欙紝鎵ц鏉愭枡绉佹湁鐘舵€佸彉閲忓満娉ㄥ唽
   for (const auto &[matName, matPtr] : matManager.getMaterials()) {
     if (matPtr) {
       matPtr->allocateStateVariables(fieldManager);
     }
   }
 
-  // 统一分配内存，并从 ParticleManager 填充几何数据
+  // 缁熶竴鍒嗛厤鍐呭瓨锛屽苟浠?ParticleManager 濉厖鍑犱綍鏁版嵁
   size_t numParticles = ctx.getParticleManager().getTotalParticles();
   fieldManager.resizeAll(numParticles);
 
@@ -318,13 +310,12 @@ void PDEngineInitializer::InitFields(PDCommon::Core::PDContext &ctx,
 }
 
 // ============================================================================
-// 4. 初始化边界条件：通过 MeshReader 读取载荷并施加
-// ============================================================================
+// 4. 鍒濆鍖栬竟鐣屾潯浠讹細閫氳繃 MeshReader 璇诲彇杞借嵎骞舵柦鍔?// ============================================================================
 void PDEngineInitializer::InitConditions(PDCommon::Core::PDContext &ctx,
                                          const YAML::Node &config) {
   LOG_INFO("Entering Conditions Initialization Phase...");
 
-  // 通过多态 Reader 读取网格文件（包含 *LOAD 段）
+  // 閫氳繃澶氭€?Reader 璇诲彇缃戞牸鏂囦欢锛堝寘鍚?*LOAD 娈碉級
   auto &ioMgr = PDCommon::IO::IOManager::getInstance();
   std::string grpdPath = ioMgr.getGrpdPath().string();
   namespace fs = std::filesystem;
@@ -337,8 +328,7 @@ void PDEngineInitializer::InitConditions(PDCommon::Core::PDContext &ctx,
     return;
   }
 
-  // 从 meshData_.loads 中施加边界条件
-  const auto &loads = reader->getMeshData().loads;
+  // 浠?meshData_.loads 涓柦鍔犺竟鐣屾潯浠?  const auto &loads = reader->getMeshData().loads;
   auto &fieldManager = ctx.getFieldManager();
   auto &bcManager = ctx.getBCManager();
 
@@ -357,18 +347,16 @@ void PDEngineInitializer::InitConditions(PDCommon::Core::PDContext &ctx,
     }
 
     std::vector<double> values = {entry.value};
-    // initialize 由各自的具体类型 (如 HeatFluxBC) 内部去获取自己专属的物理场并缓存换算系数
+    // initialize 鐢卞悇鑷殑鍏蜂綋绫诲瀷 (濡?HeatFluxBC) 鍐呴儴鍘昏幏鍙栬嚜宸变笓灞炵殑鐗╃悊鍦哄苟缂撳瓨鎹㈢畻绯绘暟
     bc->initialize(fieldManager, entry.nodeID, values);
 
     bcStats[entry.type]++;
     bcManager.addBC(std::move(bc));
   }
 
-  // ==================== 【基于多态的初始状态赋值】 ====================
-  // 不再硬编码检查 Temperature 或 Displacement。
-  // 通过统一调用 bcManager 驱动多态下的 apply()。
-  // 1. applySources: 初始化并换算由于边界带入的率场 (如 TempRate, HeatFlux, ForceDensity)
-  // 2. applyConstraints: 初始化约束场状态 (如设定 t=0 时的位移边界和恒温边界)
+  // ==================== 銆愬熀浜庡鎬佺殑鍒濆鐘舵€佽祴鍊笺€?====================
+  // 涓嶅啀纭紪鐮佹鏌?Temperature 鎴?Displacement銆?  // 閫氳繃缁熶竴璋冪敤 bcManager 椹卞姩澶氭€佷笅鐨?apply()銆?  // 1. applySources: 鍒濆鍖栧苟鎹㈢畻鐢变簬杈圭晫甯﹀叆鐨勭巼鍦?(濡?TempRate, HeatFlux, ForceDensity)
+  // 2. applyConstraints: 鍒濆鍖栫害鏉熷満鐘舵€?(濡傝瀹?t=0 鏃剁殑浣嶇Щ杈圭晫鍜屾亽娓╄竟鐣?
   bcManager.applySources();
   bcManager.applyConstraints();
   // ====================================================================
@@ -382,14 +370,14 @@ void PDEngineInitializer::InitConditions(PDCommon::Core::PDContext &ctx,
 }
 
 // ============================================================================
-// 5. 初始化邻域：读取 Horizon，构建邻居列表，生成 NeighborCount 和 BondDamage
-// 键场
+// 5. 鍒濆鍖栭偦鍩燂細璇诲彇 Horizon锛屾瀯寤洪偦灞呭垪琛紝鐢熸垚 NeighborCount 鍜?BondDamage
+// 閿満
 // ============================================================================
 void PDEngineInitializer::InitNeighbors(PDCommon::Core::PDContext &ctx,
                                         const YAML::Node &config) {
   LOG_INFO("[InitNeighbors] Entering Neighbor Search Phase...");
 
-  // 从 YAML 读取 Solver.Horizon
+  // 浠?YAML 璇诲彇 Solver.Horizon
   double horizon = 0.0;
   if (config["Solver"] && config["Solver"]["Horizon"]) {
     horizon = config["Solver"]["Horizon"].as<double>();
@@ -401,11 +389,10 @@ void PDEngineInitializer::InitNeighbors(PDCommon::Core::PDContext &ctx,
 
   LOG_INFO("[InitNeighbors] Horizon radius: " + std::to_string(horizon));
 
-  // 构建近邻列表（基于 Cell List 算法）
-  auto &mgr = ctx.getParticleManager();
+  // 鏋勫缓杩戦偦鍒楄〃锛堝熀浜?Cell List 绠楁硶锛?  auto &mgr = ctx.getParticleManager();
   ctx.createNeighborList(mgr, horizon);
 
-  // 注册 NeighborCount 场并填充数据
+  // 娉ㄥ唽 NeighborCount 鍦哄苟濉厖鏁版嵁
   auto &fieldManager = ctx.getFieldManager();
   auto &neighborList = ctx.getNeighborList();
   size_t numParticles = mgr.getTotalParticles();
@@ -427,8 +414,7 @@ void PDEngineInitializer::InitNeighbors(PDCommon::Core::PDContext &ctx,
              std::to_string(numParticles) + " particles.");
   }
 
-  // 注册 BondDamage 键场（初始值 1.0 = 完好）
-  neighborList.registerBondField("BondDamage");
+  // 娉ㄥ唽 BondDamage 閿満锛堝垵濮嬪€?1.0 = 瀹屽ソ锛?  neighborList.registerBondField("BondDamage");
   double *dmgPtr = neighborList.getBondFieldPtr("BondDamage");
   size_t nBonds = neighborList.totalBonds();
   std::fill(dmgPtr, dmgPtr + nBonds, 1.0);
@@ -439,7 +425,7 @@ void PDEngineInitializer::InitNeighbors(PDCommon::Core::PDContext &ctx,
 }
 
 // ============================================================================
-// 6. 初始化核心求解组件：从 YAML 创建 L1 (时间积分器) + L2 (PD 空间核)
+// 6. 鍒濆鍖栨牳蹇冩眰瑙ｇ粍浠讹細浠?YAML 鍒涘缓 L1 (鏃堕棿绉垎鍣? + L2 (PD 绌洪棿鏍?
 // ============================================================================
 void PDEngineInitializer::InitSolverComponents(
     const YAML::Node &config,
@@ -447,11 +433,10 @@ void PDEngineInitializer::InitSolverComponents(
     std::unique_ptr<PDCommon::Kernel::PDKernel> &kernel) {
   LOG_INFO("[PDEngine] Creating solver components (L1 + L2)...");
 
-  // 读取算法类型和 PD 理论类型
-  std::string algorithm = "Explicit"; // 默认显式集成
-  std::string pdType = "NOSB";        // 默认 NOSB 态基
-  std::string physics = "Thermal";    // 默认热传导
-
+  // 璇诲彇绠楁硶绫诲瀷鍜?PD 鐞嗚绫诲瀷
+  std::string algorithm = "Explicit"; // 榛樿鏄惧紡闆嗘垚
+  std::string pdType = "NOSB";        // 榛樿 NOSB 鎬佸熀
+  std::string physics = "Thermal";    // 榛樿鐑紶瀵?
   if (config["Solver"]) {
     auto solverNode = config["Solver"];
     if (solverNode["Algorithm"])
@@ -461,7 +446,7 @@ void PDEngineInitializer::InitSolverComponents(
     if (solverNode["Physics"])
       physics = solverNode["Physics"].as<std::string>();
 
-    // 兼容旧配置：如果存在 Type 优先作为 Physics 后备
+    // 鍏煎鏃ч厤缃細濡傛灉瀛樺湪 Type 浼樺厛浣滀负 Physics 鍚庡
     if (!solverNode["Physics"] && solverNode["Type"])
       physics = solverNode["Type"].as<std::string>();
   }
@@ -469,7 +454,7 @@ void PDEngineInitializer::InitSolverComponents(
   LOG_INFO("[PDSolver] Algorithm: " + algorithm + ", PDType: " + pdType +
            ", Physics: " + physics);
 
-  // 创建 L1: 时间推进系统 (TimeIntegrator) — 反射工厂，零 if-else
+  // 鍒涘缓 L1: 鏃堕棿鎺ㄨ繘绯荤粺 (TimeIntegrator) 鈥?鍙嶅皠宸ュ巶锛岄浂 if-else
   integrator = Src::Integration::TimeIntegratorRegistry::getInstance()
                    .create(algorithm);
   if (!integrator) {
@@ -482,12 +467,12 @@ void PDEngineInitializer::InitSolverComponents(
     exit(EXIT_FAILURE);
   }
 
-  // 多态配置：积分器自己从 YAML 中提取属于自己的参数
+  // 澶氭€侀厤缃細绉垎鍣ㄨ嚜宸变粠 YAML 涓彁鍙栧睘浜庤嚜宸辩殑鍙傛暟
   if (config["Solver"]) {
     integrator->configure(config["Solver"]);
   }
 
-  // 创建 L2: PD 积分核心 (PDKernel) — 反射工厂，零 if-else
+  // 鍒涘缓 L2: PD 绉垎鏍稿績 (PDKernel) 鈥?鍙嶅皠宸ュ巶锛岄浂 if-else
   std::string kernelKey = pdType + "_" + physics;
 
   kernel = PDCommon::Kernel::KernelRegistry::getInstance().create(kernelKey);
@@ -501,7 +486,7 @@ void PDEngineInitializer::InitSolverComponents(
     exit(EXIT_FAILURE);
   }
 
-  // 多态配置：内核自己从 YAML 中提取属于自己家族的参数
+  // 澶氭€侀厤缃細鍐呮牳鑷繁浠?YAML 涓彁鍙栧睘浜庤嚜宸卞鏃忕殑鍙傛暟
   if (config["Solver"]) {
     kernel->configure(config["Solver"]);
   }

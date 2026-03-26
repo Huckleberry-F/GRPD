@@ -3,18 +3,30 @@
 # ==============================================================================
 
 add_library(PDSolve_Obj OBJECT
-    src/PDEngine.cpp
-    src/PDEngineInitializer.cpp
+    PDEngine.cpp
+    Pre/src/InitModel.cpp
+    Pre/src/InitMaterial.cpp
+    Pre/src/InitFields.cpp
+    Pre/src/InitConditions.cpp
+    Pre/src/InitNeighbors.cpp
+    Pre/src/InitSolverComponents.cpp
+    Run/src/PDEngineRun.cpp
+    Post/src/PDEnginePost.cpp
 )
 
 target_sources(PDSolve_Obj PRIVATE
-    include/PDEngine.h
-    include/PDEngineInitializer.h
+    PDEngine.h
+    Pre/include/PDEnginePre.h
+    Run/include/PDEngineRun.h
+    Post/include/PDEnginePost.h
 )
 
 target_include_directories(PDSolve_Obj PRIVATE
-    include
+    ${CMAKE_CURRENT_SOURCE_DIR}
     ${PROJECT_SOURCE_DIR}/Src/Engine/include
+    ${CMAKE_CURRENT_SOURCE_DIR}/Pre/include
+    ${CMAKE_CURRENT_SOURCE_DIR}/Run/include
+    ${CMAKE_CURRENT_SOURCE_DIR}/Post/include
     ${PROJECT_SOURCE_DIR}/Src/Integration/include
     ${PROJECT_SOURCE_DIR}/PDCommon/Utils/include
     ${PROJECT_SOURCE_DIR}/PDCommon/Core/include

@@ -58,6 +58,12 @@ public:
   /// @param ctx PD 仿真上下文
   virtual void computeForceState(PDCommon::Core::PDContext &ctx) = 0;
 
+  /// @brief 时间步积分完成后的善后钩子（可选重写）
+  /// @details 供子类在时间推进结束后执行状态变量演化、热应变更新、
+  ///          材料参数温度依赖刷新等后处理操作。默认空实现。
+  /// @param ctx PD 仿真上下文
+  virtual void postCompute(PDCommon::Core::PDContext &ctx) {}
+
   // -----------------------------------------------------------------------
   // 时间积分辅助信息
   // -----------------------------------------------------------------------

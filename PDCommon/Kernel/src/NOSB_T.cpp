@@ -19,15 +19,16 @@
 #include "Logger.h"
 #include "NeighborList.h"
 #include "ParticleManager.h"
-#include "ThermalMaterial.h"
 #include "StabilizerRegistry.h"
+#include "ThermalMaterial.h"
 #include <cmath>
 #include <omp.h>
+
 
 // ---------------------------------------------------------------------------
 // 编译期静态注册：将 NOSB_T 以 "NOSB_Thermal" 名称注入 KernelRegistry
 // ---------------------------------------------------------------------------
-REGISTER_KERNEL(NOSB_Thermal, PDCommon::Kernel::NOSB_T)
+REGISTER_KERNEL(NOSB_T, PDCommon::Kernel::NOSB_T)
 
 namespace PDCommon::Kernel {
 
@@ -262,7 +263,8 @@ void NOSB_T::ComputeThermalState(PDContext &ctx) {
       rate_sum_nosb += omega * dot_val * vj;
     }
 
-    // 累加非局部截断热流散度项（量纲为 W/m^3，进入内部的为正，此处公式 q_nosb 表示外部，所以减去）
+    // 累加非局部截断热流散度项（量纲为 W/m^3，进入内部的为正，此处公式 q_nosb
+    // 表示外部，所以减去）
     ratePtr[i] -= rate_sum_nosb;
   }
 
@@ -273,8 +275,9 @@ void NOSB_T::ComputeThermalState(PDContext &ctx) {
     stabilizer_->applyPenalty(ctx);
   }
 
-  // 5. 最终统一转化量纲：将总热功率密度转化为温度的时间变化率 dT/dt = Q_total / (rho * cp)
-  #pragma omp parallel for schedule(static)
+// 5. 最终统一转化量纲：将总热功率密度转化为温度的时间变化率 dT/dt = Q_total /
+// (rho * cp)
+#pragma omp parallel for schedule(static)
   for (int i = 0; i < static_cast<int>(numParticles); ++i) {
     double rho = rhoArr[i];
     double cp = cpArr[i];
@@ -317,9 +320,10 @@ void NOSB_T::preCompute(PDCommon::Core::PDContext &ctx) {
 
   // 3. 实例化零能模式策略工厂：根据 zeroEnergyMethodStr_ 创建多态稳定化对象
   if (!zeroEnergyMethodStr_.empty() && zeroEnergyMethodStr_ != "None") {
-    // 根据老配置映射：如果填"Zhang"，映射为 "Thermal_Zhang" 
+    // 根据老配置映射：如果填"Zhang"，映射为 "Thermal_Zhang"
     std::string regName = "Thermal_" + zeroEnergyMethodStr_;
-    stabilizer_ = PDCommon::Kernel::StabilizerRegistry::getInstance().create(regName);
+    stabilizer_ =
+        PDCommon::Kernel::StabilizerRegistry::getInstance().create(regName);
   } else {
     stabilizer_ = nullptr; // 可选的关闭修正
   }
@@ -327,10 +331,13 @@ void NOSB_T::preCompute(PDCommon::Core::PDContext &ctx) {
   if (stabilizer_) {
     stabilizer_->setG0(zeroEnergyG0_);
 
-    // [工厂延伸] 对于类似 Zhang 方法，要求初始化阶预计算罚函数刚度张量，多态执行：
+    // [工厂延伸] 对于类似 Zhang
+    // 方法，要求初始化阶预计算罚函数刚度张量，多态执行：
     stabilizer_->preCompute(ctx);
 
-    LOG_INFO("[NOSB_T] Instantiated ThermalStabilizer globally in Phase 0 using strategy: " + zeroEnergyMethodStr_);
+    LOG_INFO("[NOSB_T] Instantiated ThermalStabilizer globally in Phase 0 "
+             "using strategy: " +
+             zeroEnergyMethodStr_);
   }
 }
 
