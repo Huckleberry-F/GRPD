@@ -18,7 +18,7 @@ Parts:
     Thickness: 1.0   # 2D情况下的虚拟厚度
     Source: "Low_Res_Box.stl"
     RepairMesh: false
-    dx: 1.0          # 离散间距
+    dx: 0.1          # 离散间距
     Scale: 1.0
 
 # 3. 边界条件
@@ -51,14 +51,14 @@ Solver:
   Type: "Mechanical"          # [关键] 切换为力学引擎
   TimeIntegrator: "CentralDifference" # [关键] 使用中心差分法
   Kernel: "NOSB_M"
-  TotalTime: 1.0e-5              # 总时长 0.1 s
+  TotalTime: 1.0e-6              # 总时长 0.1 s
   TimeStep_dt: 1.0e-9         # 中心差分的显式时间步(需很小以满足 CFL)
   OutputInterval: 100         # 每 100 步输出一帧
   OMP_Threads: 8
-  Horizon: 3.015              # 邻域半径 3.015*dx
+  Horizon: 0.3015              # 邻域半径 3.015*dx
   KernelWeightType: "Linear"
-  ZeroEnergyG0: 0.0           # 零能模式修正系数
-  ZeroEnergyMethod: "Silling" # [关键] 开启 Silling 修正
+  ZeroEnergyG0: 1.0           # 零能模式修正系数
+  ZeroEnergyMethod: "Zhang" # [关键] 开启 Silling 修正
 
 # 6. 输出设置
 Writer:

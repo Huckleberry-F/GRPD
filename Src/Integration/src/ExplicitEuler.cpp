@@ -23,7 +23,7 @@ void ExplicitEuler::run(PDCommon::Core::PDContext &ctx,
                         std::function<void(int, double)> outputCallback) {
 
   const double dt = dt_;
-  const int totalSteps = static_cast<int>(totalTime_ / dt_);
+  const int totalSteps = static_cast<int>(std::lround(totalTime_ / dt_));
   const int outputInterval = outputInterval_;
 
   auto &fieldManager = ctx.getFieldManager();

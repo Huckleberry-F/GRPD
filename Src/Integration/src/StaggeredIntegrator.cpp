@@ -84,7 +84,7 @@ void StaggeredIntegrator::run(
   }
 
   const double dt = dt_;
-  const int totalSteps = static_cast<int>(totalTime_ / dt_);
+  const int totalSteps = static_cast<int>(std::lround(totalTime_ / dt_));
   const int outputInterval = outputInterval_;
 
   // =================================================================
