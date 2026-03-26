@@ -9,6 +9,7 @@ add_library(Material_Obj OBJECT
     src/MaterialManager.cpp
     src/MaterialRegistry.cpp
     src/FourierThermalMat.cpp
+    src/LinearElasticMat.cpp
 )
 
 # 2. Add header files to target
@@ -18,6 +19,8 @@ target_sources(Material_Obj PRIVATE
     include/MaterialRegistry.h
     include/ThermalMaterial.h
     include/FourierThermalMat.h
+    include/MechanicalMaterial.h
+    include/LinearElasticMat.h
 )
 
 # 3. Set header include paths for this module

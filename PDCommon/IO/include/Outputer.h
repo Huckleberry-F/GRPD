@@ -16,6 +16,7 @@ class Outputer {
 public:
   void addScalarField(const std::string &fieldName);
   void addVectorField(const std::string &fieldName);
+  void addTensorField(const std::string &fieldName);
   void addIntField(const std::string &fieldName);
   void clear();
 
@@ -30,6 +31,7 @@ private:
   fileFormat format_ = ascii;  // 输出格式，默认 ASCII
   std::vector<std::string> scalarFields_;
   std::vector<std::string> vectorFields_;
+  std::vector<std::string> tensorFields_;
   std::vector<std::string> intFields_;
 };
 

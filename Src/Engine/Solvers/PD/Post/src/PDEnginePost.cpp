@@ -122,7 +122,9 @@ void ExportVTK(const PDCommon::Core::PDContext &ctx,
       }
 
       const int fieldDim = field->getDim();
-      if (fieldDim == 3 || yamlDim == 3) {
+      if (fieldDim == 6 || fieldDim == 9 || yamlDim == 6 || yamlDim == 9) {
+        outputer.addTensorField(varName);
+      } else if (fieldDim == 3 || yamlDim == 3) {
         outputer.addVectorField(varName);
       } else if (fieldDim == 1) {
         outputer.addScalarField(varName);

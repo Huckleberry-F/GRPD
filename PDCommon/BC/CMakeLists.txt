@@ -7,6 +7,7 @@
 add_library(BC_Obj OBJECT 
     src/BC.cpp
     src/ThermalBC.cpp
+    src/MechanicalBC.cpp
     src/BCManager.cpp
     src/BCRegistry.cpp
 )
@@ -14,6 +15,7 @@ add_library(BC_Obj OBJECT
 target_sources(BC_Obj PRIVATE
     include/BC.h
     include/ThermalBC.h
+    include/MechanicalBC.h
     include/BCManager.h
     include/BCRegistry.h
 )

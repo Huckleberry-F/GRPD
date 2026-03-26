@@ -38,6 +38,10 @@ void Outputer::addVectorField(const std::string &fieldName) {
   addUnique(vectorFields_, fieldName);
 }
 
+void Outputer::addTensorField(const std::string &fieldName) {
+  addUnique(tensorFields_, fieldName);
+}
+
 void Outputer::addIntField(const std::string &fieldName) {
   addUnique(intFields_, fieldName);
 }
@@ -45,6 +49,7 @@ void Outputer::addIntField(const std::string &fieldName) {
 void Outputer::clear() {
   scalarFields_.clear();
   vectorFields_.clear();
+  tensorFields_.clear();
   intFields_.clear();
 }
 
@@ -141,6 +146,29 @@ bool Outputer::writeVTK(const std::string &filename,
                              const_cast<double *>(field->dataPtr()),
                              fieldName,
                              3);
+  }
+
+  for (const auto &fieldName : tensorFields_) {
+    const auto *field = fm.getFieldAs<double>(fieldName);
+    if (!field) {
+      LOG_WARNING("[Outputer] Tensor field '" + fieldName +
+                  "' not found. Skipping.");
+      continue;
+    }
+    int dim = field->getDim();
+    if (dim != 6 && dim != 9) {
+      LOG_WARNING("[Outputer] Tensor field '" + fieldName +
+                  "' must have dimension 6 or 9. Skipping.");
+      continue;
+    }
+    if (!validateFieldSize(fieldName, field->size(), numParticles)) {
+      continue;
+    }
+
+    writer.setPointsVariable(Float64,
+                             const_cast<double *>(field->dataPtr()),
+                             fieldName,
+                             dim);
   }
 
   writer.write();
