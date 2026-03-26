@@ -24,7 +24,6 @@
 #include <cmath>
 #include <omp.h>
 
-
 // ---------------------------------------------------------------------------
 // 编译期静态注册：将 NOSB_T 以 "NOSB_Thermal" 名称注入 KernelRegistry
 // ---------------------------------------------------------------------------
@@ -322,19 +321,13 @@ void NOSB_T::preCompute(PDCommon::Core::PDContext &ctx) {
   if (!zeroEnergyMethodStr_.empty() && zeroEnergyMethodStr_ != "None") {
     // 根据老配置映射：如果填"Zhang"，映射为 "Thermal_Zhang"
     std::string regName = "Thermal_" + zeroEnergyMethodStr_;
-    stabilizer_ =
-        PDCommon::Kernel::StabilizerRegistry::getInstance().create(regName);
+    stabilizer_ = StabilizerRegistry::getInstance().create(regName);
   } else {
     stabilizer_ = nullptr; // 可选的关闭修正
   }
 
   if (stabilizer_) {
     stabilizer_->setG0(zeroEnergyG0_);
-
-    // [工厂延伸] 对于类似 Zhang
-    // 方法，要求初始化阶预计算罚函数刚度张量，多态执行：
-    stabilizer_->preCompute(ctx);
-
     LOG_INFO("[NOSB_T] Instantiated ThermalStabilizer globally in Phase 0 "
              "using strategy: " +
              zeroEnergyMethodStr_);

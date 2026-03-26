@@ -51,6 +51,15 @@ public:
 
   /// @brief 获取泊松比 ν [-]
   virtual double getPoissonsRatio() const = 0;
+
+  /// @brief 便捷获取体积模量 K [GPa]
+  virtual double getBulkModulus() const {
+    double E = getYoungsModulus();
+    double nu = getPoissonsRatio();
+    if (nu >= 0.5)
+      return E * 1000.0; // 避免不可压缩失效
+    return E / (3.0 * (1.0 - 2.0 * nu));
+  }
 };
 
 } // namespace PDCommon::Material

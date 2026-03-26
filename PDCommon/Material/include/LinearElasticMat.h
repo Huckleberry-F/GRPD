@@ -23,7 +23,8 @@ public:
   // -----------------------------------------------------------------------
   // 实现 MechanicalMaterial 纯虚接口
   // -----------------------------------------------------------------------
-  Eigen::Matrix3d ComputeStress(const Eigen::Matrix3d &strain) const override;
+  Eigen::Matrix3d
+  ComputeEngineeringStress(const Eigen::Matrix3d &strain) const override;
   Eigen::Matrix3d ComputePK1Stress(const Eigen::Matrix3d &F) const override;
 
   // -----------------------------------------------------------------------

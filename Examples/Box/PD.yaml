@@ -55,8 +55,9 @@ Materials:
 # dt_crit ≈ ρ·cp·dx² / (6k) = 7.85e-9 * 4.6e8 * 25 / 270 ≈ 0.334 s
 # dt = 0.01 远小于 dt_crit，稳定
 Solver:
-  Engine: "PD"
   Type: "Thermal"
+  TimeIntegrator: "Explicit"
+  Kernel: "NOSB_T"
   TotalTime: 10.0            # 10 秒
   TimeStep_dt: 0.01          # dt = 0.01 s
   OutputInterval: 100        # 每 100 步输出一次（共 10 个输出帧）

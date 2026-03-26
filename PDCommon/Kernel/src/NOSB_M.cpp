@@ -7,10 +7,10 @@
 #include "FieldRegistry.h"
 #include "KernelRegistry.h"
 #include "Logger.h"
+#include "MechanicalMaterial.h"
 #include "NeighborList.h"
 #include "ParticleManager.h"
 #include "StabilizerRegistry.h"
-#include "MechanicalMaterial.h"
 #include <cmath>
 #include <omp.h>
 
@@ -31,7 +31,7 @@ void NOSB_M::ComputeMechanicalState(PDContext &ctx) {
   auto &manager = ctx.getParticleManager();
   auto &neighborList = ctx.getNeighborList();
   auto &fieldManager = ctx.getFieldManager();
-  
+
   const size_t numParticles = manager.getTotalParticles();
 
   // 获取核心物理场 (力学核心为 Displacement, Velocity, Acceleration)
@@ -40,7 +40,8 @@ void NOSB_M::ComputeMechanicalState(PDContext &ctx) {
   auto *shapeInvField = fieldManager.getFieldAs<double>("ShapeTensorInv");
 
   if (!dispField || !accelField || !shapeInvField) {
-    LOG_ERROR("[NOSB_M] Core fields missing! Check Displacement, Acceleration or ShapeTensorInv.");
+    LOG_ERROR("[NOSB_M] Core fields missing! Check Displacement, Acceleration "
+              "or ShapeTensorInv.");
     return;
   }
 
@@ -60,7 +61,7 @@ void NOSB_M::ComputeMechanicalState(PDContext &ctx) {
   const double *dispPtr = dispField->dataPtr();
   const double *shapeInvPtr = shapeInvField->dataPtr();
   double *FPtr = defGradField->dataPtr();
-  double *PPtr = stressField->dataPtr();
+  double *PK1Ptr = stressField->dataPtr();
   double *accPtr = accelField->dataPtr();
 
   const double *omegaPtr = neighborList.getBondFieldPtr("InfluenceWeight");
@@ -71,10 +72,10 @@ void NOSB_M::ComputeMechanicalState(PDContext &ctx) {
   const auto &particles = manager.getAllParticles();
 
   // HPC 优化：预提取材料属性到数组，避免循环动态转型
-  std::vector<MechanicalMaterial*> matArr(numParticles, nullptr);
+  std::vector<MechanicalMaterial *> matArr(numParticles, nullptr);
   std::vector<double> rhoArr(numParticles);
   for (size_t i = 0; i < numParticles; ++i) {
-    auto *mat = dynamic_cast<MechanicalMaterial*>(particles[i].getMaterial());
+    auto *mat = dynamic_cast<MechanicalMaterial *>(particles[i].getMaterial());
     if (mat) {
       matArr[i] = mat;
       rhoArr[i] = mat->getDensity();
@@ -88,8 +89,10 @@ void NOSB_M::ComputeMechanicalState(PDContext &ctx) {
   // =======================================================================
 #pragma omp parallel for schedule(static)
   for (int i = 0; i < static_cast<int>(numParticles); ++i) {
-    double xi_x = coords[i * 3], xi_y = coords[i * 3 + 1], xi_z = coords[i * 3 + 2];
-    double u_ix = dispPtr[i * 3], u_iy = dispPtr[i * 3 + 1], u_iz = dispPtr[i * 3 + 2];
+    double xi_x = coords[i * 3], xi_y = coords[i * 3 + 1],
+           xi_z = coords[i * 3 + 2];
+    double u_ix = dispPtr[i * 3], u_iy = dispPtr[i * 3 + 1],
+           u_iz = dispPtr[i * 3 + 2];
 
     double m00 = 0.0, m01 = 0.0, m02 = 0.0;
     double m10 = 0.0, m11 = 0.0, m12 = 0.0;
@@ -101,7 +104,8 @@ void NOSB_M::ComputeMechanicalState(PDContext &ctx) {
 
     for (int k = 0; k < numNeighbors; ++k) {
       int j = neighbors[k];
-      if (j == -1) continue;
+      if (j == -1)
+        continue;
 
       double dx = coords[j * 3] - xi_x;
       double dy = coords[j * 3 + 1] - xi_y;
@@ -115,15 +119,24 @@ void NOSB_M::ComputeMechanicalState(PDContext &ctx) {
       double vj = volumes[j];
       double vol_omega = omega * vj;
 
-      m00 += vol_omega * dux * dx; m01 += vol_omega * dux * dy; m02 += vol_omega * dux * dz;
-      m10 += vol_omega * duy * dx; m11 += vol_omega * duy * dy; m12 += vol_omega * duy * dz;
-      m20 += vol_omega * duz * dx; m21 += vol_omega * duz * dy; m22 += vol_omega * duz * dz;
+      m00 += vol_omega * dux * dx;
+      m01 += vol_omega * dux * dy;
+      m02 += vol_omega * dux * dz;
+      m10 += vol_omega * duy * dx;
+      m11 += vol_omega * duy * dy;
+      m12 += vol_omega * duy * dz;
+      m20 += vol_omega * duz * dx;
+      m21 += vol_omega * duz * dy;
+      m22 += vol_omega * duz * dz;
     }
 
     int idx9 = i * 9;
-    double k00 = shapeInvPtr[idx9], k01 = shapeInvPtr[idx9 + 1], k02 = shapeInvPtr[idx9 + 2];
-    double k10 = shapeInvPtr[idx9 + 3], k11 = shapeInvPtr[idx9 + 4], k12 = shapeInvPtr[idx9 + 5];
-    double k20 = shapeInvPtr[idx9 + 6], k21 = shapeInvPtr[idx9 + 7], k22 = shapeInvPtr[idx9 + 8];
+    double k00 = shapeInvPtr[idx9], k01 = shapeInvPtr[idx9 + 1],
+           k02 = shapeInvPtr[idx9 + 2];
+    double k10 = shapeInvPtr[idx9 + 3], k11 = shapeInvPtr[idx9 + 4],
+           k12 = shapeInvPtr[idx9 + 5];
+    double k20 = shapeInvPtr[idx9 + 6], k21 = shapeInvPtr[idx9 + 7],
+           k22 = shapeInvPtr[idx9 + 8];
 
     double d00 = m00 * k00 + m01 * k10 + m02 * k20;
     double d01 = m00 * k01 + m01 * k11 + m02 * k21;
@@ -135,21 +148,33 @@ void NOSB_M::ComputeMechanicalState(PDContext &ctx) {
     double d21 = m20 * k01 + m21 * k11 + m22 * k21;
     double d22 = m20 * k02 + m21 * k12 + m22 * k22;
 
-    FPtr[idx9]   = 1.0 + d00; FPtr[idx9+1] = d01;       FPtr[idx9+2] = d02;
-    FPtr[idx9+3] = d10;       FPtr[idx9+4] = 1.0 + d11; FPtr[idx9+5] = d12;
-    FPtr[idx9+6] = d20;       FPtr[idx9+7] = d21;       FPtr[idx9+8] = 1.0 + d22;
+    FPtr[idx9] = 1.0 + d00;
+    FPtr[idx9 + 1] = d01;
+    FPtr[idx9 + 2] = d02;
+    FPtr[idx9 + 3] = d10;
+    FPtr[idx9 + 4] = 1.0 + d11;
+    FPtr[idx9 + 5] = d12;
+    FPtr[idx9 + 6] = d20;
+    FPtr[idx9 + 7] = d21;
+    FPtr[idx9 + 8] = 1.0 + d22;
 
     if (matArr[i]) {
       Eigen::Matrix3d F_mat;
-      F_mat << FPtr[idx9], FPtr[idx9+1], FPtr[idx9+2],
-               FPtr[idx9+3], FPtr[idx9+4], FPtr[idx9+5],
-               FPtr[idx9+6], FPtr[idx9+7], FPtr[idx9+8];
-      
+      F_mat << FPtr[idx9], FPtr[idx9 + 1], FPtr[idx9 + 2], FPtr[idx9 + 3],
+          FPtr[idx9 + 4], FPtr[idx9 + 5], FPtr[idx9 + 6], FPtr[idx9 + 7],
+          FPtr[idx9 + 8];
+
       Eigen::Matrix3d P_mat = matArr[i]->ComputePK1Stress(F_mat);
-      
-      PPtr[idx9]   = P_mat(0,0); PPtr[idx9+1] = P_mat(0,1); PPtr[idx9+2] = P_mat(0,2);
-      PPtr[idx9+3] = P_mat(1,0); PPtr[idx9+4] = P_mat(1,1); PPtr[idx9+5] = P_mat(1,2);
-      PPtr[idx9+6] = P_mat(2,0); PPtr[idx9+7] = P_mat(2,1); PPtr[idx9+8] = P_mat(2,2);
+
+      PK1Ptr[idx9] = P_mat(0, 0);
+      PK1Ptr[idx9 + 1] = P_mat(0, 1);
+      PK1Ptr[idx9 + 2] = P_mat(0, 2);
+      PK1Ptr[idx9 + 3] = P_mat(1, 0);
+      PK1Ptr[idx9 + 4] = P_mat(1, 1);
+      PK1Ptr[idx9 + 5] = P_mat(1, 2);
+      PK1Ptr[idx9 + 6] = P_mat(2, 0);
+      PK1Ptr[idx9 + 7] = P_mat(2, 1);
+      PK1Ptr[idx9 + 8] = P_mat(2, 2);
     }
   }
 
@@ -159,16 +184,23 @@ void NOSB_M::ComputeMechanicalState(PDContext &ctx) {
   // =======================================================================
 #pragma omp parallel for schedule(static)
   for (int i = 0; i < static_cast<int>(numParticles); ++i) {
-    if (rhoArr[i] <= 0.0) continue;
+    if (rhoArr[i] <= 0.0)
+      continue;
 
     int idx9_i = i * 9;
-    double p00 = PPtr[idx9_i], p01 = PPtr[idx9_i+1], p02 = PPtr[idx9_i+2];
-    double p10 = PPtr[idx9_i+3], p11 = PPtr[idx9_i+4], p12 = PPtr[idx9_i+5];
-    double p20 = PPtr[idx9_i+6], p21 = PPtr[idx9_i+7], p22 = PPtr[idx9_i+8];
+    double p00 = PK1Ptr[idx9_i], p01 = PK1Ptr[idx9_i + 1],
+           p02 = PK1Ptr[idx9_i + 2];
+    double p10 = PK1Ptr[idx9_i + 3], p11 = PK1Ptr[idx9_i + 4],
+           p12 = PK1Ptr[idx9_i + 5];
+    double p20 = PK1Ptr[idx9_i + 6], p21 = PK1Ptr[idx9_i + 7],
+           p22 = PK1Ptr[idx9_i + 8];
 
-    double i_k00 = shapeInvPtr[idx9_i], i_k01 = shapeInvPtr[idx9_i+1], i_k02 = shapeInvPtr[idx9_i+2];
-    double i_k10 = shapeInvPtr[idx9_i+3], i_k11 = shapeInvPtr[idx9_i+4], i_k12 = shapeInvPtr[idx9_i+5];
-    double i_k20 = shapeInvPtr[idx9_i+6], i_k21 = shapeInvPtr[idx9_i+7], i_k22 = shapeInvPtr[idx9_i+8];
+    double i_k00 = shapeInvPtr[idx9_i], i_k01 = shapeInvPtr[idx9_i + 1],
+           i_k02 = shapeInvPtr[idx9_i + 2];
+    double i_k10 = shapeInvPtr[idx9_i + 3], i_k11 = shapeInvPtr[idx9_i + 4],
+           i_k12 = shapeInvPtr[idx9_i + 5];
+    double i_k20 = shapeInvPtr[idx9_i + 6], i_k21 = shapeInvPtr[idx9_i + 7],
+           i_k22 = shapeInvPtr[idx9_i + 8];
 
     double PKi_00 = p00 * i_k00 + p01 * i_k10 + p02 * i_k20;
     double PKi_01 = p00 * i_k01 + p01 * i_k11 + p02 * i_k21;
@@ -180,7 +212,8 @@ void NOSB_M::ComputeMechanicalState(PDContext &ctx) {
     double PKi_21 = p20 * i_k01 + p21 * i_k11 + p22 * i_k21;
     double PKi_22 = p20 * i_k02 + p21 * i_k12 + p22 * i_k22;
 
-    double xi_x = coords[i * 3], xi_y = coords[i * 3 + 1], xi_z = coords[i * 3 + 2];
+    double xi_x = coords[i * 3], xi_y = coords[i * 3 + 1],
+           xi_z = coords[i * 3 + 2];
     double force_x = 0.0, force_y = 0.0, force_z = 0.0;
 
     const int numNeighbors = neighborList.getNeighborCount(i);
@@ -189,7 +222,8 @@ void NOSB_M::ComputeMechanicalState(PDContext &ctx) {
 
     for (int k_nb = 0; k_nb < numNeighbors; ++k_nb) {
       int j = neighbors[k_nb];
-      if (j == -1) continue;
+      if (j == -1)
+        continue;
 
       double dx = coords[j * 3] - xi_x;
       double dy = coords[j * 3 + 1] - xi_y;
@@ -199,13 +233,19 @@ void NOSB_M::ComputeMechanicalState(PDContext &ctx) {
       double vj = volumes[j];
 
       int idx9_j = j * 9;
-      double pj00 = PPtr[idx9_j], pj01 = PPtr[idx9_j+1], pj02 = PPtr[idx9_j+2];
-      double pj10 = PPtr[idx9_j+3], pj11 = PPtr[idx9_j+4], pj12 = PPtr[idx9_j+5];
-      double pj20 = PPtr[idx9_j+6], pj21 = PPtr[idx9_j+7], pj22 = PPtr[idx9_j+8];
+      double pj00 = PK1Ptr[idx9_j], pj01 = PK1Ptr[idx9_j + 1],
+             pj02 = PK1Ptr[idx9_j + 2];
+      double pj10 = PK1Ptr[idx9_j + 3], pj11 = PK1Ptr[idx9_j + 4],
+             pj12 = PK1Ptr[idx9_j + 5];
+      double pj20 = PK1Ptr[idx9_j + 6], pj21 = PK1Ptr[idx9_j + 7],
+             pj22 = PK1Ptr[idx9_j + 8];
 
-      double j_k00 = shapeInvPtr[idx9_j], j_k01 = shapeInvPtr[idx9_j+1], j_k02 = shapeInvPtr[idx9_j+2];
-      double j_k10 = shapeInvPtr[idx9_j+3], j_k11 = shapeInvPtr[idx9_j+4], j_k12 = shapeInvPtr[idx9_j+5];
-      double j_k20 = shapeInvPtr[idx9_j+6], j_k21 = shapeInvPtr[idx9_j+7], j_k22 = shapeInvPtr[idx9_j+8];
+      double j_k00 = shapeInvPtr[idx9_j], j_k01 = shapeInvPtr[idx9_j + 1],
+             j_k02 = shapeInvPtr[idx9_j + 2];
+      double j_k10 = shapeInvPtr[idx9_j + 3], j_k11 = shapeInvPtr[idx9_j + 4],
+             j_k12 = shapeInvPtr[idx9_j + 5];
+      double j_k20 = shapeInvPtr[idx9_j + 6], j_k21 = shapeInvPtr[idx9_j + 7],
+             j_k22 = shapeInvPtr[idx9_j + 8];
 
       double PKj_00 = pj00 * j_k00 + pj01 * j_k10 + pj02 * j_k20;
       double PKj_01 = pj00 * j_k01 + pj01 * j_k11 + pj02 * j_k21;
@@ -217,9 +257,12 @@ void NOSB_M::ComputeMechanicalState(PDContext &ctx) {
       double PKj_21 = pj20 * j_k01 + pj21 * j_k11 + pj22 * j_k21;
       double PKj_22 = pj20 * j_k02 + pj21 * j_k12 + pj22 * j_k22;
 
-      double vx = (PKi_00 + PKj_00) * dx + (PKi_01 + PKj_01) * dy + (PKi_02 + PKj_02) * dz;
-      double vy = (PKi_10 + PKj_10) * dx + (PKi_11 + PKj_11) * dy + (PKi_12 + PKj_12) * dz;
-      double vz = (PKi_20 + PKj_20) * dx + (PKi_21 + PKj_21) * dy + (PKi_22 + PKj_22) * dz;
+      double vx = (PKi_00 + PKj_00) * dx + (PKi_01 + PKj_01) * dy +
+                  (PKi_02 + PKj_02) * dz;
+      double vy = (PKi_10 + PKj_10) * dx + (PKi_11 + PKj_11) * dy +
+                  (PKi_12 + PKj_12) * dz;
+      double vz = (PKi_20 + PKj_20) * dx + (PKi_21 + PKj_21) * dy +
+                  (PKi_22 + PKj_22) * dz;
 
       force_x += omega * vx * vj;
       force_y += omega * vy * vj;
@@ -229,7 +272,7 @@ void NOSB_M::ComputeMechanicalState(PDContext &ctx) {
     // 更新加速度 (等效体积力 / 质量密度)
     // 假设未受其他显式外力约束时直接覆盖当前时刻加速度；如使用力场需先归零。
     // 在这个框架里，积分器先从力场累加力，我们在这里将其加到现有加速度上。
-    accPtr[i * 3]     += force_x / rhoArr[i];
+    accPtr[i * 3] += force_x / rhoArr[i];
     accPtr[i * 3 + 1] += force_y / rhoArr[i];
     accPtr[i * 3 + 2] += force_z / rhoArr[i];
   }
@@ -250,7 +293,7 @@ void NOSB_M::preCompute(PDCommon::Core::PDContext &ctx) {
   auto &reg = FieldRegistry::getInstance();
   auto fField = reg.createField("DoubleField", "DeformationGradient", 9);
   auto pField = reg.createField("DoubleField", "PK1Stress", 9);
-  
+
   fieldManager.addField(std::move(fField));
   fieldManager.addField(std::move(pField));
 
@@ -266,23 +309,33 @@ void NOSB_M::preCompute(PDCommon::Core::PDContext &ctx) {
 #pragma omp parallel for schedule(static)
   for (int i = 0; i < static_cast<int>(numParticles); ++i) {
     int idx9 = i * 9;
-    FPtr[idx9] = 1.0; FPtr[idx9+1] = 0.0; FPtr[idx9+2] = 0.0;
-    FPtr[idx9+3] = 0.0; FPtr[idx9+4] = 1.0; FPtr[idx9+5] = 0.0;
-    FPtr[idx9+6] = 0.0; FPtr[idx9+7] = 0.0; FPtr[idx9+8] = 1.0;
+    FPtr[idx9] = 1.0;
+    FPtr[idx9 + 1] = 0.0;
+    FPtr[idx9 + 2] = 0.0;
+    FPtr[idx9 + 3] = 0.0;
+    FPtr[idx9 + 4] = 1.0;
+    FPtr[idx9 + 5] = 0.0;
+    FPtr[idx9 + 6] = 0.0;
+    FPtr[idx9 + 7] = 0.0;
+    FPtr[idx9 + 8] = 1.0;
   }
 
   if (!zeroEnergyMethodStr_.empty() && zeroEnergyMethodStr_ != "None") {
     std::string regName = "Mechanical_" + zeroEnergyMethodStr_;
-    if (StabilizerRegistry::getInstance().hasType(regName)) {
+    if (StabilizerRegistry::getInstance().contains(regName)) {
       stabilizer_ = StabilizerRegistry::getInstance().create(regName);
-      stabilizer_->setG0(zeroEnergyG0_);
-      stabilizer_->preCompute(ctx);
     }
   } else {
     stabilizer_ = nullptr;
   }
-}
 
+  if (stabilizer_) {
+    stabilizer_->setG0(zeroEnergyG0_);
+    LOG_INFO("[NOSB_M] Instantiated MechanicalStabilizer globally in Phase 0 "
+             "using strategy: " +
+             zeroEnergyMethodStr_);
+  }
+}
 void NOSB_M::computeForceState(PDCommon::Core::PDContext &ctx) {
   ComputeMechanicalState(ctx);
 }
@@ -292,10 +345,7 @@ std::vector<PDKernel::IntegrationTarget> NOSB_M::getIntegrationTargets() const {
   // 对二阶中心差分系统：
   // Target 1: Displacement -> Velocity
   // Target 2: Velocity -> Acceleration
-  return {
-    {"Displacement", "Velocity", 3},
-    {"Velocity", "Acceleration", 3}
-  };
+  return {{"Displacement", "Velocity", 3}, {"Velocity", "Acceleration", 3}};
 }
 
 } // namespace PDCommon::Kernel

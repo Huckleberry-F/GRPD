@@ -1,0 +1,1766 @@
+[INFO] ==================================================
+[INFO]    GRPD Solver Engine Initialized                 
+[INFO] ==================================================
+[INFO] [EngineRegistry] Creating Engine instance: PD
+[INFO] [PDEngine] PD Engine instance created.
+[INFO] ========== Registered Types Summary ===========
+[INFO]   TimeIntegrator    : CentralDifference, Explicit, Staggered
+[INFO]   FieldRegistry     : DoubleField, IntField
+[INFO]   PhysicsFields     : Mechanical, Thermal
+[INFO]   BCRegistry        : BODY_FORCE, CONV, DISP, FLUX, PRESSURE, T, VELOCITY
+[INFO]   MaterialRegistry  : FourierThermalMat, LinearElasticMat
+[INFO]   KernelRegistry    : NOSB_M, NOSB_T
+[INFO]   EngineRegistry    : PD
+[INFO] ===============================================
+[INFO] [EngineManager] Initializing solver: PD
+[INFO] [PDEngine] Initializing PD simulation context...
+[INFO] Model pre-processing...
+[INFO] [InitModel] grpd path: D:\Project_C++\GRPD\Examples\Box_Disp\Box_Disp.grpd
+[INFO] [InitModel] model name: Box_Disp
+[INFO] Calling Python pre-processor to generate .grpd mesh...
+[ERROR] Python pre-processor failed! Please check if python is installed and paths are correct.
+[ERROR] Exit code: 1
+[INFO] ==================================================
+[INFO]    GRPD Solver Engine Initialized                 
+[INFO] ==================================================
+[INFO] [EngineRegistry] Creating Engine instance: PD
+[INFO] [PDEngine] PD Engine instance created.
+[INFO] ========== Registered Types Summary ===========
+[INFO]   TimeIntegrator    : CentralDifference, Explicit, Staggered
+[INFO]   FieldRegistry     : DoubleField, IntField
+[INFO]   PhysicsFields     : Mechanical, Thermal
+[INFO]   BCRegistry        : BODY_FORCE, CONV, DISP, FLUX, PRESSURE, T, VELOCITY
+[INFO]   MaterialRegistry  : FourierThermalMat, LinearElasticMat
+[INFO]   KernelRegistry    : NOSB_M, NOSB_T
+[INFO]   EngineRegistry    : PD
+[INFO] ===============================================
+[INFO] [EngineManager] Initializing solver: PD
+[INFO] [PDEngine] Initializing PD simulation context...
+[INFO] Model pre-processing...
+[INFO] [InitModel] grpd path: D:\Project_C++\GRPD\Examples\Box_Disp\Box_Disp.grpd
+[INFO] [InitModel] model name: Box_Disp
+[INFO] Found existing .grpd mesh file at: D:\Project_C++\GRPD\Examples\Box_Disp\Box_Disp.grpd. Skipping generation.
+[INFO] [Context Manager] Formalized model name to: Box_Disp
+[INFO] [Context Manager] Model dimension set to: 2D
+[INFO] [ReaderRegistry] Creating reader for: .grpd (name: Box_Disp)
+[INFO] [InitModel] Reading mesh file: D:\Project_C++\GRPD\Examples\Box_Disp\Box_Disp.grpd (reader: .grpd)
+[INFO] [GrpdMeshReader] Reading file: D:\Project_C++\GRPD\Examples\Box_Disp\Box_Disp.grpd
+[INFO] [GrpdMeshReader] Entering *PARTICLE section (Line 1)
+[INFO] [GrpdMeshReader] Entering *LOAD section (Line 2503)
+[INFO] [GrpdMeshReader] ============================================
+[INFO] [GrpdMeshReader]    File reading complete!
+[INFO] [GrpdMeshReader]    Total particles: 2500
+[INFO] [GrpdMeshReader]    Total load entries: 0
+[INFO] [GrpdMeshReader] ============================================
+[INFO] [InitModel] Total particles loaded for model Box_Disp: 2500
+[INFO]   Particle[0] Part=1 Pos=(-24.500000, -24.500000, 0.000000) Vol=1.000000
+[INFO]   Particle[1] Part=1 Pos=(-24.500000, -23.500000, 0.000000) Vol=1.000000
+[INFO]   Particle[2] Part=1 Pos=(-24.500000, -22.500000, 0.000000) Vol=1.000000
+[INFO]   Particle[3] Part=1 Pos=(-24.500000, -21.500000, 0.000000) Vol=1.000000
+[INFO]   Particle[4] Part=1 Pos=(-24.500000, -20.500000, 0.000000) Vol=1.000000
+[INFO] Entering Material Initialization Phase...
+[INFO] Instantiating material [1] of type: LinearElasticMat
+[INFO] [MaterialRegistry] Using factory to create material: Steel_Elastic (type: LinearElasticMat)
+[INFO] [LinearElasticMat] Material 'Steel_Elastic' is initialized. E = 210000.000000, nu = 0.300000, Density = 0.000000
+[INFO] [MaterialManager] Successfully added material instance: Steel_Elastic
+[INFO] Successfully registered material ID 1 (Steel_Elastic)
+[INFO] Assigning material pointers to particles...
+[INFO] Successfully assigned materials to 2500 particles.
+[INFO] Entering Field Registration Phase...
+[INFO] [FieldManager] Added field 'Displacement'.
+[INFO] [FieldManager] Added field 'Velocity'.
+[INFO] [FieldManager] Added field 'Acceleration'.
+[INFO] [MechanicalFields] Core fields registered: Displacement, Velocity, Acceleration.
+[INFO] [InitFields] Auto-registered PhysicsFields module: Mechanical
+[INFO] [FieldManager] Added field 'ID'.
+[INFO] [FieldManager] Added field 'PartID'.
+[INFO] [FieldManager] Added field 'MatID'.
+[INFO] [FieldManager] Added field 'Coords'.
+[INFO] [FieldManager] Added field 'Volume'.
+[INFO] [FieldManager] Resized all 8 fields for 2500 particles.
+[INFO] [MeshData] Populated particle geometry fields into FieldManager for 2500 particles.
+[INFO] [InitFields] All fields allocated for 2500 particles. Total fields: 8.
+[INFO] Entering Conditions Initialization Phase...
+[INFO] [ReaderRegistry] Creating reader for: .grpd (name: LoadReader)
+[INFO] [GrpdMeshReader] Reading file: D:\Project_C++\GRPD\Examples\Box_Disp\Box_Disp.grpd
+[INFO] [GrpdMeshReader] Entering *PARTICLE section (Line 1)
+[INFO] [GrpdMeshReader] Entering *LOAD section (Line 2503)
+[INFO] [GrpdMeshReader] ============================================
+[INFO] [GrpdMeshReader]    File reading complete!
+[INFO] [GrpdMeshReader]    Total particles: 2500
+[INFO] [GrpdMeshReader]    Total load entries: 0
+[INFO] [GrpdMeshReader] ============================================
+[INFO] [InitConditions] Load statistics:
+[INFO] [InitConditions] Boundary conditions initialization complete.
+[INFO] [InitNeighbors] Entering Neighbor Search Phase...
+[INFO] [InitNeighbors] Horizon radius: 3.015000
+[INFO] [NeighborList] Starting full-flat CSR search for 2500 particles, horizon = 3.015000
+[INFO] [NeighborList] Cell grid: 17 x 17 x 1 = 289 cells
+[INFO] [NeighborList] Flat cell list built in 0.999928 ms
+[INFO] [NeighborList] Pass 1 (count) done in 0.999928 ms
+[INFO] [NeighborList] Total bonds: 66436, Memory: 0 MB
+[INFO] [NeighborList] Pass 2 (fill) done in 0.000000 ms
+[INFO] [NeighborList] Max neighbors: 28
+[INFO] [NeighborList] Total time: 1.999855 ms
+[INFO] [FieldManager] Added field 'NeighborCount'.
+[INFO] [InitNeighbors] NeighborCount field populated for 2500 particles.
+[INFO] [InitNeighbors] BondDamage field registered, 66436 bonds initialized to 1.0
+[INFO] [InitNeighbors] Neighbor search phase complete.
+[INFO] Entering Solver Components Assembly Phase...
+[INFO] Building Time Integrator: CentralDifference
+[INFO] Time Integrator configured.
+[ERROR] Solver.Kernel (or Solver.Kernels) not found in YAML! Please specify it explicitly.
+[INFO] ==================================================
+[INFO]    GRPD Solver Engine Initialized                 
+[INFO] ==================================================
+[INFO] [EngineRegistry] Creating Engine instance: PD
+[INFO] [PDEngine] PD Engine instance created.
+[INFO] ========== Registered Types Summary ===========
+[INFO]   TimeIntegrator    : CentralDifference, Explicit, Staggered
+[INFO]   FieldRegistry     : DoubleField, IntField
+[INFO]   PhysicsFields     : Mechanical, Thermal
+[INFO]   BCRegistry        : BODY_FORCE, CONV, DISP, FLUX, PRESSURE, T, VELOCITY
+[INFO]   MaterialRegistry  : FourierThermalMat, LinearElasticMat
+[INFO]   KernelRegistry    : NOSB_M, NOSB_T
+[INFO]   EngineRegistry    : PD
+[INFO] ===============================================
+[INFO] [EngineManager] Initializing solver: PD
+[INFO] [PDEngine] Initializing PD simulation context...
+[INFO] Model pre-processing...
+[INFO] [InitModel] grpd path: D:\Project_C++\GRPD\Examples\Box_Disp\Box_Disp.grpd
+[INFO] [InitModel] model name: Box_Disp
+[INFO] Found existing .grpd mesh file at: D:\Project_C++\GRPD\Examples\Box_Disp\Box_Disp.grpd. Skipping generation.
+[INFO] [Context Manager] Formalized model name to: Box_Disp
+[INFO] [Context Manager] Model dimension set to: 2D
+[INFO] [ReaderRegistry] Creating reader for: .grpd (name: Box_Disp)
+[INFO] [InitModel] Reading mesh file: D:\Project_C++\GRPD\Examples\Box_Disp\Box_Disp.grpd (reader: .grpd)
+[INFO] [GrpdMeshReader] Reading file: D:\Project_C++\GRPD\Examples\Box_Disp\Box_Disp.grpd
+[INFO] [GrpdMeshReader] Entering *PARTICLE section (Line 1)
+[INFO] [GrpdMeshReader] Entering *LOAD section (Line 2503)
+[INFO] [GrpdMeshReader] ============================================
+[INFO] [GrpdMeshReader]    File reading complete!
+[INFO] [GrpdMeshReader]    Total particles: 2500
+[INFO] [GrpdMeshReader]    Total load entries: 0
+[INFO] [GrpdMeshReader] ============================================
+[INFO] [InitModel] Total particles loaded for model Box_Disp: 2500
+[INFO]   Particle[0] Part=1 Pos=(-24.500000, -24.500000, 0.000000) Vol=1.000000
+[INFO]   Particle[1] Part=1 Pos=(-24.500000, -23.500000, 0.000000) Vol=1.000000
+[INFO]   Particle[2] Part=1 Pos=(-24.500000, -22.500000, 0.000000) Vol=1.000000
+[INFO]   Particle[3] Part=1 Pos=(-24.500000, -21.500000, 0.000000) Vol=1.000000
+[INFO]   Particle[4] Part=1 Pos=(-24.500000, -20.500000, 0.000000) Vol=1.000000
+[INFO] Entering Material Initialization Phase...
+[INFO] Instantiating material [1] of type: LinearElasticMat
+[INFO] [MaterialRegistry] Using factory to create material: Steel_Elastic (type: LinearElasticMat)
+[INFO] [LinearElasticMat] Material 'Steel_Elastic' is initialized. E = 210000.000000, nu = 0.300000, Density = 0.000000
+[INFO] [MaterialManager] Successfully added material instance: Steel_Elastic
+[INFO] Successfully registered material ID 1 (Steel_Elastic)
+[INFO] Assigning material pointers to particles...
+[INFO] Successfully assigned materials to 2500 particles.
+[INFO] Entering Field Registration Phase...
+[INFO] [FieldManager] Added field 'Displacement'.
+[INFO] [FieldManager] Added field 'Velocity'.
+[INFO] [FieldManager] Added field 'Acceleration'.
+[INFO] [MechanicalFields] Core fields registered: Displacement, Velocity, Acceleration.
+[INFO] [InitFields] Auto-registered PhysicsFields module: Mechanical
+[INFO] [FieldManager] Added field 'ID'.
+[INFO] [FieldManager] Added field 'PartID'.
+[INFO] [FieldManager] Added field 'MatID'.
+[INFO] [FieldManager] Added field 'Coords'.
+[INFO] [FieldManager] Added field 'Volume'.
+[INFO] [FieldManager] Resized all 8 fields for 2500 particles.
+[INFO] [MeshData] Populated particle geometry fields into FieldManager for 2500 particles.
+[INFO] [InitFields] All fields allocated for 2500 particles. Total fields: 8.
+[INFO] Entering Conditions Initialization Phase...
+[INFO] [ReaderRegistry] Creating reader for: .grpd (name: LoadReader)
+[INFO] [GrpdMeshReader] Reading file: D:\Project_C++\GRPD\Examples\Box_Disp\Box_Disp.grpd
+[INFO] [GrpdMeshReader] Entering *PARTICLE section (Line 1)
+[INFO] [GrpdMeshReader] Entering *LOAD section (Line 2503)
+[INFO] [GrpdMeshReader] ============================================
+[INFO] [GrpdMeshReader]    File reading complete!
+[INFO] [GrpdMeshReader]    Total particles: 2500
+[INFO] [GrpdMeshReader]    Total load entries: 0
+[INFO] [GrpdMeshReader] ============================================
+[INFO] [InitConditions] Load statistics:
+[INFO] [InitConditions] Boundary conditions initialization complete.
+[INFO] [InitNeighbors] Entering Neighbor Search Phase...
+[INFO] [InitNeighbors] Horizon radius: 3.015000
+[INFO] [NeighborList] Starting full-flat CSR search for 2500 particles, horizon = 3.015000
+[INFO] [NeighborList] Cell grid: 17 x 17 x 1 = 289 cells
+[INFO] [NeighborList] Flat cell list built in 0.000000 ms
+[INFO] [NeighborList] Pass 1 (count) done in 0.999928 ms
+[INFO] [NeighborList] Total bonds: 66436, Memory: 0 MB
+[INFO] [NeighborList] Pass 2 (fill) done in 1.000166 ms
+[INFO] [NeighborList] Max neighbors: 28
+[INFO] [NeighborList] Total time: 2.000093 ms
+[INFO] [FieldManager] Added field 'NeighborCount'.
+[INFO] [InitNeighbors] NeighborCount field populated for 2500 particles.
+[INFO] [InitNeighbors] BondDamage field registered, 66436 bonds initialized to 1.0
+[INFO] [InitNeighbors] Neighbor search phase complete.
+[INFO] Entering Solver Components Assembly Phase...
+[INFO] Building Time Integrator: CentralDifference
+[INFO] Time Integrator configured.
+[INFO] Building Space Kernel: NOSB_M
+[INFO] [NOSB_Base] Applied KernelWeightType: Linear
+[INFO] [NOSB_Base] Applied ZeroEnergyG0: 1.000000
+[INFO] [NOSB_Base] Applied ZeroEnergyMethod string: Silling
+[INFO] Space Kernel 'NOSB_M' configured.
+[INFO] Total kernels assembled: 1
+[INFO] [PDEngine] PD simulation context initialized successfully.
+[INFO] [EngineManager] All solvers initialized. Total: 1
+[INFO] [EngineManager] Entering Main Solver Phase
+[INFO] [EngineManager] Solving: PD
+[INFO] [PDEngine] Starting PD Engine Solve Phase...
+[INFO] [CentralDifference] Identified generic 2nd-order ODE couple: Displacement (u) <- Velocity (v) <- Acceleration (a)
+[INFO] [CentralDifference] Time loop: dt = 0.000010, totalSteps = 10000
+[INFO] [FieldManager] Added field 'ShapeTensorInv'.
+[INFO] [FieldManager] Added field 'VHorizon'.
+[INFO] [NOSB_Base] Computing InfluenceWeight + Shape Tensor Inverse (K^-1)...
+[INFO] [NOSB_Base] All NOSB base fields registered and Shape Tensor Inverse computed.
+[INFO] [FieldManager] Added field 'DeformationGradient'.
+[INFO] [FieldManager] Added field 'PK1Stress'.
+[INFO] [NOSB_M] Instantiated MechanicalStabilizer globally in Phase 0 using strategy: Silling
+[INFO] --- Step 0 / 10000  |  Pure Compute: 0.000000s  |  Total: 0.000000s  |  Pure Speed: 0.000000 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=0 t=0.000000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_173851\Disp_Result_step00000_t0.0000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 100 / 10000  |  Pure Compute: 0.098040s  |  Total: 0.108623s  |  Pure Speed: 1019.988719 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=100 t=0.001000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_173851\Disp_Result_step00100_t0.0010.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 200 / 10000  |  Pure Compute: 0.194483s  |  Total: 0.209444s  |  Pure Speed: 1028.366460 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=200 t=0.002000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_173851\Disp_Result_step00200_t0.0020.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 300 / 10000  |  Pure Compute: 0.290988s  |  Total: 0.308087s  |  Pure Speed: 1030.968932 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=300 t=0.003000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_173851\Disp_Result_step00300_t0.0030.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 400 / 10000  |  Pure Compute: 0.410502s  |  Total: 0.431387s  |  Pure Speed: 974.417402 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=400 t=0.004000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_173851\Disp_Result_step00400_t0.0040.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 500 / 10000  |  Pure Compute: 0.513380s  |  Total: 0.538359s  |  Pure Speed: 973.937814 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=500 t=0.005000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_173851\Disp_Result_step00500_t0.0050.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 600 / 10000  |  Pure Compute: 0.616222s  |  Total: 0.645710s  |  Pure Speed: 973.674756 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=600 t=0.006000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_173851\Disp_Result_step00600_t0.0060.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 700 / 10000  |  Pure Compute: 0.715932s  |  Total: 0.750804s  |  Pure Speed: 977.746353 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=700 t=0.007000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_173851\Disp_Result_step00700_t0.0070.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 800 / 10000  |  Pure Compute: 0.812309s  |  Total: 0.850761s  |  Pure Speed: 984.847021 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=800 t=0.008000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_173851\Disp_Result_step00800_t0.0080.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 900 / 10000  |  Pure Compute: 0.911094s  |  Total: 0.954033s  |  Pure Speed: 987.823105 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=900 t=0.009000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_173851\Disp_Result_step00900_t0.0090.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 1000 / 10000  |  Pure Compute: 1.008750s  |  Total: 1.055789s  |  Pure Speed: 991.326095 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=1000 t=0.010000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_173851\Disp_Result_step01000_t0.0100.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 1100 / 10000  |  Pure Compute: 1.105368s  |  Total: 1.157061s  |  Pure Speed: 995.143879 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=1100 t=0.011000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_173851\Disp_Result_step01100_t0.0110.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 1200 / 10000  |  Pure Compute: 1.217384s  |  Total: 1.273634s  |  Pure Speed: 985.719876 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=1200 t=0.012000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_173851\Disp_Result_step01200_t0.0120.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 1300 / 10000  |  Pure Compute: 1.326604s  |  Total: 1.387073s  |  Pure Speed: 979.945491 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=1300 t=0.013000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_173851\Disp_Result_step01300_t0.0130.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 1400 / 10000  |  Pure Compute: 1.445453s  |  Total: 1.509458s  |  Pure Speed: 968.554562 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=1400 t=0.014000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_173851\Disp_Result_step01400_t0.0140.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 1500 / 10000  |  Pure Compute: 1.551939s  |  Total: 1.620153s  |  Pure Speed: 966.532959 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=1500 t=0.015000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_173851\Disp_Result_step01500_t0.0150.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 1600 / 10000  |  Pure Compute: 1.650774s  |  Total: 1.723058s  |  Pure Speed: 969.242307 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=1600 t=0.016000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_173851\Disp_Result_step01600_t0.0160.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 1700 / 10000  |  Pure Compute: 1.749415s  |  Total: 1.826264s  |  Pure Speed: 971.753692 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=1700 t=0.017000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_173851\Disp_Result_step01700_t0.0170.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 1800 / 10000  |  Pure Compute: 1.851177s  |  Total: 1.931182s  |  Pure Speed: 972.354345 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=1800 t=0.018000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_173851\Disp_Result_step01800_t0.0180.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 1900 / 10000  |  Pure Compute: 1.952186s  |  Total: 2.035949s  |  Pure Speed: 973.267866 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=1900 t=0.019000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_173851\Disp_Result_step01900_t0.0190.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 2000 / 10000  |  Pure Compute: 2.047999s  |  Total: 2.136683s  |  Pure Speed: 976.563215 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=2000 t=0.020000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_173851\Disp_Result_step02000_t0.0200.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 2100 / 10000  |  Pure Compute: 2.144188s  |  Total: 2.236072s  |  Pure Speed: 979.391778 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=2100 t=0.021000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_173851\Disp_Result_step02100_t0.0210.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 2200 / 10000  |  Pure Compute: 2.240390s  |  Total: 2.336276s  |  Pure Speed: 981.972020 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=2200 t=0.022000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_173851\Disp_Result_step02200_t0.0220.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 2300 / 10000  |  Pure Compute: 2.334782s  |  Total: 2.435667s  |  Pure Speed: 985.102804 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=2300 t=0.023000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_173851\Disp_Result_step02300_t0.0230.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 2400 / 10000  |  Pure Compute: 2.436473s  |  Total: 2.541358s  |  Pure Speed: 985.030330 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=2400 t=0.024000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_173851\Disp_Result_step02400_t0.0240.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 2500 / 10000  |  Pure Compute: 2.533631s  |  Total: 2.644122s  |  Pure Speed: 986.726126 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=2500 t=0.025000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_173851\Disp_Result_step02500_t0.0250.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 2600 / 10000  |  Pure Compute: 2.629850s  |  Total: 2.744987s  |  Pure Speed: 988.649505 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=2600 t=0.026000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_173851\Disp_Result_step02600_t0.0260.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 2700 / 10000  |  Pure Compute: 2.728208s  |  Total: 2.847389s  |  Pure Speed: 989.660576 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=2700 t=0.027000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_173851\Disp_Result_step02700_t0.0270.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 2800 / 10000  |  Pure Compute: 2.823510s  |  Total: 2.946921s  |  Pure Speed: 991.673379 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=2800 t=0.028000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_173851\Disp_Result_step02800_t0.0280.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 2900 / 10000  |  Pure Compute: 2.930930s  |  Total: 3.058375s  |  Pure Speed: 989.446968 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=2900 t=0.029000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_173851\Disp_Result_step02900_t0.0290.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 3000 / 10000  |  Pure Compute: 3.034608s  |  Total: 3.166383s  |  Pure Speed: 988.595562 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=3000 t=0.030000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_173851\Disp_Result_step03000_t0.0300.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 3100 / 10000  |  Pure Compute: 3.134721s  |  Total: 3.271006s  |  Pure Speed: 988.923893 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=3100 t=0.031000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_173851\Disp_Result_step03100_t0.0310.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 3200 / 10000  |  Pure Compute: 3.235421s  |  Total: 3.376223s  |  Pure Speed: 989.052090 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=3200 t=0.032000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_173851\Disp_Result_step03200_t0.0320.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 3300 / 10000  |  Pure Compute: 3.338798s  |  Total: 3.484168s  |  Pure Speed: 988.379769 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=3300 t=0.033000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_173851\Disp_Result_step03300_t0.0330.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 3400 / 10000  |  Pure Compute: 3.436564s  |  Total: 3.585239s  |  Pure Speed: 989.360245 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=3400 t=0.034000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_173851\Disp_Result_step03400_t0.0340.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 3500 / 10000  |  Pure Compute: 3.533717s  |  Total: 3.686426s  |  Pure Speed: 990.458489 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=3500 t=0.035000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_173851\Disp_Result_step03500_t0.0350.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 3600 / 10000  |  Pure Compute: 3.633382s  |  Total: 3.790396s  |  Pure Speed: 990.812417 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=3600 t=0.036000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_173851\Disp_Result_step03600_t0.0360.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 3700 / 10000  |  Pure Compute: 3.727275s  |  Total: 3.887930s  |  Pure Speed: 992.682375 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=3700 t=0.037000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_173851\Disp_Result_step03700_t0.0370.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 3800 / 10000  |  Pure Compute: 3.825275s  |  Total: 3.990658s  |  Pure Speed: 993.392528 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=3800 t=0.038000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_173851\Disp_Result_step03800_t0.0380.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 3900 / 10000  |  Pure Compute: 3.925414s  |  Total: 4.095867s  |  Pure Speed: 993.525804 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=3900 t=0.039000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_173851\Disp_Result_step03900_t0.0390.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 4000 / 10000  |  Pure Compute: 4.022747s  |  Total: 4.197243s  |  Pure Speed: 994.345456 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=4000 t=0.040000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_173851\Disp_Result_step04000_t0.0400.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 4100 / 10000  |  Pure Compute: 4.121995s  |  Total: 4.300069s  |  Pure Speed: 994.663943 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=4100 t=0.041000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_173851\Disp_Result_step04100_t0.0410.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 4200 / 10000  |  Pure Compute: 4.219371s  |  Total: 4.401260s  |  Pure Speed: 995.408961 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=4200 t=0.042000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_173851\Disp_Result_step04200_t0.0420.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 4300 / 10000  |  Pure Compute: 4.320705s  |  Total: 4.507210s  |  Pure Speed: 995.208050 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=4300 t=0.043000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_173851\Disp_Result_step04300_t0.0430.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 4400 / 10000  |  Pure Compute: 4.419817s  |  Total: 4.609409s  |  Pure Speed: 995.516330 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=4400 t=0.044000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_173851\Disp_Result_step04400_t0.0440.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 4500 / 10000  |  Pure Compute: 4.518439s  |  Total: 4.711558s  |  Pure Speed: 995.919100 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=4500 t=0.045000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_173851\Disp_Result_step04500_t0.0450.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 4600 / 10000  |  Pure Compute: 4.615674s  |  Total: 4.812827s  |  Pure Speed: 996.604180 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=4600 t=0.046000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_173851\Disp_Result_step04600_t0.0460.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 4700 / 10000  |  Pure Compute: 4.717633s  |  Total: 4.917834s  |  Pure Speed: 996.262257 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=4700 t=0.047000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_173851\Disp_Result_step04700_t0.0470.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 4800 / 10000  |  Pure Compute: 4.821017s  |  Total: 5.025220s  |  Pure Speed: 995.640567 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=4800 t=0.048000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_173851\Disp_Result_step04800_t0.0480.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 4900 / 10000  |  Pure Compute: 4.920405s  |  Total: 5.129087s  |  Pure Speed: 995.852903 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=4900 t=0.049000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_173851\Disp_Result_step04900_t0.0490.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 5000 / 10000  |  Pure Compute: 5.022559s  |  Total: 5.235465s  |  Pure Speed: 995.508465 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=5000 t=0.050000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_173851\Disp_Result_step05000_t0.0500.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 5100 / 10000  |  Pure Compute: 5.132839s  |  Total: 5.349000s  |  Pure Speed: 993.602195 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=5100 t=0.051000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_173851\Disp_Result_step05100_t0.0510.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 5200 / 10000  |  Pure Compute: 5.238274s  |  Total: 5.456890s  |  Pure Speed: 992.693414 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=5200 t=0.052000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_173851\Disp_Result_step05200_t0.0520.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 5300 / 10000  |  Pure Compute: 5.340788s  |  Total: 5.562445s  |  Pure Speed: 992.362999 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=5300 t=0.053000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_173851\Disp_Result_step05300_t0.0530.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 5400 / 10000  |  Pure Compute: 5.437893s  |  Total: 5.662522s  |  Pure Speed: 993.031658 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=5400 t=0.054000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_173851\Disp_Result_step05400_t0.0540.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 5500 / 10000  |  Pure Compute: 5.537504s  |  Total: 5.765291s  |  Pure Speed: 993.227327 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=5500 t=0.055000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_173851\Disp_Result_step05500_t0.0550.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 5600 / 10000  |  Pure Compute: 5.638172s  |  Total: 5.869140s  |  Pure Speed: 993.229809 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=5600 t=0.056000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_173851\Disp_Result_step05600_t0.0560.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 5700 / 10000  |  Pure Compute: 5.738357s  |  Total: 5.973330s  |  Pure Speed: 993.315717 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=5700 t=0.057000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_173851\Disp_Result_step05700_t0.0570.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 5800 / 10000  |  Pure Compute: 5.840399s  |  Total: 6.078441s  |  Pure Speed: 993.082921 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=5800 t=0.058000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_173851\Disp_Result_step05800_t0.0580.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 5900 / 10000  |  Pure Compute: 5.942824s  |  Total: 6.184868s  |  Pure Speed: 992.793982 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=5900 t=0.059000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_173851\Disp_Result_step05900_t0.0590.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 6000 / 10000  |  Pure Compute: 6.041362s  |  Total: 6.287450s  |  Pure Speed: 993.153580 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=6000 t=0.060000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_173851\Disp_Result_step06000_t0.0600.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 6100 / 10000  |  Pure Compute: 6.137021s  |  Total: 6.387118s  |  Pure Speed: 993.967643 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=6100 t=0.061000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_173851\Disp_Result_step06100_t0.0610.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 6200 / 10000  |  Pure Compute: 6.242394s  |  Total: 6.495497s  |  Pure Speed: 993.208775 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=6200 t=0.062000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_173851\Disp_Result_step06200_t0.0620.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 6300 / 10000  |  Pure Compute: 6.343632s  |  Total: 6.599887s  |  Pure Speed: 993.121890 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=6300 t=0.063000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_173851\Disp_Result_step06300_t0.0630.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 6400 / 10000  |  Pure Compute: 6.440946s  |  Total: 6.701726s  |  Pure Speed: 993.642844 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=6400 t=0.064000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_173851\Disp_Result_step06400_t0.0640.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 6500 / 10000  |  Pure Compute: 6.539050s  |  Total: 6.804007s  |  Pure Speed: 994.028200 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=6500 t=0.065000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_173851\Disp_Result_step06500_t0.0650.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 6600 / 10000  |  Pure Compute: 6.635279s  |  Total: 6.904340s  |  Pure Speed: 994.683147 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=6600 t=0.066000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_173851\Disp_Result_step06600_t0.0660.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 6700 / 10000  |  Pure Compute: 6.736140s  |  Total: 7.010290s  |  Pure Speed: 994.634880 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=6700 t=0.067000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_173851\Disp_Result_step06700_t0.0670.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 6800 / 10000  |  Pure Compute: 6.837269s  |  Total: 7.114421s  |  Pure Speed: 994.549081 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=6800 t=0.068000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_173851\Disp_Result_step06800_t0.0680.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 6900 / 10000  |  Pure Compute: 6.936636s  |  Total: 7.218867s  |  Pure Speed: 994.718434 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=6900 t=0.069000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_173851\Disp_Result_step06900_t0.0690.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 7000 / 10000  |  Pure Compute: 7.035583s  |  Total: 7.321230s  |  Pure Speed: 994.942423 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=7000 t=0.070000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_173851\Disp_Result_step07000_t0.0700.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 7100 / 10000  |  Pure Compute: 7.137548s  |  Total: 7.426198s  |  Pure Speed: 994.739342 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=7100 t=0.071000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_173851\Disp_Result_step07100_t0.0710.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 7200 / 10000  |  Pure Compute: 7.236913s  |  Total: 7.529569s  |  Pure Speed: 994.899358 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=7200 t=0.072000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_173851\Disp_Result_step07200_t0.0720.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 7300 / 10000  |  Pure Compute: 7.334178s  |  Total: 7.632092s  |  Pure Speed: 995.339846 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=7300 t=0.073000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_173851\Disp_Result_step07300_t0.0730.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 7400 / 10000  |  Pure Compute: 7.433439s  |  Total: 7.735161s  |  Pure Speed: 995.501504 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=7400 t=0.074000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_173851\Disp_Result_step07400_t0.0740.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 7500 / 10000  |  Pure Compute: 7.536339s  |  Total: 7.841583s  |  Pure Speed: 995.178216 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=7500 t=0.075000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_173851\Disp_Result_step07500_t0.0750.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 7600 / 10000  |  Pure Compute: 7.635587s  |  Total: 7.945117s  |  Pure Speed: 995.339376 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=7600 t=0.076000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_173851\Disp_Result_step07600_t0.0760.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 7700 / 10000  |  Pure Compute: 7.734802s  |  Total: 8.048940s  |  Pure Speed: 995.500660 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=7700 t=0.077000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_173851\Disp_Result_step07700_t0.0770.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 7800 / 10000  |  Pure Compute: 7.832144s  |  Total: 8.150394s  |  Pure Speed: 995.895913 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=7800 t=0.078000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_173851\Disp_Result_step07800_t0.0780.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 7900 / 10000  |  Pure Compute: 7.928209s  |  Total: 8.249976s  |  Pure Speed: 996.441945 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=7900 t=0.079000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_173851\Disp_Result_step07900_t0.0790.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 8000 / 10000  |  Pure Compute: 8.029764s  |  Total: 8.355728s  |  Pure Speed: 996.293353 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=8000 t=0.080000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_173851\Disp_Result_step08000_t0.0800.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 8100 / 10000  |  Pure Compute: 8.130874s  |  Total: 8.460921s  |  Pure Speed: 996.202831 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=8100 t=0.081000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_173851\Disp_Result_step08100_t0.0810.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 8200 / 10000  |  Pure Compute: 8.232996s  |  Total: 8.566554s  |  Pure Speed: 995.992176 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=8200 t=0.082000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_173851\Disp_Result_step08200_t0.0820.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 8300 / 10000  |  Pure Compute: 8.329575s  |  Total: 8.668189s  |  Pure Speed: 996.449447 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=8300 t=0.083000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_173851\Disp_Result_step08300_t0.0830.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 8400 / 10000  |  Pure Compute: 8.426458s  |  Total: 8.768306s  |  Pure Speed: 996.860104 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=8400 t=0.084000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_173851\Disp_Result_step08400_t0.0840.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 8500 / 10000  |  Pure Compute: 8.521709s  |  Total: 8.868107s  |  Pure Speed: 997.452506 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=8500 t=0.085000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_173851\Disp_Result_step08500_t0.0850.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 8600 / 10000  |  Pure Compute: 8.623865s  |  Total: 8.974265s  |  Pure Speed: 997.232714 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=8600 t=0.086000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_173851\Disp_Result_step08600_t0.0860.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 8700 / 10000  |  Pure Compute: 8.724062s  |  Total: 9.077523s  |  Pure Speed: 997.241927 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=8700 t=0.087000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_173851\Disp_Result_step08700_t0.0870.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 8800 / 10000  |  Pure Compute: 8.819051s  |  Total: 9.176125s  |  Pure Speed: 997.839802 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=8800 t=0.088000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_173851\Disp_Result_step08800_t0.0880.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 8900 / 10000  |  Pure Compute: 8.919012s  |  Total: 9.280177s  |  Pure Speed: 997.868396 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=8900 t=0.089000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_173851\Disp_Result_step08900_t0.0890.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 9000 / 10000  |  Pure Compute: 9.021417s  |  Total: 9.385595s  |  Pure Speed: 997.625950 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=9000 t=0.090000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_173851\Disp_Result_step09000_t0.0900.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 9100 / 10000  |  Pure Compute: 9.119966s  |  Total: 9.487965s  |  Pure Speed: 997.810716 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=9100 t=0.091000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_173851\Disp_Result_step09100_t0.0910.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 9200 / 10000  |  Pure Compute: 9.220051s  |  Total: 9.591797s  |  Pure Speed: 997.825283 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=9200 t=0.092000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_173851\Disp_Result_step09200_t0.0920.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 9300 / 10000  |  Pure Compute: 9.317294s  |  Total: 9.693107s  |  Pure Speed: 998.143903 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=9300 t=0.093000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_173851\Disp_Result_step09300_t0.0930.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 9400 / 10000  |  Pure Compute: 9.418012s  |  Total: 9.797998s  |  Pure Speed: 998.087484 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=9400 t=0.094000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_173851\Disp_Result_step09400_t0.0940.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 9500 / 10000  |  Pure Compute: 9.516701s  |  Total: 9.900763s  |  Pure Speed: 998.245117 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=9500 t=0.095000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_173851\Disp_Result_step09500_t0.0950.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 9600 / 10000  |  Pure Compute: 9.614918s  |  Total: 10.003095s  |  Pure Speed: 998.448484 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=9600 t=0.096000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_173851\Disp_Result_step09600_t0.0960.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 9700 / 10000  |  Pure Compute: 9.716417s  |  Total: 10.107456s  |  Pure Speed: 998.310355 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=9700 t=0.097000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_173851\Disp_Result_step09700_t0.0970.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 9800 / 10000  |  Pure Compute: 9.813412s  |  Total: 10.208914s  |  Pure Speed: 998.633258 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=9800 t=0.098000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_173851\Disp_Result_step09800_t0.0980.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 9900 / 10000  |  Pure Compute: 9.911122s  |  Total: 10.310465s  |  Pure Speed: 998.877857 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=9900 t=0.099000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_173851\Disp_Result_step09900_t0.0990.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 10000 / 10000  |  Pure Compute: 10.011081s  |  Total: 10.414428s  |  Pure Speed: 998.893117 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=10000 t=0.100000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_173851\Disp_Result_step10000_t0.1000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] [CentralDifference] Finished. Total: 10.418499s  |  Pure Compute avg: 0.001001 s/step
+[INFO] [PDEngine] PD Engine Solve Phase Finished.
+[INFO] [EngineManager] Main Solver Phase finished.
+[INFO] [EngineManager] Entering Post-processing Phase
+[INFO] [EngineManager] Outputting: PD
+[INFO] Starting data export process step=-1 t=0.000000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_173851\Disp_Result_output.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] [EngineManager] Post-processing Phase finished.
+[INFO] ==================================================
+[INFO]    GRPD Solver Engine Initialized                 
+[INFO] ==================================================
+[INFO] [EngineRegistry] Creating Engine instance: PD
+[INFO] [PDEngine] PD Engine instance created.
+[INFO] ========== Registered Types Summary ===========
+[INFO]   TimeIntegrator    : CentralDifference, Explicit, Staggered
+[INFO]   FieldRegistry     : DoubleField, IntField
+[INFO]   PhysicsFields     : Mechanical, Thermal
+[INFO]   BCRegistry        : BODY_FORCE, CONV, DISP, FLUX, PRESSURE, T, VELOCITY
+[INFO]   MaterialRegistry  : FourierThermalMat, LinearElasticMat
+[INFO]   KernelRegistry    : NOSB_M, NOSB_T
+[INFO]   EngineRegistry    : PD
+[INFO] ===============================================
+[INFO] [EngineManager] Initializing solver: PD
+[INFO] [PDEngine] Initializing PD simulation context...
+[INFO] Model pre-processing...
+[INFO] [InitModel] grpd path: D:\Project_C++\GRPD\Examples\Box_Disp\Box_Disp.grpd
+[INFO] [InitModel] model name: Box_Disp
+[INFO] Found existing .grpd mesh file at: D:\Project_C++\GRPD\Examples\Box_Disp\Box_Disp.grpd. Skipping generation.
+[INFO] [Context Manager] Formalized model name to: Box_Disp
+[INFO] [Context Manager] Model dimension set to: 2D
+[INFO] [ReaderRegistry] Creating reader for: .grpd (name: Box_Disp)
+[INFO] [InitModel] Reading mesh file: D:\Project_C++\GRPD\Examples\Box_Disp\Box_Disp.grpd (reader: .grpd)
+[INFO] [GrpdMeshReader] Reading file: D:\Project_C++\GRPD\Examples\Box_Disp\Box_Disp.grpd
+[INFO] [GrpdMeshReader] Entering *PARTICLE section (Line 1)
+[INFO] [GrpdMeshReader] Entering *LOAD section (Line 2503)
+[INFO] [GrpdMeshReader] ============================================
+[INFO] [GrpdMeshReader]    File reading complete!
+[INFO] [GrpdMeshReader]    Total particles: 2500
+[INFO] [GrpdMeshReader]    Total load entries: 0
+[INFO] [GrpdMeshReader] ============================================
+[INFO] [InitModel] Total particles loaded for model Box_Disp: 2500
+[INFO]   Particle[0] Part=1 Pos=(-24.500000, -24.500000, 0.000000) Vol=1.000000
+[INFO]   Particle[1] Part=1 Pos=(-24.500000, -23.500000, 0.000000) Vol=1.000000
+[INFO]   Particle[2] Part=1 Pos=(-24.500000, -22.500000, 0.000000) Vol=1.000000
+[INFO]   Particle[3] Part=1 Pos=(-24.500000, -21.500000, 0.000000) Vol=1.000000
+[INFO]   Particle[4] Part=1 Pos=(-24.500000, -20.500000, 0.000000) Vol=1.000000
+[INFO] Entering Material Initialization Phase...
+[INFO] Instantiating material [1] of type: LinearElasticMat
+[INFO] [MaterialRegistry] Using factory to create material: Steel_Elastic (type: LinearElasticMat)
+[INFO] [LinearElasticMat] Material 'Steel_Elastic' is initialized. E = 210000.000000, nu = 0.300000, Density = 0.000000
+[INFO] [MaterialManager] Successfully added material instance: Steel_Elastic
+[INFO] Successfully registered material ID 1 (Steel_Elastic)
+[INFO] Assigning material pointers to particles...
+[INFO] Successfully assigned materials to 2500 particles.
+[INFO] Entering Field Registration Phase...
+[INFO] [FieldManager] Added field 'Displacement'.
+[INFO] [FieldManager] Added field 'Velocity'.
+[INFO] [FieldManager] Added field 'Acceleration'.
+[INFO] [MechanicalFields] Core fields registered: Displacement, Velocity, Acceleration.
+[INFO] [InitFields] Auto-registered PhysicsFields module: Mechanical
+[INFO] [FieldManager] Added field 'ID'.
+[INFO] [FieldManager] Added field 'PartID'.
+[INFO] [FieldManager] Added field 'MatID'.
+[INFO] [FieldManager] Added field 'Coords'.
+[INFO] [FieldManager] Added field 'Volume'.
+[INFO] [FieldManager] Resized all 8 fields for 2500 particles.
+[INFO] [MeshData] Populated particle geometry fields into FieldManager for 2500 particles.
+[INFO] [InitFields] All fields allocated for 2500 particles. Total fields: 8.
+[INFO] Entering Conditions Initialization Phase...
+[INFO] [ReaderRegistry] Creating reader for: .grpd (name: LoadReader)
+[INFO] [GrpdMeshReader] Reading file: D:\Project_C++\GRPD\Examples\Box_Disp\Box_Disp.grpd
+[INFO] [GrpdMeshReader] Entering *PARTICLE section (Line 1)
+[INFO] [GrpdMeshReader] Entering *LOAD section (Line 2503)
+[INFO] [GrpdMeshReader] ============================================
+[INFO] [GrpdMeshReader]    File reading complete!
+[INFO] [GrpdMeshReader]    Total particles: 2500
+[INFO] [GrpdMeshReader]    Total load entries: 0
+[INFO] [GrpdMeshReader] ============================================
+[INFO] [InitConditions] Load statistics:
+[INFO] [InitConditions] Boundary conditions initialization complete.
+[INFO] [InitNeighbors] Entering Neighbor Search Phase...
+[INFO] [InitNeighbors] Horizon radius: 3.015000
+[INFO] [NeighborList] Starting full-flat CSR search for 2500 particles, horizon = 3.015000
+[INFO] [NeighborList] Cell grid: 17 x 17 x 1 = 289 cells
+[INFO] [NeighborList] Flat cell list built in 0.000000 ms
+[INFO] [NeighborList] Pass 1 (count) done in 3.999949 ms
+[INFO] [NeighborList] Total bonds: 66436, Memory: 0 MB
+[INFO] [NeighborList] Pass 2 (fill) done in 1.000166 ms
+[INFO] [NeighborList] Max neighbors: 28
+[INFO] [NeighborList] Total time: 5.000114 ms
+[INFO] [FieldManager] Added field 'NeighborCount'.
+[INFO] [InitNeighbors] NeighborCount field populated for 2500 particles.
+[INFO] [InitNeighbors] BondDamage field registered, 66436 bonds initialized to 1.0
+[INFO] [InitNeighbors] Neighbor search phase complete.
+[INFO] Entering Solver Components Assembly Phase...
+[INFO] Building Time Integrator: CentralDifference
+[INFO] Time Integrator configured.
+[INFO] Building Space Kernel: NOSB_M
+[INFO] [NOSB_Base] Applied KernelWeightType: Linear
+[INFO] [NOSB_Base] Applied ZeroEnergyG0: 1.000000
+[INFO] [NOSB_Base] Applied ZeroEnergyMethod string: Silling
+[INFO] Space Kernel 'NOSB_M' configured.
+[INFO] Total kernels assembled: 1
+[INFO] [PDEngine] PD simulation context initialized successfully.
+[INFO] [EngineManager] All solvers initialized. Total: 1
+[INFO] [EngineManager] Entering Main Solver Phase
+[INFO] [EngineManager] Solving: PD
+[INFO] [PDEngine] Starting PD Engine Solve Phase...
+[INFO] [CentralDifference] Identified generic 2nd-order ODE couple: Displacement (u) <- Velocity (v) <- Acceleration (a)
+[INFO] [CentralDifference] Time loop: dt = 0.000010, totalSteps = 10000
+[INFO] [FieldManager] Added field 'ShapeTensorInv'.
+[INFO] [FieldManager] Added field 'VHorizon'.
+[INFO] [NOSB_Base] Computing InfluenceWeight + Shape Tensor Inverse (K^-1)...
+[INFO] [NOSB_Base] All NOSB base fields registered and Shape Tensor Inverse computed.
+[INFO] [FieldManager] Added field 'DeformationGradient'.
+[INFO] [FieldManager] Added field 'PK1Stress'.
+[INFO] [NOSB_M] Instantiated MechanicalStabilizer globally in Phase 0 using strategy: Silling
+[INFO] --- Step 0 / 10000  |  Pure Compute: 0.000000s  |  Total: 0.000000s  |  Pure Speed: 0.000000 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=0 t=0.000000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_174237\Disp_Result_step00000_t0.0000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 100 / 10000  |  Pure Compute: 0.114460s  |  Total: 0.117488s  |  Pure Speed: 873.671473 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=100 t=0.001000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_174237\Disp_Result_step00100_t0.0010.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 200 / 10000  |  Pure Compute: 0.215929s  |  Total: 0.222960s  |  Pure Speed: 926.229523 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=200 t=0.002000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_174237\Disp_Result_step00200_t0.0020.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 300 / 10000  |  Pure Compute: 0.322500s  |  Total: 0.333249s  |  Pure Speed: 930.232270 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=300 t=0.003000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_174237\Disp_Result_step00300_t0.0030.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 400 / 10000  |  Pure Compute: 0.473112s  |  Total: 0.490646s  |  Pure Speed: 845.465588 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=400 t=0.004000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_174237\Disp_Result_step00400_t0.0040.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 500 / 10000  |  Pure Compute: 0.627366s  |  Total: 0.650210s  |  Pure Speed: 796.983450 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=500 t=0.005000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_174237\Disp_Result_step00500_t0.0050.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 600 / 10000  |  Pure Compute: 0.794495s  |  Total: 0.822952s  |  Pure Speed: 755.196887 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=600 t=0.006000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_174237\Disp_Result_step00600_t0.0060.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 700 / 10000  |  Pure Compute: 1.020394s  |  Total: 1.055054s  |  Pure Speed: 686.009320 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=700 t=0.007000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_174237\Disp_Result_step00700_t0.0070.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 800 / 10000  |  Pure Compute: 1.209146s  |  Total: 1.259591s  |  Pure Speed: 661.624263 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=800 t=0.008000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_174237\Disp_Result_step00800_t0.0080.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 900 / 10000  |  Pure Compute: 1.403135s  |  Total: 1.460652s  |  Pure Speed: 641.420681 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=900 t=0.009000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_174237\Disp_Result_step00900_t0.0090.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 1000 / 10000  |  Pure Compute: 1.597890s  |  Total: 1.662052s  |  Pure Speed: 625.825307 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=1000 t=0.010000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_174237\Disp_Result_step01000_t0.0100.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 1100 / 10000  |  Pure Compute: 1.788568s  |  Total: 1.858944s  |  Pure Speed: 615.017325 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=1100 t=0.011000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_174237\Disp_Result_step01100_t0.0110.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 1200 / 10000  |  Pure Compute: 1.971834s  |  Total: 2.049282s  |  Pure Speed: 608.570653 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=1200 t=0.012000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_174237\Disp_Result_step01200_t0.0120.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 1300 / 10000  |  Pure Compute: 2.154841s  |  Total: 2.238847s  |  Pure Speed: 603.292716 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=1300 t=0.013000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_174237\Disp_Result_step01300_t0.0130.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 1400 / 10000  |  Pure Compute: 2.354256s  |  Total: 2.445737s  |  Pure Speed: 594.667775 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=1400 t=0.014000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_174237\Disp_Result_step01400_t0.0140.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 1500 / 10000  |  Pure Compute: 2.540711s  |  Total: 2.641407s  |  Pure Speed: 590.386012 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=1500 t=0.015000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_174237\Disp_Result_step01500_t0.0150.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 1600 / 10000  |  Pure Compute: 2.710467s  |  Total: 2.817948s  |  Pure Speed: 590.304136 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=1600 t=0.016000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_174237\Disp_Result_step01600_t0.0160.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 1700 / 10000  |  Pure Compute: 2.886132s  |  Total: 3.000669s  |  Pure Speed: 589.023648 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=1700 t=0.017000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_174237\Disp_Result_step01700_t0.0170.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 1800 / 10000  |  Pure Compute: 3.047265s  |  Total: 3.167885s  |  Pure Speed: 590.693544 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=1800 t=0.018000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_174237\Disp_Result_step01800_t0.0180.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 1900 / 10000  |  Pure Compute: 3.206093s  |  Total: 3.332220s  |  Pure Speed: 592.621630 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=1900 t=0.019000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_174237\Disp_Result_step01900_t0.0190.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 2000 / 10000  |  Pure Compute: 3.365137s  |  Total: 3.497776s  |  Pure Speed: 594.329496 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=2000 t=0.020000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_174237\Disp_Result_step02000_t0.0200.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 2100 / 10000  |  Pure Compute: 3.517527s  |  Total: 3.655689s  |  Pure Speed: 597.010394 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=2100 t=0.021000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_174237\Disp_Result_step02100_t0.0210.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 2200 / 10000  |  Pure Compute: 3.668708s  |  Total: 3.813201s  |  Pure Speed: 599.666215 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=2200 t=0.022000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_174237\Disp_Result_step02200_t0.0220.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 2300 / 10000  |  Pure Compute: 3.823150s  |  Total: 3.975166s  |  Pure Speed: 601.598206 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=2300 t=0.023000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_174237\Disp_Result_step02300_t0.0230.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 2400 / 10000  |  Pure Compute: 3.979895s  |  Total: 4.137915s  |  Pure Speed: 603.030939 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=2400 t=0.024000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_174237\Disp_Result_step02400_t0.0240.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 2500 / 10000  |  Pure Compute: 4.136269s  |  Total: 4.299823s  |  Pure Speed: 604.409418 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=2500 t=0.025000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_174237\Disp_Result_step02500_t0.0250.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 2600 / 10000  |  Pure Compute: 4.295851s  |  Total: 4.464470s  |  Pure Speed: 605.235144 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=2600 t=0.026000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_174237\Disp_Result_step02600_t0.0260.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 2700 / 10000  |  Pure Compute: 4.455631s  |  Total: 4.629881s  |  Pure Speed: 605.974736 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=2700 t=0.027000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_174237\Disp_Result_step02700_t0.0270.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 2800 / 10000  |  Pure Compute: 4.616887s  |  Total: 4.797162s  |  Pure Speed: 606.469211 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=2800 t=0.028000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_174237\Disp_Result_step02800_t0.0280.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 2900 / 10000  |  Pure Compute: 4.792318s  |  Total: 4.977099s  |  Pure Speed: 605.135085 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=2900 t=0.029000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_174237\Disp_Result_step02900_t0.0290.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 3000 / 10000  |  Pure Compute: 4.947340s  |  Total: 5.139382s  |  Pure Speed: 606.386413 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=3000 t=0.030000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_174237\Disp_Result_step03000_t0.0300.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 3100 / 10000  |  Pure Compute: 5.100679s  |  Total: 5.298280s  |  Pure Speed: 607.762221 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=3100 t=0.031000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_174237\Disp_Result_step03100_t0.0310.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 3200 / 10000  |  Pure Compute: 5.262904s  |  Total: 5.466558s  |  Pure Speed: 608.029308 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=3200 t=0.032000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_174237\Disp_Result_step03200_t0.0320.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 3300 / 10000  |  Pure Compute: 5.422652s  |  Total: 5.631820s  |  Pure Speed: 608.558288 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=3300 t=0.033000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_174237\Disp_Result_step03300_t0.0330.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 3400 / 10000  |  Pure Compute: 5.571901s  |  Total: 5.785585s  |  Pure Speed: 610.204668 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=3400 t=0.034000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_174237\Disp_Result_step03400_t0.0340.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 3500 / 10000  |  Pure Compute: 5.747164s  |  Total: 5.967392s  |  Pure Speed: 608.996051 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=3500 t=0.035000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_174237\Disp_Result_step03500_t0.0350.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 3600 / 10000  |  Pure Compute: 5.908176s  |  Total: 6.134506s  |  Pure Speed: 609.325081 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=3600 t=0.036000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_174237\Disp_Result_step03600_t0.0360.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 3700 / 10000  |  Pure Compute: 6.061851s  |  Total: 6.294690s  |  Pure Speed: 610.374650 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=3700 t=0.037000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_174237\Disp_Result_step03700_t0.0370.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 3800 / 10000  |  Pure Compute: 6.221638s  |  Total: 6.461740s  |  Pure Speed: 610.771672 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=3800 t=0.038000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_174237\Disp_Result_step03800_t0.0380.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 3900 / 10000  |  Pure Compute: 6.388319s  |  Total: 6.635623s  |  Pure Speed: 610.489248 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=3900 t=0.039000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_174237\Disp_Result_step03900_t0.0390.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 4000 / 10000  |  Pure Compute: 6.588211s  |  Total: 6.841560s  |  Pure Speed: 607.145087 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=4000 t=0.040000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_174237\Disp_Result_step04000_t0.0400.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 4100 / 10000  |  Pure Compute: 6.773000s  |  Total: 7.033974s  |  Pure Speed: 605.344760 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=4100 t=0.041000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_174237\Disp_Result_step04100_t0.0410.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 4200 / 10000  |  Pure Compute: 6.949770s  |  Total: 7.217268s  |  Pure Speed: 604.336564 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=4200 t=0.042000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_174237\Disp_Result_step04200_t0.0420.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 4300 / 10000  |  Pure Compute: 7.126568s  |  Total: 7.401581s  |  Pure Speed: 603.375961 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=4300 t=0.043000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_174237\Disp_Result_step04300_t0.0430.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 4400 / 10000  |  Pure Compute: 7.318128s  |  Total: 7.599441s  |  Pure Speed: 601.246649 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=4400 t=0.044000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_174237\Disp_Result_step04400_t0.0440.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 4500 / 10000  |  Pure Compute: 7.515905s  |  Total: 7.804602s  |  Pure Speed: 598.730301 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=4500 t=0.045000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_174237\Disp_Result_step04500_t0.0450.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 4600 / 10000  |  Pure Compute: 7.684749s  |  Total: 7.980273s  |  Pure Speed: 598.588199 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=4600 t=0.046000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_174237\Disp_Result_step04600_t0.0460.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 4700 / 10000  |  Pure Compute: 7.847773s  |  Total: 8.148331s  |  Pure Speed: 598.896003 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=4700 t=0.047000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_174237\Disp_Result_step04700_t0.0470.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 4800 / 10000  |  Pure Compute: 8.002907s  |  Total: 8.310658s  |  Pure Speed: 599.782039 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=4800 t=0.048000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_174237\Disp_Result_step04800_t0.0480.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 4900 / 10000  |  Pure Compute: 8.158597s  |  Total: 8.473225s  |  Pure Speed: 600.593489 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=4900 t=0.049000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_174237\Disp_Result_step04900_t0.0490.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 5000 / 10000  |  Pure Compute: 8.310580s  |  Total: 8.631755s  |  Pure Speed: 601.642754 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=5000 t=0.050000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_174237\Disp_Result_step05000_t0.0500.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 5100 / 10000  |  Pure Compute: 8.463195s  |  Total: 8.791276s  |  Pure Speed: 602.609327 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=5100 t=0.051000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_174237\Disp_Result_step05100_t0.0510.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 5200 / 10000  |  Pure Compute: 8.613226s  |  Total: 8.946147s  |  Pure Speed: 603.722714 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=5200 t=0.052000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_174237\Disp_Result_step05200_t0.0520.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 5300 / 10000  |  Pure Compute: 8.763757s  |  Total: 9.102200s  |  Pure Speed: 604.763487 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=5300 t=0.053000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_174237\Disp_Result_step05300_t0.0530.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 5400 / 10000  |  Pure Compute: 8.904392s  |  Total: 9.248330s  |  Pure Speed: 606.442338 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=5400 t=0.054000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_174237\Disp_Result_step05400_t0.0540.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 5500 / 10000  |  Pure Compute: 9.049606s  |  Total: 9.398187s  |  Pure Speed: 607.761273 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=5500 t=0.055000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_174237\Disp_Result_step05500_t0.0550.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 5600 / 10000  |  Pure Compute: 9.199593s  |  Total: 9.553222s  |  Pure Speed: 608.722562 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=5600 t=0.056000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_174237\Disp_Result_step05600_t0.0560.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 5700 / 10000  |  Pure Compute: 9.342481s  |  Total: 9.701211s  |  Pure Speed: 610.116306 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=5700 t=0.057000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_174237\Disp_Result_step05700_t0.0570.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 5800 / 10000  |  Pure Compute: 9.491079s  |  Total: 9.855422s  |  Pure Speed: 611.100145 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=5800 t=0.058000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_174237\Disp_Result_step05800_t0.0580.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 5900 / 10000  |  Pure Compute: 9.660640s  |  Total: 10.030507s  |  Pure Speed: 610.725577 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=5900 t=0.059000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_174237\Disp_Result_step05900_t0.0590.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 6000 / 10000  |  Pure Compute: 9.811297s  |  Total: 10.187324s  |  Pure Speed: 611.539967 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=6000 t=0.060000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_174237\Disp_Result_step06000_t0.0600.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 6100 / 10000  |  Pure Compute: 9.962356s  |  Total: 10.344571s  |  Pure Speed: 612.304942 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=6100 t=0.061000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_174237\Disp_Result_step06100_t0.0610.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 6200 / 10000  |  Pure Compute: 10.127040s  |  Total: 10.515979s  |  Pure Speed: 612.222340 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=6200 t=0.062000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_174237\Disp_Result_step06200_t0.0620.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 6300 / 10000  |  Pure Compute: 10.293661s  |  Total: 10.688909s  |  Pure Speed: 612.027167 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=6300 t=0.063000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_174237\Disp_Result_step06300_t0.0630.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 6400 / 10000  |  Pure Compute: 10.467392s  |  Total: 10.869695s  |  Pure Speed: 611.422579 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=6400 t=0.064000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_174237\Disp_Result_step06400_t0.0640.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 6500 / 10000  |  Pure Compute: 10.626915s  |  Total: 11.036672s  |  Pure Speed: 611.654453 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=6500 t=0.065000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_174237\Disp_Result_step06500_t0.0650.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 6600 / 10000  |  Pure Compute: 10.769499s  |  Total: 11.184926s  |  Pure Speed: 612.841867 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=6600 t=0.066000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_174237\Disp_Result_step06600_t0.0660.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 6700 / 10000  |  Pure Compute: 10.901972s  |  Total: 11.322917s  |  Pure Speed: 614.567713 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=6700 t=0.067000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_174237\Disp_Result_step06700_t0.0670.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 6800 / 10000  |  Pure Compute: 11.032920s  |  Total: 11.460387s  |  Pure Speed: 616.337266 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=6800 t=0.068000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_174237\Disp_Result_step06800_t0.0680.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 6900 / 10000  |  Pure Compute: 11.163642s  |  Total: 11.596378s  |  Pure Speed: 618.077880 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=6900 t=0.069000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_174237\Disp_Result_step06900_t0.0690.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 7000 / 10000  |  Pure Compute: 11.292006s  |  Total: 11.729557s  |  Pure Speed: 619.907565 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=7000 t=0.070000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_174237\Disp_Result_step07000_t0.0700.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 7100 / 10000  |  Pure Compute: 11.438773s  |  Total: 11.881675s  |  Pure Speed: 620.695944 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=7100 t=0.071000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_174237\Disp_Result_step07100_t0.0710.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 7200 / 10000  |  Pure Compute: 11.588418s  |  Total: 12.037440s  |  Pure Speed: 621.310001 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=7200 t=0.072000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_174237\Disp_Result_step07200_t0.0720.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 7300 / 10000  |  Pure Compute: 11.734124s  |  Total: 12.189117s  |  Pure Speed: 622.117163 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=7300 t=0.073000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_174237\Disp_Result_step07300_t0.0730.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 7400 / 10000  |  Pure Compute: 11.880462s  |  Total: 12.340535s  |  Pure Speed: 622.871421 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=7400 t=0.074000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_174237\Disp_Result_step07400_t0.0740.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 7500 / 10000  |  Pure Compute: 12.029661s  |  Total: 12.496355s  |  Pure Speed: 623.458965 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=7500 t=0.075000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_174237\Disp_Result_step07500_t0.0750.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 7600 / 10000  |  Pure Compute: 12.174737s  |  Total: 12.646949s  |  Pure Speed: 624.243474 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=7600 t=0.076000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_174237\Disp_Result_step07600_t0.0760.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 7700 / 10000  |  Pure Compute: 12.320272s  |  Total: 12.797098s  |  Pure Speed: 624.986186 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=7700 t=0.077000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_174237\Disp_Result_step07700_t0.0770.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 7800 / 10000  |  Pure Compute: 12.470589s  |  Total: 12.951922s  |  Pure Speed: 625.471685 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=7800 t=0.078000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_174237\Disp_Result_step07800_t0.0780.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 7900 / 10000  |  Pure Compute: 12.618274s  |  Total: 13.104506s  |  Pure Speed: 626.076128 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=7900 t=0.079000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_174237\Disp_Result_step07900_t0.0790.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 8000 / 10000  |  Pure Compute: 12.768479s  |  Total: 13.260233s  |  Pure Speed: 626.542935 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=8000 t=0.080000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_174237\Disp_Result_step08000_t0.0800.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 8100 / 10000  |  Pure Compute: 12.917771s  |  Total: 13.415064s  |  Pure Speed: 627.043149 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=8100 t=0.081000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_174237\Disp_Result_step08100_t0.0810.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 8200 / 10000  |  Pure Compute: 13.068668s  |  Total: 13.570464s  |  Pure Speed: 627.454937 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=8200 t=0.082000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_174237\Disp_Result_step08200_t0.0820.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 8300 / 10000  |  Pure Compute: 13.209649s  |  Total: 13.717088s  |  Pure Speed: 628.328590 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=8300 t=0.083000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_174237\Disp_Result_step08300_t0.0830.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 8400 / 10000  |  Pure Compute: 13.358711s  |  Total: 13.872654s  |  Pure Speed: 628.803174 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=8400 t=0.084000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_174237\Disp_Result_step08400_t0.0840.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 8500 / 10000  |  Pure Compute: 13.504358s  |  Total: 14.023661s  |  Pure Speed: 629.426446 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=8500 t=0.085000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_174237\Disp_Result_step08500_t0.0850.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 8600 / 10000  |  Pure Compute: 13.643958s  |  Total: 14.169268s  |  Pure Speed: 630.315650 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=8600 t=0.086000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_174237\Disp_Result_step08600_t0.0860.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 8700 / 10000  |  Pure Compute: 13.784946s  |  Total: 14.315800s  |  Pure Speed: 631.123251 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=8700 t=0.087000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_174237\Disp_Result_step08700_t0.0870.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 8800 / 10000  |  Pure Compute: 13.931071s  |  Total: 14.467931s  |  Pure Speed: 631.681517 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=8800 t=0.088000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_174237\Disp_Result_step08800_t0.0880.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 8900 / 10000  |  Pure Compute: 14.072302s  |  Total: 14.614676s  |  Pure Speed: 632.448035 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=8900 t=0.089000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_174237\Disp_Result_step08900_t0.0890.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 9000 / 10000  |  Pure Compute: 14.221751s  |  Total: 14.769388s  |  Pure Speed: 632.833476 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=9000 t=0.090000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_174237\Disp_Result_step09000_t0.0900.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 9100 / 10000  |  Pure Compute: 14.370796s  |  Total: 14.923483s  |  Pure Speed: 633.228654 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=9100 t=0.091000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_174237\Disp_Result_step09100_t0.0910.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 9200 / 10000  |  Pure Compute: 14.521718s  |  Total: 15.079935s  |  Pure Speed: 633.533869 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=9200 t=0.092000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_174237\Disp_Result_step09200_t0.0920.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 9300 / 10000  |  Pure Compute: 14.664956s  |  Total: 15.228702s  |  Pure Speed: 634.164858 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=9300 t=0.093000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_174237\Disp_Result_step09300_t0.0930.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 9400 / 10000  |  Pure Compute: 14.812275s  |  Total: 15.381540s  |  Pure Speed: 634.608817 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=9400 t=0.094000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_174237\Disp_Result_step09400_t0.0940.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 9500 / 10000  |  Pure Compute: 14.966170s  |  Total: 15.540605s  |  Pure Speed: 634.764936 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=9500 t=0.095000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_174237\Disp_Result_step09500_t0.0950.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 9600 / 10000  |  Pure Compute: 15.123912s  |  Total: 15.704502s  |  Pure Speed: 634.756425 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=9600 t=0.096000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_174237\Disp_Result_step09600_t0.0960.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 9700 / 10000  |  Pure Compute: 15.276039s  |  Total: 15.861815s  |  Pure Speed: 634.981375 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=9700 t=0.097000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_174237\Disp_Result_step09700_t0.0970.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 9800 / 10000  |  Pure Compute: 15.432812s  |  Total: 16.024652s  |  Pure Speed: 635.010664 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=9800 t=0.098000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_174237\Disp_Result_step09800_t0.0980.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 9900 / 10000  |  Pure Compute: 15.584979s  |  Total: 16.183365s  |  Pure Speed: 635.227043 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=9900 t=0.099000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_174237\Disp_Result_step09900_t0.0990.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] --- Step 10000 / 10000  |  Pure Compute: 15.738073s  |  Total: 16.341473s  |  Pure Speed: 635.401810 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=10000 t=0.100000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_174237\Disp_Result_step10000_t0.1000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] [CentralDifference] Finished. Total: 16.347068s  |  Pure Compute avg: 0.001574 s/step
+[INFO] [PDEngine] PD Engine Solve Phase Finished.
+[INFO] [EngineManager] Main Solver Phase finished.
+[INFO] [EngineManager] Entering Post-processing Phase
+[INFO] [EngineManager] Outputting: PD
+[INFO] Starting data export process step=-1 t=0.000000
+[INFO] Fetching model context for export: Box_Disp
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Box_Disp\Result_20260326_174237\Disp_Result_output.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Box_Disp
+[INFO] [EngineManager] Post-processing Phase finished.

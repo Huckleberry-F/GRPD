@@ -108,19 +108,19 @@ python ..\..\Generate_py\generate_model.py PD.yaml
 ```text
 General-Peridynamics/
 ├── PDCommon/          # 核心底层通用架构与各类计算基底构件 (Core Base)
-│   ├── BC/            # → 边界约束容器：位移锁定/载荷外力管理
+│   ├── BC/            # → 边界约束容器：位移锁定(DISP)/外力载荷(BODY_FORCE)/速度场控制
 │   ├── Core/          # → 全局类型定义与内存配置抽象基类
 │   ├── Field/         # → 数据大动脉：连续内存场(SoA)生态与分配池
 │   ├── IO/            # → 多态接驳口：结构化 YAML分析与多模态模型写入接口
-│   ├── Kernel/        # → 物理内循环组件：积分核与多态稳定器 (Stabilizer) 工厂
-│   ├── Material/      # → 本构计算枢纽：单实例材料法则模块与状态存储表
+│   ├── Kernel/        # → 物理内循环组件：广义力学(NOSB_M)与动态稳定器 (Stabilizer)
+│   ├── Material/      # → 本构计算枢纽：弹性介质库(LinearElasticMat)与状态存储
 │   ├── Model/         # → 模型构架图谱：承载网格转化信息的 ParticleManager
 │   ├── Neighbor/      # → 邻域搜索引擎：CSR大容量索引建设及表面截断修正库
 │   └── Utils/         # → 底层服务体系：日志打印系统、错误溯源捕手
 ├── Src/               # 主求解核心与全生命周期组装厂
 │   ├── Engine/        # → 求解引擎多态池：定义Engine抽象机制与注册工厂
-│   │   └── Solvers/   #   └── 具体的求解机实现仓库 (如 PDEngine 及特供的初始化器)
-│   ├── Integration/   # → 时间演化推进器：多态的时间积分组件 (如 ExplicitEuler)
+│   │   └── Solvers/   #   └── 具体的求解机实现仓库 (如 PDEngine 及特供力学初始化机制)
+│   ├── Integration/   # → 时间演化推进器：分步差分演化大总管 (ExplicitEuler/CentralDifference)
 │   └── main.cpp       # 引擎最高时序控制主点火程序入口
 ├── Generate_py/       # 辅助 Python 前处理与网格体素工厂
 │   └── generate_model.py # → 使用 Open3D 构建高密度实体微元模型的瑞士军刀
@@ -137,11 +137,18 @@ General-Peridynamics/
 
 ## 📌 版本更新日志 (Changelog)
 
-### v1.5 — 模块职责统一与 Registry/Manager 架构对齐 (当前版本)
-- **Field 模块统一工厂路线**: 删除 `FieldManager::registerField<T>()` 模板直接创建路径，全部场创建统一经由 `FieldRegistry` 工厂 → `FieldManager::addField()` 纯容器两步模式，消除了 Field 模块中"工厂+容器"职责混合的历史遗留。
-- **三大容器模块签名对齐**: `FieldManager::addField()`, `MaterialManager::addMaterial()`, `BCManager::addBC()` 统一简化为只接受 `unique_ptr`，由对象自身 `getName()` 提供容器 key，彻底消除调用方的名称冗余传递。
-- **FieldRegistry 动态维度支持**: `FieldCreatorFunc` 签名新增 `int dim` 参数，注册类型简化为 `DoubleField` / `IntField` 两类，不再按维度硬编码工厂，为 YAML 驱动的用户自定义场 (UMAT) 奠定基础。
-- **EngineManager 职责纯化**: 重构 `EngineManager`，消除与 `Engine` 基类的 `Initialize/Solve/Output` 命名冲突，改为 `Setup/RunAll/Shutdown` 编排接口。
+### v2.0 — 非常规态基力学内核崛起与全域稳定化体系 (当前版本)
+
+* **大变形 NOSB 核心上趟**: 全面贯通了 `NOSB_M` 力学积分核。在双重 OMP 热点下实现了形变梯度 $\mathbf{F}$、广义形状算子 $\mathbf{K}^{-1}$、以及非仿射残存位移 $\mathbf{z}$ 的无分支萃取与高性能并发现发。
+* **全系零能模式防护墙 (Zero-Energy Stabilizers)**: 构建了三套针对大变形切变与穿透的微观惩罚网络（Silling 标量法、Wan 纯四阶缩并法、Zhang 动态阻力张量阵）。通过对公式体系的终极重整，将原本极易拖垮缓存的全局阻滞张量替换为 L1 命中率爆表的 $O(N)$ 零长延时向量点积。
+* **动量与显式差分驱动器**: 针对运动方程上线了 `CentralDifference` 核心差分推进引擎，被安全挂入全局 `TimeIntegrator` 网络，支持双物理场异阶时间分步演化。
+* **固体微观材料工厂**: 完全封装了力学专有的线弹性本构 `LinearElasticMat` 基元，只需杨氏模量极简介入便可高效率投射拉梅常数反馈第一类皮奥拉-基尔霍夫 (PK1) 应力场。
+* **精细化刚体边界**: 新增涵盖 `DISP`, `BODY_FORCE`, `VELOCITY`, `PRESSURE` 的四大结构动力学约束协议，真正实现由外部 YAML 安全指挥时域载荷施加。
+
+### v1.5 — 稳态底层模块职责纯度与 Manager/Registry对齐
+
+* **Field 模块统一工厂路线**: 销毁遗留的散装注册路径，统一由 `FieldRegistry` 接手 `DoubleField` 与 `IntField` 工厂分发，根除历史遗留。
+* **三大容器模块多态闭环体系**: 抽象规范了 Field/Material/BC 实例化参数通道。
 
 ### v1.4 — 多态核心提炼与全面解耦
 - **全局泛型工厂架构**: 将零能模式抑制项彻底从核积分体系中剥离，建立了跨物理场的 `Stabilizer` 纯虚抽象体系。
@@ -173,11 +180,11 @@ General-Peridynamics/
 - **热零能模式抑制 (Zero-Energy Mode Suppression) 多态实施**: 彻底完成了对点阵积分由于畸变/截面断裂所引发的虚假零能空间震荡进行多态化的补偿抑制。
 - **基准标定与 ANSYS 仿真校验**: 热传导全解模型的数据结果已与顶级商软 ANSYS 在同平台网格下完成了深度映射校验，核心算法结果分毫不差。
 
-### 🏃 Phase 1. 结构大变形内核扩张 (In Progress)
-- **`MechanicalFields` 基础就绪**: 完成力学位移、速度、加速度三维矢量场的底层注册。
-- **`CentralDifference` 与多场协同**: 已实现适合动量方程的二阶显式中心差分求解器及异阶交错积分编排器 (`StaggeredIntegrator`)。
-- **`NOSB_Mechanical` 与弹性基础落地 (Upcoming)**: 即将为引擎实装力学内核基类，解算形变梯度张量与应力状态更新。
-- **微观材料库搭建 (Upcoming)**: 即将植入可调的线弹性基元 (`LinearElasticMat`) 以及基本应力张量的相互转化链路，使系统具备基础的“抗力”。
+### ✅ Phase 1. 结构大变形内核全覆盖推进实装 (Completed)
+- **`MechanicalFields` 基础就绪**: 完美兼容且实装了力学位移、速度、加速度三维核心运动学场的底层注册化剥离。
+- **`CentralDifference` 与多场协同**: 已实现且深度验证了具备高精度的二阶显式中心差分加速器以及异阶交错步积分编排 (`StaggeredIntegrator`)。
+- **`NOSB_Mechanical` 与弹性力态根基落地**: 全量落实力学内核，彻底打破网格局限解算大形变梯度张量。实装针对各类穿透与沙漏变形的纯并发惩罚计算网络，杜绝任何零能崩溃点。
+- **线弹性微观材料库搭建**: 植入可控的线弹性基元 (`LinearElasticMat`) 及其到宏观弹性 PK1 应力场的高速映射转化通道，现已完全具备纯净的介质抗拉防变能力。
 
 ### 🔍 Phase 2. 高阶边界条件钳制与动态本领强化
 - **力学专属驱动**: 引入专用的边界条件（如位移死锁 `DisplacementBC` 和动量加压载荷 `ForceBC`）。

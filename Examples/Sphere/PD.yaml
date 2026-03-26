@@ -64,7 +64,7 @@ Solver:
   OMP_Threads: 8
   Horizon: 1.5075              # 3.015 * dx = 3.015 * 1.0 = 3.015 mm
   KernelWeightType: "Linear" # 可选: Constant, InverseDistance, Linear, Quadratic, Cubic, Quartic, Gaussian
-  ZeroEnergyG0: 0.1          # 零能模式修正系数
+  ZeroEnergyG0: 1.0          # 零能模式修正系数
   ZeroEnergyMethod: "Zhang"   # 可选: Silling, Wan, Zhang
 
 # 6. 输出设置
