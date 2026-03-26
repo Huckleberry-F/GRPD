@@ -74,6 +74,12 @@ void CentralDifference::run(PDCommon::Core::PDContext &ctx,
     exit(EXIT_FAILURE);
   }
 
+  // 收集需要清零的最高阶率场名称（加速度）
+  std::vector<std::string> accFieldNames;
+  for (const auto &so : soTargets) {
+    accFieldNames.push_back(so.aName);
+  }
+
   LOG_INFO("[CentralDifference] Time loop: dt = " + std::to_string(dt) +
            ", totalSteps = " + std::to_string(totalSteps));
 
@@ -82,16 +88,9 @@ void CentralDifference::run(PDCommon::Core::PDContext &ctx,
     kernel->preCompute(ctx);
   }
 
-  // 初始化步：清零所有加速度场(最高阶率场)，计算 a_0
-  for (auto &so : soTargets) {
-    auto *aField = fieldManager.getFieldAs<double>(so.aName);
-    if (aField) aField->clearToZero();
-  }
-  bcManager.applySources();
+  // 初始化：设定 Dirichlet 约束初值，然后计算初始加速度 a_0
   bcManager.applyConstraints();
-  for (auto &kernel : kernels) {
-    kernel->computeForceState(ctx);
-  }
+  evaluateForces(ctx, kernels, accFieldNames);
 
   auto tStart = std::chrono::high_resolution_clock::now();
   double pureComputeTime = 0.0;
@@ -132,18 +131,11 @@ void CentralDifference::run(PDCommon::Core::PDContext &ctx,
       }
     }
 
-    // 2. Clear rate fields (只清零最高阶的 Acceleration)
-    for (auto &so : soTargets) {
-      auto *aField = fieldManager.getFieldAs<double>(so.aName);
-      if (aField) aField->clearToZero();
-    }
-
-    // 3. Evaluate forces (Updates a_{n+1})
-    bcManager.applySources();
+    // 2. 修正 Dirichlet 粒子位移/速度（半步积分可能修改了约束值）
     bcManager.applyConstraints();
-    for (auto &kernel : kernels) {
-      kernel->computeForceState(ctx);
-    }
+
+    // 3. 清零加速度 → 施加 Neumann 源项 → 计算内力
+    evaluateForces(ctx, kernels, accFieldNames);
 
     // 4. v_{n+1} = v_{n+1/2} + 0.5 * a_{n+1} * dt
     for (auto &so : soTargets) {
@@ -153,7 +145,7 @@ void CentralDifference::run(PDCommon::Core::PDContext &ctx,
       }
     }
 
-    // 约束覆盖
+    // 5. 最终 Dirichlet 约束覆盖
     bcManager.applyConstraints();
 
     // 后处理钩子：遍历所有内核执行 postCompute（状态变量演化等）

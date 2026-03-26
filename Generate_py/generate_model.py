@@ -336,10 +336,11 @@ def generate_from_yaml(yaml_path):
             val_data = bc['Value'] 
             
             # 核心升级：智能处理单参数与多参数
+            # 注意：PyYAML safe_load 可能将科学计数法(如 1.0e20)解析为字符串，需强制转 float
             if isinstance(val_data, list):
-                val_str = ",".join([f"{v:>20.6f}" for v in val_data])
+                val_str = ",".join([f"{float(v):>20.6f}" for v in val_data])
             else:
-                val_str = f"{val_data:>20.6f}"
+                val_str = f"{float(val_data):>20.6f}"
             
             for i in range(total_particles):
                 if mask[i]:

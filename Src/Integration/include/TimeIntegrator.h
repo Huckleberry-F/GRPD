@@ -69,6 +69,14 @@ protected:
   double totalTime_ = 100.0;
   int outputInterval_ = 10;
 
+  /// @brief 通用算力流程：清零率场 → 施加 Neumann 源项 → 计算内力
+  /// @param ctx                PD 仿真上下文
+  /// @param kernels            PD 积分核心集合
+  /// @param rateFieldsToClear  需要清零的率场名称列表（一阶=TempRate, 二阶=Acceleration）
+  void evaluateForces(PDCommon::Core::PDContext &ctx,
+                      std::vector<std::unique_ptr<PDKernel>> &kernels,
+                      const std::vector<std::string> &rateFieldsToClear);
+
   TimeIntegrator() = default; // 只允许子类构造
 };
 

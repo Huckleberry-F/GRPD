@@ -39,6 +39,7 @@ void ExplicitEuler::run(PDCommon::Core::PDContext &ctx,
     size_t totalComponents; // numParticles * dimension
   };
   std::vector<FieldPtrs> fieldPtrs;
+  std::vector<std::string> rateFieldNames; // 率场名称列表（供 evaluateForces 清零）
 
   for (auto &kernel : kernels) {
     auto targets = kernel->getIntegrationTargets();
@@ -55,6 +56,7 @@ void ExplicitEuler::run(PDCommon::Core::PDContext &ctx,
 
       fieldPtrs.push_back({primaryField->dataPtr(), rateField->dataPtr(),
                            numParticles * target.dimension});
+      rateFieldNames.push_back(target.rateField);
     }
   }
 
@@ -68,6 +70,9 @@ void ExplicitEuler::run(PDCommon::Core::PDContext &ctx,
   for (auto &kernel : kernels) {
     kernel->preCompute(ctx);
   }
+
+  // 初始化：设定 Dirichlet 约束初值
+  bcManager.applyConstraints();
 
   // =================================================================
   // 时间步循环
@@ -101,23 +106,8 @@ void ExplicitEuler::run(PDCommon::Core::PDContext &ctx,
 
     auto tComputeStart = std::chrono::high_resolution_clock::now();
 
-    // (B) 清零所有变化率场
-    for (auto &kernel : kernels) {
-      auto targets = kernel->getIntegrationTargets();
-      for (const auto &target : targets) {
-        auto *rateField = fieldManager.getFieldAs<double>(target.rateField);
-        rateField->clearToZero();
-      }
-    }
-
-    // (C) 施加边界条件源项 + 约束
-    bcManager.applySources();
-    bcManager.applyConstraints();
-
-    // (D) PD 核心积分（遍历所有内核，多场协同调度）
-    for (auto &kernel : kernels) {
-      kernel->computeForceState(ctx);
-    }
+    // (B,C,D) 清零率场 → 施加 Neumann 源项 → 计算内力
+    evaluateForces(ctx, kernels, rateFieldNames);
 
     // (E) 显式时间积分：primary += rate * dt
     for (auto &fp : fieldPtrs) {

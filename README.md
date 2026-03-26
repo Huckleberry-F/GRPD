@@ -137,7 +137,17 @@ General-Peridynamics/
 
 ## 📌 版本更新日志 (Changelog)
 
-### v2.0 — 非常规态基力学内核崛起与全域稳定化体系 (当前版本)
+### v2.1 — 边界条件体系规范化与时间积分器统一重构 (当前版本)
+
+* **BC 分类体系统一**: 所有边界条件子类（热/力学共 7 个）全部显式声明 `isConstraint()` 覆盖，彻底消除依赖基类默认值的隐患。统一约定：Dirichlet 型（`set`, `isConstraint=true`）在积分步末尾重新施加；Neumann 型（`add`, `isConstraint=false`）仅在力计算前施加一次。
+* **VelocityBC 叠加缺陷修复**: 修复了 `VelocityBC` 因缺少 `isConstraint()` 重写导致速度在每步不断累加的严重 bug。
+* **力学 BC `apply()` 接口统一**: 全部力学边界条件的 `apply()` 方法从手动 `getData()` 下标操作重构为使用 `TypedField` 的 `set()`/`add()` 按分量接口，与热 BC 风格完全对齐。
+* **时间积分器步骤结构规范化**: `ExplicitEuler` 与 `CentralDifference` 统一为「清零→源项→内力→积分→约束」的标准循环模板。`applySources()` 与 `applyConstraints()` 完全解耦，各自出现在逻辑正确的位置。
+* **Python 前处理科学计数法容错**: 修复 `generate_model.py` 中因 PyYAML 将 `1.0e20` 解析为字符串导致的格式化崩溃。
+* **通用算力流程封装**: 在 `TimeIntegrator` 基类中提取 `evaluateForces()` protected 函数，封装「清零率场→施加源项→计算内力」三步通用流程，消除子类间的重复代码。
+* **力学位移加载算例**: 新增 `Examples/Box_Disp` 二维平面位移拉伸测试用例，配套速度驱动边界与线弹性本构。
+
+### v2.0 — 非常规态基力学内核崛起与全域稳定化体系
 
 * **大变形 NOSB 核心上趟**: 全面贯通了 `NOSB_M` 力学积分核。在双重 OMP 热点下实现了形变梯度 $\mathbf{F}$、广义形状算子 $\mathbf{K}^{-1}$、以及非仿射残存位移 $\mathbf{z}$ 的无分支萃取与高性能并发现发。
 * **全系零能模式防护墙 (Zero-Energy Stabilizers)**: 构建了三套针对大变形切变与穿透的微观惩罚网络（Silling 标量法、Wan 纯四阶缩并法、Zhang 动态阻力张量阵）。通过对公式体系的终极重整，将原本极易拖垮缓存的全局阻滞张量替换为 L1 命中率爆表的 $O(N)$ 零长延时向量点积。
@@ -186,11 +196,10 @@ General-Peridynamics/
 - **`NOSB_Mechanical` 与弹性力态根基落地**: 全量落实力学内核，彻底打破网格局限解算大形变梯度张量。实装针对各类穿透与沙漏变形的纯并发惩罚计算网络，杜绝任何零能崩溃点。
 - **线弹性微观材料库搭建**: 植入可控的线弹性基元 (`LinearElasticMat`) 及其到宏观弹性 PK1 应力场的高速映射转化通道，现已完全具备纯净的介质抗拉防变能力。
 
-### 🔍 Phase 2. 高阶边界条件钳制与动态本领强化
-- **力学专属驱动**: 引入专用的边界条件（如位移死锁 `DisplacementBC` 和动量加压载荷 `ForceBC`）。
-- **动态加载场与时域查表加载机制**: 将原本单一的时不变边界条件全面升级拓展为依赖物理时间 `t`、实时函数或者多段数据表格 (Table Curve) 动态输入的前向演变载荷体系。
-- **动态循环增强**: 为 `TimeIntegrator` 装配动量计算引擎（如 `Velocity-Verlet`），实现波的精确传递。
-- **刚体接触判定**: 实现多独立物件间的空间排斥距离接触算法。
+### ✅ Phase 2. 高阶边界条件钳制与动态本领强化 (Completed)
+- **力学专属边界条件全覆盖**: 完整实现了位移锁定 (`DisplacementBC`)、速度驱动 (`VelocityBC`)、体力载荷 (`BodyForceBC`)、压力加载 (`PressureBC`) 四大结构动力学约束协议，统一 Dirichlet/Neumann 分类与 `isConstraint` 显式声明体系。
+- **时间积分器规范化**: `ExplicitEuler` 与 `CentralDifference` 统一为标准化步骤模板，BC 施加逻辑完全解耦且位置正确。
+- **待后续扩展**: 动态加载场与时域查表加载机制 (Table Curve)、多物件刚体接触判定算法。
 
 ### 🌌 Phase 3. 破裂损伤行为与耦合大业
 - **断键力学 (Damage & Failure)**: 给相邻键赋值临界伸长率，引入裂纹动态分叉与表面能量失效机制。彻底打开近场动力学处理非连续介质破坏的“杀手锏”功能。

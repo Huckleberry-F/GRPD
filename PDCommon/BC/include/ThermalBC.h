@@ -75,6 +75,7 @@ public:
                     const std::vector<double> &values) override;
 
     void apply() override;
+    bool isConstraint() const override { return false; }  // Neumann: 向变化率场累加
 
 private:
     int particleId_;
@@ -97,6 +98,7 @@ public:
                     const std::vector<double> &values) override;
 
     void apply() override;
+    bool isConstraint() const override { return false; }  // Robin: 向变化率场累加
 
 private:
     int particleId_;

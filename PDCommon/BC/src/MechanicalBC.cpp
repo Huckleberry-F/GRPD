@@ -41,17 +41,11 @@ void DisplacementBC::apply() {
   for (int d = 0; d < 3; ++d) {
     if (applyDirs_[d]) {
       // 钳制位移，并将关联方向的速度和加速度清零
-      std::vector<double> &dispData = displacement_->getData();
-      dispData[particleId_ * 3 + d] = dispVal_[d];
-
-      if (velocity_) {
-        std::vector<double> &velData = velocity_->getData();
-        velData[particleId_ * 3 + d] = 0.0;
-      }
-      if (acceleration_) {
-        std::vector<double> &accData = acceleration_->getData();
-        accData[particleId_ * 3 + d] = 0.0;
-      }
+      displacement_->set(particleId_, dispVal_[d], d);
+      if (velocity_)
+        velocity_->set(particleId_, 0.0, d);
+      if (acceleration_)
+        acceleration_->set(particleId_, 0.0, d);
     }
   }
 }
@@ -83,9 +77,8 @@ void BodyForceBC::apply() {
     return;
   for (int d = 0; d < 3; ++d) {
     if (applyDirs_[d]) {
-      std::vector<double> &accData = acceleration_->getData();
-      // 这里作为外加体力（加速度增量）累加
-      accData[particleId_ * 3 + d] += accVal_[d];
+      // 外加体力（加速度增量）累加到变化率场
+      acceleration_->add(particleId_, accVal_[d], d);
     }
   }
 }
@@ -116,8 +109,8 @@ void VelocityBC::apply() {
     return;
   for (int d = 0; d < 3; ++d) {
     if (applyDirs_[d]) {
-      std::vector<double> &velData = velocity_->getData();
-      velData[particleId_ * 3 + d] = velVal_[d];
+      // 强制设定速度值（Dirichlet 约束）
+      velocity_->set(particleId_, velVal_[d], d);
     }
   }
 }
@@ -148,9 +141,8 @@ void PressureBC::apply() {
     return;
   for (int d = 0; d < 3; ++d) {
     if (applyDirs_[d]) {
-      std::vector<double> &accData = acceleration_->getData();
-      // 这里作为外加体力（加速度增量）累加
-      accData[particleId_ * 3 + d] += pressVal_[d];
+      // 压力贡献累加到加速度场
+      acceleration_->add(particleId_, pressVal_[d], d);
     }
   }
 }

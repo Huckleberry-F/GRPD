@@ -3,6 +3,7 @@
 # ==============================================================================
 
 add_library(Integration_Obj OBJECT 
+    src/TimeIntegrator.cpp
     src/ExplicitEuler.cpp
     src/TimeIntegratorRegistry.cpp
     src/CentralDifference.cpp

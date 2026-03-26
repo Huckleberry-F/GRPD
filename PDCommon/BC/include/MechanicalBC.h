@@ -53,7 +53,9 @@ public:
                   const std::vector<double> &values) override;
 
   void apply() override;
-  bool isConstraint() const override { return true; }
+  bool isConstraint() const override {
+    return true;
+  } // Dirichlet: 直接设定位移值
 
 private:
   int particleId_;
@@ -81,6 +83,9 @@ public:
                   const std::vector<double> &values) override;
 
   void apply() override;
+  bool isConstraint() const override {
+    return false;
+  } // Neumann: 向加速度场累加
 
 private:
   int particleId_;
@@ -107,6 +112,9 @@ public:
                   const std::vector<double> &values) override;
 
   void apply() override;
+  bool isConstraint() const override {
+    return false;
+  } // Dirichlet: 直接设定速度值
 
 private:
   int particleId_;
@@ -134,6 +142,9 @@ public:
                   const std::vector<double> &values) override;
 
   void apply() override;
+  bool isConstraint() const override {
+    return false;
+  } // Neumann: 向加速度场累加
 
 private:
   int particleId_;

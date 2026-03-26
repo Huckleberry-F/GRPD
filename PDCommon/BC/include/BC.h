@@ -49,7 +49,12 @@ public:
   /// 每个具体的派生类将实现自己的施加逻辑
   virtual void apply() = 0;
 
-  /// @brief 标识是否为约束型边界（如固定温度），用于在时间积分后重新施加
+  /// @brief 标识是否为约束型边界条件
+  /// 约定：所有子类必须显式 override 此方法，禁止依赖基类默认值
+  ///   - Dirichlet 型 (直接设定主场/速度/温度值)  → 返回 true
+  ///   - Neumann/Source 型 (向变化率场累加贡献)   → 返回 false
+  /// Constraint (true)  会在时间积分步末尾由 applyConstraints() 重新施加
+  /// Source    (false) 仅在力计算前由 applySources() 调用一次
   virtual bool isConstraint() const { return false; }
 
 protected:
