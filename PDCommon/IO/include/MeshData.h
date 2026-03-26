@@ -41,7 +41,7 @@ struct LoadEntry {
   int nodeID;       ///< 作用节点 ID
   int bcID;         ///< 边界条件组 ID
   std::string type; ///< 边界条件类型 ("T", "FLUX" 等)
-  double value;     ///< 边界条件值
+  std::vector<double> values; ///< 多维边界条件值数组
 };
 
 /// @brief 通用网格中间数据结构

@@ -151,7 +151,9 @@ bool GrpdMeshReader::read(const std::string &filepath) {
             entry.nodeID = std::stoi(tokens[0]);
             entry.bcID = std::stoi(tokens[1]);
             entry.type = tokens[2];
-            entry.value = std::stod(tokens[3]);
+            for (size_t i = 3; i < tokens.size(); ++i) {
+              entry.values.push_back(std::stod(tokens[i]));
+            }
             meshData_.loads.push_back(entry);
             loadCount++;
           } catch (const std::exception &e) {

@@ -52,8 +52,7 @@ void InitConditions(PDCommon::Core::PDContext &ctx,
       continue;
     }
 
-    std::vector<double> values = {entry.value};
-    bc->initialize(fieldManager, entry.nodeID, values);
+    bc->initialize(fieldManager, entry.nodeID, entry.values);
 
     bcStats[entry.type]++;
     bcManager.addBC(std::move(bc));
