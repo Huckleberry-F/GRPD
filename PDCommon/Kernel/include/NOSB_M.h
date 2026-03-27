@@ -11,10 +11,9 @@
 
 #include "NOSB_Base.h"
 #include "Stabilizer.h"
+#include "MechanicalMaterial.h"
 #include <memory>
 #include <vector>
-
-namespace PDCommon::Material { class MechanicalMaterial; }
 
 namespace PDCommon::Kernel {
 

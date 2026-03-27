@@ -1,43 +1,36 @@
 #ifndef PDCOMMON_KERNEL_THERMAL_STABILIZERS_H
 #define PDCOMMON_KERNEL_THERMAL_STABILIZERS_H
 
-#include "PDContext.h"
 #include "Stabilizer.h"
-#include "StabilizerRegistry.h"
 #include <vector>
 
 namespace PDCommon::Kernel {
 
-// =========================================================================
-// 零能模式稳定化策略 (Hourglass Stabilization Strategies)
-// 继承自全局泛型的 Stabilizer 基类，在 applyPenalty 内部独立获取热物理参数。
-// =========================================================================
-
-// =========================================================================
-// Silling 方法：标量各向同性惩罚
-// G = G0 * k, penalty = ω * (6k / πδ⁴) * (ΔTres / vv) * Vj
-// =========================================================================
 class SillingStabilizer : public Stabilizer {
 public:
+  SillingStabilizer() { name_ = "Thermal_Silling"; }
+  void preCompute(PDCommon::Core::PDContext &ctx) override;
   void applyPenalty(PDCommon::Core::PDContext &ctx) override;
+private:
+  std::vector<double> kArr_;
 };
 
-// =========================================================================
-// Wan 方法：迹加权各向同性惩罚
-// G = G0 * k * trace(K⁻¹), penalty = ω * G * ΔTres * Vj
-// =========================================================================
 class WanStabilizer : public Stabilizer {
 public:
+  WanStabilizer() { name_ = "Thermal_Wan"; }
+  void preCompute(PDCommon::Core::PDContext &ctx) override;
   void applyPenalty(PDCommon::Core::PDContext &ctx) override;
+private:
+  std::vector<double> GWanArr_; // Precomputed scalar penalty
 };
 
-// =========================================================================
-// Zhang 方法：各向异性惩罚 (KT = K⁻¹ · D · K⁻¹ 二次型)
-// Z = ω² · ξᵀ · KT · ξ,  G_Zhang = Z * Vj * vv_j
-// =========================================================================
 class ZhangStabilizer : public Stabilizer {
 public:
+  ZhangStabilizer() { name_ = "Thermal_Zhang"; }
+  void preCompute(PDCommon::Core::PDContext &ctx) override;
   void applyPenalty(PDCommon::Core::PDContext &ctx) override;
+private:
+  std::vector<double> kArr_;
 };
 
 } // namespace PDCommon::Kernel

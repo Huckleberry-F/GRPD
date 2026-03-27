@@ -1,42 +1,45 @@
 #ifndef PDCOMMON_KERNEL_MECHANICAL_STABILIZERS_H
 #define PDCOMMON_KERNEL_MECHANICAL_STABILIZERS_H
 
-#include "PDContext.h"
 #include "Stabilizer.h"
-#include "StabilizerRegistry.h"
 #include <vector>
 
 namespace PDCommon::Kernel {
 
-// =========================================================================
-// 力学零能模式稳定化策略 (Mechanical Hourglass Stabilization Strategies)
-// =========================================================================
-
-// =========================================================================
-// Silling 方法：标量各向同性惩罚 (Silling, 2015)
-// f_ze = ω * (18 K / π δ⁴) * (z_i / vv_i - z_j / vv_j) * Vj
-// =========================================================================
 class MechanicalSillingStabilizer : public Stabilizer {
 public:
+  MechanicalSillingStabilizer() { name_ = "Mechanical_Silling"; }
+  void preCompute(PDCommon::Core::PDContext &ctx) override;
   void applyPenalty(PDCommon::Core::PDContext &ctx) override;
+
+private:
+  std::vector<double> bulkArr_;
+  std::vector<double> rhoArr_;
 };
 
-// =========================================================================
-// Wan 方法：迹加权各向同性惩罚
-// G = G0 * K * trace(K⁻¹), penalty = ω * (G_i z_i - G_j z_j) * Vj
-// =========================================================================
 class MechanicalWanStabilizer : public Stabilizer {
 public:
+  MechanicalWanStabilizer() { name_ = "Mechanical_Wan"; }
+  void preCompute(PDCommon::Core::PDContext &ctx) override;
   void applyPenalty(PDCommon::Core::PDContext &ctx) override;
+
+private:
+  std::vector<double> lambdaArr_;
+  std::vector<double> muArr_;
+  std::vector<double> rhoArr_;
+  std::vector<double> shapeAi_; // 预分配的外接张量缓存
 };
 
-// =========================================================================
-// Zhang 方法：各向异性惩罚 (KT = K⁻¹ · D · K⁻¹ 二次型)
-// Z = ω² · ξᵀ · KT · ξ,  G_Zhang = Z * Vj * vv_j
-// =========================================================================
 class MechanicalZhangStabilizer : public Stabilizer {
 public:
+  MechanicalZhangStabilizer() { name_ = "Mechanical_Zhang"; }
+  void preCompute(PDCommon::Core::PDContext &ctx) override;
   void applyPenalty(PDCommon::Core::PDContext &ctx) override;
+
+private:
+  std::vector<double> lambdaArr_;
+  std::vector<double> muArr_;
+  std::vector<double> rhoArr_;
 };
 
 } // namespace PDCommon::Kernel

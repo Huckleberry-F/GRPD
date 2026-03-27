@@ -13,12 +13,12 @@ Assembly: {}
 
 Parts:
   - PartID: 1
-    MatID: 1         # 默认材质
-    Dimension: 3     # [关键] 声明为 2 维平面问题
-    Thickness: 1.0   # 2D情况下的虚拟厚度
+    MatID: 1 # 默认材质
+    Dimension: 2 # [关键] 声明为 2 维平面问题
+    Thickness: 1.0 # 2D情况下的虚拟厚度
     Source: "Low_Res_Box.stl"
     RepairMesh: false
-    dx: 1.0          # 离散间距
+    dx: 0.1 # 离散间距
     Scale: 1.0
 
 # 3. 边界条件
@@ -33,31 +33,31 @@ BoundaryConditions:
   - BcID: 2
     Name: "Right_Pull"
     # 右侧施加 X 方向恒等速度拉伸 (Velocity BC)，模拟位移加载
-    Box: [-999.0, -24.0, -999.0, 999.0, -999.0, 999.0]  # 若 Box 尺寸不对可自行调整 X 坐标
+    Box: [-999.0, -24.0, -999.0, 999.0, -999.0, 999.0] # 若 Box 尺寸不对可自行调整 X 坐标
     Type: "VELOCITY"
-    Value: [5.0, 0.0, 1.0e20]  # Vx = 5.0 mm/s, Vy = 0, Vz free
+    Value: [5.0, 0.0, 1.0e20] # Vx = 5.0 mm/s, Vy = 0, Vz free
 
 # 4. 材质物理属性 (钢材的线弹性本构)
 Materials:
   - MatID: 1
     Name: "Steel_Elastic"
     Type: "LinearElasticMat"
-    Density: 7.85e-9         # tonne/mm³
-    YoungsModulus: 2.1e5     # MPa (N/mm²)
-    PoissonsRatio: 0.3       # 泊松比
+    Density: 7.85e-9 # tonne/mm³
+    YoungsModulus: 2.1e5 # MPa (N/mm²)
+    PoissonsRatio: 0.3 # 泊松比
 
 # 5. 求解器控制
 Solver:
-  Type: "Mechanical"          # [关键] 切换为力学引擎
+  Type: "Mechanical" # [关键] 切换为力学引擎
   TimeIntegrator: "CentralDifference" # [关键] 使用中心差分法
   Kernel: "NOSB_M"
-  TotalTime: 1.0e-4              # 总时长 0.1 s
-  TimeStep_dt: 1.0e-9         # 中心差分的显式时间步(需很小以满足 CFL)
-  OutputInterval: 10000         # 每 100 步输出一帧
+  TotalTime: 1.0e-5 # 总时长 0.1 s
+  TimeStep_dt: 1.0e-9 # 中心差分的显式时间步(需很小以满足 CFL)
+  OutputInterval: 100 # 每 100 步输出一帧
   OMP_Threads: 8
-  Horizon: 3.015              # 邻域半径 3.015*dx
+  Horizon: 0.3015 # 邻域半径 3.015*dx
   KernelWeightType: "Linear"
-  ZeroEnergyG0: 1.0           # 零能模式修正系数
+  ZeroEnergyG0: 0.1 # 零能模式修正系数
   ZeroEnergyMethod: "Zhang" # [关键] 开启 Silling 修正
 
 # 6. 输出设置

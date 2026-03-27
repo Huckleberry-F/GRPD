@@ -1,15 +1,16 @@
-#include "PDEnginePre.h"
-#include "Logger.h"
 #include "BCManager.h"
 #include "BCRegistry.h"
 #include "FieldManager.h"
 #include "IOManager.h"
-#include "ReaderRegistry.h"
+#include "Logger.h"
 #include "MeshData.h"
+#include "PDEnginePre.h"
+#include "ReaderRegistry.h"
 #include <filesystem>
 #include <map>
-#include <vector>
 #include <string>
+#include <vector>
+
 
 namespace Src::Engine::Solvers::PD::Init {
 
@@ -18,8 +19,7 @@ namespace Src::Engine::Solvers::PD::Init {
 // 读取所有的载荷描述 (如 Dirichlet 位移约束、Neumann 力学边界或辐射边界类型)，
 // 利用 BCRegistry 生成对应格式的条件多态实例并进行注册挂载。
 // ============================================================================
-void InitConditions(PDCommon::Core::PDContext &ctx,
-                    const YAML::Node &config) {
+void InitConditions(PDCommon::Core::PDContext &ctx, const YAML::Node &config) {
   LOG_INFO("Entering Conditions Initialization Phase...");
 
   auto &ioMgr = PDCommon::IO::IOManager::getInstance();
@@ -63,7 +63,7 @@ void InitConditions(PDCommon::Core::PDContext &ctx,
 
   LOG_INFO("[InitConditions] Load statistics:");
   for (const auto &[type, count] : bcStats) {
-      LOG_INFO("  - " + type + " : " + std::to_string(count));
+    LOG_INFO("  - " + type + " : " + std::to_string(count));
   }
 
   LOG_INFO("[InitConditions] Boundary conditions initialization complete.");

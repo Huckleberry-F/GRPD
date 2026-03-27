@@ -22,6 +22,9 @@ public:
   /// 本构类自行获取所需属性。
   virtual void applyPenalty(PDCommon::Core::PDContext &ctx) = 0;
 
+  /// @brief 模型时间步循环前调用：由核心求解引擎调用，进行零内存分配改造。子类在此统一提取并缓存后续海量计算所需的不变量矩阵与材料属性数组。
+  virtual void preCompute(PDCommon::Core::PDContext &ctx) {}
+
   /// @brief 设置稳定器缩放系数 G0（通常由 YAML 指定参数控制总惩罚权重）
   void setG0(double g0) { g0_ = g0; }
 

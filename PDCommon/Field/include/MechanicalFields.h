@@ -12,11 +12,11 @@ namespace PDCommon::Field {
 
 class MechanicalFields : public PhysicsFields {
 public:
-    MechanicalFields() : PhysicsFields("Mechanical") {}
-    ~MechanicalFields() override = default;
+  MechanicalFields() : PhysicsFields("Mechanical") {}
+  ~MechanicalFields() override = default;
 
-    /// @brief 注册力学核心场
-    void registerFields(FieldManager &fm) override;
+  /// @brief 注册力学核心场
+  void registerFields(FieldManager &fm) override;
 };
 
 } // namespace PDCommon::Field

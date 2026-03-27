@@ -5,7 +5,7 @@
 # ==============================================================================
 
 # 1. Set minimum CMake version (4.0.3 introduced improved FetchContent support)
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 4.0.3)
 
 # 2. Define project name, version, and language (C++)
 project(GRPD VERSION 1.0.0 LANGUAGES CXX)
