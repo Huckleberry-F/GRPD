@@ -14,6 +14,8 @@
 #include <memory>
 #include <vector>
 
+namespace PDCommon::Material { class MechanicalMaterial; }
+
 namespace PDCommon::Kernel {
 
 class NOSB_M : public NOSB_Base {
@@ -36,6 +38,14 @@ public:
 
 private:
   std::unique_ptr<Stabilizer> stabilizer_;
+
+  // =======================================================================
+  // HPC 优化缓存：避免每次调用堆分配，避免内层循环重复矩阵运算
+  // =======================================================================
+  std::vector<PDCommon::Material::MechanicalMaterial*> matArrCache_;
+  std::vector<double> rhoArrCache_;
+  // 预计算的有效应力张量 S = P * K^-1，避免 O(N * NumNeighbors) 复杂度的冗余外积
+  std::vector<double> pkKinvCache_;
 
   // -----------------------------------------------------------------------
   // 内部实现方法
