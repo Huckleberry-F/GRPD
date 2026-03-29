@@ -1,8 +1,12 @@
 CompileFlags:
-  Compiler: g++
+  Compiler: C:/TDM-GCC-64/bin/g++.exe
   Add: 
     - "--target=x86_64-w64-mingw32"  # 【核心】强制告诉 Clangd 使用 MinGW 目标平台
+    - "-D_GCC_MAX_ALIGN_T" # 【修复】防止 clangd 内置头文件和 MinGW 冲突
     - "-std=c++17"
     - "-fopenmp"
+    - "-I"
+    - "C:/TDM-GCC-64/lib/gcc/x86_64-w64-mingw32/10.3.0/include" # 强制包含 TDM-GCC 的 omp.h 路径
+    - "-DEIGEN_DONT_VECTORIZE"
   Remove: 
     - "-fms-*" # 移除所有可能导致误判的 MSVC 兼容性宏

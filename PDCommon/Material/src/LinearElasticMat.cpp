@@ -13,6 +13,9 @@ LinearElasticMat::LinearElasticMat(const std::string &name)
     : MechanicalMaterial(name) {}
 
 void LinearElasticMat::initialize(const YAML::Node &matNode) {
+  // 必须调用基类 initialize 以解析 Damage 等通用挂载组件
+  Material::initialize(matNode);
+
   if (matNode["Density"]) {
     density_ = matNode["Density"].as<double>();
   } else {

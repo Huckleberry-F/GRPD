@@ -32,6 +32,9 @@ public:
   /// @brief 每步核心积分：NOSB 三步非局部力学计算
   void computeForceState(PDCommon::Core::PDContext &ctx) override;
 
+  /// @brief 时间步积分完成后的善后钩子（调用损伤等后处理计算）
+  void postCompute(PDCommon::Core::PDContext &ctx) override;
+
   /// @brief 返回此核心需要时间积分的场对接签名
   std::vector<IntegrationTarget> getIntegrationTargets() const override;
 

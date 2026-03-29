@@ -11,6 +11,7 @@
 #include "NeighborList.h"
 #include "ParticleManager.h"
 #include "StabilizerRegistry.h"
+#include "DamageModel.h"
 #include <cmath>
 #include <omp.h>
 
@@ -337,9 +338,21 @@ void NOSB_M::preCompute(PDCommon::Core::PDContext &ctx) {
              "using strategy: " +
              zeroEnergyMethodStr_);
   }
+  // Damage 相关的解析已迁移至 Material 层
 }
 void NOSB_M::computeForceState(PDCommon::Core::PDContext &ctx) {
   ComputeMechanicalState(ctx);
+}
+
+void NOSB_M::postCompute(PDCommon::Core::PDContext &ctx) {
+  auto &matManager = ctx.getMaterialManager();
+  // 遍历所有注册在系统中的材料
+  for (const auto &[name, mat] : matManager.getMaterials()) {
+      if (mat && mat->getDamageModel()) {
+          // 每个具体的断裂准则模型只会遍历自身对应的粒子
+          mat->getDamageModel()->computeDamage(ctx, mat->getMatId());
+      }
+  }
 }
 
 std::vector<PDKernel::IntegrationTarget> NOSB_M::getIntegrationTargets() const {

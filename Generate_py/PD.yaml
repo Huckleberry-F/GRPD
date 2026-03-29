@@ -37,7 +37,17 @@ BoundaryConditions:
     Type: "VELOCITY"
     Value: [5.0, 0.0, 1.0e20]  # Vx = 5.0 mm/s, Vy = 0, Vz free
 
-# 4. 材质物理属性 (钢材的线弹性本构)
+# 4. 预置裂纹 (PreCracks) 模块示例
+# 独立于 Solver，可在 0 步截断键以形成初始裂缝
+PreCracks:
+  - Type: "QuadCrack"
+    # 这里在几何中心 (X=50), Y从 0 到 50 的范围内切穿板子 (Z 拉伸)
+    V1: [49.9,   0.0, -100.0]
+    V2: [50.1,   0.0, -100.0]
+    V3: [50.1,  50.0,  100.0]
+    V4: [49.9,  50.0,  100.0]
+
+# 5. 材质物理属性 (钢材的线弹性本构)
 Materials:
   - MatID: 1
     Name: "Steel_Elastic"
@@ -45,6 +55,10 @@ Materials:
     Density: 7.85e-9         # tonne/mm³
     YoungsModulus: 2.1e5     # MPa (N/mm²)
     PoissonsRatio: 0.3       # 泊松比
+    # 动态损伤准则示例
+    Damage:
+      Type: "CriticalStretch"
+      Critical_Stretch: 10.05   # 超过此伸长率的键将动态断裂
 
 # 5. 求解器控制
 Solver:
@@ -60,7 +74,7 @@ Solver:
   ZeroEnergyG0: 10.0         # 零能模式修正系数
   ZeroEnergyMethod: "Silling"# [关键] 开启 Silling 修正
 
-# 6. 输出设置
+# 7. 输出设置
 Writer:
   Name: "Disp_Result"
   Type: "binary"
@@ -75,3 +89,6 @@ Writer:
       Dimension: 3
     - Name: "DeformationGradient"
       Dimension: 9
+    - Name: "Damage"         # [关键] 输出损伤场以便 ParaView 渲染裂纹
+      Dimension: 1
+

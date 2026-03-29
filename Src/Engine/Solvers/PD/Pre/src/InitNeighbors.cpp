@@ -51,12 +51,18 @@ void InitNeighbors(PDCommon::Core::PDContext &ctx,
              std::to_string(numParticles) + " particles.");
   }
 
-  neighborList.registerBondField("BondDamage");
-  double *dmgPtr = neighborList.getBondFieldPtr("BondDamage");
-  size_t nBonds = neighborList.totalBonds();
-  std::fill(dmgPtr, dmgPtr + nBonds, 1.0);
-  LOG_INFO("[InitNeighbors] BondDamage field registered, " +
-           std::to_string(nBonds) + " bonds initialized to 1.0");
+  // 为 DamageModel 及 Writer 提前注册全局 Damage 标量场 (防止第 0 步输出时找不到场)
+  if (!fieldManager.hasField("Damage")) {
+    auto damageFieldNew = PDCommon::Field::FieldRegistry::getInstance()
+        .createField("DoubleField", "Damage", 1);
+    fieldManager.addField(std::move(damageFieldNew));
+  }
+  auto *damageField = fieldManager.getFieldAs<double>("Damage");
+  if (damageField) {
+      damageField->resize(numParticles);
+      damageField->clearToZero();
+      LOG_INFO("[InitNeighbors] Global Damage scalar field properly initialized to 0.0");
+  }
 
   LOG_INFO("[InitNeighbors] Neighbor search phase complete.");
 }

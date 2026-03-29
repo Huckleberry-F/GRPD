@@ -3,11 +3,16 @@
 // ============================================================================
 
 #include "Material.h"
+#include "DamageModel.h"
+#include "DamageRegistry.h"
+#include "Logger.h"
 
 namespace PDCommon::Material {
 
 // 基础类实现
-Material::Material(const std::string &name) : name_(name), matId_(-1) {}
+Material::Material(const std::string &name) : name_(name), matId_(-1), damageModel_(nullptr) {}
+
+Material::~Material() = default;
 
 const std::string &Material::getName() const { return name_; }
 
@@ -18,7 +23,26 @@ int Material::getMatId() const { return matId_; }
 void Material::setMatId(int id) { matId_ = id; }
 
 void Material::initialize(const YAML::Node &matNode) {
-  // 默认空实现，子类可覆盖以处理具体的 YAML 数据
+  // 解析依附于该材料独有的损伤准则
+  if (matNode["Damage"]) {
+      if (matNode["Damage"]["Type"]) {
+          std::string damageTypeStr = matNode["Damage"]["Type"].as<std::string>();
+          if (damageTypeStr != "None") {
+               if (PDCommon::Damage::DamageRegistry::getInstance().contains(damageTypeStr)) {
+                   damageModel_ = PDCommon::Damage::DamageRegistry::getInstance().create(damageTypeStr);
+                   if (damageModel_) {
+                       damageModel_->configure(matNode["Damage"]);
+                       LOG_INFO("[Material] Attached DamageModel '" + damageTypeStr + "' to material: " + name_);
+                   }
+               } else {
+                   LOG_ERROR("[Material] Damage model '" + damageTypeStr + "' not found in registry!");
+               }
+          }
+      }
+  }
+}
+PDCommon::Damage::DamageModel* Material::getDamageModel() const {
+  return damageModel_.get();
 }
 
 void Material::allocateStateVariables(PDCommon::Field::FieldManager &fm) {

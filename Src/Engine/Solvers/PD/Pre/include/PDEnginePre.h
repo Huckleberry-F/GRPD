@@ -47,6 +47,18 @@ void InitConditions(PDCommon::Core::PDContext &ctx, const YAML::Node &config);
 /// @param config 模拟系统的 yaml 根配置
 void InitNeighbors(PDCommon::Core::PDContext &ctx, const YAML::Node &config);
 
+/// @brief 初始化所有带有私有 Damage 准则的 Material（需在拓扑建树之后执行）
+/// @details 为这些存在断裂模型的材质预分配状态缓存（如初始完好键统计）。
+/// @param ctx PD 全局上下文
+/// @param config 模拟系统的 yaml 根配置
+void InitDamageModels(PDCommon::Core::PDContext &ctx, const YAML::Node &config);
+
+/// @brief 初始化宏观裂纹挂载
+/// @details 读取 PreCracks 配置并用几何算法切断对应债券，形成预置裂纹面或几何缝。
+/// @param ctx PD 全局上下文
+/// @param config 模拟系统的 yaml 根配置
+void InitPreCracks(PDCommon::Core::PDContext &ctx, const YAML::Node &config);
+
 /// @brief 初始化微积分方程执行器与空间积分内核（多核版本）
 /// @details 在 L1 和 L2 的架构层组装出 TimeIntegrator（如 ExplicitEuler）和多个 PDKernel 内核。
 ///          支持 YAML 中的 Solver.Kernel（单核兼容）和 Solver.Kernels（多核列表）两种模式。

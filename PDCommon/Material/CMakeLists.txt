@@ -26,6 +26,7 @@ target_sources(Material_Obj PRIVATE
 # 3. Set header include paths for this module
 # PUBLIC ensures targets linking to Material_Obj can see these headers
 target_include_directories(Material_Obj PUBLIC include)
+target_include_directories(Material_Obj PRIVATE ${PROJECT_SOURCE_DIR}/PDCommon/Damage/include)
 
 # 4. Link dependencies
 # Note: For OBJECT libraries, this is mainly to propagate include paths

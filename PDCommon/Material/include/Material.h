@@ -15,6 +15,10 @@ namespace PDCommon::Field {
 class FieldManager;
 }
 
+namespace PDCommon::Damage {
+class DamageModel;
+}
+
 namespace PDCommon::Material {
 
 class Material {
@@ -23,7 +27,7 @@ public:
   /// @param name 材料实例的唯一名称
   explicit Material(const std::string &name = "");
 
-  virtual ~Material() = default;
+  virtual ~Material();
 
   // 禁用拷贝构造和赋值操作
   Material(const Material &) = delete;
@@ -58,9 +62,13 @@ public:
   /// 注意：后续应结合Particle对象的属性（如状态变量state_vars等）传入进行计算
   virtual void evaluate() = 0;
 
+  /// @brief 获取挂载在此材料下的损伤评估模型
+  PDCommon::Damage::DamageModel* getDamageModel() const;
+
 protected:
   std::string name_; // 材料实例名称
   int matId_;        // 关联的整型标号
+  std::unique_ptr<PDCommon::Damage::DamageModel> damageModel_; // 专属损伤判定模型
 };
 
 } // namespace PDCommon::Material
