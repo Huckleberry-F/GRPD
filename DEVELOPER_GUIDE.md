@@ -9,50 +9,51 @@ GRPD 的求解器架构采用了强制解耦的三层设计，确保各层级只
 ```mermaid
 graph TD
     %% 定义组件
-    subgraph Layer 1: TimeIntegrator (时间积分算法层)
-        TI[TimeIntegrator 基类]
-        EE(ExplicitEuler)
-        CD(CentralDifference)
-        SI(StaggeredIntegrator)
+    subgraph Layer1 ["Layer 1: TimeIntegrator (时间积分算法层)"]
+        TI["TimeIntegrator 基类"]
+        EE("ExplicitEuler")
+        CD("CentralDifference")
+        SI("StaggeredIntegrator")
     end
 
-    subgraph Layer 2: PDKernel (PD 非局部算力层)
-        PK[PDKernel 基类]
-        NM(NOSB_M: 力学态基)
-        NT(NOSB_T: 热传导态基)
-        BB(BondBased: 键基)
+    subgraph Layer2 ["Layer 2: PDKernel (PD 非局部算力层)"]
+        PK["PDKernel 基类"]
+        NM("NOSB_M: 力学态基")
+        NT("NOSB_T: 热传导态基")
+        BB("BondBased: 键基")
     end
 
-    subgraph Layer 3: Material (本构关系物理层)
-        Mat[Material 基类]
-        VM(VonMises: 弹塑性)
-        LE(LinearElastic: 线弹性)
-        HC(HeatConduction: 热传导)
+    subgraph Layer3 ["Layer 3: Material (本构关系物理层)"]
+        Mat["Material 基类"]
+        VM("VonMises: 弹塑性")
+        LE("LinearElastic: 线弹性")
+        HC("HeatConduction: 热传导")
     end
 
     %% 定义连接关系
-    TI -->|预计算、积分求解| PK
-    PK -->|传递物理场数据| Mat
+    TI -->|"预计算、积分求解"| PK
+    PK -->|"传递物理场数据"| Mat
 
     %% 层级说明
-    style Layer 1 fill:#e1f5fe,stroke:#01579b,stroke-width:2px;
-    style Layer 2 fill:#e8f5e9,stroke:#2e7d32,stroke-width:2px;
-    style Layer 3 fill:#fff3e0,stroke:#e65100,stroke-width:2px;
+    style Layer1 fill:#e1f5fe,stroke:#01579b,stroke-width:2px;
+    style Layer2 fill:#e8f5e9,stroke:#2e7d32,stroke-width:2px;
+    style Layer3 fill:#fff3e0,stroke:#e65100,stroke-width:2px;
 ```
 
 ### 层级职责划分
-*   **Layer 1: TimeIntegrator (时间积分)**
-    *   **负责**：推进时间步（`dt`），执行 $v += a \cdot dt$ 和 $u += v \cdot dt$。管理边界条件的施加（Dirichlet/Neumann）。
-    *   **不知道**：它是力学问题还是热学问题？算力用的是键基还是态基？
-    *   **接口**：只调用 `PDKernel::computeForceState(ctx)`。
-*   **Layer 2: PDKernel (PD积分核心)**
-    *   **负责**：遍历邻居列表（CSR 结构），计算形状张量，计算变形梯度 $F$。
-    *   **不知道**：这是 Explicit 还​​是 CentralDifference？材料是弹性还是塑性？
-    *   **接口**：将算好的 $F$ 传递给 `Material::evaluate()`，取回 $PK1$ 应力并累加为粒子力态。
-*   **Layer 3: Material (材料本构)**
-    *   **负责**：纯粹的局部连续介质力学计算（如用 $F$ 算 $\sigma$）。
-    *   **不知道**：什么是粒子？什么是邻域？什么是时间步？
-    *   **接口**：实现 `evaluate()` 方法。
+
+* **Layer 1: TimeIntegrator (时间积分)**
+  * **负责**：推进时间步（`dt`），执行 $v += a \cdot dt$ 和 $u += v \cdot dt$。管理边界条件的施加（Dirichlet/Neumann）。
+  * **不知道**：它是力学问题还是热学问题？算力用的是键基还是态基？
+  * **接口**：只调用 `PDKernel::computeForceState(ctx)`。
+* **Layer 2: PDKernel (PD积分核心)**
+  * **负责**：遍历邻居列表（CSR 结构），计算形状张量，计算变形梯度 $F$。
+  * **不知道**：这是 Explicit 还​​是 CentralDifference？材料是弹性还是塑性？
+  * **接口**：将算好的 $F$ 传递给 `Material::evaluate()`，取回 $PK1$ 应力并累加为粒子力态。
+* **Layer 3: Material (材料本构)**
+  * **负责**：纯粹的局部连续介质力学计算（如用 $F$ 算 $\sigma$）。
+  * **不知道**：什么是粒子？什么是邻域？什么是时间步？
+  * **接口**：实现 `evaluate()` 方法。
 
 ---
 
@@ -60,9 +61,9 @@ graph TD
 
 项目中大量使用了以下组合设计模式来保证模块的插拔性（以 `Material` 模块为例，`Field`, `BC`, `PDKernel`, `TimeIntegrator` 等均遵循）：
 
-1.  **Registry (注册表单例)**: 提供宏 `REGISTER_MATERIAL("LinearElastic", LinearElastic)`，实现编译期静态注册。
-2.  **Factory (工厂)**: 通过字符串反射（从 YAML 读取 `"LinearElastic"`）来动态使用 `std::unique_ptr` 创建对应的具体子类实例。
-3.  **Manager (管理器)**: 纯容器（如 `MaterialManager`），**只负责持有和使用**对象，不负责创建对象生命周期，实现了配置解析层和执行层的解耦。
+1. **Registry (注册表单例)**: 提供宏 `REGISTER_MATERIAL("LinearElastic", LinearElastic)`，实现编译期静态注册。
+2. **Factory (工厂)**: 通过字符串反射（从 YAML 读取 `"LinearElastic"`）来动态使用 `std::unique_ptr` 创建对应的具体子类实例。
+3. **Manager (管理器)**: 纯容器（如 `MaterialManager`），**只负责持有和使用**对象，不负责创建对象生命周期，实现了配置解析层和执行层的解耦。
 
 ---
 
@@ -90,33 +91,37 @@ private:
 这里以添加不同类型的功能为例说明标准的开发流程。
 
 ### 场景 1：新增一种材料本构（最常见）
-*   **目标**：添加一个名为 `NeoHookean` 的超弹性材料。
-*   **步骤**：
-    1.  在 `PDCommon/Material/include/` 和 `src/` 新建 `NeoHookean.h` 和 `.cpp`。
-    2.  继承自力学基类（例如 `MechanicalMaterial` 或重构后的基类）。
-    3.  重写 `evaluate()` 方法，在这里写入公式：从 `DeformationGradient` 场读数据，算完写到 `PK1Stress` 场。
-    4.  在 `.cpp` 末尾添加一行注册宏：`REGISTER_MATERIAL("NeoHookean", NeoHookean);`
-    5.  在 `CMakeLists.txt` 中添加源码。
-*   **结果**：无需修改任何原本的核心代码，用户在 YAML 中填入 `Type: NeoHookean` 即可运行。
+
+* **目标**：添加一个名为 `NeoHookean` 的超弹性材料。
+* **步骤**：
+  1. 在 `PDCommon/Material/include/` 和 `src/` 新建 `NeoHookean.h` 和 `.cpp`。
+  2. 继承自力学基类（例如 `MechanicalMaterial` 或重构后的基类）。
+  3. 重写 `evaluate()` 方法，在这里写入公式：从 `DeformationGradient` 场读数据，算完写到 `PK1Stress` 场。
+  4. 在 `.cpp` 末尾添加一行注册宏：`REGISTER_MATERIAL("NeoHookean", NeoHookean);`
+  5. 在 `CMakeLists.txt` 中添加源码。
+* **结果**：无需修改任何原本的核心代码，用户在 YAML 中填入 `Type: NeoHookean` 即可运行。
 
 ### 场景 2：新增一种积分算法
-*   **目标**：添加 `RungeKutta4`。
-*   **步骤**：
-    1.  在 `Src/Integration/` 下继承 `TimeIntegrator`。
-    2.  实现 `run(PDContext& ctx, ...)` 循环。
-    3.  在循环内部，对于需要求解算力的地方，调用 `evaluateForces(ctx, kernels, rateFieldNames)`，这会自动搞定率场清零、Neumann 源项和 Kernel 受力计算。
-    4.  处理好时间步和约束 `applyConstraints()`。
-    5.  注册：`REGISTER_INTEGRATOR("RungeKutta4", RungeKutta4);`
+
+* **目标**：添加 `RungeKutta4`。
+* **步骤**：
+  1. 在 `Src/Integration/` 下继承 `TimeIntegrator`。
+  2. 实现 `run(PDContext& ctx, ...)` 循环。
+  3. 在循环内部，对于需要求解算力的地方，调用 `evaluateForces(ctx, kernels, rateFieldNames)`，这会自动搞定率场清零、Neumann 源项和 Kernel 受力计算。
+  4. 处理好时间步和约束 `applyConstraints()`。
+  5. 注册：`REGISTER_INTEGRATOR("RungeKutta4", RungeKutta4);`
 
 ### 场景 3：新增一种影响函数（核函数类型）
-*   **步骤**：
-    1.  修改 `PDKernel::InfluenceKernelType` 枚举，增加如 `CustomShape`。
-    2.  在 `PDKernel::GetInfluenceWeight` 的 `switch` 分支中添加你的形函数数学表达式。
+
+* **步骤**：
+  1. 修改 `PDKernel::InfluenceKernelType` 枚举，增加如 `CustomShape`。
+  2. 在 `PDKernel::GetInfluenceWeight` 的 `switch` 分支中添加你的形函数数学表达式。
 
 ---
 
 ## 5. 编码规范提醒
-1.  **C++17标准**：尽量使用现代特性，如 `auto`, 智能指针。
-2.  **指针性能**：在最核心的循环里（如 `computeForceState`），从 `FieldManager` 获取裸指针（`dataPtr()`），然后用数组下标遍历，结合 `#pragma omp parallel for`，避免在循环体内调用复杂虚函数。
-3.  **零拷贝原则**：`PDContext` 及各管理器对象在传递时必须传引用 `&`，严禁按值传递导致的巨量内存拷贝。
-4.  **H/CPP 严格分离**：复杂的逻辑必须写在 `.cpp` 文件里，坚决禁止在 `.h` 头文件里写大量实现代码（模板类除外），以降低编译耦合度。
+
+1. **C++17标准**：尽量使用现代特性，如 `auto`, 智能指针。
+2. **指针性能**：在最核心的循环里（如 `computeForceState`），从 `FieldManager` 获取裸指针（`dataPtr()`），然后用数组下标遍历，结合 `#pragma omp parallel for`，避免在循环体内调用复杂虚函数。
+3. **零拷贝原则**：`PDContext` 及各管理器对象在传递时必须传引用 `&`，严禁按值传递导致的巨量内存拷贝。
+4. **H/CPP 严格分离**：复杂的逻辑必须写在 `.cpp` 文件里，坚决禁止在 `.h` 头文件里写大量实现代码（模板类除外），以降低编译耦合度。

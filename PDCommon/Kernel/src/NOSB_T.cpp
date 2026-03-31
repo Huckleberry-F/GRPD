@@ -158,19 +158,25 @@ void NOSB_T::ComputeThermalState(PDContext &ctx) {
       gradPtr[i * 3 + 1] = grad_y;
       gradPtr[i * 3 + 2] = grad_z;
 
-      // 提取独立材料常数
-      double k_i = kArrCache_[i];
-      double qx = -k_i * grad_x;
-      double qy = -k_i * grad_y;
-      double qz = -k_i * grad_z;
-      fluxPtr[i * 3] = qx;
-      fluxPtr[i * 3 + 1] = qy;
-      fluxPtr[i * 3 + 2] = qz;
+      // 调用多态本构模型计算热流密度 q = f(∇T)
+      Eigen::Vector3d qVec(0.0, 0.0, 0.0);
+      if (matArrCache_[i]) {
+        Eigen::Vector3d gradT(grad_x, grad_y, grad_z);
+        qVec = matArrCache_[i]->ComputeHeatFlux(gradT);
+        double qx = qVec(0);
+        double qy = qVec(1);
+        double qz = qVec(2);
 
-      // 【HPC 算法降维】极度关键的反张量矢量乘法提取 KQ_i = K_i^-1 * q_i
-      kqCache_[i * 3] = k00 * qx + k01 * qy + k02 * qz;
-      kqCache_[i * 3 + 1] = k10 * qx + k11 * qy + k12 * qz;
-      kqCache_[i * 3 + 2] = k20 * qx + k21 * qy + k22 * qz;
+        fluxPtr[i * 3] = qx;
+        fluxPtr[i * 3 + 1] = qy;
+        fluxPtr[i * 3 + 2] = qz;
+        // 【HPC 算法降维】极度关键的反张量矢量乘法提取 KQ_i = K_i^-1 * q_i
+        kqCache_[i * 3] = k00 * qx + k01 * qy + k02 * qz;
+        kqCache_[i * 3 + 1] = k10 * qx + k11 * qy + k12 * qz;
+        kqCache_[i * 3 + 2] = k20 * qx + k21 * qy + k22 * qz;
+      } else {
+        kqCache_[i * 3] = kqCache_[i * 3 + 1] = kqCache_[i * 3 + 2] = 0.0;
+      }
     }
 
     // -----------------------------------------------------------------------
