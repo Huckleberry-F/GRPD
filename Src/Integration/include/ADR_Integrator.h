@@ -1,21 +1,24 @@
 // ============================================================================
-// ADR_Integrator.h - 自适应动态弛豫准静态积分器
+// ADR_Integrator.h - 自适应动态弛豫准静态积分器 (Adaptive Dynamic Relaxation)
 //
 // 职责：
-//   实现 "Smooth Ramp + Hold & Converge" 的显式准静态时间推进架构。
-//   通过质量比例阻尼和平滑升压函数，在显式框架内实现准静态加载，
-//   消除瞬态冲击波，使断裂沿预定路径稳定扩展。
+//   实现类 ANSYS 风格的 LoadStep / Substep / KBC 显式准静态时间推进架构。
+//   通过自适应阻尼参数 cn 与 Leapfrog (Verlet) 时间积分格式，
+//   在显式框架内实现准静态加载，使系统稳定弛豫至平衡构型。
 //
 // 架构位置：
 //   继承自 TimeIntegrator，通过 REGISTER_TIME_INTEGRATOR 宏注入注册表。
 //   YAML 中配置 TimeIntegrator: "ADR" 即可触发。
 //
 // 算法核心：
-//   外层循环：LoadStep (物理载荷步，每步输出一次 VTK)
-//   内层循环：显式中心差分推进 + 质量比例阻尼
-//     Phase 1 (Ramp): t < T_ramp 时，loadFactor 由 Smooth Step 函数驱动
-//     Phase 2 (Hold): t >= T_ramp 后，loadFactor 锁定为 1.0，等动能衰减
-//     收敛判定：动能 / 峰值动能 < Energy_Tol
+//   外层循环：LoadStep × Substep (载荷步 × 增量子步)
+//     - KBC=0 (Ramp)：loadFactor 在子步间线性插值
+//     - KBC=1 (Step)：loadFactor 在载荷步开始时阶跃至目标值
+//   内层循环：伪时间迭代 (Pseudo Steps)
+//     1. 计算内力 → 加速度 a_new
+//     2. 自适应阻尼 cn = 2*sqrt(cn1/cn2)，上限 1.8/dt
+//     3. Leapfrog 速度-位移更新（含阻尼衰减项）
+//     4. 收敛判定：位移增量范数 TOL2 < dispTol 且力残差范数 TOL3 < forceTol
 // ============================================================================
 
 #ifndef SRC_INTEGRATION_ADR_INTEGRATOR_H
@@ -25,7 +28,9 @@
 #include <memory>
 #include <vector>
 
-namespace PDCommon::Kernel { class PDKernel; }
+namespace PDCommon::Kernel {
+class PDKernel;
+}
 
 namespace Src::Integration {
 
@@ -51,12 +56,12 @@ private:
   // -----------------------------------------------------------------------
   // ADR 专属参数（从 YAML Solver 段读取）
   // -----------------------------------------------------------------------
-  int numLoadSteps_ = 10;       ///< 物理载荷大步数量
-  int numSubsteps_  = 1;        ///< 每个载荷步细分为几个增量子步
-  int kbc_          = 0;        ///< 加载控制：0=Ramp(坡道加载), 1=Step(阶跃突加)
-  int maxPseudoSteps_ = 5000;   ///< 每个 Substep 内允许的最大迭代数
-  double dispTol_   = 1.0e-6;   ///< 位移收敛阈值 TOL2
-  double forceTol_  = 1.0e-4;   ///< 力平衡收敛阈值 TOL3
+  int numLoadSteps_ = 10;     ///< 物理载荷大步数量
+  int numSubsteps_ = 1;       ///< 每个载荷步细分为几个增量子步
+  int kbc_ = 0;               ///< 加载控制：0=Ramp(坡道加载), 1=Step(阶跃突加)
+  int maxPseudoSteps_ = 5000; ///< 每个 Substep 内允许的最大迭代数
+  double dispTol_ = 1.0e-6;   ///< 位移收敛阈值 TOL2
+  double forceTol_ = 1.0e-4;  ///< 力平衡收敛阈值 TOL3
 };
 
 } // namespace Src::Integration

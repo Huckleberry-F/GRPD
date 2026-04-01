@@ -6,7 +6,6 @@
 #include "BCRegistry.h"
 #include "FieldManager.h"
 #include <cmath>
-#include <limits>
 
 namespace PDCommon::BC {
 
