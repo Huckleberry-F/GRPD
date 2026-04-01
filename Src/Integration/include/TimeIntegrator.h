@@ -44,14 +44,7 @@ public:
   // -----------------------------------------------------------------------
 
   /// @brief 从 YAML 读取控制参数（子类可 override 追加私有参数）
-  virtual void configure(const YAML::Node &solverNode) {
-    if (solverNode["TimeStep_dt"])
-      dt_ = solverNode["TimeStep_dt"].as<double>();
-    if (solverNode["TotalTime"])
-      totalTime_ = solverNode["TotalTime"].as<double>();
-    if (solverNode["OutputInterval"])
-      outputInterval_ = solverNode["OutputInterval"].as<int>();
-  }
+  virtual void configure(const YAML::Node &solverNode);
 
   /// @brief 执行完整的时间推进循环（多核协同版本）
   /// @param ctx            PD 仿真上下文

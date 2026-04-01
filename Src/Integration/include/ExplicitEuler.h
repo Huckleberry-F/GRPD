@@ -24,6 +24,9 @@ public:
   ExplicitEuler() = default;
   ~ExplicitEuler() override = default;
 
+  /// @brief 从 YAML 读取控制参数
+  void configure(const YAML::Node &solverNode) override;
+
   /// @brief 执行显式欧拉时间推进循环（多核版本）
   void run(PDCommon::Core::PDContext &ctx,
            std::vector<std::unique_ptr<PDKernel>> &kernels,

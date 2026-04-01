@@ -49,6 +49,13 @@ public:
   /// 每个具体的派生类将实现自己的施加逻辑
   virtual void apply() = 0;
 
+  /// @brief 按比例施加边界条件（用于 ADR 准静态加载）
+  /// @param loadFactor 加载比例因子 [0.0, 1.0]
+  /// @details 默认实现直接调用无参 apply()。
+  ///          Dirichlet 型子类（如 DisplacementBC）可重写此方法，
+  ///          将施加值乘以 loadFactor 实现平滑升压。
+  virtual void apply(double loadFactor) { apply(); }
+
   /// @brief 标识是否为约束型边界条件
   /// 约定：所有子类必须显式 override 此方法，禁止依赖基类默认值
   ///   - Dirichlet 型 (直接设定主场/速度/温度值)  → 返回 true

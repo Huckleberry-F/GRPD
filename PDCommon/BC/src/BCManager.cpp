@@ -32,6 +32,14 @@ void BCManager::applyConstraints() {
     }
 }
 
+void BCManager::applyConstraints(double loadFactor) {
+    for (auto &bc : bcs_) {
+        if (bc->isConstraint()) {
+            bc->apply(loadFactor);
+        }
+    }
+}
+
 size_t BCManager::size() const { return bcs_.size(); }
 
 void BCManager::clear() { bcs_.clear(); }

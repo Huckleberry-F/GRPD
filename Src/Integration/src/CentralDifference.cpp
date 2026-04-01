@@ -15,6 +15,11 @@
 
 namespace Src::Integration {
 
+void CentralDifference::configure(const YAML::Node &solverNode) {
+  TimeIntegrator::configure(solverNode);
+  // 可在此处追加解析 CentralDifference 特有的 YAML 参数
+}
+
 void CentralDifference::run(PDCommon::Core::PDContext &ctx,
                             std::vector<std::unique_ptr<PDKernel>> &kernels,
                             std::function<void(int, double)> outputCallback) {

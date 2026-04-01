@@ -284,7 +284,7 @@ General-Peridynamics/
 ├── Src/               # 主求解核心与全生命周期组装厂
 │   ├── Engine/        # → 求解引擎多态池：定义Engine抽象机制与注册工厂
 │   │   └── Solvers/   #   └── 具体的求解机实现仓库 (如 PDEngine 及特供力学初始化机制)
-│   ├── Integration/   # → 时间演化推进器：分步差分演化大总管 (ExplicitEuler/CentralDifference)
+│   ├── Integration/   # → 时间演化推进器：显式差分大总管 (ExplicitEuler/CentralD/ADR)
 │   └── main.cpp       # 引擎最高时序控制主点火程序入口
 ├── Generate_py/       # 辅助 Python 前处理与网格体素工厂
 │   └── generate_model.py # → 使用 Open3D 构建高密度实体微元模型的瑞士军刀
@@ -300,7 +300,13 @@ General-Peridynamics/
 
 ## 📌 版本更新日志 (Changelog)
 
-### v2.3 — 损伤断裂力学解耦与多材料扩展架构 (Damage Module Refactoring) (当前版本)
+### v2.4 — 显式准静态自适应动态弛豫积分器体系 (ADR Quasi-Static Solver) (当前版本)
+
+* **自适应动态弛豫核心 (Adaptive Dynamic Relaxation)**: 全新引入了基于速度 Verlet / Leapfrog 框架的显式准静态时间推进器 (`ADR_Integrator`)。通过计算内力残差与位移增量内积，自动感知系统振荡并投射最优的衰减阻尼系数 ($cn$)。实现了在显式并行框架内完美过滤激波、极高稳定性地模拟大变形与断裂准静态加载。
+* **ANSYS 风格阶跃/坡道加载管线 (KBC Load Control)**: 深度对齐顶级商软底层的载荷调度内核。在积分域外包裹了 `LoadStep` + `NumSubsteps` 复合架构，且完美还原了 `KBC=0` (Ramp 坡道平滑爬升) 与 `KBC=1` (Step 阶跃突加) 控制逻辑，`BCManager` 实现了 `loadFactor` 分步加压支持。
+* **纯净的多态时间积分网络与状态刻录**: 将积分系统（ExplicitEuler/CentralDifference）的 YAML `configure` 解析全盘剥离至各 `.cpp` 私密实现，保持了头文件无污染的防御性编程规范。在 ADR 载荷收敛时刻全面引入 `Material::commitState()` 状态池固化钩子，为未来的塑性与不可逆损伤做好了伏笔。
+
+### v2.3 — 损伤断裂力学解耦与多材料扩展架构 (Damage Module Refactoring)
 
 * **全局损伤机制解耦 (Damage Decoupling)**: 彻底重构 Peridynamics 断裂模块。将 `DamageModel` 的配置与判断逻辑由全局 `Solver` 级别剥离，下沉至 `Material` 本构层级。这种架构级的重大解耦使不同材料能够拥有独立自治的断裂失效法则，为未来处理多相复合材料复杂破坏、界面脱粘提供了坚实的扩展根基。
 * **预制裂纹单例注册表 (PreCrack Registry)**: 引入 `PreCrackRegistry` 和 `PreCrack` 多态抽象体系，通过参数化几何描述（如 `QuadCrack` 四边形裂纹面）精确定位并自动切断初始拓扑连结。实现了在连续体素网格内无需前处理结构分割即可灵活定义三维内部裂纹。

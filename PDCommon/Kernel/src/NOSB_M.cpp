@@ -3,6 +3,7 @@
 // ============================================================================
 
 #include "NOSB_M.h"
+#include "DamageModel.h"
 #include "FieldManager.h"
 #include "FieldRegistry.h"
 #include "KernelRegistry.h"
@@ -11,9 +12,9 @@
 #include "NeighborList.h"
 #include "ParticleManager.h"
 #include "StabilizerRegistry.h"
-#include "DamageModel.h"
 #include <cmath>
 #include <omp.h>
+
 
 // ---------------------------------------------------------------------------
 // 编译期静态注册：将 NOSB_M 注册到 KernelRegistry
@@ -212,9 +213,12 @@ void NOSB_M::ComputeMechanicalState(PDContext &ctx) {
              PKi_21 = pkKinvCache_[idx9_i + 7],
              PKi_22 = pkKinvCache_[idx9_i + 8];
 
-      double xi_x = coords[i * 3], xi_y = coords[i * 3 + 1],
-             xi_z = coords[i * 3 + 2];
-      double force_x = 0.0, force_y = 0.0, force_z = 0.0;
+      double xi_x = coords[i * 3];
+      double xi_y = coords[i * 3 + 1];
+      double xi_z = coords[i * 3 + 2];
+      double force_x = 0.0;
+      double force_y = 0.0;
+      double force_z = 0.0;
 
       const int numNeighbors = neighborList.getNeighborCount(i);
       const int *neighbors = neighborList.getNeighborIds(i);
@@ -348,10 +352,10 @@ void NOSB_M::postCompute(PDCommon::Core::PDContext &ctx) {
   auto &matManager = ctx.getMaterialManager();
   // 遍历所有注册在系统中的材料
   for (const auto &[name, mat] : matManager.getMaterials()) {
-      if (mat && mat->getDamageModel()) {
-          // 每个具体的断裂准则模型只会遍历自身对应的粒子
-          mat->getDamageModel()->computeDamage(ctx, mat->getMatId());
-      }
+    if (mat && mat->getDamageModel()) {
+      // 每个具体的断裂准则模型只会遍历自身对应的粒子
+      mat->getDamageModel()->computeDamage(ctx, mat->getMatId());
+    }
   }
 }
 

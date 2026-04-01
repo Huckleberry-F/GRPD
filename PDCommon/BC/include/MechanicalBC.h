@@ -53,6 +53,7 @@ public:
                   const std::vector<double> &values) override;
 
   void apply() override;
+  void apply(double loadFactor) override;
   bool isConstraint() const override {
     return true;
   } // Dirichlet: 直接设定位移值
@@ -112,6 +113,7 @@ public:
                   const std::vector<double> &values) override;
 
   void apply() override;
+  void apply(double loadFactor) override;
   bool isConstraint() const override {
     return false;
   } // Dirichlet: 直接设定速度值

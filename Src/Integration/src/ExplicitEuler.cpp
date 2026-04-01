@@ -18,6 +18,11 @@
 
 namespace Src::Integration {
 
+void ExplicitEuler::configure(const YAML::Node &solverNode) {
+  TimeIntegrator::configure(solverNode);
+  // 可在此处追加解析 ExplicitEuler 特有的 YAML 参数
+}
+
 void ExplicitEuler::run(PDCommon::Core::PDContext &ctx,
                         std::vector<std::unique_ptr<PDKernel>> &kernels,
                         std::function<void(int, double)> outputCallback) {

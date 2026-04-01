@@ -10,6 +10,15 @@
 
 namespace Src::Integration {
 
+void TimeIntegrator::configure(const YAML::Node &solverNode) {
+    if (solverNode["TimeStep_dt"])
+      dt_ = solverNode["TimeStep_dt"].as<double>();
+    if (solverNode["TotalTime"])
+      totalTime_ = solverNode["TotalTime"].as<double>();
+    if (solverNode["OutputInterval"])
+      outputInterval_ = solverNode["OutputInterval"].as<int>();
+}
+
 void TimeIntegrator::evaluateForces(
     PDCommon::Core::PDContext &ctx,
     std::vector<std::unique_ptr<PDKernel>> &kernels,

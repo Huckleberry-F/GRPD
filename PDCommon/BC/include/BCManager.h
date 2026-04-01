@@ -43,6 +43,10 @@ public:
     /// @brief 仅施加约束型边界条件（如固定温度）
     void applyConstraints();
 
+    /// @brief 按比例施加约束型边界条件（用于 ADR 准静态加载）
+    /// @param loadFactor 加载比例因子 [0.0, 1.0]
+    void applyConstraints(double loadFactor);
+
     /// @brief 获取当前管理的边界条件总数
     size_t size() const;
 

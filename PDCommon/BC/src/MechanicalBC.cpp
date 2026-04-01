@@ -50,6 +50,21 @@ void DisplacementBC::apply() {
   }
 }
 
+void DisplacementBC::apply(double loadFactor) {
+  if (!displacement_)
+    return;
+  for (int d = 0; d < 3; ++d) {
+    if (applyDirs_[d]) {
+      // 按比例施加位移约束：u = dispVal * loadFactor
+      displacement_->set(particleId_, dispVal_[d] * loadFactor, d);
+      if (velocity_)
+        velocity_->set(particleId_, 0.0, d);
+      if (acceleration_)
+        acceleration_->set(particleId_, 0.0, d);
+    }
+  }
+}
+
 // ===========================================================================
 // BodyForceBC (Neumann)
 // ===========================================================================
@@ -111,6 +126,17 @@ void VelocityBC::apply() {
     if (applyDirs_[d]) {
       // 强制设定速度值（Dirichlet 约束）
       velocity_->set(particleId_, velVal_[d], d);
+    }
+  }
+}
+
+void VelocityBC::apply(double loadFactor) {
+  if (!velocity_)
+    return;
+  for (int d = 0; d < 3; ++d) {
+    if (applyDirs_[d]) {
+      // 按比例施加速度约束：v = velVal * loadFactor
+      velocity_->set(particleId_, velVal_[d] * loadFactor, d);
     }
   }
 }

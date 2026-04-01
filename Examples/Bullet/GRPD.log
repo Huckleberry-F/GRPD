@@ -1,0 +1,1942 @@
+[INFO] ==================================================
+[INFO]    GRPD Solver Engine Initialized                 
+[INFO] ==================================================
+[INFO] [EngineRegistry] Creating Engine instance: PD
+[INFO] [PDEngine] PD Engine instance created.
+[INFO] ========== Registered Types Summary ===========
+[INFO]   TimeIntegrator    : CentralDifference, Explicit, Staggered
+[INFO]   FieldRegistry     : DoubleField, IntField
+[INFO]   PhysicsFields     : Mechanical, Thermal
+[INFO]   BCRegistry        : BODY_FORCE, CONV, DISP, FLUX, PRESSURE, T, VELOCITY
+[INFO]   MaterialRegistry  : FourierThermalMat, LinearElasticMat
+[INFO]   KernelRegistry    : NOSB_M, NOSB_T
+[INFO]   EngineRegistry    : PD
+[INFO] ===============================================
+[INFO] [EngineManager] Initializing solver: PD
+[INFO] [PDEngine] Initializing PD simulation context...
+[INFO] Model pre-processing...
+[INFO] [InitModel] grpd path: D:\Project_C++\GRPD\Examples\Bullet\Bullet.grpd
+[INFO] [InitModel] model name: Bullet
+[INFO] Calling Python pre-processor to generate .grpd mesh...
+[INFO] Mesh generated successfully by Python.
+[INFO] [Context Manager] Formalized model name to: Bullet
+[INFO] [Context Manager] Model dimension set to: 2D
+[INFO] [ReaderRegistry] Creating reader for: .grpd (name: Bullet)
+[INFO] [InitModel] Reading mesh file: D:\Project_C++\GRPD\Examples\Bullet\Bullet.grpd (reader: .grpd)
+[INFO] [GrpdMeshReader] Reading file: D:\Project_C++\GRPD\Examples\Bullet\Bullet.grpd
+[INFO] [GrpdMeshReader] Entering *PARTICLE section (Line 1)
+[INFO] [GrpdMeshReader] Entering *LOAD section (Line 359803)
+[INFO] [GrpdMeshReader] ============================================
+[INFO] [GrpdMeshReader]    File reading complete!
+[INFO] [GrpdMeshReader]    Total particles: 359800
+[INFO] [GrpdMeshReader]    Total load entries: 597
+[INFO] [GrpdMeshReader] ============================================
+[INFO] [InitModel] Total particles loaded for model Bullet: 359800
+[INFO]   Particle[0] Part=1 Pos=(-99.875000, 0.125000, 0.000000) Vol=0.062500
+[INFO]   Particle[1] Part=1 Pos=(-99.875000, 0.375000, 0.000000) Vol=0.062500
+[INFO]   Particle[2] Part=1 Pos=(-99.875000, 0.625000, 0.000000) Vol=0.062500
+[INFO]   Particle[3] Part=1 Pos=(-99.875000, 0.875000, 0.000000) Vol=0.062500
+[INFO]   Particle[4] Part=1 Pos=(-99.875000, 1.125000, 0.000000) Vol=0.062500
+[INFO] Entering Material Initialization Phase...
+[INFO] Instantiating material [1] of type: LinearElasticMat
+[INFO] [MaterialRegistry] Using factory to create material: Steel_Elastic (type: LinearElasticMat)
+[INFO] [Material] Attached DamageModel 'CriticalStretch' to material: Steel_Elastic
+[INFO] [LinearElasticMat] Material 'Steel_Elastic' is initialized. E = 191000.000000, nu = 0.300000, Density = 0.000000
+[INFO] [MaterialManager] Successfully added material instance: Steel_Elastic
+[INFO] Successfully registered material ID 1 (Steel_Elastic)
+[INFO] Assigning material pointers to particles...
+[INFO] Successfully assigned materials to 359800 particles.
+[INFO] Entering Field Registration Phase...
+[INFO] [FieldManager] Added field 'Displacement'.
+[INFO] [FieldManager] Added field 'Velocity'.
+[INFO] [FieldManager] Added field 'Acceleration'.
+[INFO] [MechanicalFields] Core fields registered: Displacement, Velocity, Acceleration.
+[INFO] [InitFields] Auto-registered PhysicsFields module: Mechanical
+[INFO] [FieldManager] Added field 'ID'.
+[INFO] [FieldManager] Added field 'PartID'.
+[INFO] [FieldManager] Added field 'MatID'.
+[INFO] [FieldManager] Added field 'Coords'.
+[INFO] [FieldManager] Added field 'Volume'.
+[INFO] [FieldManager] Resized all 8 fields for 359800 particles.
+[INFO] [MeshData] Populated particle geometry fields into FieldManager for 359800 particles.
+[INFO] [InitFields] All fields allocated for 359800 particles. Total fields: 8.
+[INFO] Entering Conditions Initialization Phase...
+[INFO] [ReaderRegistry] Creating reader for: .grpd (name: LoadReader)
+[INFO] [GrpdMeshReader] Reading file: D:\Project_C++\GRPD\Examples\Bullet\Bullet.grpd
+[INFO] [GrpdMeshReader] Entering *PARTICLE section (Line 1)
+[INFO] [GrpdMeshReader] Entering *LOAD section (Line 359803)
+[INFO] [GrpdMeshReader] ============================================
+[INFO] [GrpdMeshReader]    File reading complete!
+[INFO] [GrpdMeshReader]    Total particles: 359800
+[INFO] [GrpdMeshReader]    Total load entries: 597
+[INFO] [GrpdMeshReader] ============================================
+[INFO] [InitConditions] Load statistics:
+[INFO]   - VELOCITY : 597
+[INFO] [InitConditions] Boundary conditions initialization complete.
+[INFO] [InitNeighbors] Entering Neighbor Search Phase...
+[INFO] [InitNeighbors] Horizon radius: 0.751500
+[INFO] [NeighborList] Starting full-flat CSR search for 359800 particles, horizon = 0.751500
+[INFO] [NeighborList] Cell grid: 266 x 200 x 1 = 53200 cells
+[INFO] [NeighborList] Flat cell list built in 7.999897 ms
+[INFO] [NeighborList] Pass 1 (count) done in 10.999918 ms
+[INFO] [NeighborList] Total bonds: 10016908, Memory: 114 MB
+[INFO] [NeighborList] Pass 2 (fill) done in 45.000076 ms
+[INFO] [NeighborList] Max neighbors: 28
+[INFO] [NeighborList] Total time: 63.999891 ms
+[INFO] [FieldManager] Added field 'NeighborCount'.
+[INFO] [InitNeighbors] NeighborCount field populated for 359800 particles.
+[INFO] [FieldManager] Added field 'Damage'.
+[INFO] [InitNeighbors] Global Damage scalar field properly initialized to 0.0
+[INFO] [InitNeighbors] Neighbor search phase complete.
+[INFO] Initializing Material-specific Damage Models...
+[INFO] [CriticalStretch] Initialized. Critical Stretch = 0.020000
+[INFO] Material Damage Models initialized. Total Active Models: 1
+[INFO] [InitPreCracks] Detected PreCracks configuration. Initializing geometric cuts...
+[INFO] [QuadCrack] Successfully configured QuadCrack with normal: (1.000000, 0.000000, 0.000000)
+[INFO] [QuadCrack] Evaluating bond breakage for crack...
+[INFO] [QuadCrack] Cut 7188 bonds traversing the preset crack.
+[INFO] [InitPreCracks] Applied PreCrack of type: QuadCrack
+[INFO] [QuadCrack] Successfully configured QuadCrack with normal: (1.000000, 0.000000, 0.000000)
+[INFO] [QuadCrack] Evaluating bond breakage for crack...
+[INFO] [QuadCrack] Cut 7188 bonds traversing the preset crack.
+[INFO] [InitPreCracks] Applied PreCrack of type: QuadCrack
+[INFO] Entering Solver Components Assembly Phase...
+[INFO] Building Time Integrator: CentralDifference
+[INFO] Time Integrator configured.
+[INFO] Building Space Kernel: NOSB_M
+[INFO] [NOSB_Base] Applied KernelWeightType: Linear
+[INFO] [NOSB_Base] Applied ZeroEnergyG0: 0.100000
+[INFO] [NOSB_Base] Applied ZeroEnergyMethod string: Zhang
+[INFO] Space Kernel 'NOSB_M' configured.
+[INFO] Total kernels assembled: 1
+[INFO] [PDEngine] PD simulation context initialized successfully.
+[INFO] [EngineManager] All solvers initialized. Total: 1
+[INFO] [EngineManager] Entering Main Solver Phase
+[INFO] [EngineManager] Solving: PD
+[INFO] [PDEngine] Starting PD Engine Solve Phase...
+[INFO] [CentralDifference] Identified generic 2nd-order ODE couple: Displacement (u) <- Velocity (v) <- Acceleration (a)
+[INFO] [CentralDifference] Time loop: dt = 0.000000, totalSteps = 10000
+[INFO] [FieldManager] Added field 'ShapeTensorInv'.
+[INFO] [FieldManager] Added field 'VHorizon'.
+[INFO] [NOSB_Base] Computing InfluenceWeight + Shape Tensor Inverse (K^-1)...
+[INFO] [NOSB_Base] All NOSB base fields registered and Shape Tensor Inverse computed.
+[INFO] [FieldManager] Added field 'DeformationGradient'.
+[INFO] [FieldManager] Added field 'PK1Stress'.
+[INFO] [NOSB_M] Instantiated MechanicalStabilizer globally in Phase 0 using strategy: Zhang
+[INFO] --- Step 0 / 10000  |  Pure Compute: 0.000000s  |  Total: 0.000000s  |  Pure Speed: 0.000000 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=0 t=0.000000
+[INFO] Fetching model context for export: Bullet
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bullet\Result_20260330_143910\Disp_Result_step00000_t0.0000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bullet
+[INFO] ==================================================
+[INFO]    GRPD Solver Engine Initialized                 
+[INFO] ==================================================
+[INFO] [EngineRegistry] Creating Engine instance: PD
+[INFO] [PDEngine] PD Engine instance created.
+[INFO] ========== Registered Types Summary ===========
+[INFO]   TimeIntegrator    : CentralDifference, Explicit, Staggered
+[INFO]   FieldRegistry     : DoubleField, IntField
+[INFO]   PhysicsFields     : Mechanical, Thermal
+[INFO]   BCRegistry        : BODY_FORCE, CONV, DISP, FLUX, PRESSURE, T, VELOCITY
+[INFO]   MaterialRegistry  : FourierThermalMat, LinearElasticMat
+[INFO]   KernelRegistry    : NOSB_M, NOSB_T
+[INFO]   EngineRegistry    : PD
+[INFO] ===============================================
+[INFO] [EngineManager] Initializing solver: PD
+[INFO] [PDEngine] Initializing PD simulation context...
+[INFO] Model pre-processing...
+[INFO] [InitModel] grpd path: D:\Project_C++\GRPD\Examples\Bullet\Bullet.grpd
+[INFO] [InitModel] model name: Bullet
+[INFO] Calling Python pre-processor to generate .grpd mesh...
+[INFO] Mesh generated successfully by Python.
+[INFO] [Context Manager] Formalized model name to: Bullet
+[INFO] [Context Manager] Model dimension set to: 3D
+[INFO] [ReaderRegistry] Creating reader for: .grpd (name: Bullet)
+[INFO] [InitModel] Reading mesh file: D:\Project_C++\GRPD\Examples\Bullet\Bullet.grpd (reader: .grpd)
+[INFO] [GrpdMeshReader] Reading file: D:\Project_C++\GRPD\Examples\Bullet\Bullet.grpd
+[INFO] [GrpdMeshReader] Entering *PARTICLE section (Line 1)
+[INFO] [GrpdMeshReader] Entering *LOAD section (Line 78073)
+[INFO] [GrpdMeshReader] ============================================
+[INFO] [GrpdMeshReader]    File reading complete!
+[INFO] [GrpdMeshReader]    Total particles: 78070
+[INFO] [GrpdMeshReader]    Total load entries: 0
+[INFO] [GrpdMeshReader] ============================================
+[INFO] [InitModel] Total particles loaded for model Bullet: 78070
+[INFO]   Particle[0] Part=1 Pos=(-4.400000, 130.599998, -24.400000) Vol=1.000000
+[INFO]   Particle[1] Part=1 Pos=(-4.400000, 131.599998, -24.400000) Vol=1.000000
+[INFO]   Particle[2] Part=1 Pos=(-4.400000, 132.599998, -24.400000) Vol=1.000000
+[INFO]   Particle[3] Part=1 Pos=(-4.400000, 133.599998, -24.400000) Vol=1.000000
+[INFO]   Particle[4] Part=1 Pos=(-4.400000, 134.599998, -24.400000) Vol=1.000000
+[INFO] Entering Material Initialization Phase...
+[INFO] Instantiating material [1] of type: LinearElasticMat
+[INFO] [MaterialRegistry] Using factory to create material: Steel_Elastic (type: LinearElasticMat)
+[INFO] [Material] Attached DamageModel 'CriticalStretch' to material: Steel_Elastic
+[INFO] [LinearElasticMat] Material 'Steel_Elastic' is initialized. E = 191000.000000, nu = 0.300000, Density = 0.000000
+[INFO] [MaterialManager] Successfully added material instance: Steel_Elastic
+[INFO] Successfully registered material ID 1 (Steel_Elastic)
+[INFO] Assigning material pointers to particles...
+[INFO] Successfully assigned materials to 78070 particles.
+[INFO] Entering Field Registration Phase...
+[INFO] [FieldManager] Added field 'Displacement'.
+[INFO] [FieldManager] Added field 'Velocity'.
+[INFO] [FieldManager] Added field 'Acceleration'.
+[INFO] [MechanicalFields] Core fields registered: Displacement, Velocity, Acceleration.
+[INFO] [InitFields] Auto-registered PhysicsFields module: Mechanical
+[INFO] [FieldManager] Added field 'ID'.
+[INFO] [FieldManager] Added field 'PartID'.
+[INFO] [FieldManager] Added field 'MatID'.
+[INFO] [FieldManager] Added field 'Coords'.
+[INFO] [FieldManager] Added field 'Volume'.
+[INFO] [FieldManager] Resized all 8 fields for 78070 particles.
+[INFO] [MeshData] Populated particle geometry fields into FieldManager for 78070 particles.
+[INFO] [InitFields] All fields allocated for 78070 particles. Total fields: 8.
+[INFO] Entering Conditions Initialization Phase...
+[INFO] [ReaderRegistry] Creating reader for: .grpd (name: LoadReader)
+[INFO] [GrpdMeshReader] Reading file: D:\Project_C++\GRPD\Examples\Bullet\Bullet.grpd
+[INFO] [GrpdMeshReader] Entering *PARTICLE section (Line 1)
+[INFO] [GrpdMeshReader] Entering *LOAD section (Line 78073)
+[INFO] [GrpdMeshReader] ============================================
+[INFO] [GrpdMeshReader]    File reading complete!
+[INFO] [GrpdMeshReader]    Total particles: 78070
+[INFO] [GrpdMeshReader]    Total load entries: 0
+[INFO] [GrpdMeshReader] ============================================
+[INFO] [InitConditions] Load statistics:
+[INFO] [InitConditions] Boundary conditions initialization complete.
+[INFO] [InitNeighbors] Entering Neighbor Search Phase...
+[INFO] [InitNeighbors] Horizon radius: 3.015000
+[INFO] [NeighborList] Starting full-flat CSR search for 78070 particles, horizon = 3.015000
+[INFO] [NeighborList] Cell grid: 17 x 20 x 17 = 5780 cells
+[INFO] [NeighborList] Flat cell list built in 0.999928 ms
+[INFO] [NeighborList] Pass 1 (count) done in 16.999960 ms
+[INFO] [NeighborList] Total bonds: 8844920, Memory: 101 MB
+[INFO] [NeighborList] Pass 2 (fill) done in 44.000149 ms
+[INFO] [NeighborList] Max neighbors: 122
+[INFO] [NeighborList] Total time: 62.000036 ms
+[INFO] [FieldManager] Added field 'NeighborCount'.
+[INFO] [InitNeighbors] NeighborCount field populated for 78070 particles.
+[INFO] [FieldManager] Added field 'Damage'.
+[INFO] [InitNeighbors] Global Damage scalar field properly initialized to 0.0
+[INFO] [InitNeighbors] Neighbor search phase complete.
+[INFO] Initializing Material-specific Damage Models...
+[INFO] [CriticalStretch] Initialized. Critical Stretch = 0.020000
+[INFO] Material Damage Models initialized. Total Active Models: 1
+[INFO] [InitPreCracks] Detected PreCracks configuration. Initializing geometric cuts...
+[INFO] [QuadCrack] Successfully configured QuadCrack with normal: (1.000000, 0.000000, 0.000000)
+[INFO] [QuadCrack] Evaluating bond breakage for crack...
+[INFO] [QuadCrack] Cut 0 bonds traversing the preset crack.
+[INFO] [InitPreCracks] Applied PreCrack of type: QuadCrack
+[INFO] [QuadCrack] Successfully configured QuadCrack with normal: (1.000000, 0.000000, 0.000000)
+[INFO] [QuadCrack] Evaluating bond breakage for crack...
+[INFO] [QuadCrack] Cut 0 bonds traversing the preset crack.
+[INFO] [InitPreCracks] Applied PreCrack of type: QuadCrack
+[INFO] Entering Solver Components Assembly Phase...
+[INFO] Building Time Integrator: CentralDifference
+[INFO] Time Integrator configured.
+[INFO] Building Space Kernel: NOSB_M
+[INFO] [NOSB_Base] Applied KernelWeightType: Linear
+[INFO] [NOSB_Base] Applied ZeroEnergyG0: 0.100000
+[INFO] [NOSB_Base] Applied ZeroEnergyMethod string: Zhang
+[INFO] Space Kernel 'NOSB_M' configured.
+[INFO] Total kernels assembled: 1
+[INFO] [PDEngine] PD simulation context initialized successfully.
+[INFO] [EngineManager] All solvers initialized. Total: 1
+[INFO] [EngineManager] Entering Main Solver Phase
+[INFO] [EngineManager] Solving: PD
+[INFO] [PDEngine] Starting PD Engine Solve Phase...
+[INFO] [CentralDifference] Identified generic 2nd-order ODE couple: Displacement (u) <- Velocity (v) <- Acceleration (a)
+[INFO] [CentralDifference] Time loop: dt = 0.000000, totalSteps = 10000
+[INFO] [FieldManager] Added field 'ShapeTensorInv'.
+[INFO] [FieldManager] Added field 'VHorizon'.
+[INFO] [NOSB_Base] Computing InfluenceWeight + Shape Tensor Inverse (K^-1)...
+[INFO] [NOSB_Base] All NOSB base fields registered and Shape Tensor Inverse computed.
+[INFO] [FieldManager] Added field 'DeformationGradient'.
+[INFO] [FieldManager] Added field 'PK1Stress'.
+[INFO] [NOSB_M] Instantiated MechanicalStabilizer globally in Phase 0 using strategy: Zhang
+[INFO] --- Step 0 / 10000  |  Pure Compute: 0.000000s  |  Total: 0.000000s  |  Pure Speed: 0.000000 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=0 t=0.000000
+[INFO] Fetching model context for export: Bullet
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bullet\Result_20260330_144234\Disp_Result_step00000_t0.0000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bullet
+[INFO] --- Step 200 / 10000  |  Pure Compute: 12.993615s  |  Total: 13.015793s  |  Pure Speed: 15.392175 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=200 t=0.000002
+[INFO] Fetching model context for export: Bullet
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bullet\Result_20260330_144234\Disp_Result_step00200_t0.0000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bullet
+[INFO] ==================================================
+[INFO]    GRPD Solver Engine Initialized                 
+[INFO] ==================================================
+[INFO] [EngineRegistry] Creating Engine instance: PD
+[INFO] [PDEngine] PD Engine instance created.
+[INFO] ========== Registered Types Summary ===========
+[INFO]   TimeIntegrator    : CentralDifference, Explicit, Staggered
+[INFO]   FieldRegistry     : DoubleField, IntField
+[INFO]   PhysicsFields     : Mechanical, Thermal
+[INFO]   BCRegistry        : BODY_FORCE, CONV, DISP, FLUX, PRESSURE, T, VELOCITY
+[INFO]   MaterialRegistry  : FourierThermalMat, LinearElasticMat
+[INFO]   KernelRegistry    : NOSB_M, NOSB_T
+[INFO]   EngineRegistry    : PD
+[INFO] ===============================================
+[INFO] [EngineManager] Initializing solver: PD
+[INFO] [PDEngine] Initializing PD simulation context...
+[INFO] Model pre-processing...
+[INFO] [InitModel] grpd path: D:\Project_C++\GRPD\Examples\Bullet\Bullet.grpd
+[INFO] [InitModel] model name: Bullet
+[INFO] Calling Python pre-processor to generate .grpd mesh...
+[INFO] Mesh generated successfully by Python.
+[INFO] [Context Manager] Formalized model name to: Bullet
+[INFO] [Context Manager] Model dimension set to: 3D
+[INFO] [ReaderRegistry] Creating reader for: .grpd (name: Bullet)
+[INFO] [InitModel] Reading mesh file: D:\Project_C++\GRPD\Examples\Bullet\Bullet.grpd (reader: .grpd)
+[INFO] [GrpdMeshReader] Reading file: D:\Project_C++\GRPD\Examples\Bullet\Bullet.grpd
+[INFO] [GrpdMeshReader] Entering *PARTICLE section (Line 1)
+[INFO] [GrpdMeshReader] Entering *LOAD section (Line 195801)
+[INFO] [GrpdMeshReader] ============================================
+[INFO] [GrpdMeshReader]    File reading complete!
+[INFO] [GrpdMeshReader]    Total particles: 195798
+[INFO] [GrpdMeshReader]    Total load entries: 0
+[INFO] [GrpdMeshReader] ============================================
+[INFO] [InitModel] Total particles loaded for model Bullet: 195798
+[INFO]   Particle[0] Part=1 Pos=(-42.117999, -41.984290, 0.100000) Vol=0.008000
+[INFO]   Particle[1] Part=1 Pos=(-42.117999, -41.784290, 0.100000) Vol=0.008000
+[INFO]   Particle[2] Part=1 Pos=(-42.117999, -41.584290, 0.100000) Vol=0.008000
+[INFO]   Particle[3] Part=1 Pos=(-42.117999, -41.384290, 0.100000) Vol=0.008000
+[INFO]   Particle[4] Part=1 Pos=(-42.117999, -41.184290, 0.100000) Vol=0.008000
+[INFO] Entering Material Initialization Phase...
+[INFO] Instantiating material [1] of type: LinearElasticMat
+[INFO] [MaterialRegistry] Using factory to create material: Steel_Elastic (type: LinearElasticMat)
+[INFO] [Material] Attached DamageModel 'CriticalStretch' to material: Steel_Elastic
+[INFO] [LinearElasticMat] Material 'Steel_Elastic' is initialized. E = 191000.000000, nu = 0.300000, Density = 0.000000
+[INFO] [MaterialManager] Successfully added material instance: Steel_Elastic
+[INFO] Successfully registered material ID 1 (Steel_Elastic)
+[INFO] Assigning material pointers to particles...
+[INFO] Successfully assigned materials to 195798 particles.
+[INFO] Entering Field Registration Phase...
+[INFO] [FieldManager] Added field 'Displacement'.
+[INFO] [FieldManager] Added field 'Velocity'.
+[INFO] [FieldManager] Added field 'Acceleration'.
+[INFO] [MechanicalFields] Core fields registered: Displacement, Velocity, Acceleration.
+[INFO] [InitFields] Auto-registered PhysicsFields module: Mechanical
+[INFO] [FieldManager] Added field 'ID'.
+[INFO] [FieldManager] Added field 'PartID'.
+[INFO] [FieldManager] Added field 'MatID'.
+[INFO] [FieldManager] Added field 'Coords'.
+[INFO] [FieldManager] Added field 'Volume'.
+[INFO] [FieldManager] Resized all 8 fields for 195798 particles.
+[INFO] [MeshData] Populated particle geometry fields into FieldManager for 195798 particles.
+[INFO] [InitFields] All fields allocated for 195798 particles. Total fields: 8.
+[INFO] Entering Conditions Initialization Phase...
+[INFO] [ReaderRegistry] Creating reader for: .grpd (name: LoadReader)
+[INFO] [GrpdMeshReader] Reading file: D:\Project_C++\GRPD\Examples\Bullet\Bullet.grpd
+[INFO] [GrpdMeshReader] Entering *PARTICLE section (Line 1)
+[INFO] [GrpdMeshReader] Entering *LOAD section (Line 195801)
+[INFO] [GrpdMeshReader] ============================================
+[INFO] [GrpdMeshReader]    File reading complete!
+[INFO] [GrpdMeshReader]    Total particles: 195798
+[INFO] [GrpdMeshReader]    Total load entries: 0
+[INFO] [GrpdMeshReader] ============================================
+[INFO] [InitConditions] Load statistics:
+[INFO] [InitConditions] Boundary conditions initialization complete.
+[INFO] [InitNeighbors] Entering Neighbor Search Phase...
+[INFO] [InitNeighbors] Horizon radius: 0.603000
+[INFO] [NeighborList] Starting full-flat CSR search for 195798 particles, horizon = 0.603000
+[INFO] [NeighborList] Cell grid: 17 x 17 x 39 = 11271 cells
+[INFO] [NeighborList] Flat cell list built in 4.000187 ms
+[INFO] [NeighborList] Pass 1 (count) done in 43.999910 ms
+[INFO] [NeighborList] Total bonds: 22473366, Memory: 257 MB
+[INFO] [NeighborList] Pass 2 (fill) done in 115.000010 ms
+[INFO] [NeighborList] Max neighbors: 122
+[INFO] [NeighborList] Total time: 163.000107 ms
+[INFO] [FieldManager] Added field 'NeighborCount'.
+[INFO] [InitNeighbors] NeighborCount field populated for 195798 particles.
+[INFO] [FieldManager] Added field 'Damage'.
+[INFO] [InitNeighbors] Global Damage scalar field properly initialized to 0.0
+[INFO] [InitNeighbors] Neighbor search phase complete.
+[INFO] Initializing Material-specific Damage Models...
+[INFO] [CriticalStretch] Initialized. Critical Stretch = 0.020000
+[INFO] Material Damage Models initialized. Total Active Models: 1
+[INFO] [InitPreCracks] Detected PreCracks configuration. Initializing geometric cuts...
+[INFO] [QuadCrack] Successfully configured QuadCrack with normal: (1.000000, 0.000000, 0.000000)
+[INFO] [QuadCrack] Evaluating bond breakage for crack...
+[INFO] [QuadCrack] Cut 0 bonds traversing the preset crack.
+[INFO] [InitPreCracks] Applied PreCrack of type: QuadCrack
+[INFO] [QuadCrack] Successfully configured QuadCrack with normal: (1.000000, 0.000000, 0.000000)
+[INFO] [QuadCrack] Evaluating bond breakage for crack...
+[INFO] [QuadCrack] Cut 0 bonds traversing the preset crack.
+[INFO] [InitPreCracks] Applied PreCrack of type: QuadCrack
+[INFO] Entering Solver Components Assembly Phase...
+[INFO] Building Time Integrator: CentralDifference
+[INFO] Time Integrator configured.
+[INFO] Building Space Kernel: NOSB_M
+[INFO] [NOSB_Base] Applied KernelWeightType: Linear
+[INFO] [NOSB_Base] Applied ZeroEnergyG0: 0.100000
+[INFO] [NOSB_Base] Applied ZeroEnergyMethod string: Zhang
+[INFO] Space Kernel 'NOSB_M' configured.
+[INFO] Total kernels assembled: 1
+[INFO] [PDEngine] PD simulation context initialized successfully.
+[INFO] [EngineManager] All solvers initialized. Total: 1
+[INFO] [EngineManager] Entering Main Solver Phase
+[INFO] [EngineManager] Solving: PD
+[INFO] [PDEngine] Starting PD Engine Solve Phase...
+[INFO] [CentralDifference] Identified generic 2nd-order ODE couple: Displacement (u) <- Velocity (v) <- Acceleration (a)
+[INFO] [CentralDifference] Time loop: dt = 0.000000, totalSteps = 10000
+[INFO] [FieldManager] Added field 'ShapeTensorInv'.
+[INFO] [FieldManager] Added field 'VHorizon'.
+[INFO] [NOSB_Base] Computing InfluenceWeight + Shape Tensor Inverse (K^-1)...
+[INFO] [NOSB_Base] All NOSB base fields registered and Shape Tensor Inverse computed.
+[INFO] [FieldManager] Added field 'DeformationGradient'.
+[INFO] [FieldManager] Added field 'PK1Stress'.
+[INFO] [NOSB_M] Instantiated MechanicalStabilizer globally in Phase 0 using strategy: Zhang
+[INFO] --- Step 0 / 10000  |  Pure Compute: 0.000000s  |  Total: 0.000000s  |  Pure Speed: 0.000000 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=0 t=0.000000
+[INFO] Fetching model context for export: Bullet
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bullet\Result_20260330_144807\Disp_Result_step00000_t0.0000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bullet
+[INFO] --- Step 200 / 10000  |  Pure Compute: 37.620554s  |  Total: 37.656854s  |  Pure Speed: 5.316243 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=200 t=0.000002
+[INFO] Fetching model context for export: Bullet
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bullet\Result_20260330_144807\Disp_Result_step00200_t0.0000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bullet
+[INFO] --- Step 400 / 10000  |  Pure Compute: 69.950949s  |  Total: 70.054731s  |  Pure Speed: 5.718293 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=400 t=0.000003
+[INFO] Fetching model context for export: Bullet
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bullet\Result_20260330_144807\Disp_Result_step00400_t0.0000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bullet
+[INFO] --- Step 600 / 10000  |  Pure Compute: 98.024556s  |  Total: 98.186197s  |  Pure Speed: 6.120915 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=600 t=0.000005
+[INFO] Fetching model context for export: Bullet
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bullet\Result_20260330_144807\Disp_Result_step00600_t0.0000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bullet
+[INFO] --- Step 800 / 10000  |  Pure Compute: 134.664777s  |  Total: 134.895744s  |  Pure Speed: 5.940677 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=800 t=0.000007
+[INFO] Fetching model context for export: Bullet
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bullet\Result_20260330_144807\Disp_Result_step00800_t0.0000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bullet
+[INFO] --- Step 1000 / 10000  |  Pure Compute: 169.394323s  |  Total: 169.700162s  |  Pure Speed: 5.903386 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=1000 t=0.000009
+[INFO] Fetching model context for export: Bullet
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bullet\Result_20260330_144807\Disp_Result_step01000_t0.0000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bullet
+[INFO] --- Step 1200 / 10000  |  Pure Compute: 201.626517s  |  Total: 201.994024s  |  Pure Speed: 5.951598 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=1200 t=0.000010
+[INFO] Fetching model context for export: Bullet
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bullet\Result_20260330_144807\Disp_Result_step01200_t0.0000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bullet
+[INFO] --- Step 1400 / 10000  |  Pure Compute: 232.417495s  |  Total: 232.841994s  |  Pure Speed: 6.023643 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=1400 t=0.000012
+[INFO] Fetching model context for export: Bullet
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bullet\Result_20260330_144807\Disp_Result_step01400_t0.0000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bullet
+[INFO] --- Step 1600 / 10000  |  Pure Compute: 261.556705s  |  Total: 262.050934s  |  Pure Speed: 6.117220 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=1600 t=0.000014
+[INFO] Fetching model context for export: Bullet
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bullet\Result_20260330_144807\Disp_Result_step01600_t0.0000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bullet
+[INFO] --- Step 1800 / 10000  |  Pure Compute: 288.251945s  |  Total: 288.799732s  |  Pure Speed: 6.244537 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=1800 t=0.000016
+[INFO] Fetching model context for export: Bullet
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bullet\Result_20260330_144807\Disp_Result_step01800_t0.0000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bullet
+[INFO] --- Step 2000 / 10000  |  Pure Compute: 322.742999s  |  Total: 323.351893s  |  Pure Speed: 6.196881 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=2000 t=0.000017
+[INFO] Fetching model context for export: Bullet
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bullet\Result_20260330_144807\Disp_Result_step02000_t0.0000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bullet
+[INFO] ==================================================
+[INFO]    GRPD Solver Engine Initialized                 
+[INFO] ==================================================
+[INFO] [EngineRegistry] Creating Engine instance: PD
+[INFO] [PDEngine] PD Engine instance created.
+[INFO] ========== Registered Types Summary ===========
+[INFO]   TimeIntegrator    : CentralDifference, Explicit, Staggered
+[INFO]   FieldRegistry     : DoubleField, IntField
+[INFO]   PhysicsFields     : Mechanical, Thermal
+[INFO]   BCRegistry        : BODY_FORCE, CONV, DISP, FLUX, PRESSURE, T, VELOCITY
+[INFO]   MaterialRegistry  : FourierThermalMat, LinearElasticMat
+[INFO]   KernelRegistry    : NOSB_M, NOSB_T
+[INFO]   EngineRegistry    : PD
+[INFO] ===============================================
+[INFO] [EngineManager] Initializing solver: PD
+[INFO] [PDEngine] Initializing PD simulation context...
+[INFO] Model pre-processing...
+[INFO] [InitModel] grpd path: D:\Project_C++\GRPD\Examples\Bullet\Bullet.grpd
+[INFO] [InitModel] model name: Bullet
+[INFO] Calling Python pre-processor to generate .grpd mesh...
+[INFO] Mesh generated successfully by Python.
+[INFO] [Context Manager] Formalized model name to: Bullet
+[INFO] [Context Manager] Model dimension set to: 3D
+[INFO] [ReaderRegistry] Creating reader for: .grpd (name: Bullet)
+[INFO] [InitModel] Reading mesh file: D:\Project_C++\GRPD\Examples\Bullet\Bullet.grpd (reader: .grpd)
+[INFO] [GrpdMeshReader] Reading file: D:\Project_C++\GRPD\Examples\Bullet\Bullet.grpd
+[INFO] [GrpdMeshReader] Entering *PARTICLE section (Line 1)
+[INFO] [GrpdMeshReader] Entering *LOAD section (Line 195801)
+[INFO] [GrpdMeshReader] ============================================
+[INFO] [GrpdMeshReader]    File reading complete!
+[INFO] [GrpdMeshReader]    Total particles: 195798
+[INFO] [GrpdMeshReader]    Total load entries: 4560
+[INFO] [GrpdMeshReader] ============================================
+[INFO] [InitModel] Total particles loaded for model Bullet: 195798
+[INFO]   Particle[0] Part=1 Pos=(-42.117999, -41.984290, 0.100000) Vol=0.008000
+[INFO]   Particle[1] Part=1 Pos=(-42.117999, -41.784290, 0.100000) Vol=0.008000
+[INFO]   Particle[2] Part=1 Pos=(-42.117999, -41.584290, 0.100000) Vol=0.008000
+[INFO]   Particle[3] Part=1 Pos=(-42.117999, -41.384290, 0.100000) Vol=0.008000
+[INFO]   Particle[4] Part=1 Pos=(-42.117999, -41.184290, 0.100000) Vol=0.008000
+[INFO] Entering Material Initialization Phase...
+[INFO] Instantiating material [1] of type: LinearElasticMat
+[INFO] [MaterialRegistry] Using factory to create material: Steel_Elastic (type: LinearElasticMat)
+[INFO] [Material] Attached DamageModel 'CriticalStretch' to material: Steel_Elastic
+[INFO] [LinearElasticMat] Material 'Steel_Elastic' is initialized. E = 191000.000000, nu = 0.300000, Density = 0.000000
+[INFO] [MaterialManager] Successfully added material instance: Steel_Elastic
+[INFO] Successfully registered material ID 1 (Steel_Elastic)
+[INFO] Assigning material pointers to particles...
+[INFO] Successfully assigned materials to 195798 particles.
+[INFO] Entering Field Registration Phase...
+[INFO] [FieldManager] Added field 'Displacement'.
+[INFO] [FieldManager] Added field 'Velocity'.
+[INFO] [FieldManager] Added field 'Acceleration'.
+[INFO] [MechanicalFields] Core fields registered: Displacement, Velocity, Acceleration.
+[INFO] [InitFields] Auto-registered PhysicsFields module: Mechanical
+[INFO] [FieldManager] Added field 'ID'.
+[INFO] [FieldManager] Added field 'PartID'.
+[INFO] [FieldManager] Added field 'MatID'.
+[INFO] [FieldManager] Added field 'Coords'.
+[INFO] [FieldManager] Added field 'Volume'.
+[INFO] [FieldManager] Resized all 8 fields for 195798 particles.
+[INFO] [MeshData] Populated particle geometry fields into FieldManager for 195798 particles.
+[INFO] [InitFields] All fields allocated for 195798 particles. Total fields: 8.
+[INFO] Entering Conditions Initialization Phase...
+[INFO] [ReaderRegistry] Creating reader for: .grpd (name: LoadReader)
+[INFO] [GrpdMeshReader] Reading file: D:\Project_C++\GRPD\Examples\Bullet\Bullet.grpd
+[INFO] [GrpdMeshReader] Entering *PARTICLE section (Line 1)
+[INFO] [GrpdMeshReader] Entering *LOAD section (Line 195801)
+[INFO] [GrpdMeshReader] ============================================
+[INFO] [GrpdMeshReader]    File reading complete!
+[INFO] [GrpdMeshReader]    Total particles: 195798
+[INFO] [GrpdMeshReader]    Total load entries: 4560
+[INFO] [GrpdMeshReader] ============================================
+[INFO] [InitConditions] Load statistics:
+[INFO]   - VELOCITY : 4560
+[INFO] [InitConditions] Boundary conditions initialization complete.
+[INFO] [InitNeighbors] Entering Neighbor Search Phase...
+[INFO] [InitNeighbors] Horizon radius: 0.603000
+[INFO] [NeighborList] Starting full-flat CSR search for 195798 particles, horizon = 0.603000
+[INFO] [NeighborList] Cell grid: 17 x 17 x 39 = 11271 cells
+[INFO] [NeighborList] Flat cell list built in 23.999929 ms
+[INFO] [NeighborList] Pass 1 (count) done in 110.000134 ms
+[INFO] [NeighborList] Total bonds: 22473366, Memory: 257 MB
+[INFO] [NeighborList] Pass 2 (fill) done in 235.999823 ms
+[INFO] [NeighborList] Max neighbors: 122
+[INFO] [NeighborList] Total time: 369.999886 ms
+[INFO] [FieldManager] Added field 'NeighborCount'.
+[INFO] [InitNeighbors] NeighborCount field populated for 195798 particles.
+[INFO] [FieldManager] Added field 'Damage'.
+[INFO] [InitNeighbors] Global Damage scalar field properly initialized to 0.0
+[INFO] [InitNeighbors] Neighbor search phase complete.
+[INFO] Initializing Material-specific Damage Models...
+[INFO] [CriticalStretch] Initialized. Critical Stretch = 0.020000
+[INFO] Material Damage Models initialized. Total Active Models: 1
+[INFO] [InitPreCracks] Detected PreCracks configuration. Initializing geometric cuts...
+[INFO] [QuadCrack] Successfully configured QuadCrack with normal: (0.000000, -1.000000, 0.000000)
+[INFO] [QuadCrack] Evaluating bond breakage for crack...
+[INFO] [QuadCrack] Cut 403480 bonds traversing the preset crack.
+[INFO] [InitPreCracks] Applied PreCrack of type: QuadCrack
+[INFO] [QuadCrack] Successfully configured QuadCrack with normal: (1.000000, 0.000000, 0.000000)
+[INFO] [QuadCrack] Evaluating bond breakage for crack...
+[INFO] [QuadCrack] Cut 482166 bonds traversing the preset crack.
+[INFO] [InitPreCracks] Applied PreCrack of type: QuadCrack
+[INFO] Entering Solver Components Assembly Phase...
+[INFO] Building Time Integrator: CentralDifference
+[INFO] Time Integrator configured.
+[INFO] Building Space Kernel: NOSB_M
+[INFO] [NOSB_Base] Applied KernelWeightType: Linear
+[INFO] [NOSB_Base] Applied ZeroEnergyG0: 0.100000
+[INFO] [NOSB_Base] Applied ZeroEnergyMethod string: Zhang
+[INFO] Space Kernel 'NOSB_M' configured.
+[INFO] Total kernels assembled: 1
+[INFO] [PDEngine] PD simulation context initialized successfully.
+[INFO] [EngineManager] All solvers initialized. Total: 1
+[INFO] [EngineManager] Entering Main Solver Phase
+[INFO] [EngineManager] Solving: PD
+[INFO] [PDEngine] Starting PD Engine Solve Phase...
+[INFO] [CentralDifference] Identified generic 2nd-order ODE couple: Displacement (u) <- Velocity (v) <- Acceleration (a)
+[INFO] [CentralDifference] Time loop: dt = 0.000000, totalSteps = 10000
+[INFO] [FieldManager] Added field 'ShapeTensorInv'.
+[INFO] [FieldManager] Added field 'VHorizon'.
+[INFO] [NOSB_Base] Computing InfluenceWeight + Shape Tensor Inverse (K^-1)...
+[INFO] [NOSB_Base] All NOSB base fields registered and Shape Tensor Inverse computed.
+[INFO] [FieldManager] Added field 'DeformationGradient'.
+[INFO] [FieldManager] Added field 'PK1Stress'.
+[INFO] [NOSB_M] Instantiated MechanicalStabilizer globally in Phase 0 using strategy: Zhang
+[INFO] --- Step 0 / 10000  |  Pure Compute: 0.000000s  |  Total: 0.000000s  |  Pure Speed: 0.000000 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=0 t=0.000000
+[INFO] Fetching model context for export: Bullet
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bullet\Result_20260330_145340\Disp_Result_step00000_t0.0000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bullet
+[INFO] --- Step 2200 / 10000  |  Pure Compute: 364.544674s  |  Total: 365.187595s  |  Pure Speed: 6.034926 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=2200 t=0.000019
+[INFO] Fetching model context for export: Bullet
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bullet\Result_20260330_144807\Disp_Result_step02200_t0.0000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bullet
+[INFO] --- Step 200 / 10000  |  Pure Compute: 33.826258s  |  Total: 33.958659s  |  Pure Speed: 5.912567 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=200 t=0.000002
+[INFO] Fetching model context for export: Bullet
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bullet\Result_20260330_145340\Disp_Result_step00200_t0.0000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bullet
+[INFO] --- Step 400 / 10000  |  Pure Compute: 66.589886s  |  Total: 66.784095s  |  Pure Speed: 6.006918 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=400 t=0.000003
+[INFO] Fetching model context for export: Bullet
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bullet\Result_20260330_145340\Disp_Result_step00400_t0.0000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bullet
+[INFO] --- Step 600 / 10000  |  Pure Compute: 91.899616s  |  Total: 92.143080s  |  Pure Speed: 6.528863 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=600 t=0.000005
+[INFO] Fetching model context for export: Bullet
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bullet\Result_20260330_145340\Disp_Result_step00600_t0.0000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bullet
+[INFO] --- Step 800 / 10000  |  Pure Compute: 119.631818s  |  Total: 119.936689s  |  Pure Speed: 6.687184 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=800 t=0.000007
+[INFO] Fetching model context for export: Bullet
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bullet\Result_20260330_145340\Disp_Result_step00800_t0.0000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bullet
+[INFO] --- Step 1000 / 10000  |  Pure Compute: 147.474967s  |  Total: 147.852143s  |  Pure Speed: 6.780812 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=1000 t=0.000009
+[INFO] Fetching model context for export: Bullet
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bullet\Result_20260330_145340\Disp_Result_step01000_t0.0000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bullet
+[INFO] --- Step 1200 / 10000  |  Pure Compute: 175.793041s  |  Total: 176.217842s  |  Pure Speed: 6.826209 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=1200 t=0.000010
+[INFO] Fetching model context for export: Bullet
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bullet\Result_20260330_145340\Disp_Result_step01200_t0.0000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bullet
+[INFO] --- Step 1400 / 10000  |  Pure Compute: 203.530309s  |  Total: 204.014566s  |  Pure Speed: 6.878582 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=1400 t=0.000012
+[INFO] Fetching model context for export: Bullet
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bullet\Result_20260330_145340\Disp_Result_step01400_t0.0000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bullet
+[INFO] --- Step 1600 / 10000  |  Pure Compute: 234.102541s  |  Total: 234.642806s  |  Pure Speed: 6.834612 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=1600 t=0.000014
+[INFO] Fetching model context for export: Bullet
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bullet\Result_20260330_145340\Disp_Result_step01600_t0.0000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bullet
+[INFO] --- Step 1800 / 10000  |  Pure Compute: 259.603704s  |  Total: 260.194147s  |  Pure Speed: 6.933645 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=1800 t=0.000016
+[INFO] Fetching model context for export: Bullet
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bullet\Result_20260330_145340\Disp_Result_step01800_t0.0000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bullet
+[INFO] ==================================================
+[INFO]    GRPD Solver Engine Initialized                 
+[INFO] ==================================================
+[INFO] [EngineRegistry] Creating Engine instance: PD
+[INFO] [PDEngine] PD Engine instance created.
+[INFO] ========== Registered Types Summary ===========
+[INFO]   TimeIntegrator    : CentralDifference, Explicit, Staggered
+[INFO]   FieldRegistry     : DoubleField, IntField
+[INFO]   PhysicsFields     : Mechanical, Thermal
+[INFO]   BCRegistry        : BODY_FORCE, CONV, DISP, FLUX, PRESSURE, T, VELOCITY
+[INFO]   MaterialRegistry  : FourierThermalMat, LinearElasticMat
+[INFO]   KernelRegistry    : NOSB_M, NOSB_T
+[INFO]   EngineRegistry    : PD
+[INFO] ===============================================
+[INFO] [EngineManager] Initializing solver: PD
+[INFO] [PDEngine] Initializing PD simulation context...
+[INFO] Model pre-processing...
+[INFO] [InitModel] grpd path: D:\Project_C++\GRPD\Examples\Bullet\Bullet.grpd
+[INFO] [InitModel] model name: Bullet
+[INFO] Calling Python pre-processor to generate .grpd mesh...
+[INFO] Mesh generated successfully by Python.
+[INFO] [Context Manager] Formalized model name to: Bullet
+[INFO] [Context Manager] Model dimension set to: 3D
+[INFO] [ReaderRegistry] Creating reader for: .grpd (name: Bullet)
+[INFO] [InitModel] Reading mesh file: D:\Project_C++\GRPD\Examples\Bullet\Bullet.grpd (reader: .grpd)
+[INFO] [GrpdMeshReader] Reading file: D:\Project_C++\GRPD\Examples\Bullet\Bullet.grpd
+[INFO] [GrpdMeshReader] Entering *PARTICLE section (Line 1)
+[INFO] [GrpdMeshReader] Entering *LOAD section (Line 195801)
+[INFO] [GrpdMeshReader] ============================================
+[INFO] [GrpdMeshReader]    File reading complete!
+[INFO] [GrpdMeshReader]    Total particles: 195798
+[INFO] [GrpdMeshReader]    Total load entries: 4560
+[INFO] [GrpdMeshReader] ============================================
+[INFO] [InitModel] Total particles loaded for model Bullet: 195798
+[INFO]   Particle[0] Part=1 Pos=(-42.117999, -41.984290, 0.100000) Vol=0.008000
+[INFO]   Particle[1] Part=1 Pos=(-42.117999, -41.784290, 0.100000) Vol=0.008000
+[INFO]   Particle[2] Part=1 Pos=(-42.117999, -41.584290, 0.100000) Vol=0.008000
+[INFO]   Particle[3] Part=1 Pos=(-42.117999, -41.384290, 0.100000) Vol=0.008000
+[INFO]   Particle[4] Part=1 Pos=(-42.117999, -41.184290, 0.100000) Vol=0.008000
+[INFO] Entering Material Initialization Phase...
+[INFO] Instantiating material [1] of type: LinearElasticMat
+[INFO] [MaterialRegistry] Using factory to create material: Steel_Elastic (type: LinearElasticMat)
+[INFO] [Material] Attached DamageModel 'CriticalStretch' to material: Steel_Elastic
+[INFO] [LinearElasticMat] Material 'Steel_Elastic' is initialized. E = 191000.000000, nu = 0.300000, Density = 0.000000
+[INFO] [MaterialManager] Successfully added material instance: Steel_Elastic
+[INFO] Successfully registered material ID 1 (Steel_Elastic)
+[INFO] Assigning material pointers to particles...
+[INFO] Successfully assigned materials to 195798 particles.
+[INFO] Entering Field Registration Phase...
+[INFO] [FieldManager] Added field 'Displacement'.
+[INFO] [FieldManager] Added field 'Velocity'.
+[INFO] [FieldManager] Added field 'Acceleration'.
+[INFO] [MechanicalFields] Core fields registered: Displacement, Velocity, Acceleration.
+[INFO] [InitFields] Auto-registered PhysicsFields module: Mechanical
+[INFO] [FieldManager] Added field 'ID'.
+[INFO] [FieldManager] Added field 'PartID'.
+[INFO] [FieldManager] Added field 'MatID'.
+[INFO] [FieldManager] Added field 'Coords'.
+[INFO] [FieldManager] Added field 'Volume'.
+[INFO] [FieldManager] Resized all 8 fields for 195798 particles.
+[INFO] [MeshData] Populated particle geometry fields into FieldManager for 195798 particles.
+[INFO] [InitFields] All fields allocated for 195798 particles. Total fields: 8.
+[INFO] Entering Conditions Initialization Phase...
+[INFO] [ReaderRegistry] Creating reader for: .grpd (name: LoadReader)
+[INFO] [GrpdMeshReader] Reading file: D:\Project_C++\GRPD\Examples\Bullet\Bullet.grpd
+[INFO] [GrpdMeshReader] Entering *PARTICLE section (Line 1)
+[INFO] [GrpdMeshReader] Entering *LOAD section (Line 195801)
+[INFO] [GrpdMeshReader] ============================================
+[INFO] [GrpdMeshReader]    File reading complete!
+[INFO] [GrpdMeshReader]    Total particles: 195798
+[INFO] [GrpdMeshReader]    Total load entries: 4560
+[INFO] [GrpdMeshReader] ============================================
+[INFO] [InitConditions] Load statistics:
+[INFO]   - VELOCITY : 4560
+[INFO] [InitConditions] Boundary conditions initialization complete.
+[INFO] [InitNeighbors] Entering Neighbor Search Phase...
+[INFO] [InitNeighbors] Horizon radius: 0.603000
+[INFO] [NeighborList] Starting full-flat CSR search for 195798 particles, horizon = 0.603000
+[INFO] [NeighborList] Cell grid: 17 x 17 x 39 = 11271 cells
+[INFO] [NeighborList] Flat cell list built in 3.999949 ms
+[INFO] [NeighborList] Pass 1 (count) done in 38.000107 ms
+[INFO] [NeighborList] Total bonds: 22473366, Memory: 257 MB
+[INFO] [NeighborList] Pass 2 (fill) done in 127.999783 ms
+[INFO] [NeighborList] Max neighbors: 122
+[INFO] [NeighborList] Total time: 169.999838 ms
+[INFO] [FieldManager] Added field 'NeighborCount'.
+[INFO] [InitNeighbors] NeighborCount field populated for 195798 particles.
+[INFO] [FieldManager] Added field 'Damage'.
+[INFO] [InitNeighbors] Global Damage scalar field properly initialized to 0.0
+[INFO] [InitNeighbors] Neighbor search phase complete.
+[INFO] Initializing Material-specific Damage Models...
+[INFO] [CriticalStretch] Initialized. Critical Stretch = 0.002000
+[INFO] Material Damage Models initialized. Total Active Models: 1
+[INFO] [InitPreCracks] Detected PreCracks configuration. Initializing geometric cuts...
+[INFO] [QuadCrack] Successfully configured QuadCrack with normal: (0.000000, -1.000000, 0.000000)
+[INFO] [QuadCrack] Evaluating bond breakage for crack...
+[INFO] [QuadCrack] Cut 135396 bonds traversing the preset crack.
+[INFO] [InitPreCracks] Applied PreCrack of type: QuadCrack
+[INFO] [QuadCrack] Successfully configured QuadCrack with normal: (1.000000, 0.000000, 0.000000)
+[INFO] [QuadCrack] Evaluating bond breakage for crack...
+[INFO] [QuadCrack] Cut 131556 bonds traversing the preset crack.
+[INFO] [InitPreCracks] Applied PreCrack of type: QuadCrack
+[INFO] Entering Solver Components Assembly Phase...
+[INFO] Building Time Integrator: CentralDifference
+[INFO] Time Integrator configured.
+[INFO] Building Space Kernel: NOSB_M
+[INFO] [NOSB_Base] Applied KernelWeightType: Linear
+[INFO] [NOSB_Base] Applied ZeroEnergyG0: 0.100000
+[INFO] [NOSB_Base] Applied ZeroEnergyMethod string: Zhang
+[INFO] Space Kernel 'NOSB_M' configured.
+[INFO] Total kernels assembled: 1
+[INFO] [PDEngine] PD simulation context initialized successfully.
+[INFO] [EngineManager] All solvers initialized. Total: 1
+[INFO] [EngineManager] Entering Main Solver Phase
+[INFO] [EngineManager] Solving: PD
+[INFO] [PDEngine] Starting PD Engine Solve Phase...
+[INFO] [CentralDifference] Identified generic 2nd-order ODE couple: Displacement (u) <- Velocity (v) <- Acceleration (a)
+[INFO] [CentralDifference] Time loop: dt = 0.000000, totalSteps = 10000
+[INFO] [FieldManager] Added field 'ShapeTensorInv'.
+[INFO] [FieldManager] Added field 'VHorizon'.
+[INFO] [NOSB_Base] Computing InfluenceWeight + Shape Tensor Inverse (K^-1)...
+[INFO] [NOSB_Base] All NOSB base fields registered and Shape Tensor Inverse computed.
+[INFO] [FieldManager] Added field 'DeformationGradient'.
+[INFO] [FieldManager] Added field 'PK1Stress'.
+[INFO] [NOSB_M] Instantiated MechanicalStabilizer globally in Phase 0 using strategy: Zhang
+[INFO] --- Step 0 / 10000  |  Pure Compute: 0.000000s  |  Total: 0.000000s  |  Pure Speed: 0.000000 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=0 t=0.000000
+[INFO] Fetching model context for export: Bullet
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bullet\Result_20260330_150338\Disp_Result_step00000_t0.0000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bullet
+[INFO] --- Step 200 / 10000  |  Pure Compute: 25.259706s  |  Total: 25.299075s  |  Pure Speed: 7.917748 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=200 t=0.000002
+[INFO] Fetching model context for export: Bullet
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bullet\Result_20260330_150338\Disp_Result_step00200_t0.0000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bullet
+[INFO] --- Step 400 / 10000  |  Pure Compute: 53.111607s  |  Total: 53.200534s  |  Pure Speed: 7.531310 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=400 t=0.000003
+[INFO] Fetching model context for export: Bullet
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bullet\Result_20260330_150338\Disp_Result_step00400_t0.0000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bullet
+[INFO] --- Step 600 / 10000  |  Pure Compute: 75.635027s  |  Total: 75.771108s  |  Pure Speed: 7.932833 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=600 t=0.000005
+[INFO] Fetching model context for export: Bullet
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bullet\Result_20260330_150338\Disp_Result_step00600_t0.0000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bullet
+[INFO] --- Step 800 / 10000  |  Pure Compute: 91.379733s  |  Total: 91.558396s  |  Pure Speed: 8.754676 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=800 t=0.000007
+[INFO] Fetching model context for export: Bullet
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bullet\Result_20260330_150338\Disp_Result_step00800_t0.0000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bullet
+[INFO] --- Step 1000 / 10000  |  Pure Compute: 104.529128s  |  Total: 104.761122s  |  Pure Speed: 9.566711 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=1000 t=0.000009
+[INFO] Fetching model context for export: Bullet
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bullet\Result_20260330_150338\Disp_Result_step01000_t0.0000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bullet
+[INFO] --- Step 1200 / 10000  |  Pure Compute: 118.289781s  |  Total: 118.572636s  |  Pure Speed: 10.144579 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=1200 t=0.000010
+[INFO] Fetching model context for export: Bullet
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bullet\Result_20260330_150338\Disp_Result_step01200_t0.0000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bullet
+[INFO] --- Step 1400 / 10000  |  Pure Compute: 127.793807s  |  Total: 128.164930s  |  Pure Speed: 10.955147 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=1400 t=0.000012
+[INFO] Fetching model context for export: Bullet
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bullet\Result_20260330_150338\Disp_Result_step01400_t0.0000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bullet
+[INFO] --- Step 1600 / 10000  |  Pure Compute: 132.253590s  |  Total: 132.661905s  |  Pure Speed: 12.097970 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=1600 t=0.000014
+[INFO] Fetching model context for export: Bullet
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bullet\Result_20260330_150338\Disp_Result_step01600_t0.0000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bullet
+[INFO] --- Step 1800 / 10000  |  Pure Compute: 135.720357s  |  Total: 136.165504s  |  Pure Speed: 13.262565 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=1800 t=0.000016
+[INFO] Fetching model context for export: Bullet
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bullet\Result_20260330_150338\Disp_Result_step01800_t0.0000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bullet
+[INFO] --- Step 2000 / 10000  |  Pure Compute: 139.392450s  |  Total: 139.882460s  |  Pure Speed: 14.347979 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=2000 t=0.000017
+[INFO] Fetching model context for export: Bullet
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bullet\Result_20260330_150338\Disp_Result_step02000_t0.0000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bullet
+[INFO] --- Step 2200 / 10000  |  Pure Compute: 143.062362s  |  Total: 143.596764s  |  Pure Speed: 15.377909 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=2200 t=0.000019
+[INFO] Fetching model context for export: Bullet
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bullet\Result_20260330_150338\Disp_Result_step02200_t0.0000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bullet
+[INFO] --- Step 2400 / 10000  |  Pure Compute: 146.681201s  |  Total: 147.259512s  |  Pure Speed: 16.362015 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=2400 t=0.000021
+[INFO] Fetching model context for export: Bullet
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bullet\Result_20260330_150338\Disp_Result_step02400_t0.0000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bullet
+[INFO] --- Step 2600 / 10000  |  Pure Compute: 150.224494s  |  Total: 150.840927s  |  Pure Speed: 17.307431 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=2600 t=0.000023
+[INFO] Fetching model context for export: Bullet
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bullet\Result_20260330_150338\Disp_Result_step02600_t0.0000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bullet
+[INFO] --- Step 2800 / 10000  |  Pure Compute: 153.844017s  |  Total: 154.509855s  |  Pure Speed: 18.200253 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=2800 t=0.000024
+[INFO] Fetching model context for export: Bullet
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bullet\Result_20260330_150338\Disp_Result_step02800_t0.0000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bullet
+[INFO] --- Step 3000 / 10000  |  Pure Compute: 158.191565s  |  Total: 158.900610s  |  Pure Speed: 18.964349 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=3000 t=0.000026
+[INFO] Fetching model context for export: Bullet
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bullet\Result_20260330_150338\Disp_Result_step03000_t0.0000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bullet
+[INFO] --- Step 3200 / 10000  |  Pure Compute: 162.448321s  |  Total: 163.211899s  |  Pure Speed: 19.698572 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=3200 t=0.000028
+[INFO] Fetching model context for export: Bullet
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bullet\Result_20260330_150338\Disp_Result_step03200_t0.0000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bullet
+[INFO] --- Step 3400 / 10000  |  Pure Compute: 166.364838s  |  Total: 167.170674s  |  Pure Speed: 20.437011 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=3400 t=0.000030
+[INFO] Fetching model context for export: Bullet
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bullet\Result_20260330_150338\Disp_Result_step03400_t0.0000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bullet
+[INFO] --- Step 3600 / 10000  |  Pure Compute: 169.871880s  |  Total: 170.718943s  |  Pure Speed: 21.192442 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=3600 t=0.000031
+[INFO] Fetching model context for export: Bullet
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bullet\Result_20260330_150338\Disp_Result_step03600_t0.0000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bullet
+[INFO] --- Step 3800 / 10000  |  Pure Compute: 173.262077s  |  Total: 174.161887s  |  Pure Speed: 21.932093 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=3800 t=0.000033
+[INFO] Fetching model context for export: Bullet
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bullet\Result_20260330_150338\Disp_Result_step03800_t0.0000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bullet
+[INFO] --- Step 4000 / 10000  |  Pure Compute: 176.551456s  |  Total: 177.493607s  |  Pure Speed: 22.656284 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=4000 t=0.000035
+[INFO] Fetching model context for export: Bullet
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bullet\Result_20260330_150338\Disp_Result_step04000_t0.0000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bullet
+[INFO] --- Step 4200 / 10000  |  Pure Compute: 179.878678s  |  Total: 180.860421s  |  Pure Speed: 23.349071 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=4200 t=0.000037
+[INFO] Fetching model context for export: Bullet
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bullet\Result_20260330_150338\Disp_Result_step04200_t0.0000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bullet
+[INFO] --- Step 4400 / 10000  |  Pure Compute: 182.993447s  |  Total: 184.018689s  |  Pure Speed: 24.044577 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=4400 t=0.000038
+[INFO] Fetching model context for export: Bullet
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bullet\Result_20260330_150338\Disp_Result_step04400_t0.0000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bullet
+[INFO] --- Step 4600 / 10000  |  Pure Compute: 186.280054s  |  Total: 187.345514s  |  Pure Speed: 24.694002 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=4600 t=0.000040
+[INFO] Fetching model context for export: Bullet
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bullet\Result_20260330_150338\Disp_Result_step04600_t0.0000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bullet
+[INFO] ==================================================
+[INFO]    GRPD Solver Engine Initialized                 
+[INFO] ==================================================
+[INFO] [EngineRegistry] Creating Engine instance: PD
+[INFO] [PDEngine] PD Engine instance created.
+[INFO] ========== Registered Types Summary ===========
+[INFO]   TimeIntegrator    : CentralDifference, Explicit, Staggered
+[INFO]   FieldRegistry     : DoubleField, IntField
+[INFO]   PhysicsFields     : Mechanical, Thermal
+[INFO]   BCRegistry        : BODY_FORCE, CONV, DISP, FLUX, PRESSURE, T, VELOCITY
+[INFO]   MaterialRegistry  : FourierThermalMat, LinearElasticMat
+[INFO]   KernelRegistry    : NOSB_M, NOSB_T
+[INFO]   EngineRegistry    : PD
+[INFO] ===============================================
+[INFO] [EngineManager] Initializing solver: PD
+[INFO] [PDEngine] Initializing PD simulation context...
+[INFO] Model pre-processing...
+[INFO] [InitModel] grpd path: D:\Project_C++\GRPD\Examples\Bullet\Bullet.grpd
+[INFO] [InitModel] model name: Bullet
+[INFO] Found existing .grpd mesh file at: D:\Project_C++\GRPD\Examples\Bullet\Bullet.grpd. Skipping generation.
+[INFO] [Context Manager] Formalized model name to: Bullet
+[INFO] [Context Manager] Model dimension set to: 3D
+[INFO] [ReaderRegistry] Creating reader for: .grpd (name: Bullet)
+[INFO] [InitModel] Reading mesh file: D:\Project_C++\GRPD\Examples\Bullet\Bullet.grpd (reader: .grpd)
+[INFO] [GrpdMeshReader] Reading file: D:\Project_C++\GRPD\Examples\Bullet\Bullet.grpd
+[INFO] [GrpdMeshReader] Entering *PARTICLE section (Line 1)
+[INFO] [GrpdMeshReader] Entering *LOAD section (Line 195801)
+[INFO] [GrpdMeshReader] ============================================
+[INFO] [GrpdMeshReader]    File reading complete!
+[INFO] [GrpdMeshReader]    Total particles: 195798
+[INFO] [GrpdMeshReader]    Total load entries: 4560
+[INFO] [GrpdMeshReader] ============================================
+[INFO] [InitModel] Total particles loaded for model Bullet: 195798
+[INFO]   Particle[0] Part=1 Pos=(-42.117999, -41.984290, 0.100000) Vol=0.008000
+[INFO]   Particle[1] Part=1 Pos=(-42.117999, -41.784290, 0.100000) Vol=0.008000
+[INFO]   Particle[2] Part=1 Pos=(-42.117999, -41.584290, 0.100000) Vol=0.008000
+[INFO]   Particle[3] Part=1 Pos=(-42.117999, -41.384290, 0.100000) Vol=0.008000
+[INFO]   Particle[4] Part=1 Pos=(-42.117999, -41.184290, 0.100000) Vol=0.008000
+[INFO] Entering Material Initialization Phase...
+[INFO] Instantiating material [1] of type: LinearElasticMat
+[INFO] [MaterialRegistry] Using factory to create material: Steel_Elastic (type: LinearElasticMat)
+[INFO] [Material] Attached DamageModel 'CriticalStretch' to material: Steel_Elastic
+[INFO] [LinearElasticMat] Material 'Steel_Elastic' is initialized. E = 191000.000000, nu = 0.300000, Density = 0.000000
+[INFO] [MaterialManager] Successfully added material instance: Steel_Elastic
+[INFO] Successfully registered material ID 1 (Steel_Elastic)
+[INFO] Assigning material pointers to particles...
+[INFO] Successfully assigned materials to 195798 particles.
+[INFO] Entering Field Registration Phase...
+[INFO] [FieldManager] Added field 'Displacement'.
+[INFO] [FieldManager] Added field 'Velocity'.
+[INFO] [FieldManager] Added field 'Acceleration'.
+[INFO] [MechanicalFields] Core fields registered: Displacement, Velocity, Acceleration.
+[INFO] [InitFields] Auto-registered PhysicsFields module: Mechanical
+[INFO] [FieldManager] Added field 'ID'.
+[INFO] [FieldManager] Added field 'PartID'.
+[INFO] [FieldManager] Added field 'MatID'.
+[INFO] [FieldManager] Added field 'Coords'.
+[INFO] [FieldManager] Added field 'Volume'.
+[INFO] [FieldManager] Resized all 8 fields for 195798 particles.
+[INFO] [MeshData] Populated particle geometry fields into FieldManager for 195798 particles.
+[INFO] [InitFields] All fields allocated for 195798 particles. Total fields: 8.
+[INFO] Entering Conditions Initialization Phase...
+[INFO] [ReaderRegistry] Creating reader for: .grpd (name: LoadReader)
+[INFO] [GrpdMeshReader] Reading file: D:\Project_C++\GRPD\Examples\Bullet\Bullet.grpd
+[INFO] [GrpdMeshReader] Entering *PARTICLE section (Line 1)
+[INFO] [GrpdMeshReader] Entering *LOAD section (Line 195801)
+[INFO] [GrpdMeshReader] ============================================
+[INFO] [GrpdMeshReader]    File reading complete!
+[INFO] [GrpdMeshReader]    Total particles: 195798
+[INFO] [GrpdMeshReader]    Total load entries: 4560
+[INFO] [GrpdMeshReader] ============================================
+[INFO] [InitConditions] Load statistics:
+[INFO]   - VELOCITY : 4560
+[INFO] [InitConditions] Boundary conditions initialization complete.
+[INFO] [InitNeighbors] Entering Neighbor Search Phase...
+[INFO] [InitNeighbors] Horizon radius: 0.603000
+[INFO] [NeighborList] Starting full-flat CSR search for 195798 particles, horizon = 0.603000
+[INFO] [NeighborList] Cell grid: 17 x 17 x 39 = 11271 cells
+[INFO] [NeighborList] Flat cell list built in 3.000021 ms
+[INFO] [NeighborList] Pass 1 (count) done in 39.999962 ms
+[INFO] [NeighborList] Total bonds: 22473366, Memory: 257 MB
+[INFO] [NeighborList] Pass 2 (fill) done in 106.999874 ms
+[INFO] [NeighborList] Max neighbors: 122
+[INFO] [NeighborList] Total time: 149.999857 ms
+[INFO] [FieldManager] Added field 'NeighborCount'.
+[INFO] [InitNeighbors] NeighborCount field populated for 195798 particles.
+[INFO] [FieldManager] Added field 'Damage'.
+[INFO] [InitNeighbors] Global Damage scalar field properly initialized to 0.0
+[INFO] [InitNeighbors] Neighbor search phase complete.
+[INFO] Initializing Material-specific Damage Models...
+[INFO] [CriticalStretch] Initialized. Critical Stretch = 0.002000
+[INFO] Material Damage Models initialized. Total Active Models: 1
+[INFO] Entering Solver Components Assembly Phase...
+[INFO] Building Time Integrator: CentralDifference
+[INFO] Time Integrator configured.
+[INFO] Building Space Kernel: NOSB_M
+[INFO] [NOSB_Base] Applied KernelWeightType: Linear
+[INFO] [NOSB_Base] Applied ZeroEnergyG0: 0.100000
+[INFO] [NOSB_Base] Applied ZeroEnergyMethod string: Zhang
+[INFO] Space Kernel 'NOSB_M' configured.
+[INFO] Total kernels assembled: 1
+[INFO] [PDEngine] PD simulation context initialized successfully.
+[INFO] [EngineManager] All solvers initialized. Total: 1
+[INFO] [EngineManager] Entering Main Solver Phase
+[INFO] [EngineManager] Solving: PD
+[INFO] [PDEngine] Starting PD Engine Solve Phase...
+[INFO] [CentralDifference] Identified generic 2nd-order ODE couple: Displacement (u) <- Velocity (v) <- Acceleration (a)
+[INFO] [CentralDifference] Time loop: dt = 0.000000, totalSteps = 10000
+[INFO] [FieldManager] Added field 'ShapeTensorInv'.
+[INFO] [FieldManager] Added field 'VHorizon'.
+[INFO] [NOSB_Base] Computing InfluenceWeight + Shape Tensor Inverse (K^-1)...
+[INFO] [NOSB_Base] All NOSB base fields registered and Shape Tensor Inverse computed.
+[INFO] [FieldManager] Added field 'DeformationGradient'.
+[INFO] [FieldManager] Added field 'PK1Stress'.
+[INFO] [NOSB_M] Instantiated MechanicalStabilizer globally in Phase 0 using strategy: Zhang
+[INFO] --- Step 0 / 10000  |  Pure Compute: 0.000000s  |  Total: 0.000000s  |  Pure Speed: 0.000000 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=0 t=0.000000
+[INFO] Fetching model context for export: Bullet
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bullet\Result_20260330_151047\Disp_Result_step00000_t0.0000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bullet
+[INFO] --- Step 200 / 10000  |  Pure Compute: 32.188262s  |  Total: 32.223282s  |  Pure Speed: 6.213445 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=200 t=0.000002
+[INFO] Fetching model context for export: Bullet
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bullet\Result_20260330_151047\Disp_Result_step00200_t0.0000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bullet
+[INFO] --- Step 400 / 10000  |  Pure Compute: 58.402250s  |  Total: 58.489205s  |  Pure Speed: 6.849051 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=400 t=0.000003
+[INFO] Fetching model context for export: Bullet
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bullet\Result_20260330_151047\Disp_Result_step00400_t0.0000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bullet
+[INFO] --- Step 600 / 10000  |  Pure Compute: 75.338268s  |  Total: 75.477455s  |  Pure Speed: 7.964080 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=600 t=0.000005
+[INFO] Fetching model context for export: Bullet
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bullet\Result_20260330_151047\Disp_Result_step00600_t0.0000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bullet
+[INFO] --- Step 800 / 10000  |  Pure Compute: 92.748657s  |  Total: 92.941630s  |  Pure Speed: 8.625462 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=800 t=0.000007
+[INFO] Fetching model context for export: Bullet
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bullet\Result_20260330_151047\Disp_Result_step00800_t0.0000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bullet
+[INFO] --- Step 1000 / 10000  |  Pure Compute: 107.674461s  |  Total: 107.914491s  |  Pure Speed: 9.287253 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=1000 t=0.000009
+[INFO] Fetching model context for export: Bullet
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bullet\Result_20260330_151047\Disp_Result_step01000_t0.0000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bullet
+[INFO] ==================================================
+[INFO]    GRPD Solver Engine Initialized                 
+[INFO] ==================================================
+[INFO] [EngineRegistry] Creating Engine instance: PD
+[INFO] [PDEngine] PD Engine instance created.
+[INFO] ========== Registered Types Summary ===========
+[INFO]   TimeIntegrator    : CentralDifference, Explicit, Staggered
+[INFO]   FieldRegistry     : DoubleField, IntField
+[INFO]   PhysicsFields     : Mechanical, Thermal
+[INFO]   BCRegistry        : BODY_FORCE, CONV, DISP, FLUX, PRESSURE, T, VELOCITY
+[INFO]   MaterialRegistry  : FourierThermalMat, LinearElasticMat
+[INFO]   KernelRegistry    : NOSB_M, NOSB_T
+[INFO]   EngineRegistry    : PD
+[INFO] ===============================================
+[INFO] [EngineManager] Initializing solver: PD
+[INFO] [PDEngine] Initializing PD simulation context...
+[INFO] Model pre-processing...
+[INFO] [InitModel] grpd path: D:\Project_C++\GRPD\Examples\Bullet\Bullet.grpd
+[INFO] [InitModel] model name: Bullet
+[INFO] Found existing .grpd mesh file at: D:\Project_C++\GRPD\Examples\Bullet\Bullet.grpd. Skipping generation.
+[INFO] [Context Manager] Formalized model name to: Bullet
+[INFO] [Context Manager] Model dimension set to: 3D
+[INFO] [ReaderRegistry] Creating reader for: .grpd (name: Bullet)
+[INFO] [InitModel] Reading mesh file: D:\Project_C++\GRPD\Examples\Bullet\Bullet.grpd (reader: .grpd)
+[INFO] [GrpdMeshReader] Reading file: D:\Project_C++\GRPD\Examples\Bullet\Bullet.grpd
+[INFO] [GrpdMeshReader] Entering *PARTICLE section (Line 1)
+[INFO] [GrpdMeshReader] Entering *LOAD section (Line 195801)
+[INFO] [GrpdMeshReader] ============================================
+[INFO] [GrpdMeshReader]    File reading complete!
+[INFO] [GrpdMeshReader]    Total particles: 195798
+[INFO] [GrpdMeshReader]    Total load entries: 4560
+[INFO] [GrpdMeshReader] ============================================
+[INFO] [InitModel] Total particles loaded for model Bullet: 195798
+[INFO]   Particle[0] Part=1 Pos=(-42.117999, -41.984290, 0.100000) Vol=0.008000
+[INFO]   Particle[1] Part=1 Pos=(-42.117999, -41.784290, 0.100000) Vol=0.008000
+[INFO]   Particle[2] Part=1 Pos=(-42.117999, -41.584290, 0.100000) Vol=0.008000
+[INFO]   Particle[3] Part=1 Pos=(-42.117999, -41.384290, 0.100000) Vol=0.008000
+[INFO]   Particle[4] Part=1 Pos=(-42.117999, -41.184290, 0.100000) Vol=0.008000
+[INFO] Entering Material Initialization Phase...
+[INFO] Instantiating material [1] of type: LinearElasticMat
+[INFO] [MaterialRegistry] Using factory to create material: Steel_Elastic (type: LinearElasticMat)
+[INFO] [Material] Attached DamageModel 'CriticalStretch' to material: Steel_Elastic
+[INFO] [LinearElasticMat] Material 'Steel_Elastic' is initialized. E = 191000.000000, nu = 0.300000, Density = 0.000000
+[INFO] [MaterialManager] Successfully added material instance: Steel_Elastic
+[INFO] Successfully registered material ID 1 (Steel_Elastic)
+[INFO] Assigning material pointers to particles...
+[INFO] Successfully assigned materials to 195798 particles.
+[INFO] Entering Field Registration Phase...
+[INFO] [FieldManager] Added field 'Displacement'.
+[INFO] [FieldManager] Added field 'Velocity'.
+[INFO] [FieldManager] Added field 'Acceleration'.
+[INFO] [MechanicalFields] Core fields registered: Displacement, Velocity, Acceleration.
+[INFO] [InitFields] Auto-registered PhysicsFields module: Mechanical
+[INFO] [FieldManager] Added field 'ID'.
+[INFO] [FieldManager] Added field 'PartID'.
+[INFO] [FieldManager] Added field 'MatID'.
+[INFO] [FieldManager] Added field 'Coords'.
+[INFO] [FieldManager] Added field 'Volume'.
+[INFO] [FieldManager] Resized all 8 fields for 195798 particles.
+[INFO] [MeshData] Populated particle geometry fields into FieldManager for 195798 particles.
+[INFO] [InitFields] All fields allocated for 195798 particles. Total fields: 8.
+[INFO] Entering Conditions Initialization Phase...
+[INFO] [ReaderRegistry] Creating reader for: .grpd (name: LoadReader)
+[INFO] [GrpdMeshReader] Reading file: D:\Project_C++\GRPD\Examples\Bullet\Bullet.grpd
+[INFO] [GrpdMeshReader] Entering *PARTICLE section (Line 1)
+[INFO] [GrpdMeshReader] Entering *LOAD section (Line 195801)
+[INFO] [GrpdMeshReader] ============================================
+[INFO] [GrpdMeshReader]    File reading complete!
+[INFO] [GrpdMeshReader]    Total particles: 195798
+[INFO] [GrpdMeshReader]    Total load entries: 4560
+[INFO] [GrpdMeshReader] ============================================
+[INFO] [InitConditions] Load statistics:
+[INFO]   - VELOCITY : 4560
+[INFO] [InitConditions] Boundary conditions initialization complete.
+[INFO] [InitNeighbors] Entering Neighbor Search Phase...
+[INFO] [InitNeighbors] Horizon radius: 0.603000
+[INFO] [NeighborList] Starting full-flat CSR search for 195798 particles, horizon = 0.603000
+[INFO] [NeighborList] Cell grid: 17 x 17 x 39 = 11271 cells
+[INFO] [NeighborList] Flat cell list built in 4.999876 ms
+[INFO] [NeighborList] Pass 1 (count) done in 61.000109 ms
+[INFO] [NeighborList] Total bonds: 22473366, Memory: 257 MB
+[INFO] [NeighborList] Pass 2 (fill) done in 154.000044 ms
+[INFO] [NeighborList] Max neighbors: 122
+[INFO] [NeighborList] Total time: 220.000029 ms
+[INFO] [FieldManager] Added field 'NeighborCount'.
+[INFO] [InitNeighbors] NeighborCount field populated for 195798 particles.
+[INFO] [FieldManager] Added field 'Damage'.
+[INFO] [InitNeighbors] Global Damage scalar field properly initialized to 0.0
+[INFO] [InitNeighbors] Neighbor search phase complete.
+[INFO] Initializing Material-specific Damage Models...
+[INFO] [CriticalStretch] Initialized. Critical Stretch = 0.010000
+[INFO] Material Damage Models initialized. Total Active Models: 1
+[INFO] Entering Solver Components Assembly Phase...
+[INFO] Building Time Integrator: CentralDifference
+[INFO] Time Integrator configured.
+[INFO] Building Space Kernel: NOSB_M
+[INFO] [NOSB_Base] Applied KernelWeightType: Linear
+[INFO] [NOSB_Base] Applied ZeroEnergyG0: 0.100000
+[INFO] [NOSB_Base] Applied ZeroEnergyMethod string: Zhang
+[INFO] Space Kernel 'NOSB_M' configured.
+[INFO] Total kernels assembled: 1
+[INFO] [PDEngine] PD simulation context initialized successfully.
+[INFO] [EngineManager] All solvers initialized. Total: 1
+[INFO] [EngineManager] Entering Main Solver Phase
+[INFO] [EngineManager] Solving: PD
+[INFO] [PDEngine] Starting PD Engine Solve Phase...
+[INFO] [CentralDifference] Identified generic 2nd-order ODE couple: Displacement (u) <- Velocity (v) <- Acceleration (a)
+[INFO] [CentralDifference] Time loop: dt = 0.000000, totalSteps = 1000
+[INFO] [FieldManager] Added field 'ShapeTensorInv'.
+[INFO] [FieldManager] Added field 'VHorizon'.
+[INFO] [NOSB_Base] Computing InfluenceWeight + Shape Tensor Inverse (K^-1)...
+[INFO] [NOSB_Base] All NOSB base fields registered and Shape Tensor Inverse computed.
+[INFO] [FieldManager] Added field 'DeformationGradient'.
+[INFO] [FieldManager] Added field 'PK1Stress'.
+[INFO] [NOSB_M] Instantiated MechanicalStabilizer globally in Phase 0 using strategy: Zhang
+[INFO] --- Step 0 / 1000  |  Pure Compute: 0.000000s  |  Total: 0.000000s  |  Pure Speed: 0.000000 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=0 t=0.000000
+[INFO] Fetching model context for export: Bullet
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bullet\Result_20260330_151329\Disp_Result_step00000_t0.0000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bullet
+[INFO] --- Step 50 / 1000  |  Pure Compute: 8.049437s  |  Total: 8.090271s  |  Pure Speed: 6.211615 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=50 t=0.000000
+[INFO] Fetching model context for export: Bullet
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bullet\Result_20260330_151329\Disp_Result_step00050_t0.0000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bullet
+[INFO] --- Step 100 / 1000  |  Pure Compute: 17.092763s  |  Total: 17.194844s  |  Pure Speed: 5.850429 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=100 t=0.000001
+[INFO] Fetching model context for export: Bullet
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bullet\Result_20260330_151329\Disp_Result_step00100_t0.0000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bullet
+[INFO] --- Step 150 / 1000  |  Pure Compute: 25.941212s  |  Total: 26.083629s  |  Pure Speed: 5.782305 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=150 t=0.000001
+[INFO] Fetching model context for export: Bullet
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bullet\Result_20260330_151329\Disp_Result_step00150_t0.0000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bullet
+[INFO] --- Step 200 / 1000  |  Pure Compute: 35.867041s  |  Total: 36.067320s  |  Pure Speed: 5.576150 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=200 t=0.000002
+[INFO] Fetching model context for export: Bullet
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bullet\Result_20260330_151329\Disp_Result_step00200_t0.0000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bullet
+[INFO] --- Step 250 / 1000  |  Pure Compute: 42.624928s  |  Total: 42.875852s  |  Pure Speed: 5.865113 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=250 t=0.000002
+[INFO] Fetching model context for export: Bullet
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bullet\Result_20260330_151329\Disp_Result_step00250_t0.0000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bullet
+[INFO] --- Step 300 / 1000  |  Pure Compute: 48.611401s  |  Total: 48.909996s  |  Pure Speed: 6.171392 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=300 t=0.000003
+[INFO] Fetching model context for export: Bullet
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bullet\Result_20260330_151329\Disp_Result_step00300_t0.0000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bullet
+[INFO] --- Step 350 / 1000  |  Pure Compute: 54.391349s  |  Total: 54.734014s  |  Pure Speed: 6.434847 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=350 t=0.000003
+[INFO] Fetching model context for export: Bullet
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bullet\Result_20260330_151329\Disp_Result_step00350_t0.0000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bullet
+[INFO] --- Step 400 / 1000  |  Pure Compute: 60.473586s  |  Total: 60.871555s  |  Pure Speed: 6.614458 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=400 t=0.000003
+[INFO] Fetching model context for export: Bullet
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bullet\Result_20260330_151329\Disp_Result_step00400_t0.0000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bullet
+[INFO] --- Step 450 / 1000  |  Pure Compute: 67.016419s  |  Total: 67.462852s  |  Pure Speed: 6.714772 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=450 t=0.000004
+[INFO] Fetching model context for export: Bullet
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bullet\Result_20260330_151329\Disp_Result_step00450_t0.0000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bullet
+[INFO] --- Step 500 / 1000  |  Pure Compute: 75.302905s  |  Total: 75.797450s  |  Pure Speed: 6.639850 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=500 t=0.000004
+[INFO] Fetching model context for export: Bullet
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bullet\Result_20260330_151329\Disp_Result_step00500_t0.0000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bullet
+[INFO] --- Step 550 / 1000  |  Pure Compute: 82.862409s  |  Total: 83.415842s  |  Pure Speed: 6.637509 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=550 t=0.000005
+[INFO] Fetching model context for export: Bullet
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bullet\Result_20260330_151329\Disp_Result_step00550_t0.0000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bullet
+[INFO] --- Step 600 / 1000  |  Pure Compute: 89.635780s  |  Total: 90.235932s  |  Pure Speed: 6.693756 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=600 t=0.000005
+[INFO] Fetching model context for export: Bullet
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bullet\Result_20260330_151329\Disp_Result_step00600_t0.0000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bullet
+[INFO] --- Step 650 / 1000  |  Pure Compute: 96.527809s  |  Total: 97.172672s  |  Pure Speed: 6.733811 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=650 t=0.000006
+[INFO] Fetching model context for export: Bullet
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bullet\Result_20260330_151329\Disp_Result_step00650_t0.0000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bullet
+[INFO] --- Step 700 / 1000  |  Pure Compute: 103.433708s  |  Total: 104.121792s  |  Pure Speed: 6.767620 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=700 t=0.000006
+[INFO] Fetching model context for export: Bullet
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bullet\Result_20260330_151329\Disp_Result_step00700_t0.0000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bullet
+[INFO] --- Step 750 / 1000  |  Pure Compute: 109.025571s  |  Total: 109.766529s  |  Pure Speed: 6.879120 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=750 t=0.000007
+[INFO] Fetching model context for export: Bullet
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bullet\Result_20260330_151329\Disp_Result_step00750_t0.0000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bullet
+[INFO] --- Step 800 / 1000  |  Pure Compute: 114.070483s  |  Total: 114.861556s  |  Pure Speed: 7.013208 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=800 t=0.000007
+[INFO] Fetching model context for export: Bullet
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bullet\Result_20260330_151329\Disp_Result_step00800_t0.0000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bullet
+[INFO] --- Step 850 / 1000  |  Pure Compute: 119.130788s  |  Total: 119.966208s  |  Pure Speed: 7.135015 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=850 t=0.000007
+[INFO] Fetching model context for export: Bullet
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bullet\Result_20260330_151329\Disp_Result_step00850_t0.0000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bullet
+[INFO] --- Step 900 / 1000  |  Pure Compute: 124.273832s  |  Total: 125.159101s  |  Pure Speed: 7.242072 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=900 t=0.000008
+[INFO] Fetching model context for export: Bullet
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bullet\Result_20260330_151329\Disp_Result_step00900_t0.0000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bullet
+[INFO] --- Step 950 / 1000  |  Pure Compute: 129.791011s  |  Total: 130.718763s  |  Pure Speed: 7.319459 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=950 t=0.000008
+[INFO] Fetching model context for export: Bullet
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bullet\Result_20260330_151329\Disp_Result_step00950_t0.0000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bullet
+[INFO] --- Step 1000 / 1000  |  Pure Compute: 136.409153s  |  Total: 137.392974s  |  Pure Speed: 7.330886 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=1000 t=0.000009
+[INFO] Fetching model context for export: Bullet
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bullet\Result_20260330_151329\Disp_Result_step01000_t0.0000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bullet
+[INFO] [CentralDifference] Finished. Total: 137.446440s  |  Pure Compute avg: 0.136409 s/step
+[INFO] [PDEngine] PD Engine Solve Phase Finished.
+[INFO] [EngineManager] Main Solver Phase finished.
+[INFO] [EngineManager] Entering Post-processing Phase
+[INFO] [EngineManager] Outputting: PD
+[INFO] Starting data export process step=-1 t=0.000000
+[INFO] Fetching model context for export: Bullet
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bullet\Result_20260330_151329\Disp_Result_output.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bullet
+[INFO] [EngineManager] Post-processing Phase finished.
+[INFO] ==================================================
+[INFO]    GRPD Solver Engine Initialized                 
+[INFO] ==================================================
+[INFO] [EngineRegistry] Creating Engine instance: PD
+[INFO] [PDEngine] PD Engine instance created.
+[INFO] ========== Registered Types Summary ===========
+[INFO]   TimeIntegrator    : CentralDifference, Explicit, Staggered
+[INFO]   FieldRegistry     : DoubleField, IntField
+[INFO]   PhysicsFields     : Mechanical, Thermal
+[INFO]   BCRegistry        : BODY_FORCE, CONV, DISP, FLUX, PRESSURE, T, VELOCITY
+[INFO]   MaterialRegistry  : FourierThermalMat, LinearElasticMat
+[INFO]   KernelRegistry    : NOSB_M, NOSB_T
+[INFO]   EngineRegistry    : PD
+[INFO] ===============================================
+[INFO] [EngineManager] Initializing solver: PD
+[INFO] [PDEngine] Initializing PD simulation context...
+[INFO] Model pre-processing...
+[INFO] [InitModel] grpd path: D:\Project_C++\GRPD\Examples\Bullet\Bullet.grpd
+[INFO] [InitModel] model name: Bullet
+[INFO] Found existing .grpd mesh file at: D:\Project_C++\GRPD\Examples\Bullet\Bullet.grpd. Skipping generation.
+[INFO] [Context Manager] Formalized model name to: Bullet
+[INFO] [Context Manager] Model dimension set to: 3D
+[INFO] [ReaderRegistry] Creating reader for: .grpd (name: Bullet)
+[INFO] [InitModel] Reading mesh file: D:\Project_C++\GRPD\Examples\Bullet\Bullet.grpd (reader: .grpd)
+[INFO] [GrpdMeshReader] Reading file: D:\Project_C++\GRPD\Examples\Bullet\Bullet.grpd
+[INFO] [GrpdMeshReader] Entering *PARTICLE section (Line 1)
+[INFO] [GrpdMeshReader] Entering *LOAD section (Line 195801)
+[INFO] [GrpdMeshReader] ============================================
+[INFO] [GrpdMeshReader]    File reading complete!
+[INFO] [GrpdMeshReader]    Total particles: 195798
+[INFO] [GrpdMeshReader]    Total load entries: 4560
+[INFO] [GrpdMeshReader] ============================================
+[INFO] [InitModel] Total particles loaded for model Bullet: 195798
+[INFO]   Particle[0] Part=1 Pos=(-42.117999, -41.984290, 0.100000) Vol=0.008000
+[INFO]   Particle[1] Part=1 Pos=(-42.117999, -41.784290, 0.100000) Vol=0.008000
+[INFO]   Particle[2] Part=1 Pos=(-42.117999, -41.584290, 0.100000) Vol=0.008000
+[INFO]   Particle[3] Part=1 Pos=(-42.117999, -41.384290, 0.100000) Vol=0.008000
+[INFO]   Particle[4] Part=1 Pos=(-42.117999, -41.184290, 0.100000) Vol=0.008000
+[INFO] Entering Material Initialization Phase...
+[INFO] Instantiating material [1] of type: LinearElasticMat
+[INFO] [MaterialRegistry] Using factory to create material: Steel_Elastic (type: LinearElasticMat)
+[INFO] [Material] Attached DamageModel 'CriticalStretch' to material: Steel_Elastic
+[INFO] [LinearElasticMat] Material 'Steel_Elastic' is initialized. E = 191000.000000, nu = 0.300000, Density = 0.000000
+[INFO] [MaterialManager] Successfully added material instance: Steel_Elastic
+[INFO] Successfully registered material ID 1 (Steel_Elastic)
+[INFO] Assigning material pointers to particles...
+[INFO] Successfully assigned materials to 195798 particles.
+[INFO] Entering Field Registration Phase...
+[INFO] [FieldManager] Added field 'Displacement'.
+[INFO] [FieldManager] Added field 'Velocity'.
+[INFO] [FieldManager] Added field 'Acceleration'.
+[INFO] [MechanicalFields] Core fields registered: Displacement, Velocity, Acceleration.
+[INFO] [InitFields] Auto-registered PhysicsFields module: Mechanical
+[INFO] [FieldManager] Added field 'ID'.
+[INFO] [FieldManager] Added field 'PartID'.
+[INFO] [FieldManager] Added field 'MatID'.
+[INFO] [FieldManager] Added field 'Coords'.
+[INFO] [FieldManager] Added field 'Volume'.
+[INFO] [FieldManager] Resized all 8 fields for 195798 particles.
+[INFO] [MeshData] Populated particle geometry fields into FieldManager for 195798 particles.
+[INFO] [InitFields] All fields allocated for 195798 particles. Total fields: 8.
+[INFO] Entering Conditions Initialization Phase...
+[INFO] [ReaderRegistry] Creating reader for: .grpd (name: LoadReader)
+[INFO] [GrpdMeshReader] Reading file: D:\Project_C++\GRPD\Examples\Bullet\Bullet.grpd
+[INFO] [GrpdMeshReader] Entering *PARTICLE section (Line 1)
+[INFO] [GrpdMeshReader] Entering *LOAD section (Line 195801)
+[INFO] [GrpdMeshReader] ============================================
+[INFO] [GrpdMeshReader]    File reading complete!
+[INFO] [GrpdMeshReader]    Total particles: 195798
+[INFO] [GrpdMeshReader]    Total load entries: 4560
+[INFO] [GrpdMeshReader] ============================================
+[INFO] [InitConditions] Load statistics:
+[INFO]   - VELOCITY : 4560
+[INFO] [InitConditions] Boundary conditions initialization complete.
+[INFO] [InitNeighbors] Entering Neighbor Search Phase...
+[INFO] [InitNeighbors] Horizon radius: 0.603000
+[INFO] [NeighborList] Starting full-flat CSR search for 195798 particles, horizon = 0.603000
+[INFO] [NeighborList] Cell grid: 17 x 17 x 39 = 11271 cells
+[INFO] [NeighborList] Flat cell list built in 3.999949 ms
+[INFO] [NeighborList] Pass 1 (count) done in 41.000128 ms
+[INFO] [NeighborList] Total bonds: 22473366, Memory: 257 MB
+[INFO] [NeighborList] Pass 2 (fill) done in 115.999937 ms
+[INFO] [NeighborList] Max neighbors: 122
+[INFO] [NeighborList] Total time: 161.000013 ms
+[INFO] [FieldManager] Added field 'NeighborCount'.
+[INFO] [InitNeighbors] NeighborCount field populated for 195798 particles.
+[INFO] [FieldManager] Added field 'Damage'.
+[INFO] [InitNeighbors] Global Damage scalar field properly initialized to 0.0
+[INFO] [InitNeighbors] Neighbor search phase complete.
+[INFO] Initializing Material-specific Damage Models...
+[INFO] [CriticalStretch] Initialized. Critical Stretch = 0.050000
+[INFO] Material Damage Models initialized. Total Active Models: 1
+[INFO] Entering Solver Components Assembly Phase...
+[INFO] Building Time Integrator: CentralDifference
+[INFO] Time Integrator configured.
+[INFO] Building Space Kernel: NOSB_M
+[INFO] [NOSB_Base] Applied KernelWeightType: Linear
+[INFO] [NOSB_Base] Applied ZeroEnergyG0: 0.100000
+[INFO] [NOSB_Base] Applied ZeroEnergyMethod string: Zhang
+[INFO] Space Kernel 'NOSB_M' configured.
+[INFO] Total kernels assembled: 1
+[INFO] [PDEngine] PD simulation context initialized successfully.
+[INFO] [EngineManager] All solvers initialized. Total: 1
+[INFO] [EngineManager] Entering Main Solver Phase
+[INFO] [EngineManager] Solving: PD
+[INFO] [PDEngine] Starting PD Engine Solve Phase...
+[INFO] [CentralDifference] Identified generic 2nd-order ODE couple: Displacement (u) <- Velocity (v) <- Acceleration (a)
+[INFO] [CentralDifference] Time loop: dt = 0.000000, totalSteps = 1000
+[INFO] [FieldManager] Added field 'ShapeTensorInv'.
+[INFO] [FieldManager] Added field 'VHorizon'.
+[INFO] [NOSB_Base] Computing InfluenceWeight + Shape Tensor Inverse (K^-1)...
+[INFO] [NOSB_Base] All NOSB base fields registered and Shape Tensor Inverse computed.
+[INFO] [FieldManager] Added field 'DeformationGradient'.
+[INFO] [FieldManager] Added field 'PK1Stress'.
+[INFO] [NOSB_M] Instantiated MechanicalStabilizer globally in Phase 0 using strategy: Zhang
+[INFO] --- Step 0 / 1000  |  Pure Compute: 0.000000s  |  Total: 0.000000s  |  Pure Speed: 0.000000 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=0 t=0.000000
+[INFO] Fetching model context for export: Bullet
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bullet\Result_20260330_151751\Disp_Result_step00000_t0.0000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bullet
+[INFO] --- Step 50 / 1000  |  Pure Compute: 8.911839s  |  Total: 8.942115s  |  Pure Speed: 5.610514 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=50 t=0.000000
+[INFO] Fetching model context for export: Bullet
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bullet\Result_20260330_151751\Disp_Result_step00050_t0.0000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bullet
+[INFO] --- Step 100 / 1000  |  Pure Compute: 17.737892s  |  Total: 17.816935s  |  Pure Speed: 5.637648 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=100 t=0.000001
+[INFO] Fetching model context for export: Bullet
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bullet\Result_20260330_151751\Disp_Result_step00100_t0.0000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bullet
+[INFO] --- Step 150 / 1000  |  Pure Compute: 26.826139s  |  Total: 26.963771s  |  Pure Speed: 5.591561 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=150 t=0.000001
+[INFO] Fetching model context for export: Bullet
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bullet\Result_20260330_151751\Disp_Result_step00150_t0.0000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bullet
+[INFO] --- Step 200 / 1000  |  Pure Compute: 33.602091s  |  Total: 33.782042s  |  Pure Speed: 5.952010 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=200 t=0.000002
+[INFO] Fetching model context for export: Bullet
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bullet\Result_20260330_151751\Disp_Result_step00200_t0.0000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bullet
+[INFO] --- Step 250 / 1000  |  Pure Compute: 40.395680s  |  Total: 40.616391s  |  Pure Speed: 6.188781 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=250 t=0.000002
+[INFO] Fetching model context for export: Bullet
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bullet\Result_20260330_151751\Disp_Result_step00250_t0.0000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bullet
+[INFO] --- Step 300 / 1000  |  Pure Compute: 47.250906s  |  Total: 47.510095s  |  Pure Speed: 6.349085 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=300 t=0.000003
+[INFO] Fetching model context for export: Bullet
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bullet\Result_20260330_151751\Disp_Result_step00300_t0.0000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bullet
+[INFO] --- Step 350 / 1000  |  Pure Compute: 55.063955s  |  Total: 55.368090s  |  Pure Speed: 6.356245 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=350 t=0.000003
+[INFO] Fetching model context for export: Bullet
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bullet\Result_20260330_151751\Disp_Result_step00350_t0.0000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bullet
+[INFO] --- Step 400 / 1000  |  Pure Compute: 63.679587s  |  Total: 64.035241s  |  Pure Speed: 6.281448 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=400 t=0.000003
+[INFO] Fetching model context for export: Bullet
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bullet\Result_20260330_151751\Disp_Result_step00400_t0.0000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bullet
+[INFO] --- Step 450 / 1000  |  Pure Compute: 72.252844s  |  Total: 72.647608s  |  Pure Speed: 6.228129 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=450 t=0.000004
+[INFO] Fetching model context for export: Bullet
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bullet\Result_20260330_151751\Disp_Result_step00450_t0.0000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bullet
+[INFO] --- Step 500 / 1000  |  Pure Compute: 81.277614s  |  Total: 81.725972s  |  Pure Speed: 6.151755 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=500 t=0.000004
+[INFO] Fetching model context for export: Bullet
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bullet\Result_20260330_151751\Disp_Result_step00500_t0.0000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bullet
+[INFO] --- Step 550 / 1000  |  Pure Compute: 90.974974s  |  Total: 91.468696s  |  Pure Speed: 6.045619 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=550 t=0.000005
+[INFO] Fetching model context for export: Bullet
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bullet\Result_20260330_151751\Disp_Result_step00550_t0.0000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bullet
+[INFO] --- Step 600 / 1000  |  Pure Compute: 99.078587s  |  Total: 99.620471s  |  Pure Speed: 6.055799 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=600 t=0.000005
+[INFO] Fetching model context for export: Bullet
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bullet\Result_20260330_151751\Disp_Result_step00600_t0.0000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bullet
+[INFO] --- Step 650 / 1000  |  Pure Compute: 105.948335s  |  Total: 106.537330s  |  Pure Speed: 6.135066 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=650 t=0.000006
+[INFO] Fetching model context for export: Bullet
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bullet\Result_20260330_151751\Disp_Result_step00650_t0.0000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bullet
+[INFO] --- Step 700 / 1000  |  Pure Compute: 113.126460s  |  Total: 113.764723s  |  Pure Speed: 6.187765 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=700 t=0.000006
+[INFO] Fetching model context for export: Bullet
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bullet\Result_20260330_151751\Disp_Result_step00700_t0.0000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bullet
+[INFO] --- Step 750 / 1000  |  Pure Compute: 122.767810s  |  Total: 123.458088s  |  Pure Speed: 6.109093 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=750 t=0.000007
+[INFO] Fetching model context for export: Bullet
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bullet\Result_20260330_151751\Disp_Result_step00750_t0.0000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bullet
+[INFO] --- Step 800 / 1000  |  Pure Compute: 132.023414s  |  Total: 132.767086s  |  Pure Speed: 6.059531 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=800 t=0.000007
+[INFO] Fetching model context for export: Bullet
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bullet\Result_20260330_151751\Disp_Result_step00800_t0.0000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bullet
+[INFO] --- Step 850 / 1000  |  Pure Compute: 140.825380s  |  Total: 141.611820s  |  Pure Speed: 6.035844 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=850 t=0.000007
+[INFO] Fetching model context for export: Bullet
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bullet\Result_20260330_151751\Disp_Result_step00850_t0.0000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bullet
+[INFO] --- Step 900 / 1000  |  Pure Compute: 148.624288s  |  Total: 149.462273s  |  Pure Speed: 6.055538 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=900 t=0.000008
+[INFO] Fetching model context for export: Bullet
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bullet\Result_20260330_151751\Disp_Result_step00900_t0.0000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bullet
+[INFO] --- Step 950 / 1000  |  Pure Compute: 156.561786s  |  Total: 157.442885s  |  Pure Speed: 6.067892 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=950 t=0.000008
+[INFO] Fetching model context for export: Bullet
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bullet\Result_20260330_151751\Disp_Result_step00950_t0.0000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bullet
+[INFO] --- Step 1000 / 1000  |  Pure Compute: 162.842398s  |  Total: 163.765668s  |  Pure Speed: 6.140907 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=1000 t=0.000009
+[INFO] Fetching model context for export: Bullet
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bullet\Result_20260330_151751\Disp_Result_step01000_t0.0000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bullet
+[INFO] [CentralDifference] Finished. Total: 163.806672s  |  Pure Compute avg: 0.162842 s/step
+[INFO] [PDEngine] PD Engine Solve Phase Finished.
+[INFO] [EngineManager] Main Solver Phase finished.
+[INFO] [EngineManager] Entering Post-processing Phase
+[INFO] [EngineManager] Outputting: PD
+[INFO] Starting data export process step=-1 t=0.000000
+[INFO] Fetching model context for export: Bullet
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bullet\Result_20260330_151751\Disp_Result_output.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bullet
+[INFO] [EngineManager] Post-processing Phase finished.
+[INFO] ==================================================
+[INFO]    GRPD Solver Engine Initialized                 
+[INFO] ==================================================
+[INFO] [EngineRegistry] Creating Engine instance: PD
+[INFO] [PDEngine] PD Engine instance created.
+[INFO] ========== Registered Types Summary ===========
+[INFO]   TimeIntegrator    : CentralDifference, Explicit, Staggered
+[INFO]   FieldRegistry     : DoubleField, IntField
+[INFO]   PhysicsFields     : Mechanical, Thermal
+[INFO]   BCRegistry        : BODY_FORCE, CONV, DISP, FLUX, PRESSURE, T, VELOCITY
+[INFO]   MaterialRegistry  : FourierThermalMat, LinearElasticMat
+[INFO]   KernelRegistry    : NOSB_M, NOSB_T
+[INFO]   EngineRegistry    : PD
+[INFO] ===============================================
+[INFO] [EngineManager] Initializing solver: PD
+[INFO] [PDEngine] Initializing PD simulation context...
+[INFO] Model pre-processing...
+[INFO] [InitModel] grpd path: D:\Project_C++\GRPD\Examples\Bullet\Bullet.grpd
+[INFO] [InitModel] model name: Bullet
+[INFO] Found existing .grpd mesh file at: D:\Project_C++\GRPD\Examples\Bullet\Bullet.grpd. Skipping generation.
+[INFO] [Context Manager] Formalized model name to: Bullet
+[INFO] [Context Manager] Model dimension set to: 3D
+[INFO] [ReaderRegistry] Creating reader for: .grpd (name: Bullet)
+[INFO] [InitModel] Reading mesh file: D:\Project_C++\GRPD\Examples\Bullet\Bullet.grpd (reader: .grpd)
+[INFO] [GrpdMeshReader] Reading file: D:\Project_C++\GRPD\Examples\Bullet\Bullet.grpd
+[INFO] [GrpdMeshReader] Entering *PARTICLE section (Line 1)
+[INFO] [GrpdMeshReader] Entering *LOAD section (Line 195801)
+[INFO] [GrpdMeshReader] ============================================
+[INFO] [GrpdMeshReader]    File reading complete!
+[INFO] [GrpdMeshReader]    Total particles: 195798
+[INFO] [GrpdMeshReader]    Total load entries: 4560
+[INFO] [GrpdMeshReader] ============================================
+[INFO] [InitModel] Total particles loaded for model Bullet: 195798
+[INFO]   Particle[0] Part=1 Pos=(-42.117999, -41.984290, 0.100000) Vol=0.008000
+[INFO]   Particle[1] Part=1 Pos=(-42.117999, -41.784290, 0.100000) Vol=0.008000
+[INFO]   Particle[2] Part=1 Pos=(-42.117999, -41.584290, 0.100000) Vol=0.008000
+[INFO]   Particle[3] Part=1 Pos=(-42.117999, -41.384290, 0.100000) Vol=0.008000
+[INFO]   Particle[4] Part=1 Pos=(-42.117999, -41.184290, 0.100000) Vol=0.008000
+[INFO] Entering Material Initialization Phase...
+[INFO] Instantiating material [1] of type: LinearElasticMat
+[INFO] [MaterialRegistry] Using factory to create material: Steel_Elastic (type: LinearElasticMat)
+[INFO] [Material] Attached DamageModel 'CriticalStretch' to material: Steel_Elastic
+[INFO] [LinearElasticMat] Material 'Steel_Elastic' is initialized. E = 191000.000000, nu = 0.300000, Density = 0.000000
+[INFO] [MaterialManager] Successfully added material instance: Steel_Elastic
+[INFO] Successfully registered material ID 1 (Steel_Elastic)
+[INFO] Assigning material pointers to particles...
+[INFO] Successfully assigned materials to 195798 particles.
+[INFO] Entering Field Registration Phase...
+[INFO] [FieldManager] Added field 'Displacement'.
+[INFO] [FieldManager] Added field 'Velocity'.
+[INFO] [FieldManager] Added field 'Acceleration'.
+[INFO] [MechanicalFields] Core fields registered: Displacement, Velocity, Acceleration.
+[INFO] [InitFields] Auto-registered PhysicsFields module: Mechanical
+[INFO] [FieldManager] Added field 'ID'.
+[INFO] [FieldManager] Added field 'PartID'.
+[INFO] [FieldManager] Added field 'MatID'.
+[INFO] [FieldManager] Added field 'Coords'.
+[INFO] [FieldManager] Added field 'Volume'.
+[INFO] [FieldManager] Resized all 8 fields for 195798 particles.
+[INFO] [MeshData] Populated particle geometry fields into FieldManager for 195798 particles.
+[INFO] [InitFields] All fields allocated for 195798 particles. Total fields: 8.
+[INFO] Entering Conditions Initialization Phase...
+[INFO] [ReaderRegistry] Creating reader for: .grpd (name: LoadReader)
+[INFO] [GrpdMeshReader] Reading file: D:\Project_C++\GRPD\Examples\Bullet\Bullet.grpd
+[INFO] [GrpdMeshReader] Entering *PARTICLE section (Line 1)
+[INFO] [GrpdMeshReader] Entering *LOAD section (Line 195801)
+[INFO] [GrpdMeshReader] ============================================
+[INFO] [GrpdMeshReader]    File reading complete!
+[INFO] [GrpdMeshReader]    Total particles: 195798
+[INFO] [GrpdMeshReader]    Total load entries: 4560
+[INFO] [GrpdMeshReader] ============================================
+[INFO] [InitConditions] Load statistics:
+[INFO]   - VELOCITY : 4560
+[INFO] [InitConditions] Boundary conditions initialization complete.
+[INFO] [InitNeighbors] Entering Neighbor Search Phase...
+[INFO] [InitNeighbors] Horizon radius: 0.603000
+[INFO] [NeighborList] Starting full-flat CSR search for 195798 particles, horizon = 0.603000
+[INFO] [NeighborList] Cell grid: 17 x 17 x 39 = 11271 cells
+[INFO] [NeighborList] Flat cell list built in 5.000114 ms
+[INFO] [NeighborList] Pass 1 (count) done in 36.999941 ms
+[INFO] [NeighborList] Total bonds: 22473366, Memory: 257 MB
+[INFO] [NeighborList] Pass 2 (fill) done in 111.999989 ms
+[INFO] [NeighborList] Max neighbors: 122
+[INFO] [NeighborList] Total time: 154.000044 ms
+[INFO] [FieldManager] Added field 'NeighborCount'.
+[INFO] [InitNeighbors] NeighborCount field populated for 195798 particles.
+[INFO] [FieldManager] Added field 'Damage'.
+[INFO] [InitNeighbors] Global Damage scalar field properly initialized to 0.0
+[INFO] [InitNeighbors] Neighbor search phase complete.
+[INFO] Initializing Material-specific Damage Models...
+[INFO] [CriticalStretch] Initialized. Critical Stretch = 0.020000
+[INFO] Material Damage Models initialized. Total Active Models: 1
+[INFO] Entering Solver Components Assembly Phase...
+[INFO] Building Time Integrator: CentralDifference
+[INFO] Time Integrator configured.
+[INFO] Building Space Kernel: NOSB_M
+[INFO] [NOSB_Base] Applied KernelWeightType: Linear
+[INFO] [NOSB_Base] Applied ZeroEnergyG0: 0.100000
+[INFO] [NOSB_Base] Applied ZeroEnergyMethod string: Zhang
+[INFO] Space Kernel 'NOSB_M' configured.
+[INFO] Total kernels assembled: 1
+[INFO] [PDEngine] PD simulation context initialized successfully.
+[INFO] [EngineManager] All solvers initialized. Total: 1
+[INFO] [EngineManager] Entering Main Solver Phase
+[INFO] [EngineManager] Solving: PD
+[INFO] [PDEngine] Starting PD Engine Solve Phase...
+[INFO] [CentralDifference] Identified generic 2nd-order ODE couple: Displacement (u) <- Velocity (v) <- Acceleration (a)
+[INFO] [CentralDifference] Time loop: dt = 0.000000, totalSteps = 1000
+[INFO] [FieldManager] Added field 'ShapeTensorInv'.
+[INFO] [FieldManager] Added field 'VHorizon'.
+[INFO] [NOSB_Base] Computing InfluenceWeight + Shape Tensor Inverse (K^-1)...
+[INFO] [NOSB_Base] All NOSB base fields registered and Shape Tensor Inverse computed.
+[INFO] [FieldManager] Added field 'DeformationGradient'.
+[INFO] [FieldManager] Added field 'PK1Stress'.
+[INFO] [NOSB_M] Instantiated MechanicalStabilizer globally in Phase 0 using strategy: Zhang
+[INFO] --- Step 0 / 1000  |  Pure Compute: 0.000000s  |  Total: 0.000000s  |  Pure Speed: 0.000000 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=0 t=0.000000
+[INFO] Fetching model context for export: Bullet
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bullet\Result_20260330_152311\Disp_Result_step00000_t0.0000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bullet
+[INFO] --- Step 50 / 1000  |  Pure Compute: 6.390821s  |  Total: 6.428872s  |  Pure Speed: 7.823721 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=50 t=0.000000
+[INFO] Fetching model context for export: Bullet
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bullet\Result_20260330_152311\Disp_Result_step00050_t0.0000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bullet
+[INFO] --- Step 100 / 1000  |  Pure Compute: 12.525233s  |  Total: 12.600699s  |  Pure Speed: 7.983884 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=100 t=0.000001
+[INFO] Fetching model context for export: Bullet
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bullet\Result_20260330_152311\Disp_Result_step00100_t0.0000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bullet
+[INFO] --- Step 150 / 1000  |  Pure Compute: 18.714827s  |  Total: 18.837347s  |  Pure Speed: 8.015035 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=150 t=0.000001
+[INFO] Fetching model context for export: Bullet
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bullet\Result_20260330_152311\Disp_Result_step00150_t0.0000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bullet
+[INFO] --- Step 200 / 1000  |  Pure Compute: 24.910084s  |  Total: 25.079500s  |  Pure Speed: 8.028877 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=200 t=0.000002
+[INFO] Fetching model context for export: Bullet
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bullet\Result_20260330_152311\Disp_Result_step00200_t0.0000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bullet
+[INFO] --- Step 250 / 1000  |  Pure Compute: 32.621422s  |  Total: 32.841934s  |  Pure Speed: 7.663676 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=250 t=0.000002
+[INFO] Fetching model context for export: Bullet
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bullet\Result_20260330_152311\Disp_Result_step00250_t0.0000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bullet
+[INFO] --- Step 300 / 1000  |  Pure Compute: 40.481685s  |  Total: 40.752091s  |  Pure Speed: 7.410759 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=300 t=0.000003
+[INFO] Fetching model context for export: Bullet
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bullet\Result_20260330_152311\Disp_Result_step00300_t0.0000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bullet
+[INFO] --- Step 350 / 1000  |  Pure Compute: 49.073928s  |  Total: 49.385421s  |  Pure Speed: 7.132097 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=350 t=0.000003
+[INFO] Fetching model context for export: Bullet
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bullet\Result_20260330_152311\Disp_Result_step00350_t0.0000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bullet
+[INFO] --- Step 400 / 1000  |  Pure Compute: 57.460047s  |  Total: 57.812807s  |  Pure Speed: 6.961359 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=400 t=0.000003
+[INFO] Fetching model context for export: Bullet
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bullet\Result_20260330_152311\Disp_Result_step00400_t0.0000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bullet
+[INFO] --- Step 450 / 1000  |  Pure Compute: 65.797584s  |  Total: 66.201694s  |  Pure Speed: 6.839157 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=450 t=0.000004
+[INFO] Fetching model context for export: Bullet
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bullet\Result_20260330_152311\Disp_Result_step00450_t0.0000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bullet
+[INFO] --- Step 500 / 1000  |  Pure Compute: 74.217426s  |  Total: 74.672437s  |  Pure Speed: 6.736962 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=500 t=0.000004
+[INFO] Fetching model context for export: Bullet
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bullet\Result_20260330_152311\Disp_Result_step00500_t0.0000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bullet
+[INFO] --- Step 550 / 1000  |  Pure Compute: 82.877696s  |  Total: 83.383064s  |  Pure Speed: 6.636285 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=550 t=0.000005
+[INFO] Fetching model context for export: Bullet
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bullet\Result_20260330_152311\Disp_Result_step00550_t0.0000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bullet
+[INFO] --- Step 600 / 1000  |  Pure Compute: 90.016859s  |  Total: 90.576746s  |  Pure Speed: 6.665418 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=600 t=0.000005
+[INFO] Fetching model context for export: Bullet
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bullet\Result_20260330_152311\Disp_Result_step00600_t0.0000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bullet
+[INFO] --- Step 650 / 1000  |  Pure Compute: 96.959845s  |  Total: 97.562846s  |  Pure Speed: 6.703806 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=650 t=0.000006
+[INFO] Fetching model context for export: Bullet
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bullet\Result_20260330_152311\Disp_Result_step00650_t0.0000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bullet
+[INFO] --- Step 700 / 1000  |  Pure Compute: 104.285977s  |  Total: 104.933766s  |  Pure Speed: 6.712312 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=700 t=0.000006
+[INFO] Fetching model context for export: Bullet
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bullet\Result_20260330_152311\Disp_Result_step00700_t0.0000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bullet
+[INFO] --- Step 750 / 1000  |  Pure Compute: 113.194794s  |  Total: 113.894310s  |  Pure Speed: 6.625746 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=750 t=0.000007
+[INFO] Fetching model context for export: Bullet
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bullet\Result_20260330_152311\Disp_Result_step00750_t0.0000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bullet
+[INFO] --- Step 800 / 1000  |  Pure Compute: 122.430898s  |  Total: 123.177915s  |  Pure Speed: 6.534298 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=800 t=0.000007
+[INFO] Fetching model context for export: Bullet
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bullet\Result_20260330_152311\Disp_Result_step00800_t0.0000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bullet
+[INFO] --- Step 850 / 1000  |  Pure Compute: 129.256243s  |  Total: 130.085335s  |  Pure Speed: 6.576085 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=850 t=0.000007
+[INFO] Fetching model context for export: Bullet
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bullet\Result_20260330_152311\Disp_Result_step00850_t0.0000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bullet
+[INFO] --- Step 900 / 1000  |  Pure Compute: 135.544059s  |  Total: 136.414504s  |  Pure Speed: 6.639907 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=900 t=0.000008
+[INFO] Fetching model context for export: Bullet
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bullet\Result_20260330_152311\Disp_Result_step00900_t0.0000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bullet
+[INFO] --- Step 950 / 1000  |  Pure Compute: 142.486941s  |  Total: 143.398320s  |  Pure Speed: 6.667278 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=950 t=0.000008
+[INFO] Fetching model context for export: Bullet
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bullet\Result_20260330_152311\Disp_Result_step00950_t0.0000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bullet
+[INFO] --- Step 1000 / 1000  |  Pure Compute: 150.765034s  |  Total: 151.743610s  |  Pure Speed: 6.632838 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=1000 t=0.000009
+[INFO] Fetching model context for export: Bullet
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bullet\Result_20260330_152311\Disp_Result_step01000_t0.0000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bullet
+[INFO] [CentralDifference] Finished. Total: 151.801463s  |  Pure Compute avg: 0.150765 s/step
+[INFO] [PDEngine] PD Engine Solve Phase Finished.
+[INFO] [EngineManager] Main Solver Phase finished.
+[INFO] [EngineManager] Entering Post-processing Phase
+[INFO] [EngineManager] Outputting: PD
+[INFO] Starting data export process step=-1 t=0.000000
+[INFO] Fetching model context for export: Bullet
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bullet\Result_20260330_152311\Disp_Result_output.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bullet
+[INFO] [EngineManager] Post-processing Phase finished.

@@ -62,6 +62,11 @@ public:
   /// 注意：后续应结合Particle对象的属性（如状态变量state_vars等）传入进行计算
   virtual void evaluate() = 0;
 
+  /// @brief 提交状态变量（ADR 载荷步收敛后调用）
+  /// @details 将试探性状态变量（State_Trial）刻录为已收敛的真实状态（State_Old）。
+  ///          默认空实现。路径依赖材料（如 J2 塑性、损伤演化）必须重写此方法。
+  virtual void commitState() {}
+
   /// @brief 获取挂载在此材料下的损伤评估模型
   PDCommon::Damage::DamageModel* getDamageModel() const;
 

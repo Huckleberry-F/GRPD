@@ -1,0 +1,97 @@
+#==============================================================================
+# GRPD 全局主配置文件 - 力学 NOSB 测试用例 (2D 纯平面位移)
+# 单位制：N-mm-tonne-s
+#   长度: mm
+#   质量: tonne (1e3 kg)
+#   时间: s
+#   力:   N (= tonne·mm/s²)
+#   应力: MPa (= N/mm²)
+# ==============================================================================
+
+# 1. 全局设置
+Assembly: {}
+
+Parts:
+  - PartID: 1
+    MatID: 1
+    Dimension: 3
+    Thickness: 1.0
+    Source: "380_acp_bullet.stl" # 已经在当前 Bullet 目录下，直接引用即可
+    RepairMesh: false
+    dx: 0.2 # 保持网格尺度一致
+    Scale: 1.0
+
+# 3. 边界条件
+BoundaryConditions:
+  - BcID: 1
+    Name: "Impact_Front"
+    # 380 ACP 子弹此时沿 Z 轴摆放 (Z 从 0 到 23.5)。我们假设 Z=23.5 是前端或后端。
+    # 抓取 Z > 22.0 的尖端区域，施加向 -Z 方向的超高速（压缩）模拟狠狠撞向坚硬阻碍物
+    # X, Y 方向自由 (1.0e20)
+    Box: [-999.0, 999.0, -999.0, 999.0, 22.0, 999.0]
+    Type: "VELOCITY"
+    Value: [1.0e20, 1.0e20, -300000.0] # Z 方向强压缩 300 m/s
+
+# 4. 预置裂纹 (PreCracks) - 模拟空尖弹 (JHP) 弹头顶端的十字预制引导槽
+# 弹体截面中心坐标约在 X=-37.2, Y=-41.1。我们仅在弹头处（Z=18.0 至 25.0）设置切割槽
+PreCracks:
+  - Type: "QuadCrack"
+    # 十字引导槽 1：沿 X 轴劈穿弹尖
+    V1: [-43.0, -41.1, 18.0]
+    V2: [-31.0, -41.1, 18.0]
+    V3: [-31.0, -41.1, 25.0]
+    V4: [-43.0, -41.1, 25.0]
+  - Type: "QuadCrack"
+    # 十字引导槽 2：沿 Y 轴劈穿弹尖
+    V1: [-37.2, -47.0, 18.0]
+    V2: [-37.2, -35.0, 18.0]
+    V3: [-37.2, -35.0, 25.0]
+    V4: [-37.2, -47.0, 25.0]
+
+# 5. 材质物理属性 (钢材的线弹性本构)
+Materials:
+  - MatID: 1
+    Name: "Steel_Elastic"
+    Type: "LinearElasticMat"
+    Density: 8.0e-9 # tonne/mm³
+    YoungsModulus: 1.91e5 # MPa (N/mm²)
+    PoissonsRatio: 0.3 # 泊松比
+    # 断裂损伤准则
+    Damage:
+      Type: "CriticalStretch"
+      Critical_Stretch: 0.02 # 超过此伸长率的键将动态断裂
+
+# 5. 求解器控制
+Solver:
+  Engine: "PD"
+  Type: "Mechanical" # [关键] 切换为力学引擎
+  Kernel: "NOSB_M"
+  TimeIntegrator: "CentralDifference" # [关键] 使用中心差分法
+  TotalTime: 8.7e-6 # 总时长 0.1 s
+  TimeStep_dt: 8.7e-9 # 中心差分的显式时间步(需很小以满足 CFL)
+  OutputInterval: 50 # 每 100 步输出一帧
+  OMP_Threads: 8
+  Horizon: 0.603 # 邻域半径 3.015*dx
+  KernelWeightType: "Linear"
+  ZeroEnergyG0: 0.1 # 零能模式修正系数
+  ZeroEnergyMethod: "Zhang" # [关键] 开启 Silling 修正
+
+# 7. 输出设置
+Writer:
+  Name: "Disp_Result"
+  Type: "binary"
+  Variables:
+    - Name: "PartID"
+      Dimension: 1
+    - Name: "Volume"
+      Dimension: 1
+    - Name: "Displacement"
+      Dimension: 3
+    - Name: "Velocity"
+      Dimension: 3
+    - Name: "DeformationGradient"
+      Dimension: 9
+    - Name: "Damage" # [关键] 输出损伤场以便 ParaView 渲染裂纹
+      Dimension: 1
+    - Name: "PK1Stress" # [关键] 输出损伤场以便 ParaView 渲染裂纹
+      Dimension: 9

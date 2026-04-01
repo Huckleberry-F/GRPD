@@ -8,6 +8,7 @@ add_library(Integration_Obj OBJECT
     src/TimeIntegratorRegistry.cpp
     src/CentralDifference.cpp
     src/StaggeredIntegrator.cpp
+    src/ADR_Integrator.cpp
 )
 
 target_sources(Integration_Obj PRIVATE
@@ -16,6 +17,7 @@ target_sources(Integration_Obj PRIVATE
     include/TimeIntegratorRegistry.h
     include/CentralDifference.h
     include/StaggeredIntegrator.h
+    include/ADR_Integrator.h
 )
 
 target_include_directories(Integration_Obj PUBLIC include)
