@@ -62,6 +62,7 @@ private:
   int maxPseudoSteps_ = 5000; ///< 每个 Substep 内允许的最大迭代数
   double dispTol_ = 1.0e-6;   ///< 位移收敛阈值 TOL2
   double forceTol_ = 1.0e-4;  ///< 力平衡收敛阈值 TOL3
+  int logInterval_ = 1000;    ///< 日志打印步频
 };
 
 } // namespace Src::Integration

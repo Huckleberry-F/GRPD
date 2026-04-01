@@ -39,14 +39,6 @@ void CentralDifference::run(PDCommon::Core::PDContext &ctx,
     targets.insert(targets.end(), t.begin(), t.end());
   }
 
-  // 定义泛型二阶场指针结构体
-  struct SecondOrderTarget {
-    std::string uName, vName, aName;
-    double *uPtr;
-    double *vPtr;
-    double *aPtr;
-    size_t totalComponents;
-  };
   std::vector<SecondOrderTarget> soTargets;
 
   // 泛型拓扑检测：自动寻找满足二阶常微分方程依赖链的 target 对
@@ -61,13 +53,23 @@ void CentralDifference::run(PDCommon::Core::PDContext &ctx,
         auto *aField = fieldManager.getFieldAs<double>(ta.rateField);
 
         if (uField && vField && aField) {
-            soTargets.push_back({
-                tb.primaryField, ta.primaryField, ta.rateField,
-                uField->dataPtr(), vField->dataPtr(), aField->dataPtr(),
-                numParticles * tb.dimension
-            });
-            LOG_INFO("[CentralDifference] Identified generic 2nd-order ODE couple: " 
-                     + tb.primaryField + " (u) <- " + ta.primaryField + " (v) <- " + ta.rateField + " (a)");
+            bool alreadyAdded = false;
+            for (const auto &existing : soTargets) {
+              if (existing.uPtr == uField->dataPtr()) {
+                alreadyAdded = true;
+                break;
+              }
+            }
+            if (!alreadyAdded) {
+                soTargets.push_back({
+                    tb.primaryField, ta.primaryField, ta.rateField,
+                    uField->dataPtr(), vField->dataPtr(), aField->dataPtr(),
+                    numParticles * tb.dimension,
+                    tb.dimension
+                });
+                LOG_INFO("[CentralDifference] Identified generic 2nd-order ODE couple: " 
+                         + tb.primaryField + " (u) <- " + ta.primaryField + " (v) <- " + ta.rateField + " (a)");
+            }
         }
       }
     }

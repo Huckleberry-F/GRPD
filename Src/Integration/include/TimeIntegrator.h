@@ -58,6 +58,23 @@ public:
   virtual std::string getName() const = 0;
 
 protected:
+  struct FirstOrderTarget {
+    std::string primaryName, rateName;
+    double *primaryPtr;
+    double *ratePtr;
+    size_t totalComponents;
+    int dimension;
+  };
+
+  struct SecondOrderTarget {
+    std::string uName, vName, aName;
+    double *uPtr;
+    double *vPtr;
+    double *aPtr;
+    size_t totalComponents;
+    int dimension;
+  };
+
   double dt_ = 1.0;
   double totalTime_ = 100.0;
   int outputInterval_ = 10;

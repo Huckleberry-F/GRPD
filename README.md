@@ -300,7 +300,14 @@ General-Peridynamics/
 
 ## 📌 版本更新日志 (Changelog)
 
-### v2.4 — 显式准静态自适应动态弛豫积分器体系 (ADR Quasi-Static Solver) (当前版本)
+### v2.5 — 高阶非线性求解重构与 ADR 极速优化 (Advanced ADR Optimization)
+
+* **反多核实例重叠计算防御 (Multi-Kernel Defenses)**: 在时间积分系统底层确立了更安全的结构体内存查重防卫机制（提炼提取了 `FirstOrderTarget` 与 `SecondOrderTarget` 到积分基类 `TimeIntegrator`）。根除了相同的物理场被复数同类型求解模块（例如同时启动数个独立区域的非常规态基核）带来的重复积分迭代崩溃，赋能全模块泛用大耦合。
+* **残差阻尼归一化基准 (Incremental Adaptive Damping)**: 在自适应动态弛豫核心 (`ADR_Integrator`) 内引入跨 Substep 的 `dispBase` 基准记录体系。彻底消除累加多 LoadStep 的物理大变形场景下，因为总体位移分母过度膨胀导致的结构动力消能失活 Bug。
+* **极速热核分支消除 (Zero-Branch OMP execution)**: 应用乘法平移取代指令中断判定语句。在热点并行 `schedule(static)` 内核内通过智能三元赋值清剿了基于机器截断精度的防除零发散检测分支 (`if(abs(v)>1e-16)`），让底层指令寄存器和 L1 Cache 预加载管线得以满负荷发挥并发优势。
+* **显式准静态高级架构确立 (Explicit Quasi-Static Architecture Blueprint)**: 提炼并编制出了《基于子步分段的显式动态松弛跟踪法》设计大纲 (`Docs/ADR_Substepping_Explicit_Relaxation_Design.md`)。为 GRPD 引入连续极小增量、内层实时径向返回及本构状态瞬间固化的重型非线性暴力求解流派确立了实施范本，破除了传统牛顿法根找不着引发全步长丢弃的时间诅咒，为强硬化与破坏准静态定常化铺平道路。
+
+### v2.4 — 显式准静态自适应动态弛豫积分器体系 (ADR Quasi-Static Solver)
 
 * **自适应动态弛豫核心 (Adaptive Dynamic Relaxation)**: 全新引入了基于速度 Verlet / Leapfrog 框架的显式准静态时间推进器 (`ADR_Integrator`)。通过计算内力残差与位移增量内积，自动感知系统振荡并投射最优的衰减阻尼系数 ($cn$)。实现了在显式并行框架内完美过滤激波、极高稳定性地模拟大变形与断裂准静态加载。
 * **ANSYS 风格阶跃/坡道加载管线 (KBC Load Control)**: 深度对齐顶级商软底层的载荷调度内核。在积分域外包裹了 `LoadStep` + `NumSubsteps` 复合架构，且完美还原了 `KBC=0` (Ramp 坡道平滑爬升) 与 `KBC=1` (Step 阶跃突加) 控制逻辑，`BCManager` 实现了 `loadFactor` 分步加压支持。

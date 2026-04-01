@@ -38,12 +38,7 @@ void ExplicitEuler::run(PDCommon::Core::PDContext &ctx,
   // =================================================================
   // 汇总所有内核声明的积分目标场（多核场合并）
   // =================================================================
-  struct FieldPtrs {
-    double *primaryPtr;
-    double *ratePtr;
-    size_t totalComponents; // numParticles * dimension
-  };
-  std::vector<FieldPtrs> fieldPtrs;
+  std::vector<FirstOrderTarget> fieldPtrs;
   std::vector<std::string> rateFieldNames; // 率场名称列表（供 evaluateForces 清零）
 
   for (auto &kernel : kernels) {
@@ -59,9 +54,20 @@ void ExplicitEuler::run(PDCommon::Core::PDContext &ctx,
         return;
       }
 
-      fieldPtrs.push_back({primaryField->dataPtr(), rateField->dataPtr(),
-                           numParticles * target.dimension});
-      rateFieldNames.push_back(target.rateField);
+      bool alreadyAdded = false;
+      for (const auto &existing : fieldPtrs) {
+        if (existing.primaryPtr == primaryField->dataPtr()) {
+          alreadyAdded = true;
+          break;
+        }
+      }
+
+      if (!alreadyAdded) {
+        fieldPtrs.push_back({target.primaryField, target.rateField,
+                             primaryField->dataPtr(), rateField->dataPtr(),
+                             numParticles * static_cast<size_t>(target.dimension), target.dimension});
+        rateFieldNames.push_back(target.rateField);
+      }
     }
   }
 
