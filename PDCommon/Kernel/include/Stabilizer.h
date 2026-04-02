@@ -28,13 +28,17 @@ public:
   /// @brief 设置稳定器缩放系数 G0（通常由 YAML 指定参数控制总惩罚权重）
   void setG0(double g0) { g0_ = g0; }
 
+  /// @brief 设置质量缩放因子（与主 Kernel 保持一致）
+  void setMassScaleFactor(double factor) { massScaleFactor_ = factor; }
+
   /// @brief 获取稳定器名称
   const std::string &getName() const { return name_; }
   void setName(const std::string &name) { name_ = name; }
 
 protected:
-  std::string name_; ///< 稳定器注册名
-  double g0_{1.0};   ///< 零能修正缩放系数 G0
+  std::string name_;              ///< 稳定器注册名
+  double g0_{1.0};                ///< 零能修正缩放系数 G0
+  double massScaleFactor_{1.0};   ///< 质量缩放因子（与主 Kernel 同步）
 };
 
 } // namespace PDCommon::Kernel

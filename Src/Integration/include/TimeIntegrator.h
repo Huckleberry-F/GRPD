@@ -78,6 +78,7 @@ protected:
   double dt_ = 1.0;
   double totalTime_ = 100.0;
   int outputInterval_ = 10;
+  bool autoCalcDt_ = true; ///< 是否自动计算时间步（用户设 TimeStep_dt 后关闭）
 
   /// @brief 通用算力流程：清零率场 → 施加 Neumann 源项 → 计算内力
   /// @param ctx                PD 仿真上下文
@@ -86,6 +87,30 @@ protected:
   void evaluateForces(PDCommon::Core::PDContext &ctx,
                       std::vector<std::unique_ptr<PDKernel>> &kernels,
                       const std::vector<std::string> &rateFieldsToClear);
+
+  /// @brief 从 Kernel 的注册列表中自动解算和匹配二阶 ODE 系统（如 U -> V -> A）
+  /// @param kernels             所有算子内核集合
+  /// @param ctx                 用来查询实际场指针的上下文
+  /// @param out_soTargets       [Output] 匹配出的二阶组
+  /// @param out_accFieldNames   [Output] 需要被定期清零和重置的高阶率场（通常是加速度）
+  void extractSecondOrderTargets(const std::vector<std::unique_ptr<PDKernel>> &kernels,
+                                 PDCommon::Core::PDContext &ctx,
+                                 std::vector<SecondOrderTarget> &out_soTargets,
+                                 std::vector<std::string> &out_accFieldNames);
+
+  /// @brief 从 Kernel 注册列表中提取一阶系统依赖 (如 T -> T_rate)
+  void extractFirstOrderTargets(const std::vector<std::unique_ptr<PDKernel>> &kernels,
+                                PDCommon::Core::PDContext &ctx,
+                                std::vector<FirstOrderTarget> &out_foTargets,
+                                std::vector<std::string> &out_rateFieldNames);
+
+  /// @brief 基于 CFL 条件自动计算时间步长（通用方法）
+  /// @param ctx            PD 仿真上下文
+  /// @param massScale      质量缩放因子（动力学=1.0，ADR=用户设定值）
+  /// @param safetyFactor   CFL 安全系数（默认 0.8）
+  void computeCFLTimestep(PDCommon::Core::PDContext &ctx,
+                          double massScale = 1.0,
+                          double safetyFactor = 0.8);
 
   TimeIntegrator() = default; // 只允许子类构造
 };

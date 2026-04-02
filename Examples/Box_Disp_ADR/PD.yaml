@@ -1,0 +1,97 @@
+#==============================================================================
+# GRPD 全局主配置文件 - ADR 准静态拉伸测试 (2D 平面位移)
+# 单位制：N-mm-tonne-s
+#   长度: mm
+#   质量: tonne (1e3 kg)
+#   时间: s
+#   力:   N (= tonne·mm/s²)
+#   应力: MPa (= N/mm²)
+# ==============================================================================
+
+# 1. 全局设置
+Assembly: {}
+
+# 2. 几何模型：2D 矩形平面 100mm × 50mm
+Parts:
+  - PartID: 1
+    MatID: 1
+    Dimension: 2 # 2 维平面问题
+    Length: 100.0 # X 方向长度 100mm
+    Width: 50.0 # Y 方向宽度 50mm
+    Thickness: 0.5 # 2D 虚拟厚度
+    Offset: [0.0, 0.0, 0.0]
+    dx: 0.5 # 粗网格，200×100=20000 个粒子
+
+# 3. 边界条件
+# 左端 (X < 0.01) 完全固定，右端 (X > 99.99) 施加 X 方向位移 1mm
+BoundaryConditions:
+  - BcID: 1
+    Name: "Fixed_Left"
+    Box: [-999.0, 1.0, -999.0, 999.0, -999.0, 999.0]
+    Type: "DISP"
+    Value: [0.0, 0.0, 1.0e20] # X,Y 方向固定为 0，Z 自由
+
+  - BcID: 2
+    Name: "Pull_Right"
+    Box: [99.0, 999.0, -999.0, 999.0, -999.0, 999.0]
+    Type: "DISP"
+    Value: [1.0, 1.0e20, 1.0e20] # X 方向施加 1mm 位移（ADR 按 loadFactor 缩放），Y/Z 自由
+
+# 4. 预置裂纹 (在盒子正下方中心处开一条垂直切口，改用现有的 QuadCrack 平面切断法)
+PreCracks:
+  - CrackID: 1
+    Type: "QuadCrack"
+    # 用四个点定义一个跨越 Z 轴的实体平面，正好切断 X=50 的位置
+    V1: [50.0, -10.0, -10.0]
+    V2: [50.0, -10.0, 10.0]
+    V3: [50.0, 25.0, 10.0]
+    V4: [50.0, 25.0, -10.0]
+
+# 5. 材质物理属性 (钢材线弹性)
+Materials:
+  - MatID: 1
+    Name: "Steel_Elastic"
+    Type: "LinearElasticMat"
+    Density: 8.0e-9 # tonne/mm³ (约 8000 kg/m³)
+    YoungsModulus: 2.0e5 # MPa (200 GPa)
+    PoissonsRatio: 0.3
+
+# 6. 求解器控制
+Solver:
+  Engine: "PD"
+  Type: "Mechanical"
+  Kernel: "NOSB_M"
+  TimeIntegrator: "ADR" # 准静态 ADR 积分器
+  # dt 由 CFL 自动计算，无需手动设置
+  NumLoadSteps: 1 # 1 个载荷大步
+  NumSubsteps: 10 # 分 10 个增量子步加载
+  KBC: 0 # Ramp 坡道加载
+  MaxPseudoSteps: 20000 # 每个子步最大迭代 20000 次
+  MassScaleFactor: 1.25e8 # 质量缩放因子
+  RampWaveRatio: 3.0 # 新增：测试用的爬坡时间为 3.0 倍物理衰减区间
+  DispTol: 1.0e-6 # 位移收敛阈值
+  ForceTol: 1.0e-4 # 力残差收敛阈值
+  OutputInterval: 2000 # 每 1000 伪步打印一次日志
+  OMP_Threads: 8
+  Horizon: 1.6075 # 3.015 * dx
+  KernelWeightType: "Linear"
+  ZeroEnergyG0: 1.0
+  ZeroEnergyMethod: "Zhang"
+
+# 7. 输出设置
+Writer:
+  Name: "ADR_Disp_Result"
+  Type: "binary"
+  Variables:
+    - Name: "PartID"
+      Dimension: 1
+    - Name: "Volume"
+      Dimension: 1
+    - Name: "Displacement"
+      Dimension: 3
+    - Name: "Velocity"
+      Dimension: 3
+    - Name: "DeformationGradient"
+      Dimension: 9
+    - Name: "PK1Stress"
+      Dimension: 9

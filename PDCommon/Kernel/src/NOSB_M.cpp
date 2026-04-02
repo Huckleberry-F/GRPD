@@ -293,7 +293,7 @@ void NOSB_M::preCompute(PDCommon::Core::PDContext &ctx) {
         particles[i].getMaterial());
     if (mat) {
       matArrCache_[i] = mat;
-      rhoArrCache_[i] = mat->getDensity();
+      rhoArrCache_[i] = mat->getDensity() * massScaleFactor_;
     }
   }
   auto &reg = FieldRegistry::getInstance();
@@ -337,6 +337,7 @@ void NOSB_M::preCompute(PDCommon::Core::PDContext &ctx) {
 
   if (stabilizer_) {
     stabilizer_->setG0(zeroEnergyG0_);
+    stabilizer_->setMassScaleFactor(massScaleFactor_);
     stabilizer_->preCompute(ctx);
     LOG_INFO("[NOSB_M] Instantiated MechanicalStabilizer globally in Phase 0 "
              "using strategy: " +

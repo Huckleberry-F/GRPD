@@ -125,6 +125,9 @@ void VelocityBC::apply() {
     if (applyDirs_[d]) {
       // 强制设定速度值（Dirichlet 约束）
       velocity_->set(particleId_, velVal_[d], d);
+      // 恒速边界加速度需要强杀阻断积分
+      if (acceleration_)
+        acceleration_->set(particleId_, 0.0, d);
     }
   }
 }
@@ -136,6 +139,9 @@ void VelocityBC::apply(double loadFactor) {
     if (applyDirs_[d]) {
       // 按比例施加速度约束：v = velVal * loadFactor
       velocity_->set(particleId_, velVal_[d] * loadFactor, d);
+      // 恒速边界加速度需要强杀阻断积分
+      if (acceleration_)
+        acceleration_->set(particleId_, 0.0, d);
     }
   }
 }

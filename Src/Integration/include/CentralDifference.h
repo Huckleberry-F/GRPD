@@ -39,6 +39,14 @@ public:
            std::function<void(int, double)> outputCallback) override;
 
   std::string getName() const override { return "CentralDifference"; }
+
+private:
+  // --- 内部重构：抽象出的算法推演流水线部件 ---
+  std::vector<SecondOrderTarget> soTargets_;
+  std::vector<std::string> accFieldNames_;
+
+  void updateKinematicsStep1(double dt);
+  void updateKinematicsStep2(double dt);
 };
 
 } // namespace Src::Integration

@@ -58,7 +58,7 @@ void MechanicalSillingStabilizer::preCompute(PDContext &ctx) {
     auto *mat = dynamic_cast<MechanicalMaterial *>(particles[i].getMaterial());
     if (mat) {
       bulkArr_[i] = mat->getBulkModulus();
-      rhoArr_[i] = mat->getDensity();
+      rhoArr_[i] = mat->getDensity() * massScaleFactor_;
     }
   }
 }
@@ -170,7 +170,7 @@ void MechanicalWanStabilizer::preCompute(PDContext &ctx) {
         nu = 0.4999;
       lambdaArr_[i] = (E * nu) / ((1.0 + nu) * (1.0 - 2.0 * nu));
       muArr_[i] = E / (2.0 * (1.0 + nu));
-      rhoArr_[i] = mat->getDensity();
+      rhoArr_[i] = mat->getDensity() * massScaleFactor_;
     }
   }
 
@@ -303,7 +303,7 @@ void MechanicalZhangStabilizer::preCompute(PDContext &ctx) {
         nu = 0.4999;
       lambdaArr_[i] = (E * nu) / ((1.0 + nu) * (1.0 - 2.0 * nu));
       muArr_[i] = E / (2.0 * (1.0 + nu));
-      rhoArr_[i] = mat->getDensity();
+      rhoArr_[i] = mat->getDensity() * massScaleFactor_;
     }
   }
 }

@@ -278,7 +278,7 @@ void NOSB_T::preCompute(PDCommon::Core::PDContext &ctx) {
         particles[i].getMaterial());
     if (mat) {
       matArrCache_[i] = mat;
-      rhoArrCache_[i] = mat->getDensity();
+      rhoArrCache_[i] = mat->getDensity() * massScaleFactor_;
       cpArrCache_[i] = mat->getHeatCapacity();
       kArrCache_[i] = mat->getConductivity();
     }
@@ -313,6 +313,7 @@ void NOSB_T::preCompute(PDCommon::Core::PDContext &ctx) {
 
   if (stabilizer_) {
     stabilizer_->setG0(zeroEnergyG0_);
+    stabilizer_->setMassScaleFactor(massScaleFactor_);
     stabilizer_->preCompute(ctx);
     LOG_INFO("[NOSB_T] Instantiated ThermalStabilizer globally in Phase 0 "
              "using strategy: " +

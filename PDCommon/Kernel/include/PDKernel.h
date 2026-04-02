@@ -78,10 +78,22 @@ public:
   /// @brief 返回此核心需要时间积分的场列表
   virtual std::vector<IntegrationTarget> getIntegrationTargets() const = 0;
 
+  // -----------------------------------------------------------------------
+  // 质量缩放 (Mass Scaling) 接口 —— ADR 准静态积分器使用
+  // -----------------------------------------------------------------------
+
+  /// @brief 设置质量缩放因子（ADR 积分器在 preCompute 前调用）
+  /// @param factor 质量放大倍数，默认 1.0（不缩放）
+  void setMassScaleFactor(double factor) { massScaleFactor_ = factor; }
+
+  /// @brief 获取当前质量缩放因子
+  double getMassScaleFactor() const { return massScaleFactor_; }
+
 protected:
   PDKernel() = default; // 只允许子类构造
   
   InfluenceKernelType kernelType_{InfluenceKernelType::Constant};
+  double massScaleFactor_{1.0}; ///< 质量缩放因子（ADR 用，默认不缩放）
 
   /// @brief 获取指定核函数（影响函数）的权重值
   inline double GetInfluenceWeight(double xi, double horizon,

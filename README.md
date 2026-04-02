@@ -300,6 +300,12 @@ General-Peridynamics/
 
 ## 📌 版本更新日志 (Changelog)
 
+### v3.0 — 终极组件化与伪代码级积分架构重构 (Ultimate Componentization & Self-Documenting Integrators)
+
+* **自文档化积分架构 (Self-Documenting Pipelines)**: 彻底分解重构了 `ADR_Integrator`、`CentralDifference` 与 `ExplicitEuler` 历代积累的巨石型主循环代码。将所有繁杂的内核数组寻址与拓扑配对逻辑下沉抽象至 `TimeIntegrator` 基类的 `extractFirst/SecondOrderTargets` 函数。现在的积分器入口如同严谨的伪代码散文，真正实现了大解耦与高度可拓展性。
+* **动能状态探针与预成型外挂**: 深度集成了 `TOL1` （伪速度 L2 范数）的动能探测与日志规范输出。在确保原版自适应阻尼器 ($cn$) 可观测性的同时，为后续直接接入“全场动能归零强制减速法 (KER)”做好了底层探针接驳口。
+* **统一外设工具链与解耦隔离**: 抽离创立了 `PDCommon/Utils/StringUtils.h`，统一管控了全场底层精度的科学计数法打印；凭借对积分核心目标的隔离，将大部分积分器的头文件包含数量砍去过半，达到极致的文件级编译隔离。
+
 ### v2.5 — 高阶非线性求解重构与 ADR 极速优化 (Advanced ADR Optimization)
 
 * **反多核实例重叠计算防御 (Multi-Kernel Defenses)**: 在时间积分系统底层确立了更安全的结构体内存查重防卫机制（提炼提取了 `FirstOrderTarget` 与 `SecondOrderTarget` 到积分基类 `TimeIntegrator`）。根除了相同的物理场被复数同类型求解模块（例如同时启动数个独立区域的非常规态基核）带来的重复积分迭代崩溃，赋能全模块泛用大耦合。
