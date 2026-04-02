@@ -4,9 +4,13 @@
 
 #include "ExplicitEuler.h"
 #include "BCManager.h"
+#include "FieldManager.h"
 #include "Logger.h"
+#include "MaterialManager.h"
+#include "ThermalMaterial.h"
 #include "PDKernel.h"
 #include <chrono>
+#include <cmath>
 #include <omp.h>
 
 namespace Src::Integration {
@@ -34,6 +38,7 @@ void ExplicitEuler::run(PDCommon::Core::PDContext &ctx,
   }
 
   if (autoCalcDt_) {
+    // 调用继承的虚拟方法，现在它被多态覆盖以处理热计算
     computeCFLTimestep(ctx);
   }
 
@@ -106,6 +111,57 @@ void ExplicitEuler::updateKinematicsEuler(double dt) {
     for (int i = 0; i < static_cast<int>(fp.totalComponents); ++i) {
       fp.primaryPtr[i] += fp.ratePtr[i] * dt;
     }
+  }
+}
+
+void ExplicitEuler::computeCFLTimestep(PDCommon::Core::PDContext &ctx,
+                                       double massScale,
+                                       double safetyFactor) {
+  auto &matManager = ctx.getMaterialManager();
+  auto &fieldManager = ctx.getFieldManager();
+
+  auto *volumeField = fieldManager.getFieldAs<double>("Volume");
+  if (!volumeField) {
+    LOG_WARNING("[ExplicitEuler] Volume field not found, cannot auto-calc dt. "
+                "Using dt = " + std::to_string(dt_));
+    return;
+  }
+
+  const double *volumes = volumeField->dataPtr();
+  if (volumes[0] <= 0.0) return;
+  double dx = std::cbrt(volumes[0]);
+
+  // 取最苛刻的热扩散 dt
+  double minDt = 1e30;
+  bool foundThermal = false;
+
+  for (const auto &[name, matPtr] : matManager.getMaterials()) {
+    auto *thermalMat = dynamic_cast<PDCommon::Material::ThermalMaterial *>(matPtr.get());
+    if (thermalMat) {
+      double k = thermalMat->getConductivity();
+      double rho = thermalMat->getDensity();
+      double cp = thermalMat->getHeatCapacity();
+      if (rho > 1e-30 && cp > 1e-30 && k > 0.0) {
+        double alpha = k / (rho * cp);
+        // 对于三维扩散，临界阻尼步长安全限度通常约为 dx^2 / (6 * alpha)。
+        double dt_limit = (dx * dx) / (6.0 * alpha);
+        if (dt_limit < minDt) {
+          minDt = dt_limit;
+          foundThermal = true;
+        }
+      }
+    }
+  }
+
+  if (foundThermal) {
+    dt_ = safetyFactor * minDt;
+    LOG_INFO("[" + getName() + "] Auto Thermal dt: dx = " + std::to_string(dx) +
+             ", dt_limit = " + std::to_string(minDt) +
+             ", final dt = " + std::to_string(dt_));
+  } else {
+    // 如果没有热场且运行了 ExplicitEuler（比如耗散性的力学阻尼问题），
+    // 降级退回给基类的力学 CFL 波速计算。
+    TimeIntegrator::computeCFLTimestep(ctx, massScale, safetyFactor);
   }
 }
 

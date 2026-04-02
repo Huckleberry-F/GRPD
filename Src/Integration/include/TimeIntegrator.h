@@ -104,13 +104,13 @@ protected:
                                 std::vector<FirstOrderTarget> &out_foTargets,
                                 std::vector<std::string> &out_rateFieldNames);
 
-  /// @brief 基于 CFL 条件自动计算时间步长（通用方法）
+  /// @brief 基于 CFL 条件自动计算时间步长（默认按机械波速计算，子类可按需重写）
   /// @param ctx            PD 仿真上下文
   /// @param massScale      质量缩放因子（动力学=1.0，ADR=用户设定值）
   /// @param safetyFactor   CFL 安全系数（默认 0.8）
-  void computeCFLTimestep(PDCommon::Core::PDContext &ctx,
-                          double massScale = 1.0,
-                          double safetyFactor = 0.8);
+  virtual void computeCFLTimestep(PDCommon::Core::PDContext &ctx,
+                                  double massScale = 1.0,
+                                  double safetyFactor = 0.8);
 
   TimeIntegrator() = default; // 只允许子类构造
 };

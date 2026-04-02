@@ -35,11 +35,15 @@ public:
   std::string getName() const override { return "ExplicitEuler"; }
 
 private:
-  // --- 内部重构：抽象出的算法推演流水线部件 ---
   std::vector<FirstOrderTarget> foTargets_;
   std::vector<std::string> rateFieldNames_;
 
   void updateKinematicsEuler(double dt);
+
+protected:
+  void computeCFLTimestep(PDCommon::Core::PDContext &ctx,
+                          double massScale = 1.0,
+                          double safetyFactor = 0.8) override;
 };
 
 } // namespace Src::Integration

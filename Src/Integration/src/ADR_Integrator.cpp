@@ -38,6 +38,8 @@ void ADR_Integrator::configure(const YAML::Node &solverNode) {
     rampWaveRatio_ = solverNode["RampWaveRatio"].as<double>();
   if (solverNode["RampIters"])
     rampItersOverride_ = solverNode["RampIters"].as<int>();
+  if (solverNode["DampingMethod"])
+    dampingMethod_ = solverNode["DampingMethod"].as<std::string>();
 }
 
 // ---------------------------------------------------------------------------
@@ -117,6 +119,7 @@ void ADR_Integrator::run(PDCommon::Core::PDContext &ctx,
            std::to_string(numLoadSteps_) + ", NumSubsteps = " +
            std::to_string(numSubsteps_) + ", KBC = " + std::to_string(kbc_) +
            ", MassScale = " + std::to_string(massScaleFactor_) +
+           ", DampingMethod = " + dampingMethod_ +
            ", dt = " + std::to_string(dt));
 
   // 2. 积分主循环
@@ -136,7 +139,8 @@ void ADR_Integrator::run(PDCommon::Core::PDContext &ctx,
                       numLoadSteps_;
 
       int rampIters = (kbc_ == 1) ? 0 : computeRampIters(ctx); // KBC=1阶跃
-      LOG_INFO("    [Substep " + std::to_string(sub) + "] Computed RampIters: " + std::to_string(rampIters));
+      LOG_INFO("    [Substep " + std::to_string(sub) +
+               "] Computed RampIters: " + std::to_string(rampIters));
 
       bool converged = false;
       int iter = 0;
@@ -202,12 +206,15 @@ void ADR_Integrator::run(PDCommon::Core::PDContext &ctx,
       }
 
       if (!converged) {
-        LOG_WARNING("    [Step " + std::to_string(step) + " / Sub " +
-                    std::to_string(sub) +
-                    "] Reached MaxPseudoSteps without convergence!" +
-                    " | TOL1(V): " + PDCommon::Utils::StringUtils::toScientific(TOL1_) +
-                    " | TOL2(dU): " + PDCommon::Utils::StringUtils::toScientific(TOL2_) +
-                    " | TOL3(Res): " + PDCommon::Utils::StringUtils::toScientific(TOL3_));
+        LOG_WARNING(
+            "    [Step " + std::to_string(step) + " / Sub " +
+            std::to_string(sub) +
+            "] Reached MaxPseudoSteps without convergence!" +
+            " | TOL1(V): " + PDCommon::Utils::StringUtils::toScientific(TOL1_) +
+            " | TOL2(dU): " +
+            PDCommon::Utils::StringUtils::toScientific(TOL2_) +
+            " | TOL3(Res): " +
+            PDCommon::Utils::StringUtils::toScientific(TOL3_));
       }
 
       // [状态递进]
@@ -263,6 +270,11 @@ void ADR_Integrator::saveOldDisplacement() {
 }
 
 double ADR_Integrator::computeAdaptiveDamping(double dt) {
+  // 纯动能法：完全弃用粘性阻尼系数（返回 cn = 0）
+  // 注意：HybridKinetic 会继续执行下去，计算全局自适应的 cn
+  if (dampingMethod_ == "LocalKinetic" || dampingMethod_ == "GlobalKinetic") {
+    return 0.0;
+  }
   double cn = 0.0;
   double cn1 = 0.0;
   double cn2 = 0.0;
@@ -275,27 +287,71 @@ double ADR_Integrator::computeAdaptiveDamping(double dt) {
 #pragma omp parallel for reduction(- : local_cn1) reduction(+ : local_cn2)     \
     schedule(static)
       for (int i = 0; i < static_cast<int>(so.totalComponents); ++i) {
-        double dU = so.uPtr[i] - dispBase_[k][i];
-        double inv_vhalf = (std::abs(velHalfOld_[k][i]) > 1e-16)
-                               ? (1.0 / velHalfOld_[k][i])
-                               : 0.0;
-        local_cn1 -= dU * dU * (so.aPtr[i] - aOld_[k][i]) * inv_vhalf / dt;
-        local_cn2 += dU * dU;
+        // [关键重构]：彻底抛弃极度不稳定的“单自由度局部差分法” (dU*dU * da /
+        // dv)。 改用绝对鲁棒的能量法瑞利商 (Rayleigh Quotient) 进行全场积分：
+        // 修正：dispOld_ 在循环开头就已经被覆盖为了当前的 uPtr，所以相减是 0！
+        // 真正的上一子步真实位移增量，完全等价于最后一次使用的更新速度 * dt：
+        double dU_step = velHalfOld_[k][i] * dt;
+        double da = so.aPtr[i] - aOld_[k][i]; // 对应的加速度变化率
+
+        local_cn1 -= dU_step * da;
+        local_cn2 += dU_step * dU_step;
       }
       cn1 += local_cn1;
       cn2 += local_cn2;
     }
   }
 
-  if (cn2 > 1e-30 && (cn1 / cn2) > 0.0)
+  if (cn2 > 1e-30 && (cn1 / cn2) > 0.0) {
     cn = 2.0 * std::sqrt(cn1 / cn2);
+  }
   if (cn > 1.8 / dt)
     cn = 1.8 / dt;
+
+  // // 持久化保护：如果计算得到的 cn 无效
+  // // (例如由于全场速度被斩波归零，或者发生刚体漂移)， 使用上一次有效的
+  // // cn，保持粘性阻尼在动能被斩波期间的连续吸能能力
+  // if (cn > 0.0) {
+  //   lastValidCn_ = cn;
+  // } else {
+  //   cn = lastValidCn_;
+  // }
 
   return cn;
 }
 
 void ADR_Integrator::updateKinematicsLeapfrog(double cn, double dt) {
+  const bool useLocalKinetic = (dampingMethod_ == "LocalKinetic");
+  const bool useGlobalPeakCheck =
+      (dampingMethod_ == "GlobalKinetic" || dampingMethod_ == "HybridKinetic");
+
+  bool globalPeakDetected = false;
+
+  // ================================================================
+  // 全局/混合阻尼核心：提前预结算真实的全局功率 (Global Power)
+  // 当 全局功率 < 0 时，说明全系统总动能刚刚越过峰值，应当同时进行速度斩波
+  // ================================================================
+  if (useGlobalPeakCheck && !isFirstExplicitTick_) {
+    double globalPower = 0.0;
+    for (size_t k = 0; k < soTargets_.size(); ++k) {
+      const auto &so = soTargets_[k];
+      double localPower = 0.0;
+#pragma omp parallel for reduction(+ : localPower) schedule(static)
+      for (int i = 0; i < static_cast<int>(so.totalComponents); ++i) {
+        // 使用实际生效的 cn 计算预期的下一步速度
+        double velNew =
+            ((2.0 - cn * dt) * velHalfOld_[k][i] + 2.0 * dt * so.aPtr[i]) /
+            (2.0 + cn * dt);
+        double vMid = 0.5 * (velHalfOld_[k][i] + velNew);
+        localPower += vMid * so.aPtr[i];
+      }
+      globalPower += localPower;
+    }
+    if (globalPower < 0.0) {
+      globalPeakDetected = true;
+    }
+  }
+
   for (size_t k = 0; k < soTargets_.size(); ++k) {
     const auto &so = soTargets_[k];
 #pragma omp parallel for schedule(static)
@@ -308,6 +364,23 @@ void ADR_Integrator::updateKinematicsLeapfrog(double cn, double dt) {
         velHalfNew =
             ((2.0 - cn * dt) * velHalfOld_[k][i] + 2.0 * dt * so.aPtr[i]) /
             (2.0 + cn * dt);
+      }
+
+      // ================================================================
+      // 动能法斩波：
+      // 1. Local模式: 每个粒子自行查自身功率
+      // 2. Global/Hybrid模式:听从全局信号齐步走
+      // 注意：一旦触发，立刻将本该很大的 velHalfNew
+      // 强制重置为从零再加速的一小段速度
+      // ================================================================
+      if (useLocalKinetic && !isFirstExplicitTick_) {
+        double vMid = 0.5 * (velHalfOld_[k][i] + velHalfNew);
+        if (vMid * so.aPtr[i] < 0.0) {
+          velHalfNew = 0.5 * dt * so.aPtr[i];
+        }
+      } else if (useGlobalPeakCheck && globalPeakDetected) {
+        // 全局同时降速，保留模式形态不散掉
+        velHalfNew = 0.5 * dt * so.aPtr[i];
       }
 
       so.vPtr[i] = 0.5 * (velHalfOld_[k][i] + velHalfNew);
@@ -323,28 +396,39 @@ void ADR_Integrator::computeConvergenceCriteria() {
   TOL1_ = 0.0;
   TOL2_ = 0.0;
   TOL3_ = 0.0;
+  double denom_TOL2 = 0.0;
 
   for (size_t k = 0; k < soTargets_.size(); ++k) {
     const auto &so = soTargets_[k];
     double local_tol1 = 0.0;
     double local_tol2 = 0.0;
     double local_tol3 = 0.0;
-#pragma omp parallel for reduction(+ : local_tol1, local_tol2, local_tol3)     \
-    schedule(static)
+    double local_denom_tol2 = 0.0;
+#pragma omp parallel for reduction(+ : local_tol1, local_tol2, local_tol3, local_denom_tol2) schedule(static)
     for (int i = 0; i < static_cast<int>(so.totalComponents); ++i) {
-      double du = so.uPtr[i] - dispOld_[k][i];
+      double du_iter = so.uPtr[i] - dispOld_[k][i];
+      double du_substep = so.uPtr[i] - dispBase_[k][i];
+      
       local_tol1 += velHalfOld_[k][i] * velHalfOld_[k][i];
-      local_tol2 += du * du;
+      local_tol2 += du_iter * du_iter;
+      local_denom_tol2 += du_substep * du_substep;
       local_tol3 += so.aPtr[i] * so.aPtr[i];
     }
     TOL1_ += local_tol1;
     TOL2_ += local_tol2;
+    denom_TOL2 += local_denom_tol2;
     TOL3_ += local_tol3;
   }
 
   TOL1_ = std::sqrt(TOL1_);
   TOL2_ = std::sqrt(TOL2_);
+  denom_TOL2 = std::sqrt(denom_TOL2);
   TOL3_ = std::sqrt(TOL3_);
+
+  // 使用相对位移进行 TOL2 判定（防除零保护）
+  if (denom_TOL2 > 1e-12) {
+    TOL2_ = TOL2_ / denom_TOL2;
+  }
 }
 
 } // namespace Src::Integration

@@ -26,6 +26,7 @@
 
 #include "TimeIntegrator.h"
 #include <memory>
+#include <string>
 #include <vector>
 
 namespace PDCommon::Kernel {
@@ -37,6 +38,10 @@ namespace Src::Integration {
 using PDCommon::Kernel::PDKernel;
 
 /// @brief 自适应动态弛豫准静态积分器
+///
+/// 支持两种阻尼策略（通过 YAML DampingMethod 切换）：
+///   - "Viscous"      : Underwood 全局粘性自适应阻尼（默认）
+///   - "LocalKinetic"  : 局部动能阻尼法（逐粒子功率判定速度清零）
 class ADR_Integrator : public TimeIntegrator {
 public:
   ADR_Integrator() = default;
@@ -56,15 +61,18 @@ private:
   // -----------------------------------------------------------------------
   // ADR 专属参数（从 YAML Solver 段读取）
   // -----------------------------------------------------------------------
-  int numLoadSteps_ = 10;        ///< 物理载荷大步数量
-  int numSubsteps_ = 1;          ///< 每个载荷步细分为几个增量子步
-  int kbc_ = 0;                  ///< 加载控制：0=Ramp(坡道加载), 1=Step(阶跃突加)
-  int maxPseudoSteps_ = 5000;    ///< 每个 Substep 内允许的最大迭代数
-  double dispTol_ = 1.0e-6;      ///< 位移收敛阈值 TOL2
-  double forceTol_ = 1.0e-4;     ///< 力平衡收敛阈值 TOL3
+  int numLoadSteps_ = 10;     ///< 物理载荷大步数量
+  int numSubsteps_ = 1;       ///< 每个载荷步细分为几个增量子步
+  int kbc_ = 0;               ///< 加载控制：0=Ramp(坡道加载), 1=Step(阶跃突加)
+  int maxPseudoSteps_ = 5000; ///< 每个 Substep 内允许的最大迭代数
+  double dispTol_ = 1.0e-6;   ///< 位移收敛阈值 TOL2
+  double forceTol_ = 1.0e-4;  ///< 力平衡收敛阈值 TOL3
   double massScaleFactor_ = 1.0e5; ///< 质量缩放因子（默认放大 10^5 倍）
-  double rampWaveRatio_ = 2.0;     ///< 爬坡期覆盖特征波长倍数（默认2倍模型长度）
-  int rampItersOverride_ = 0;      ///< 手动指定爬坡步数（0=自动物理计算）
+  double rampWaveRatio_ = 2.0; ///< 爬坡期覆盖特征波长倍数（默认2倍模型长度）
+  int rampItersOverride_ = 0;  ///< 手动指定爬坡步数（0=自动物理计算）
+
+  /// @brief 阻尼策略："Viscous"=Underwood粘性阻尼, "LocalKinetic"=局部动能阻尼
+  std::string dampingMethod_ = "Viscous";
 
   /// @brief 内部辅助：结合 CFL 计算物理波传播所需的最小平滑爬坡步数
   int computeRampIters(PDCommon::Core::PDContext &ctx);
@@ -81,6 +89,7 @@ private:
   double TOL1_ = 0.0;
   double TOL2_ = 0.0;
   double TOL3_ = 0.0;
+  double lastValidCn_ = 0.0;
 
   void initializeHistoryVariables();
   void saveBaseDisplacement();

@@ -69,6 +69,12 @@ Solver:
   MaxPseudoSteps: 20000 # 每个子步最大迭代 20000 次
   MassScaleFactor: 1.25e8 # 质量缩放因子
   RampWaveRatio: 3.0 # 新增：测试用的爬坡时间为 3.0 倍物理衰减区间
+  # 阻尼方法选择:
+  # "Viscous"       : 经典自适应粘性阻尼 (Underwood，动态计算 cn)
+  # "LocalKinetic"  : 局部动能阻尼 (节点级斩波，容易打碎低频模态)
+  # "GlobalKinetic" : 全局动能阻尼 (Barnes法，全局越过平衡点时全系统重置为0)
+  # "HybridKinetic" : 混合动力法 (粘性阻尼持续吸能 + 全局峰值斩波，地表最强算法)
+  DampingMethod: "HybridKinetic" # "Viscous"=Underwood粘性阻尼(默认), "LocalKinetic"=局部动能阻尼
   DispTol: 1.0e-6 # 位移收敛阈值
   ForceTol: 1.0e-4 # 力残差收敛阈值
   OutputInterval: 2000 # 每 1000 伪步打印一次日志

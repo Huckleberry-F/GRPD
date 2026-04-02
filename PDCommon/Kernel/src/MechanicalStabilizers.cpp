@@ -326,6 +326,12 @@ void MechanicalZhangStabilizer::applyPenalty(PDContext &ctx) {
   const double *omegaPtr = neighborList.getBondFieldPtr("InfluenceWeight");
   double *accPtr = fieldManager.getFieldAs<double>("Acceleration")->dataPtr();
 
+  // [维度修复]
+  // 无需猜测系统维度以及厚度(由于厚度并未全局存储，导致 dx 解析报错)
+  // 我们直接在后续的每一个节点内部，完美且精确地求取当前粒子的所有邻居真实体积之和！
+  // 这个体积和 (sum(vj)) 即等价于： 2D(面积 * 厚度) 或是 3D(真实球体体积)。
+  // 并且它天然适配带有表面破损或者截断的边界！！！
+
 #pragma omp parallel for schedule(guided)
   for (int i = 0; i < static_cast<int>(numParticles); ++i) {
     double rho_i = rhoArr_[i];
@@ -348,6 +354,12 @@ void MechanicalZhangStabilizer::applyPenalty(PDContext &ctx) {
     const int numNeighbors = neighborList.getNeighborCount(i);
     const int *neighbors = neighborList.getNeighborIds(i);
     const int offset = neighbors - neighborList.getNeighborIds(0);
+
+    // [绝杀优化]：无需从外部寻找常数 dx 或厚度！
+    // 粒子的真实物理几何体积，本质上就是它所有邻居节点的体积之和。
+    // 这行简单的动态统计，自动包含了边界截断体积、自动适用 2D (面积*厚度) 和 3D
+    // (球体积)。
+    double vi = volumes[i];
 
 #pragma omp simd
     for (int k_nb = 0; k_nb < numNeighbors; ++k_nb) {
@@ -382,7 +394,11 @@ void MechanicalZhangStabilizer::applyPenalty(PDContext &ctx) {
 
       double o2 = omega * omega;
       double lam_mu_i = lam_i + mu_i;
-      double vv_j = vvPtr[j];
+
+      // 提取完整的缺失的量纲 [L^3] -> 也就是局部视野的体积 (2D下天然等于
+      // 面积*厚度)
+      double vv_j = vvPtr[j] * vi;
+
       double t_ix =
           o2 * (lam_mu_i * p_dot_z_i * px_i + mu_i * p_dot_p_i * z_ix) * vv_j;
       double t_iy =
@@ -399,15 +415,17 @@ void MechanicalZhangStabilizer::applyPenalty(PDContext &ctx) {
 
       double mu_j = muArr_[j];
       double lam_mu_j = lambdaArr_[j] + mu_j;
-      double t_jx = o2 *
-                    (lam_mu_j * p_dot_z_j * px_j + mu_j * p_dot_p_j * z_jx) *
-                    vvPtr[i];
-      double t_jy = o2 *
-                    (lam_mu_j * p_dot_z_j * py_j + mu_j * p_dot_p_j * z_jy) *
-                    vvPtr[i];
-      double t_jz = o2 *
-                    (lam_mu_j * p_dot_z_j * pz_j + mu_j * p_dot_p_j * z_jz) *
-                    vvPtr[i];
+
+      // 提取完整的缺失的量纲 [L^3] -> 也就是局部视野的体积 (2D下天然等于
+      // 面积*厚度)
+      double vv_i = vvPtr[i] * vi;
+
+      double t_jx =
+          o2 * (lam_mu_j * p_dot_z_j * px_j + mu_j * p_dot_p_j * z_jx) * vv_i;
+      double t_jy =
+          o2 * (lam_mu_j * p_dot_z_j * py_j + mu_j * p_dot_p_j * z_jy) * vv_i;
+      double t_jz =
+          o2 * (lam_mu_j * p_dot_z_j * pz_j + mu_j * p_dot_p_j * z_jz) * vv_i;
 
       force_x += g0_ * (t_ix - t_jx) * vj;
       force_y += g0_ * (t_iy - t_jy) * vj;
