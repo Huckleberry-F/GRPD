@@ -101,14 +101,14 @@ void IOManager::initialize() {
   // ===========================================================
   // 5. 汇总输出
   // ===========================================================
-  LOG_INFO("==================================================");
+  LOG_INFO("[IOManager] ==================================================");
   LOG_INFO("[IOManager] IO Manager Ready:");
-  LOG_INFO("  Model Name  : " + modelName_);
-  LOG_INFO("  Work Dir    : " + workDir_.string());
-  LOG_INFO("  Install Dir : " + installDir_.string());
-  LOG_INFO("  YAML Path   : " + yamlPath_.string());
-  LOG_INFO("  Result Dir  : " + resultDir_.string());
-  LOG_INFO("==================================================");
+  LOG_INFO("[IOManager]   Model Name  : " + modelName_);
+  LOG_INFO("[IOManager]   Work Dir    : " + workDir_.string());
+  LOG_INFO("[IOManager]   Install Dir : " + installDir_.string());
+  LOG_INFO("[IOManager]   YAML Path   : " + yamlPath_.string());
+  LOG_INFO("[IOManager]   Result Dir  : " + resultDir_.string());
+  LOG_INFO("[IOManager] ==================================================");
 
   initialized_ = true;
 }

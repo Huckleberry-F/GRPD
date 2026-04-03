@@ -9,5 +9,5 @@ void Start() {
 
   SHOW_LOGO();
 
-  LOG_INFO("GRPD is running...!");
+  LOG_INFO("[Start] GRPD is running...!");
 }

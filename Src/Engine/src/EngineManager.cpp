@@ -16,9 +16,9 @@ namespace Src::Engine {
 // 构造函数
 // ---------------------------------------------------------------------------
 EngineManager::EngineManager() {
-  LOG_INFO("==================================================");
-  LOG_INFO("   GRPD Solver Engine Initialized                 ");
-  LOG_INFO("==================================================");
+  LOG_INFO("[EngineManager] ==================================================");
+  LOG_INFO("[EngineManager]    GRPD Solver Engine Initialized                 ");
+  LOG_INFO("[EngineManager] ==================================================");
 }
 
 // ---------------------------------------------------------------------------
@@ -70,7 +70,9 @@ void EngineManager::Setup(const std::string &yamlPath) {
 // RunAll: 遍历所有求解器执行求解
 // ---------------------------------------------------------------------------
 void EngineManager::RunAll() {
+  LOG_INFO("[EngineManager] ==================================================");
   LOG_INFO("[EngineManager] Entering Main Solver Phase");
+  LOG_INFO("[EngineManager] ==================================================");
   for (auto &engine : engines_) {
     LOG_INFO("[EngineManager] Solving: " + engine->getName());
     engine->Solve();
@@ -82,7 +84,9 @@ void EngineManager::RunAll() {
 // ExportAll: 遍历所有求解器执行输出
 // ---------------------------------------------------------------------------
 void EngineManager::ExportAll() {
+  LOG_INFO("[EngineManager] ==================================================");
   LOG_INFO("[EngineManager] Entering Post-processing Phase");
+  LOG_INFO("[EngineManager] ==================================================");
   for (auto &engine : engines_) {
     LOG_INFO("[EngineManager] Outputting: " + engine->getName());
     engine->Output();

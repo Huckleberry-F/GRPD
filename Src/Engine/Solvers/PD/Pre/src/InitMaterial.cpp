@@ -18,7 +18,9 @@ namespace Src::Engine::Solvers::PD::Init {
 // ============================================================================
 void InitMaterial(PDCommon::Core::PDContext &ctx,
                   const YAML::Node &config) {
-  LOG_INFO("Entering Material Initialization Phase...");
+  LOG_INFO("[InitMaterial] ==================================================");
+  LOG_INFO("[InitMaterial] Entering Material Initialization Phase...");
+  LOG_INFO("[InitMaterial] ==================================================");
 
   auto &matManager = ctx.getMaterialManager();
   std::unordered_map<int, PDCommon::Material::Material *> idToMatMap;
@@ -47,7 +49,7 @@ void InitMaterial(PDCommon::Core::PDContext &ctx,
         std::string name =
             matNode["Name"] ? matNode["Name"].as<std::string>() : "";
 
-        LOG_INFO("Instantiating material [" + std::to_string(matId) +
+        LOG_INFO("[InitMaterial] Instantiating material [" + std::to_string(matId) +
                  "] of type: " + type);
         std::string keyName =
             name.empty() ? "Mat_" + std::to_string(matId) : name;
@@ -64,7 +66,7 @@ void InitMaterial(PDCommon::Core::PDContext &ctx,
           idToMatMap[matId] = matPtr.get();
           matManager.addMaterial(std::move(matPtr));
 
-          LOG_INFO("Successfully registered material ID " +
+          LOG_INFO("[InitMaterial] Successfully registered material ID " +
                    std::to_string(matId) + " (" + keyName + ")");
         }
       } catch (const std::exception &e) {
@@ -75,7 +77,7 @@ void InitMaterial(PDCommon::Core::PDContext &ctx,
     LOG_WARNING("No 'Material' or 'Materials' section found in PD.yaml!");
   }
 
-  LOG_INFO("Assigning material pointers to particles...");
+  LOG_INFO("[InitMaterial] Assigning material pointers to particles...");
   auto &particleArray = ctx.getParticleManager().getAllParticles();
   int assignCount = 0;
 
@@ -97,7 +99,7 @@ void InitMaterial(PDCommon::Core::PDContext &ctx,
     }
   }
 
-  LOG_INFO("Successfully assigned materials to " + std::to_string(assignCount) +
+  LOG_INFO("[InitMaterial] Successfully assigned materials to " + std::to_string(assignCount) +
            " particles.");
 }
 

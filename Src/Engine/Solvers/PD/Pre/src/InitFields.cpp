@@ -19,7 +19,9 @@ namespace Src::Engine::Solvers::PD::Init {
 // ============================================================================
 void InitFields(PDCommon::Core::PDContext &ctx,
                 const YAML::Node &config) {
-  LOG_INFO("Entering Field Registration Phase...");
+  LOG_INFO("[InitFields] ==================================================");
+  LOG_INFO("[InitFields] Entering Field Registration Phase...");
+  LOG_INFO("[InitFields] ==================================================");
 
   std::string solverType = "";
   if (config["Solver"] && config["Solver"]["Type"]) {

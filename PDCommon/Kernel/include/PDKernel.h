@@ -91,13 +91,13 @@ public:
 
 protected:
   PDKernel() = default; // 只允许子类构造
-  
-  InfluenceKernelType kernelType_{InfluenceKernelType::Constant};
+
+  InfluenceKernelType kernelType_{InfluenceKernelType::Gaussian};
   double massScaleFactor_{1.0}; ///< 质量缩放因子（ADR 用，默认不缩放）
 
   /// @brief 获取指定核函数（影响函数）的权重值
   inline double GetInfluenceWeight(double xi, double horizon,
-                            InfluenceKernelType type) const {
+                                   InfluenceKernelType type) const {
     switch (type) {
     case InfluenceKernelType::InverseDistance:
       return (xi > 1e-16) ? (1.0 / xi) : 0.0;

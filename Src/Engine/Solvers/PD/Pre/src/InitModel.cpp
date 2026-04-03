@@ -1,11 +1,12 @@
-#include "PDEnginePre.h"
 #include "IOManager.h"
-#include "ReaderRegistry.h"
-#include "ParticleManager.h"
-#include "MeshData.h"
 #include "Logger.h"
+#include "MeshData.h"
+#include "PDEnginePre.h"
+#include "ParticleManager.h"
+#include "ReaderRegistry.h"
 #include <cstdlib>
 #include <filesystem>
+
 
 namespace Src::Engine::Solvers::PD::Init {
 
@@ -14,10 +15,11 @@ namespace Src::Engine::Solvers::PD::Init {
 // 由 IOManager 定位 grpd 文件；若不存在则呼叫 Python 生成引擎生成该文件；
 // 依据后缀多态调动对应的 ReaderRegistry 将拓扑结构吸入体系并映射到 Particle。
 // ============================================================================
-void InitModel(PDCommon::Core::PDContext &ctx,
-               const YAML::Node &config,
+void InitModel(PDCommon::Core::PDContext &ctx, const YAML::Node &config,
                const std::string &yamlPath) {
-  LOG_INFO("Model pre-processing...");
+  LOG_INFO("[InitModel] ==================================================");
+  LOG_INFO("[InitModel] Model pre-processing...");
+  LOG_INFO("[InitModel] ==================================================");
 
   auto &ioMgr = PDCommon::IO::IOManager::getInstance();
   std::string grpdPath = ioMgr.getGrpdPath().string();
@@ -26,14 +28,14 @@ void InitModel(PDCommon::Core::PDContext &ctx,
   LOG_INFO("[InitModel] model name: " + currentModelName);
 
   if (std::filesystem::exists(grpdPath)) {
-    LOG_INFO("Found existing .grpd mesh file at: " + grpdPath +
+    LOG_INFO("[InitModel] Found existing .grpd mesh file at: " + grpdPath +
              ". Skipping generation.");
   } else {
-    LOG_INFO("Calling Python pre-processor to generate .grpd mesh...");
+    LOG_INFO(
+        "[InitModel] Calling Python pre-processor to generate .grpd mesh...");
 
     auto &ioMgr = PDCommon::IO::IOManager::getInstance();
-    std::filesystem::path scriptPath =
-        ioMgr.getScriptPath("generate_model.py");
+    std::filesystem::path scriptPath = ioMgr.getScriptPath("generate_model.py");
 
     std::string pythonCommand =
         "python \"" + scriptPath.string() + "\" \"" + yamlPath + "\"";
@@ -46,7 +48,7 @@ void InitModel(PDCommon::Core::PDContext &ctx,
       exit(EXIT_FAILURE);
     }
 
-    LOG_INFO("Mesh generated successfully by Python.");
+    LOG_INFO("[InitModel] Mesh generated successfully by Python.");
   }
 
   ctx.setName(currentModelName);
@@ -71,7 +73,8 @@ void InitModel(PDCommon::Core::PDContext &ctx,
 
   auto &manager = ctx.getParticleManager();
 
-  // 依靠 ReaderRegistry 反射构造支持多格式文件 (默认是 .grpd 的二进制专用 Reader)
+  // 依靠 ReaderRegistry 反射构造支持多格式文件 (默认是 .grpd 的二进制专用
+  // Reader)
   namespace fs = std::filesystem;
   std::string ext = fs::path(grpdPath).extension().string();
   auto reader = PDCommon::IO::ReaderRegistry::getInstance().createReader(
@@ -82,8 +85,8 @@ void InitModel(PDCommon::Core::PDContext &ctx,
     exit(EXIT_FAILURE);
   }
 
-  LOG_INFO("[InitModel] Reading mesh file: " + grpdPath +
-           " (reader: " + ext + ")");
+  LOG_INFO("[InitModel] Reading mesh file: " + grpdPath + " (reader: " + ext +
+           ")");
 
   if (!reader->read(grpdPath)) {
     LOG_ERROR("[InitModel] Reader failed for file: " + grpdPath);
@@ -96,25 +99,12 @@ void InitModel(PDCommon::Core::PDContext &ctx,
   for (size_t i = 0; i < numPts; ++i) {
     manager.addParticle(meshData.nodeIDs[i], meshData.partIDs[i],
                         meshData.matIDs[i], meshData.coords[i * 3 + 0],
-                        meshData.coords[i * 3 + 1],
-                        meshData.coords[i * 3 + 2], meshData.volumes[i]);
+                        meshData.coords[i * 3 + 1], meshData.coords[i * 3 + 2],
+                        meshData.volumes[i]);
   }
 
-  LOG_INFO("[InitModel] Total particles loaded for model " +
-           currentModelName + ": " +
-           std::to_string(manager.getTotalParticles()));
-
-  size_t previewCount =
-      std::min(static_cast<size_t>(5), manager.getTotalParticles());
-  for (size_t i = 0; i < previewCount; i++) {
-    const auto &p = manager.getParticle(static_cast<int>(i));
-    LOG_INFO("  Particle[" + std::to_string(p.getId()) +
-             "] Part=" + std::to_string(p.getPartId()) + " Pos=(" +
-             std::to_string(p.getCoords()[0]) + ", " +
-             std::to_string(p.getCoords()[1]) + ", " +
-             std::to_string(p.getCoords()[2]) + ")" +
-             " Vol=" + std::to_string(p.getVolume()));
-  }
+  LOG_INFO("[InitModel] Total particles loaded for model " + currentModelName +
+           ": " + std::to_string(manager.getTotalParticles()));
 }
 
 } // namespace Src::Engine::Solvers::PD::Init

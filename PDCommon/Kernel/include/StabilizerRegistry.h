@@ -6,6 +6,7 @@
 #include <map>
 #include <memory>
 #include <string>
+#include <vector>
 
 namespace PDCommon::Kernel {
 
@@ -26,6 +27,9 @@ public:
 
   /// @brief 检查一个稳定器是否已注册
   bool contains(const std::string &name) const;
+
+  /// @brief 获取所有已注册的稳定器类型
+  std::vector<std::string> getRegisteredTypes() const;
 
 private:
   StabilizerRegistry() = default;

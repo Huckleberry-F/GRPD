@@ -69,13 +69,23 @@ void MechanicalSillingStabilizer::applyPenalty(PDContext &ctx) {
   auto &manager = ctx.getParticleManager();
   const size_t numParticles = manager.getTotalParticles();
 
+  const int dim = ctx.getDimension();
   const double horizon = neighborList.getHorizon();
   const double delta4 = horizon * horizon * horizon * horizon;
   // Silling 的经验系数：18 / (pi * delta^4)
   const double coeff_base = 18.0 / (3.141592653589793 * delta4);
 
-  const double *coords = fieldManager.getFieldAs<double>("Coords")->dataPtr();
   const double *volumes = fieldManager.getFieldAs<double>("Volume")->dataPtr();
+  double dx = (numParticles > 0) ? std::cbrt(volumes[0]) : 0.0;
+
+  double v_macro = 0.0;
+  if (dim == 2) {
+    v_macro = 3.141592653589793 * horizon * horizon * dx;
+  } else {
+    v_macro = 4.0 / 3.0 * 3.141592653589793 * horizon * horizon * horizon;
+  }
+
+  const double *coords = fieldManager.getFieldAs<double>("Coords")->dataPtr();
   const double *dispPtr =
       fieldManager.getFieldAs<double>("Displacement")->dataPtr();
   const double *F_Ptr =
@@ -99,7 +109,7 @@ void MechanicalSillingStabilizer::applyPenalty(PDContext &ctx) {
     double u_iz = dispPtr[i * 3 + 2];
 
     double G_i = g0_ * bulkArr_[i];
-    double coeff_i = coeff_base * G_i / vvPtr[i];
+    double coeff_i = coeff_base * G_i * vvPtr[i] / v_macro;
     const double *Fi = &F_Ptr[i * 9];
 
     double force_x = 0.0, force_y = 0.0, force_z = 0.0;
@@ -134,7 +144,7 @@ void MechanicalSillingStabilizer::applyPenalty(PDContext &ctx) {
                            z_jz);
 
       double G_j = g0_ * bulkArr_[j];
-      double coeff_j = coeff_base * G_j / vvPtr[j];
+      double coeff_j = coeff_base * G_j * vvPtr[j] / v_macro;
 
       force_x += omega * vj / horizon * (coeff_i * z_ix - coeff_j * z_jx);
       force_y += omega * vj / horizon * (coeff_i * z_iy - coeff_j * z_jy);

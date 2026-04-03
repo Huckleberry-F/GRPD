@@ -20,7 +20,9 @@ namespace Src::Engine::Solvers::PD::Init {
 // 利用 BCRegistry 生成对应格式的条件多态实例并进行注册挂载。
 // ============================================================================
 void InitConditions(PDCommon::Core::PDContext &ctx, const YAML::Node &config) {
-  LOG_INFO("Entering Conditions Initialization Phase...");
+  LOG_INFO("[InitConditions] ==================================================");
+  LOG_INFO("[InitConditions] Entering Conditions Initialization Phase...");
+  LOG_INFO("[InitConditions] ==================================================");
 
   auto &ioMgr = PDCommon::IO::IOManager::getInstance();
   std::string grpdPath = ioMgr.getGrpdPath().string();
@@ -63,7 +65,7 @@ void InitConditions(PDCommon::Core::PDContext &ctx, const YAML::Node &config) {
 
   LOG_INFO("[InitConditions] Load statistics:");
   for (const auto &[type, count] : bcStats) {
-    LOG_INFO("  - " + type + " : " + std::to_string(count));
+    LOG_INFO("[InitConditions]   - " + type + " : " + std::to_string(count));
   }
 
   LOG_INFO("[InitConditions] Boundary conditions initialization complete.");

@@ -15,12 +15,12 @@ Assembly: {}
 Parts:
   - PartID: 1
     MatID: 1
-    Dimension: 2 # 2 维平面问题
+    Dimension: 3 # 2 维平面问题
     Length: 100.0 # X 方向长度 100mm
     Width: 50.0 # Y 方向宽度 50mm
-    Thickness: 0.5 # 2D 虚拟厚度
+    Thickness: 10.0 # 2D 虚拟厚度
     Offset: [0.0, 0.0, 0.0]
-    dx: 0.5 # 粗网格，200×100=20000 个粒子
+    dx: 1.0 # 粗网格，200×100=20000 个粒子
 
 # 3. 边界条件
 # 左端 (X < 0.01) 完全固定，右端 (X > 99.99) 施加 X 方向位移 1mm
@@ -29,23 +29,23 @@ BoundaryConditions:
     Name: "Fixed_Left"
     Box: [-999.0, 1.0, -999.0, 999.0, -999.0, 999.0]
     Type: "DISP"
-    Value: [0.0, 0.0, 1.0e20] # X,Y 方向固定为 0，Z 自由
+    Value: [0.0, 1.0e20, 1.0e20] # X,Y 方向固定为 0，Z 自由
 
   - BcID: 2
     Name: "Pull_Right"
     Box: [99.0, 999.0, -999.0, 999.0, -999.0, 999.0]
     Type: "DISP"
-    Value: [1.0, 1.0e20, 1.0e20] # X 方向施加 1mm 位移（ADR 按 loadFactor 缩放），Y/Z 自由
+    Value: [0.1, 1.0e20, 1.0e20] # X 方向施加 1mm 位移（ADR 按 loadFactor 缩放），Y/Z 自由
 
 # 4. 预置裂纹 (在盒子正下方中心处开一条垂直切口，改用现有的 QuadCrack 平面切断法)
-PreCracks:
-  - CrackID: 1
-    Type: "QuadCrack"
-    # 用四个点定义一个跨越 Z 轴的实体平面，正好切断 X=50 的位置
-    V1: [50.0, -10.0, -10.0]
-    V2: [50.0, -10.0, 10.0]
-    V3: [50.0, 25.0, 10.0]
-    V4: [50.0, 25.0, -10.0]
+#PreCracks:
+#- CrackID: 1
+#  Type: "QuadCrack"
+# 用四个点定义一个跨越 Z 轴的实体平面，正好切断 X=50 的位置
+#  V1: [50.0, -10.0, -10.0]
+#  V2: [50.0, -10.0, 10.0]
+#  V3: [50.0, 25.0, 10.0]
+#  V4: [50.0, 25.0, -10.0]
 
 # 5. 材质物理属性 (钢材线弹性)
 Materials:
@@ -79,8 +79,8 @@ Solver:
   ForceTol: 1.0e-4 # 力残差收敛阈值
   OutputInterval: 2000 # 每 1000 伪步打印一次日志
   OMP_Threads: 8
-  Horizon: 1.6075 # 3.015 * dx
-  KernelWeightType: "Linear"
+  Horizon: 3.015 # 3.015 * dx
+  KernelWeightType: "Gaussian"
   ZeroEnergyG0: 1.0
   ZeroEnergyMethod: "Zhang"
 

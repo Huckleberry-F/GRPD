@@ -16,6 +16,8 @@
 #include "MaterialRegistry.h"
 #include "TimeIntegratorRegistry.h"
 #include "PhysicsFieldRegistry.h"
+#include "ReaderRegistry.h"
+#include "StabilizerRegistry.h"
 #include <string>
 #include <vector>
 #include <yaml-cpp/yaml.h>
@@ -44,23 +46,28 @@ PDEngine::PDEngine() {
 // printRegistrySummary: 打印 PD 引擎使用的所有注册表信息
 // ---------------------------------------------------------------------------
 void PDEngine::printRegistrySummary() const {
-  LOG_INFO("========== Registered Types Summary ===========");
-  LOG_INFO("  TimeIntegrator    : " +
+  LOG_INFO("[PDEngine] ===============================================");
+  LOG_INFO("[PDEngine] ========== Registered Types Summary ===========");
+  LOG_INFO("[PDEngine]   TimeIntegrator    : " +
            joinTypes(Src::Integration::TimeIntegratorRegistry::getInstance()
                          .getRegisteredTypes()));
-  LOG_INFO("  FieldRegistry     : " +
+  LOG_INFO("[PDEngine]   FieldRegistry     : " +
            joinTypes(PDCommon::Field::FieldRegistry::getInstance().getRegisteredTypes()));
-  LOG_INFO("  PhysicsFields     : " +
+  LOG_INFO("[PDEngine]   PhysicsFields     : " +
            joinTypes(PDCommon::Field::PhysicsFieldRegistry::getInstance().getRegisteredTypes()));
-  LOG_INFO("  BCRegistry        : " +
+  LOG_INFO("[PDEngine]   BCRegistry        : " +
            joinTypes(PDCommon::BC::BCRegistry::getInstance().getRegisteredTypes()));
-  LOG_INFO("  MaterialRegistry  : " +
+  LOG_INFO("[PDEngine]   ReaderRegistry    : " +
+           joinTypes(PDCommon::IO::ReaderRegistry::getInstance().getRegisteredTypes()));
+  LOG_INFO("[PDEngine]   StabilizerRegistry: " +
+           joinTypes(PDCommon::Kernel::StabilizerRegistry::getInstance().getRegisteredTypes()));
+  LOG_INFO("[PDEngine]   MaterialRegistry  : " +
            joinTypes(PDCommon::Material::MaterialRegistry::getInstance().getRegisteredTypes()));
-  LOG_INFO("  KernelRegistry    : " +
+  LOG_INFO("[PDEngine]   KernelRegistry    : " +
            joinTypes(PDCommon::Kernel::KernelRegistry::getInstance().getRegisteredTypes()));
-  LOG_INFO("  EngineRegistry    : " +
+  LOG_INFO("[PDEngine]   EngineRegistry    : " +
            joinTypes(Src::Engine::EngineRegistry::getInstance().getRegisteredTypes()));
-  LOG_INFO("===============================================");
+  LOG_INFO("[PDEngine] ===============================================");
 }
 
 // ============================================================================

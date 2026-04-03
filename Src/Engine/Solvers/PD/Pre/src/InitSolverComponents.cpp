@@ -14,7 +14,9 @@ void InitSolverComponents(
     const YAML::Node &config,
     std::unique_ptr<Src::Integration::TimeIntegrator> &integrator,
     std::vector<std::unique_ptr<PDCommon::Kernel::PDKernel>> &kernels) {
-  LOG_INFO("Entering Solver Components Assembly Phase...");
+  LOG_INFO("[InitSolverComponents] ==================================================");
+  LOG_INFO("[InitSolverComponents] Entering Solver Components Assembly Phase...");
+  LOG_INFO("[InitSolverComponents] ==================================================");
 
   // -----------------------------------------------------------------
   // 1. 时间积分器装配（逻辑不变）
@@ -27,13 +29,13 @@ void InitSolverComponents(
     exit(EXIT_FAILURE);
   }
 
-  LOG_INFO("Building Time Integrator: " + solverType);
+  LOG_INFO("[InitSolverComponents] Building Time Integrator: " + solverType);
   integrator = Src::Integration::TimeIntegratorRegistry::getInstance()
                    .create(solverType);
 
   if (integrator) {
     integrator->configure(config["Solver"]);
-    LOG_INFO("Time Integrator configured.");
+    LOG_INFO("[InitSolverComponents] Time Integrator configured.");
   } else {
     LOG_ERROR("Failed to create Time Integrator: " + solverType);
     exit(EXIT_FAILURE);
@@ -51,7 +53,7 @@ void InitSolverComponents(
     for (const auto &node : config["Solver"]["Kernels"]) {
       kernelTypes.push_back(node.as<std::string>());
     }
-    LOG_INFO("Detected multi-kernel configuration with " + 
+    LOG_INFO("[InitSolverComponents] Detected multi-kernel configuration with " + 
              std::to_string(kernelTypes.size()) + " kernels.");
   } else if (config["Solver"] && config["Solver"]["Kernel"]) {
     // 单核兼容模式：Kernel: NOSB_T
@@ -64,12 +66,12 @@ void InitSolverComponents(
 
   // 逐一实例化并压入容器
   for (const auto &kernelType : kernelTypes) {
-    LOG_INFO("Building Space Kernel: " + kernelType);
+    LOG_INFO("[InitSolverComponents] Building Space Kernel: " + kernelType);
     auto kernel = PDCommon::Kernel::KernelRegistry::getInstance().create(kernelType);
 
     if (kernel) {
       kernel->configure(config["Solver"]);
-      LOG_INFO("Space Kernel '" + kernelType + "' configured.");
+      LOG_INFO("[InitSolverComponents] Space Kernel '" + kernelType + "' configured.");
       kernels.push_back(std::move(kernel));
     } else {
       LOG_ERROR("Failed to create Kernel: " + kernelType);
@@ -77,7 +79,7 @@ void InitSolverComponents(
     }
   }
 
-  LOG_INFO("Total kernels assembled: " + std::to_string(kernels.size()));
+  LOG_INFO("[InitSolverComponents] Total kernels assembled: " + std::to_string(kernels.size()));
 
   // -----------------------------------------------------------------
   // TODO [热力耦合扩展]: 支持 StaggeredIntegrator（异阶交错积分器）

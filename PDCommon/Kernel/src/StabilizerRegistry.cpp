@@ -16,7 +16,6 @@ void StabilizerRegistry::registerStabilizer(const std::string &name,
     return;
   }
   registryMap_[name] = std::move(creator);
-  LOG_INFO("[StabilizerRegistry] Registered Stabilizer: " + name);
 }
 
 std::unique_ptr<Stabilizer> StabilizerRegistry::create(const std::string &name) const {
@@ -30,6 +29,15 @@ std::unique_ptr<Stabilizer> StabilizerRegistry::create(const std::string &name) 
 
 bool StabilizerRegistry::contains(const std::string &name) const {
   return registryMap_.find(name) != registryMap_.end();
+}
+
+std::vector<std::string> StabilizerRegistry::getRegisteredTypes() const {
+  std::vector<std::string> types;
+  types.reserve(registryMap_.size());
+  for (const auto &pair : registryMap_) {
+    types.push_back(pair.first);
+  }
+  return types;
 }
 
 } // namespace PDCommon::Kernel

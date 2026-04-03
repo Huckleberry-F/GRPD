@@ -12,6 +12,7 @@
 #include "ParticleManager.h"
 #include "StringUtils.h"
 #include "TimeIntegratorRegistry.h"
+#include "Timer.h"
 #include <cmath>
 #include <omp.h>
 
@@ -122,6 +123,14 @@ void ADR_Integrator::run(PDCommon::Core::PDContext &ctx,
            ", DampingMethod = " + dampingMethod_ +
            ", dt = " + std::to_string(dt));
 
+  PDCommon::Utils::Timer timer;
+  timer.start();
+
+  // [初始状态输出] 开始迭代前，先输出一次初始未变形装配，便于后处理参考对比
+  if (outputCallback) {
+    outputCallback(0, 0.0);
+  }
+
   // 2. 积分主循环
   for (int step = 0; step < numLoadSteps_; ++step) {
     LOG_INFO("=== Load Step " + std::to_string(step) + " / " +
@@ -156,6 +165,8 @@ void ADR_Integrator::run(PDCommon::Core::PDContext &ctx,
 
         saveOldDisplacement();
 
+        timer.tick();
+
         // 💡 [核心工序流水线表达]
         bcManager.applyConstraints(currentLF);
         evaluateForces(ctx, kernels, accFieldNames_);
@@ -171,6 +182,8 @@ void ADR_Integrator::run(PDCommon::Core::PDContext &ctx,
         }
 
         computeConvergenceCriteria(); // 收集收敛 TOL 数据
+
+        timer.tock();
 
         // [收敛判定与日志输出]
         if (!inRampPhase && iter > rampIters + 20) {
@@ -191,14 +204,12 @@ void ADR_Integrator::run(PDCommon::Core::PDContext &ctx,
 
         if (iter % outputInterval_ == 0 && iter > 0) {
           LOG_INFO(
-              "    > Step " + std::to_string(step) + " / Sub " +
-              std::to_string(sub) + " Iter " + std::to_string(iter) +
-              " | LF: " + std::to_string(currentLF) +
-              " | TOL1: " + PDCommon::Utils::StringUtils::toScientific(TOL1_) +
-              " | TOL2: " + PDCommon::Utils::StringUtils::toScientific(TOL2_) +
-              " | TOL3: " + PDCommon::Utils::StringUtils::toScientific(TOL3_) +
+              "    > Sub " + std::to_string(sub) + " Iter " +
+              std::to_string(iter) + " | LF: " + std::to_string(currentLF) +
+              " | Res: " + PDCommon::Utils::StringUtils::toScientific(TOL3_) +
               " | cn: " + PDCommon::Utils::StringUtils::toScientific(cn) +
-              (inRampPhase ? " [Ramping]" : ""));
+              " | Speed: " + std::to_string(static_cast<int>(timer.pureSpeed())) +
+              " steps/s" + (inRampPhase ? " [Ramping]" : ""));
         }
 
         iter++;
@@ -228,6 +239,8 @@ void ADR_Integrator::run(PDCommon::Core::PDContext &ctx,
       }
     }
   }
+
+  timer.logSummary("ADR_Integrator");
 }
 
 // ============================================================================
@@ -404,11 +417,12 @@ void ADR_Integrator::computeConvergenceCriteria() {
     double local_tol2 = 0.0;
     double local_tol3 = 0.0;
     double local_denom_tol2 = 0.0;
-#pragma omp parallel for reduction(+ : local_tol1, local_tol2, local_tol3, local_denom_tol2) schedule(static)
+#pragma omp parallel for reduction(+ : local_tol1, local_tol2, local_tol3,     \
+                                       local_denom_tol2) schedule(static)
     for (int i = 0; i < static_cast<int>(so.totalComponents); ++i) {
       double du_iter = so.uPtr[i] - dispOld_[k][i];
       double du_substep = so.uPtr[i] - dispBase_[k][i];
-      
+
       local_tol1 += velHalfOld_[k][i] * velHalfOld_[k][i];
       local_tol2 += du_iter * du_iter;
       local_denom_tol2 += du_substep * du_substep;

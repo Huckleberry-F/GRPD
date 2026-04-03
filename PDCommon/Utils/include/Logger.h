@@ -52,6 +52,8 @@ private:
 
   std::mutex logMutex_;   // Output synchronization lock
   std::ofstream logFile_; // Global file stream instance
+  std::string lastModuleName_; // To keep track if the module name is repeated
+  std::string lastLevel_;      // To keep track if the level is repeated
 };
 
 // Utility macros for cleaner call-site syntax

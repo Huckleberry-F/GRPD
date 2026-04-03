@@ -9,7 +9,7 @@
 #include "MaterialManager.h"
 #include "ThermalMaterial.h"
 #include "PDKernel.h"
-#include <chrono>
+#include "Timer.h"
 #include <cmath>
 #include <omp.h>
 
@@ -52,23 +52,17 @@ void ExplicitEuler::run(PDCommon::Core::PDContext &ctx,
 
   bcManager.applyConstraints();
 
-  auto tStart = std::chrono::high_resolution_clock::now();
-  double pureComputeTime = 0.0;
+  PDCommon::Utils::Timer timer;
+  timer.start();
 
   for (int step = 0; step <= totalSteps; ++step) {
 
     if (step % outputInterval == 0) {
-      auto tNow = std::chrono::high_resolution_clock::now();
-      double totalElapsed =
-          std::chrono::duration<double>(tNow - tStart).count();
-      double pureSpeed =
-          (step > 0 && pureComputeTime > 0.0) ? (step / pureComputeTime) : 0.0;
-
       LOG_INFO("--- Step " + std::to_string(step) + " / " +
                std::to_string(totalSteps) +
-               "  |  Pure Compute: " + std::to_string(pureComputeTime) + "s" +
-               "  |  Total: " + std::to_string(totalElapsed) + "s" +
-               "  |  Pure Speed: " + std::to_string(pureSpeed) + " steps/s");
+               "  |  Pure Compute: " + std::to_string(timer.pureComputeTime()) + "s" +
+               "  |  Total: " + std::to_string(timer.totalElapsed()) + "s" +
+               "  |  Speed: " + std::to_string(static_cast<int>(timer.pureSpeed())) + " steps/s");
 
       LOG_INFO("Starting data export process...");
       if (outputCallback)
@@ -77,7 +71,7 @@ void ExplicitEuler::run(PDCommon::Core::PDContext &ctx,
     if (step == totalSteps)
       break;
 
-    auto tComputeStart = std::chrono::high_resolution_clock::now();
+    timer.tick();
 
     // -------------------------------------------------------------
     // Generic Explicit Euler Pipeline
@@ -93,16 +87,10 @@ void ExplicitEuler::run(PDCommon::Core::PDContext &ctx,
     }
     // -------------------------------------------------------------
 
-    auto tComputeEnd = std::chrono::high_resolution_clock::now();
-    pureComputeTime +=
-        std::chrono::duration<double>(tComputeEnd - tComputeStart).count();
+    timer.tock();
   }
 
-  auto tEnd = std::chrono::high_resolution_clock::now();
-  double totalElapsed = std::chrono::duration<double>(tEnd - tStart).count();
-  LOG_INFO("[ExplicitEuler] Finished. Total: " + std::to_string(totalElapsed) +
-           "s  |  Pure Compute avg: " +
-           std::to_string(pureComputeTime / totalSteps) + " s/step");
+  timer.logSummary("ExplicitEuler");
 }
 
 void ExplicitEuler::updateKinematicsEuler(double dt) {

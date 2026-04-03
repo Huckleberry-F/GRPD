@@ -14,7 +14,9 @@ namespace Src::Engine::Solvers::PD::Init {
 // ============================================================================
 void InitNeighbors(PDCommon::Core::PDContext &ctx,
                    const YAML::Node &config) {
+  LOG_INFO("[InitNeighbors] ==================================================");
   LOG_INFO("[InitNeighbors] Entering Neighbor Search Phase...");
+  LOG_INFO("[InitNeighbors] ==================================================");
 
   double horizon = 0.0;
   if (config["Solver"] && config["Solver"]["Horizon"]) {

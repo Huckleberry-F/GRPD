@@ -12,8 +12,7 @@ void ExportVTK(const PDCommon::Core::PDContext &ctx,
                const std::string &yamlPath,
                int step, double physicalTime) {
   const auto &currentModel = ctx;
-  LOG_INFO("Starting data export process step=" + std::to_string(step) + 
-           " t=" + std::to_string(physicalTime));
+  // Removed redundant start log
 
   std::string currentModelName = currentModel.getName();
   bool binaryRequested = false;
@@ -35,8 +34,7 @@ void ExportVTK(const PDCommon::Core::PDContext &ctx,
         } else if (typeStr == "ASCII" || typeStr == "ascii") {
           binaryRequested = false;
         } else {
-          LOG_INFO("Unknown Writer Type: " + typeStr +
-                   ". Using default ASCII.");
+          LOG_WARNING("[PDEnginePost] Unknown Writer Type: " + typeStr + ". Using default ASCII.");
         }
       }
       if (config["Writer"]["Variables"]) {
@@ -57,7 +55,7 @@ void ExportVTK(const PDCommon::Core::PDContext &ctx,
     return;
   }
 
-  LOG_INFO("Fetching model context for export: " + currentModelName);
+  // Fetching model context
 
   try {
     const auto &fieldManager = currentModel.getFieldManager();
@@ -82,20 +80,16 @@ void ExportVTK(const PDCommon::Core::PDContext &ctx,
     } else {
       vtkOutputPath = ioManager.buildResultPath(finalOutputName + "_output.vtk");
     }
-    LOG_INFO("Exporting to VTK format: " + vtkOutputPath);
 
     const size_t numParticles = coordsField->size();
     if (numParticles == 0) {
-      LOG_INFO("No particles to export for model: " + currentModelName);
+      LOG_WARNING("[PDEnginePost] No particles to export for model: " + currentModelName);
       return;
     }
 
     PDCommon::IO::Outputer outputer;
     if (binaryRequested) {
       outputer.setFormat(PDCommon::IO::binary);
-      LOG_INFO("Output format set to BINARY.");
-    } else {
-      LOG_INFO("Output format set to ASCII.");
     }
 
     // [遍历写出白名单] 按要求进行过滤组装。对于一维场执行 addScalarField，而对 3 维场执行 addVectorField。
@@ -135,13 +129,11 @@ void ExportVTK(const PDCommon::Core::PDContext &ctx,
     }
 
     if (!outputer.writeVTK(vtkOutputPath, fieldManager, numParticles)) {
-      LOG_ERROR("VTK export failed for model: " + currentModelName);
+      LOG_ERROR("[PDEnginePost] VTK export failed for model: " + currentModelName);
       return;
     }
-
-    LOG_INFO("Successfully exported data for model: " + currentModelName);
   } catch (const std::exception &e) {
-    LOG_ERROR("Write process aborted: " + std::string(e.what()));
+    LOG_ERROR("[PDEnginePost] Write process aborted: " + std::string(e.what()));
   }
 }
 
