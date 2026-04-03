@@ -61,7 +61,7 @@ LinearElasticMat::ComputeEngineeringStress(const Eigen::Matrix3d &F) const {
 }
 
 Eigen::Matrix3d
-LinearElasticMat::ComputePK1Stress(const Eigen::Matrix3d &F) const {
+LinearElasticMat::ComputePK1Stress(const Eigen::Matrix3d &F, int particleId) const {
   // 小应变假设下的简易回拉（大变形应使用对数应变等其他形变度量）
   // 计算右 Cauchy-Green 张量 C = F^T * F
   Eigen::Matrix3d C = F.transpose() * F;

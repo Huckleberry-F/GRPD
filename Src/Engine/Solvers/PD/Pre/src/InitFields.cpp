@@ -77,6 +77,14 @@ void InitFields(PDCommon::Core::PDContext &ctx,
   size_t numParticles = ctx.getParticleManager().getTotalParticles();
   fieldManager.resizeAll(numParticles);
 
+  // 在全部场分配之后进行指针的高速挂载
+  LOG_INFO("[InitFields] Binding high-speed material state pointers...");
+  for (const auto &[matName, matPtr] : matManager.getMaterials()) {
+    if (matPtr) {
+      matPtr->bindStateVariables(fieldManager);
+    }
+  }
+
   if (!PDCommon::IO::MeshData::populateParticleFields(
           ctx.getParticleManager(), fieldManager)) {
     LOG_ERROR("[InitFields] Failed to populate particle fields from "

@@ -300,6 +300,13 @@ General-Peridynamics/
 
 ## 📌 版本更新日志 (Changelog)
 
+### v3.1 — 金属塑性与二次开发插槽 (J2 Plasticity & UMAT Architecture)
+
+* **J2 流动塑性本构落地 (Von Mises Plasticity)**: 成功实装了经典的 J2 金属塑性本构 `J2PlasticityMat`。引入了标准的小变形切线映射与径向返回算法 (Radial Return Algorithm)。首次跨越纯弹性阈值，使 GRPD 具备了模拟金属屈服、能量耗散与弹塑性加载的能力。
+* **面向数据设计 (SOA) 的状态挂载机制**: 新增首创的 `bindStateVariables` 内存挂载策略。在海量粒子场分配完成定型后，将复杂的历史状态变量 (`EqPlasticStrain`, `PlasticStrain` 等) 的底层连续裸指针直接硬对接给材料计算单例，从而在确保极低访存延迟的 OMP 深层循环下，实现无锁的、精确的粒子历史依赖更新方案。
+* **统一的试探与推进机制 (Trial & Commit States)**: 对接 ADR 等显式准静态跌代体系，引入 `Trial` 试探场和 `Old` 落盘场的双套设计，确保局部未收敛的跌代子步绝不污染物理场进度。
+* **用户材料动态挂载 (UMAT/DLL) 架构范本**: 新增详尽的 `Docs/UMAT_Development_Guide.md` 指南，确立了采用匿名通用一维内存池 (`numStateVariables > 0` 与 `SDV`) 和纯 C-ABI 裸指针穿梭来实现高性能第三方 DLL 二次开发的蓝图架构。
+
 ### v3.0 — 终极组件化与伪代码级积分架构重构 (Ultimate Componentization & Self-Documenting Integrators)
 
 * **自文档化积分架构 (Self-Documenting Pipelines)**: 彻底分解重构了 `ADR_Integrator`、`CentralDifference` 与 `ExplicitEuler` 历代积累的巨石型主循环代码。将所有繁杂的内核数组寻址与拓扑配对逻辑下沉抽象至 `TimeIntegrator` 基类的 `extractFirst/SecondOrderTargets` 函数。现在的积分器入口如同严谨的伪代码散文，真正实现了大解耦与高度可拓展性。

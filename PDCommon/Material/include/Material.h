@@ -53,6 +53,10 @@ public:
   /// @param fm 物理场管理器引用
   virtual void allocateStateVariables(PDCommon::Field::FieldManager &fm);
 
+  /// @brief 将场数据指针对接到材料内部的常驻裸指针池中（用于规避极高频求解过程中的虚函数查询与表查找）
+  /// 在所有材料向 fm 注册完毕且 fm 执行 Resize 后调用
+  virtual void bindStateVariables(PDCommon::Field::FieldManager &fm) {}
+
   /// @brief 获取该材料需要的状态变量(SDV)数量
   /// 引擎将根据所有材料的最大需求分配统一的 SDV 场
   /// @return 状态变量数量

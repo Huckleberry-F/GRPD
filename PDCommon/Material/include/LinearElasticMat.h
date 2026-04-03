@@ -25,7 +25,7 @@ public:
   // -----------------------------------------------------------------------
   Eigen::Matrix3d
   ComputeEngineeringStress(const Eigen::Matrix3d &strain) const override;
-  Eigen::Matrix3d ComputePK1Stress(const Eigen::Matrix3d &F) const override;
+  Eigen::Matrix3d ComputePK1Stress(const Eigen::Matrix3d &F, int particleId = -1) const override;
 
   // -----------------------------------------------------------------------
   // 实现 Material 基类虚函数
