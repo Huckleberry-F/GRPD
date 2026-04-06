@@ -58,11 +58,13 @@ public:
   std::string getName() const override { return "ADR"; }
 
 private:
+
+
   // -----------------------------------------------------------------------
   // ADR 专属参数（从 YAML Solver 段读取）
   // -----------------------------------------------------------------------
-  int numLoadSteps_ = 10;     ///< 物理载荷大步数量
-  int numSubsteps_ = 1;       ///< 每个载荷步细分为几个增量子步
+  // numLoadSteps_, numSubsteps_, loadStepConfigs_ 已移至 TimeIntegrator 基类
+
   int kbc_ = 0;               ///< 加载控制：0=Ramp(坡道加载), 1=Step(阶跃突加)
   int maxPseudoSteps_ = 5000; ///< 每个 Substep 内允许的最大迭代数
   double dispTol_ = 1.0e-6;   ///< 位移收敛阈值 TOL2

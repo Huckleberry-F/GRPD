@@ -21,10 +21,6 @@ namespace Src::Integration {
 void ADR_Integrator::configure(const YAML::Node &solverNode) {
   TimeIntegrator::configure(solverNode);
 
-  if (solverNode["NumLoadSteps"])
-    numLoadSteps_ = solverNode["NumLoadSteps"].as<int>();
-  if (solverNode["NumSubsteps"])
-    numSubsteps_ = solverNode["NumSubsteps"].as<int>();
   if (solverNode["KBC"])
     kbc_ = solverNode["KBC"].as<int>();
   if (solverNode["MaxPseudoSteps"])
@@ -35,8 +31,6 @@ void ADR_Integrator::configure(const YAML::Node &solverNode) {
     forceTol_ = solverNode["ForceTol"].as<double>();
   if (solverNode["MassScaleFactor"])
     massScaleFactor_ = solverNode["MassScaleFactor"].as<double>();
-  if (solverNode["RampWaveRatio"])
-    rampWaveRatio_ = solverNode["RampWaveRatio"].as<double>();
   if (solverNode["RampIters"])
     rampItersOverride_ = solverNode["RampIters"].as<int>();
   if (solverNode["DampingMethod"])
@@ -117,8 +111,8 @@ void ADR_Integrator::run(PDCommon::Core::PDContext &ctx,
   initializeHistoryVariables();
 
   LOG_INFO("[ADR_Integrator] Starting Custom ADR: NumLoadSteps = " +
-           std::to_string(numLoadSteps_) + ", NumSubsteps = " +
-           std::to_string(numSubsteps_) + ", KBC = " + std::to_string(kbc_) +
+           std::to_string(loadStepConfigs_.size()) + ", FirstStep NumSubsteps = " +
+           std::to_string(loadStepConfigs_.empty() ? 0 : loadStepConfigs_[0].numSubsteps) + ", KBC = " + std::to_string(kbc_) +
            ", MassScale = " + std::to_string(massScaleFactor_) +
            ", DampingMethod = " + dampingMethod_ +
            ", dt = " + std::to_string(dt));
@@ -127,25 +121,30 @@ void ADR_Integrator::run(PDCommon::Core::PDContext &ctx,
   timer.start();
 
   // [初始状态输出] 开始迭代前，先输出一次初始未变形装配，便于后处理参考对比
+  int globalSubstepCounter = 0;
   if (outputCallback) {
-    outputCallback(0, 0.0);
+    outputCallback(globalSubstepCounter, 0.0);
   }
 
   // 2. 积分主循环
-  for (int step = 0; step < numLoadSteps_; ++step) {
-    LOG_INFO("=== Load Step " + std::to_string(step) + " / " +
-             std::to_string(numLoadSteps_ - 1) + " ===");
+  for (size_t stepIdx = 0; stepIdx < loadStepConfigs_.size(); ++stepIdx) {
+    const auto& stepConfig = loadStepConfigs_[stepIdx];
+    int step = stepConfig.stepId - 1; // mapping to internal index for logging
+    int currentNumSubsteps = stepConfig.numSubsteps;
 
-    for (int sub = 0; sub < numSubsteps_; ++sub) {
+    LOG_INFO("=== Load Step " + std::to_string(stepConfig.stepId) + " / " +
+             std::to_string(loadStepConfigs_.size()) + " ===");
+
+    for (int sub = 0; sub < currentNumSubsteps; ++sub) {
       saveBaseDisplacement();
 
-      // [加载因子控制]
-      double targetLF = (static_cast<double>(step) +
-                         static_cast<double>(sub + 1) / numSubsteps_) /
-                        numLoadSteps_;
-      double prevLF = (static_cast<double>(step) +
-                       static_cast<double>(sub) / numSubsteps_) /
-                      numLoadSteps_;
+      // [加载因子控制] 根据各自的子步数计算全局或局部LF
+      double targetLF = (static_cast<double>(stepIdx) +
+                         static_cast<double>(sub + 1) / currentNumSubsteps) /
+                        loadStepConfigs_.size();
+      double prevLF = (static_cast<double>(stepIdx) +
+                       static_cast<double>(sub) / currentNumSubsteps) /
+                      loadStepConfigs_.size();
 
       int rampIters = (kbc_ == 1) ? 0 : computeRampIters(ctx); // KBC=1阶跃
       LOG_INFO("    [Substep " + std::to_string(sub) +
@@ -237,7 +236,8 @@ void ADR_Integrator::run(PDCommon::Core::PDContext &ctx,
       }
 
       if (outputCallback) {
-        outputCallback(step * numSubsteps_ + sub + 1, targetLF);
+        globalSubstepCounter++;
+        outputCallback(globalSubstepCounter, targetLF);
       }
     }
   }

@@ -64,6 +64,34 @@ void DisplacementBC::apply(double loadFactor) {
   }
 }
 
+void DisplacementBC::setTableNames(const std::vector<std::string> &names) {
+  size_t dim = std::min(names.size(), static_cast<size_t>(3));
+  for (size_t i = 0; i < dim; ++i) {
+    tableName_[i] = names[i];
+  }
+}
+
+// 注意这里需要包含 Table.h, 我们之后再在文件顶部添加
+void DisplacementBC::applyWithTime(double currentTime) {
+  if (!displacement_)
+    return;
+  for (int d = 0; d < 3; ++d) {
+    if (applyDirs_[d]) {
+      double targetVal = dispVal_[d]; // Default fallback
+      if (!tableName_[d].empty() && tableName_[d] != "None") {
+        // Todo: Access TableManager to evaluate table. 
+        // For now, logging a warning and falling back to 0.0 if table not found.
+        targetVal = 0.0; 
+      }
+      displacement_->set(particleId_, targetVal, d);
+      if (velocity_)
+        velocity_->set(particleId_, 0.0, d);
+      if (acceleration_)
+        acceleration_->set(particleId_, 0.0, d);
+    }
+  }
+}
+
 // ===========================================================================
 // BodyForceBC (Neumann)
 // ===========================================================================

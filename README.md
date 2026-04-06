@@ -312,6 +312,7 @@ General-Peridynamics/
 * **自文档化积分架构 (Self-Documenting Pipelines)**: 彻底分解重构了 `ADR_Integrator`、`CentralDifference` 与 `ExplicitEuler` 历代积累的巨石型主循环代码。将所有繁杂的内核数组寻址与拓扑配对逻辑下沉抽象至 `TimeIntegrator` 基类的 `extractFirst/SecondOrderTargets` 函数。现在的积分器入口如同严谨的伪代码散文，真正实现了大解耦与高度可拓展性。
 * **动能状态探针与预成型外挂**: 深度集成了 `TOL1` （伪速度 L2 范数）的动能探测与日志规范输出。在确保原版自适应阻尼器 ($cn$) 可观测性的同时，为后续直接接入“全场动能归零强制减速法 (KER)”做好了底层探针接驳口。
 * **统一外设工具链与解耦隔离**: 抽离创立了 `PDCommon/Utils/StringUtils.h`，统一管控了全场底层精度的科学计数法打印；凭借对积分核心目标的隔离，将大部分积分器的头文件包含数量砍去过半，达到极致的文件级编译隔离。
+* **多阶段物理推进器底座 (Multi-Step Time Integrator Base)**: 跨求解器打破了全局单调定步长加载的时代限制。在 `TimeIntegrator` 基类层升维引入 `LoadSteps` 与时间/子步驱分段控制框架，使包含显式动量、准静态松弛（ADR）、显式热传导的全体积分核均彻底获得多任务分步连续演化能力。底层已并轨支持基于物理时长的变尺度 $\Delta t$ 控制以及预置了与时间-幅值查表技术 (Table Amplitude) 耦合的高阶生态。
 * **精简化纯净日志系统 (Clean & Professional Logging)**: 针对底层 `Logger` 彻底重构了具备缩进感知的支持 UTF-8 的全自动 Word-Wrap 折行算法。智能消除缺乏前缀的冗余时间戳断层，并全面静默了后处理 `VTKOutput` 频繁的刷屏提示。使庞杂的时间积分循环能在极度纯净且自动排版的模块 Header 层级下流畅推演汇报。
 
 ### v2.5 — 高阶非线性求解重构与 ADR 极速优化 (Advanced ADR Optimization)

@@ -6,12 +6,15 @@
 # Manually list source files for CMake 4.0+ stability
 add_library(Utils_Obj OBJECT 
     src/Logger.cpp
+    src/Table.cpp
 )
 
 # 2. Add header files to target
 target_sources(Utils_Obj PRIVATE
     include/Logger.h
     include/DataExtractor.h
+    include/Table.h
+
     # Other headers...
 )
 # 3. Set header include paths for this module

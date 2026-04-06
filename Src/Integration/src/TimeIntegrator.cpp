@@ -20,8 +20,15 @@ void TimeIntegrator::configure(const YAML::Node &solverNode) {
       dt_ = solverNode["TimeStep_dt"].as<double>();
       autoCalcDt_ = false; // 用户显式指定了 dt，关闭自动计算
     }
-    if (solverNode["TotalTime"])
+    if (solverNode["TotalTime"]) {
       totalTime_ = solverNode["TotalTime"].as<double>();
+      defaultEndTime_ = totalTime_;
+    }
+    if (solverNode["NumLoadSteps"])
+      defaultNumLoadSteps_ = solverNode["NumLoadSteps"].as<int>();
+    if (solverNode["NumSubsteps"])
+      defaultNumSubsteps_ = solverNode["NumSubsteps"].as<int>();
+
     if (solverNode["OutputInterval"])
       outputInterval_ = solverNode["OutputInterval"].as<int>();
       
@@ -29,6 +36,34 @@ void TimeIntegrator::configure(const YAML::Node &solverNode) {
       int threads = solverNode["OMP_Threads"].as<int>();
       omp_set_num_threads(threads);
       LOG_INFO("[TimeIntegrator] Explicitly set OMP Threads to: " + std::to_string(threads));
+    }
+
+    // 统一解析 LoadSteps 序列
+    loadStepConfigs_.clear();
+    if (solverNode["LoadSteps"] && solverNode["LoadSteps"].IsSequence()) {
+      for (size_t i = 0; i < solverNode["LoadSteps"].size(); ++i) {
+        auto stepNode = solverNode["LoadSteps"][i];
+        LoadStepConfig config;
+        config.stepId = static_cast<int>(i) + 1;
+        if (stepNode["Step"]) config.stepId = stepNode["Step"].as<int>();
+        
+        config.numSubsteps = stepNode["NumSubsteps"] ? stepNode["NumSubsteps"].as<int>() : defaultNumSubsteps_;
+        config.targetTime = stepNode["TargetTime"] ? stepNode["TargetTime"].as<double>() : defaultEndTime_;
+        if (stepNode["TimeStep_dt"]) config.userDt = stepNode["TimeStep_dt"].as<double>();
+        
+        loadStepConfigs_.push_back(config);
+      }
+    } else {
+      // 没有任何显式定义序列时，退化为默认的一组均等划分或单一物理时段
+      int steps = std::max(1, defaultNumLoadSteps_);
+      for (int i = 0; i < steps; ++i) {
+        LoadStepConfig config;
+        config.stepId = i + 1;
+        config.numSubsteps = defaultNumSubsteps_;
+        // 显式总时间按步数均分（如果缺省按步分段计算）
+        config.targetTime = defaultEndTime_ * static_cast<double>(i + 1) / static_cast<double>(steps);
+        loadStepConfigs_.push_back(config);
+      }
     }
 }
 

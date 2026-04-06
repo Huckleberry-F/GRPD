@@ -42,52 +42,68 @@ void ExplicitEuler::run(PDCommon::Core::PDContext &ctx,
     computeCFLTimestep(ctx);
   }
 
-  const double dt = dt_;
-  const int totalSteps = static_cast<int>(std::lround(totalTime_ / dt));
-  const int outputInterval = outputInterval_;
-
-  LOG_INFO("[ExplicitEuler] Time loop: dt = " + std::to_string(dt) +
-           ", totalSteps = " + std::to_string(totalSteps) +
-           ", kernels = " + std::to_string(kernels.size()));
+  LOG_INFO("[ExplicitEuler] Starting Explicit Loop with " + 
+           std::to_string(loadStepConfigs_.size()) + " LoadStep(s). Default dt = " + std::to_string(dt_));
 
   bcManager.applyConstraints();
 
   PDCommon::Utils::Timer timer;
   timer.start();
 
-  for (int step = 0; step <= totalSteps; ++step) {
+  int globalStepCounter = 0;
+  double currentTime = 0.0;
+  const int outputInterval = outputInterval_;
 
-    if (step % outputInterval == 0) {
-      LOG_INFO("--- Step " + std::to_string(step) + " / " +
-               std::to_string(totalSteps) +
-               "  |  Pure Compute: " + std::to_string(timer.pureComputeTime()) + "s" +
-               "  |  Total: " + std::to_string(timer.totalElapsed()) + "s" +
-               "  |  Speed: " + std::to_string(static_cast<int>(timer.pureSpeed())) + " steps/s");
+  for (size_t lstepIdx = 0; lstepIdx < loadStepConfigs_.size(); ++lstepIdx) {
+    const auto& config = loadStepConfigs_[lstepIdx];
+    double targetTime = config.targetTime;
+    double currentDt = (config.userDt > 0.0) ? config.userDt : dt_; 
 
-      LOG_INFO("Starting data export process...");
-      if (outputCallback)
-        outputCallback(step, step * dt);
+    LOG_INFO("=== Load Step " + std::to_string(config.stepId) + " / " +
+             std::to_string(loadStepConfigs_.size()) + " | TargetTime: " + std::to_string(targetTime) + " ===");
+
+    while (currentTime < targetTime - 1e-12) {
+      if (globalStepCounter % outputInterval == 0) {
+        LOG_INFO("--- Step " + std::to_string(globalStepCounter) + " | Time: " +
+                 std::to_string(currentTime) +
+                 "  |  Pure Compute: " + std::to_string(timer.pureComputeTime()) + "s" +
+                 "  |  Total: " + std::to_string(timer.totalElapsed()) + "s" +
+                 "  |  Speed: " + std::to_string(static_cast<int>(timer.pureSpeed())) + " steps/s");
+
+        if (outputCallback)
+          outputCallback(globalStepCounter, currentTime);
+      }
+
+      if (currentTime + currentDt > targetTime) {
+        currentDt = targetTime - currentTime;
+      }
+
+      timer.tick();
+
+      // -------------------------------------------------------------
+      // Generic Explicit Euler Pipeline
+      // -------------------------------------------------------------
+      evaluateForces(ctx, kernels, rateFieldNames_);
+
+      updateKinematicsEuler(currentDt);
+
+      bcManager.applyConstraints();
+
+      for (auto &kernel : kernels) {
+        kernel->postCompute(ctx);
+      }
+      // -------------------------------------------------------------
+
+      timer.tock();
+
+      currentTime += currentDt;
+      globalStepCounter++;
     }
-    if (step == totalSteps)
-      break;
+  }
 
-    timer.tick();
-
-    // -------------------------------------------------------------
-    // Generic Explicit Euler Pipeline
-    // -------------------------------------------------------------
-    evaluateForces(ctx, kernels, rateFieldNames_);
-
-    updateKinematicsEuler(dt);
-
-    bcManager.applyConstraints();
-
-    for (auto &kernel : kernels) {
-      kernel->postCompute(ctx);
-    }
-    // -------------------------------------------------------------
-
-    timer.tock();
+  // 最终强制输出一次作为结束
+  if (outputCallback) {
+    outputCallback(globalStepCounter, currentTime);
   }
 
   timer.logSummary("ExplicitEuler");

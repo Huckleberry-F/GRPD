@@ -64,6 +64,13 @@ public:
   /// Source    (false) 仅在力计算前由 applySources() 调用一次
   virtual bool isConstraint() const { return false; }
 
+  /// @brief 设置用于查表的 Table 名称。
+  /// @param names 各维度对应的 Table 名称（如为空或 "None" 表示不用 Table）
+  virtual void setTableNames(const std::vector<std::string> &names) {}
+
+  /// @brief 传入当前时间/进度，执行带 Table 查表的施加逻辑。默认退化为 apply()
+  virtual void applyWithTime(double currentTime) { apply(); }
+
 protected:
   std::string name_; // 边界条件实例名称
 };

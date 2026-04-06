@@ -28,7 +28,7 @@ BoundaryConditions:
     Name: "Grip_Top"
     Box: [-999.0, 999.0, 97.0, 101.0, -999.0, 999.0]
     Type: "DISP"
-    Value: [0.0, 2.5, 0.0] # 顶部夹住，且往上强制拉伸2.5mm，引发强烈颈缩
+    Value: [0.0, 1.0, 0.0] # 顶部极值设定为横坐标 1.0 (由于有两个载荷步，第一步将正好均匀递增至 0.5)
 
 # 4. 没有显式指定初始裂缝（靠试样中间设计的内径缩小来自然集中应力产生颈缩与断裂）
 
@@ -54,8 +54,11 @@ Solver:
   Type: "Mechanical"
   Kernel: "NOSB_M"
   TimeIntegrator: "ADR"
-  NumLoadSteps: 5       # 载荷分为 5 大步
-  NumSubsteps:  20      # 每大步 20 个子步（共 100 增量），稳定地捕获非线性断裂
+  LoadSteps:
+    - Step: 1
+      NumSubsteps: 10      # 第一阶段通过 10 步缓慢将 LoadFactor 均摊推至 0.5 (即 0.5mm 变形)
+    - Step: 2
+      NumSubsteps: 20      # 第二阶段通过 20 步均摊将 LoadFactor 从 0.5 推至最终的 1.0 (即追加至 1.0mm)
   KBC: 0
   MaxPseudoSteps: 15000 
   MassScaleFactor: 1.0e9

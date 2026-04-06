@@ -30,6 +30,8 @@ protected:
   PDCommon::Field::TypedField<double> *displacement_;
   PDCommon::Field::TypedField<double> *velocity_;
   PDCommon::Field::TypedField<double> *acceleration_;
+
+  std::string tableName_[3] = {"", "", ""};
 };
 
 /**
@@ -54,6 +56,9 @@ public:
 
   void apply() override;
   void apply(double loadFactor) override;
+  void applyWithTime(double currentTime) override;
+  void setTableNames(const std::vector<std::string> &names) override;
+
   bool isConstraint() const override {
     return true;
   } // Dirichlet: 直接设定位移值
