@@ -35,7 +35,7 @@ BoundaryConditions:
     Name: "Pull_Right"
     Box: [99.0, 999.0, -999.0, 999.0, -999.0, 999.0]
     Type: "DISP"
-    Value: [0.1, 1.0e20, 1.0e20] # X 方向施加 1mm 位移（ADR 按 loadFactor 缩放），Y/Z 自由
+    Value: [0.5, 1.0e20, 1.0e20] # X 方向施加位移，Y/Z 自由
 
 # 4. 预置裂纹 (在盒子正下方中心处开一条垂直切口，改用现有的 QuadCrack 平面切断法)
 #PreCracks:
@@ -50,11 +50,15 @@ BoundaryConditions:
 # 5. 材质物理属性 (钢材线弹性)
 Materials:
   - MatID: 1
-    Name: "Steel_Elastic"
-    Type: "LinearElasticMat"
+    Name: "Steel_Plastic"
+    Type: "J2PlasticityMat"
     Density: 8.0e-9 # tonne/mm³ (约 8000 kg/m³)
     YoungsModulus: 2.0e5 # MPa (200 GPa)
     PoissonsRatio: 0.3
+    YieldStress: 400.0 # MPa, 初始屈服应力。拉伸位移0.5mm对应名义应力1000MPa，必定发生屈服
+    HardeningModulus: 2.0e3 # MPa, 塑性强化模量
+    HardeningType: "Isotropic" # 强化类别
+    LargeDeformation: false
 
 # 6. 求解器控制
 Solver:
@@ -81,7 +85,7 @@ Solver:
   OMP_Threads: 8
   Horizon: 3.015 # 3.015 * dx
   KernelWeightType: "Gaussian"
-  ZeroEnergyG0: 1.0
+  ZeroEnergyG0: 0.2
   ZeroEnergyMethod: "Zhang"
 
 # 7. 输出设置
@@ -101,3 +105,9 @@ Writer:
       Dimension: 9
     - Name: "PK1Stress"
       Dimension: 9
+    - Name: "EqPlasticStrain_Old"
+      Dimension: 1
+    - Name: "PlasticStrain_Old"
+      Dimension: 9
+    - Name: "VonMisesStress"
+      Dimension: 1

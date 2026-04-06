@@ -78,6 +78,9 @@ private:
   double *betaOld_{nullptr};
   double *betaTrial_{nullptr};
 
+  // 4. 辅助推导输出：Von Mises 输出标量
+  double *vonMises_{nullptr};
+
   void computeLameParameters();
 };
 

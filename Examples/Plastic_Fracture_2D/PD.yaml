@@ -1,0 +1,90 @@
+#==============================================================================
+# GRPD 算例： 3D 圆柱形骨头/哑铃试样拉伸断裂 (Dogbone Tensile Test)
+#
+# 此算例通过读取外部 STL 模型建立一个存在中心微缩颈（诱导颈缩发生处）的圆柱，
+# 使用 J2 塑性 + 断裂模型来观察三维空间的典型“杯锥状”（Cup and Cone）断口或颈缩现象。
+#==============================================================================
+
+# 1. 全局设置
+Assembly: {}
+
+# 2. 几何模型：读取 Python 脚本生成的 cylinder.stl (自动利用 Open3D 射线体素化)
+Parts:
+  - PartID: 1
+    MatID: 1
+    Dimension: 3
+    Source: "cylinder.stl"
+    dx: 0.6 # 3D圆柱体素化网格尺寸。若机器性能足够，可下调以获得更光滑细腻的圆柱表面
+
+# 3. 边界条件：模拟试验机上下夹头完全夹死两端并拉伸
+BoundaryConditions:
+  - BcID: 1
+    Name: "Grip_Bottom"
+    Box: [-999.0, 999.0, -1.0, 3.0, -999.0, 999.0]
+    Type: "DISP"
+    Value: [0.0, 0.0, 0.0] # 模拟夹具完全夹死（X,Y,Z 都限制横向收缩）
+
+  - BcID: 2
+    Name: "Grip_Top"
+    Box: [-999.0, 999.0, 97.0, 101.0, -999.0, 999.0]
+    Type: "DISP"
+    Value: [0.0, 2.5, 0.0] # 顶部夹住，且往上强制拉伸2.5mm，引发强烈颈缩
+
+# 4. 没有显式指定初始裂缝（靠试样中间设计的内径缩小来自然集中应力产生颈缩与断裂）
+
+# 5. 材质物理属性
+Materials:
+  - MatID: 1
+    Name: "Ductile_Steel_3D"
+    Type: "J2PlasticityMat"
+    Density: 8.0e-9        # tonne/mm³
+    YoungsModulus: 2.0e5   # MPa
+    PoissonsRatio: 0.3     
+    YieldStress: 350.0     # MPa 初屈服
+    HardeningModulus: 1000.0 # MPa 塑性硬化
+    HardeningType: "Isotropic"
+    LargeDeformation: false
+    Damage:
+      Type: "CriticalStretch"
+      Critical_Stretch: 0.042 # 3D 试样临界拉伸放宽至 3% 以便充分展现颈缩（塑性大变形）
+
+# 6. 求解器控制
+Solver:
+  Engine: "PD"
+  Type: "Mechanical"
+  Kernel: "NOSB_M"
+  TimeIntegrator: "ADR"
+  NumLoadSteps: 5       # 载荷分为 5 大步
+  NumSubsteps:  20      # 每大步 20 个子步（共 100 增量），稳定地捕获非线性断裂
+  KBC: 0
+  MaxPseudoSteps: 15000 
+  MassScaleFactor: 1.0e9
+  DampingMethod: "HybridKinetic"
+  DispTol: 1.0e-5
+  ForceTol: 1.0e-3
+  OutputInterval: 1000    # 可以通过引擎后台看迭代阻尼收敛的情况
+  OMP_Threads: 12
+  Horizon: 1.8045
+  KernelWeightType: "Gaussian"
+  ZeroEnergyG0: 0.2
+  ZeroEnergyMethod: "Silling"
+
+# 7. 输出设置
+Writer:
+  Name: "Dogbone_Fracture_Result"
+  Type: "binary"
+  Variables:
+    - Name: "PartID"
+      Dimension: 1
+    - Name: "Volume"
+      Dimension: 1
+    - Name: "Damage"
+      Dimension: 1
+    - Name: "Displacement"
+      Dimension: 3
+    - Name: "PK1Stress"
+      Dimension: 9
+    - Name: "EqPlasticStrain_Old"
+      Dimension: 1
+    - Name: "VonMisesStress"
+      Dimension: 1

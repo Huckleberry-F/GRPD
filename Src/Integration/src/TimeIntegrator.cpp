@@ -11,6 +11,7 @@
 #include "PDKernel.h"
 #include "TypedField.h"
 #include <cmath>
+#include <omp.h>
 
 namespace Src::Integration {
 
@@ -23,6 +24,12 @@ void TimeIntegrator::configure(const YAML::Node &solverNode) {
       totalTime_ = solverNode["TotalTime"].as<double>();
     if (solverNode["OutputInterval"])
       outputInterval_ = solverNode["OutputInterval"].as<int>();
+      
+    if (solverNode["OMP_Threads"]) {
+      int threads = solverNode["OMP_Threads"].as<int>();
+      omp_set_num_threads(threads);
+      LOG_INFO("[TimeIntegrator] Explicitly set OMP Threads to: " + std::to_string(threads));
+    }
 }
 
 void TimeIntegrator::evaluateForces(

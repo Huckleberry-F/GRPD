@@ -8,6 +8,10 @@
 #include <iostream>
 #include <string>
 
+#ifdef _WIN32
+#include <windows.h>
+#endif
+
 #include <chrono>
 #include <iomanip>
 #include <sstream>
@@ -203,6 +207,20 @@ namespace PDCommon {
 namespace Utils {
 Logger &Logger::getInstance() {
   static Logger instance;
+#ifdef _WIN32
+  static bool ansi_enabled = false;
+  if (!ansi_enabled) {
+    HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
+    if (hOut != INVALID_HANDLE_VALUE) {
+      DWORD dwMode = 0;
+      if (GetConsoleMode(hOut, &dwMode)) {
+        dwMode |= 0x0004; // ENABLE_VIRTUAL_TERMINAL_PROCESSING
+        SetConsoleMode(hOut, dwMode);
+      }
+    }
+    ansi_enabled = true;
+  }
+#endif
   return instance;
 }
 

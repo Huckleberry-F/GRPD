@@ -65,6 +65,7 @@ void J2PlasticityMat::allocateStateVariables(PDCommon::Field::FieldManager &fm) 
   fm.addField(reg.createField("DoubleField", "EqPlasticStrain_Trial", 1));
   fm.addField(reg.createField("DoubleField", "PlasticStrain_Old", 9));
   fm.addField(reg.createField("DoubleField", "PlasticStrain_Trial", 9));
+  fm.addField(reg.createField("DoubleField", "VonMisesStress", 1));
 
   if (hardeningType_ == HardeningType::Kinematic || hardeningType_ == HardeningType::Combined) {
     fm.addField(reg.createField("DoubleField", "BackStress_Old", 9));
@@ -81,8 +82,10 @@ void J2PlasticityMat::bindStateVariables(PDCommon::Field::FieldManager &fm) {
   eqPSTrial_ = fm.getFieldAs<double>("EqPlasticStrain_Trial")->dataPtr();
   pSOld_     = fm.getFieldAs<double>("PlasticStrain_Old")->dataPtr();
   pSTrial_   = fm.getFieldAs<double>("PlasticStrain_Trial")->dataPtr();
+  vonMises_  = fm.getFieldAs<double>("VonMisesStress")->dataPtr();
 
   if (hardeningType_ == HardeningType::Kinematic || hardeningType_ == HardeningType::Combined) {
+
     betaOld_   = fm.getFieldAs<double>("BackStress_Old")->dataPtr();
     betaTrial_ = fm.getFieldAs<double>("BackStress_Trial")->dataPtr();
   }
@@ -192,6 +195,7 @@ Eigen::Matrix3d J2PlasticityMat::ComputePK1Stress(const Eigen::Matrix3d &F, int 
     Eigen::Matrix3d dEps_p = dGamma * std::sqrt(1.5) * n_dir;
     
     eps_p_new = eps_p_old + dEps_p;
+    alpha_new = alpha_old + dGamma;
     
     Eigen::Matrix3d S_new = S_trial - 2.0 * mu_ * dEps_p;
     sigma = S_new + hydro_stress * I;
@@ -202,6 +206,10 @@ Eigen::Matrix3d J2PlasticityMat::ComputePK1Stress(const Eigen::Matrix3d &F, int 
   pSTrial_[idx9]     = eps_p_new(0, 0); pSTrial_[idx9 + 1] = eps_p_new(0, 1); pSTrial_[idx9 + 2] = eps_p_new(0, 2);
   pSTrial_[idx9 + 3] = eps_p_new(1, 0); pSTrial_[idx9 + 4] = eps_p_new(1, 1); pSTrial_[idx9 + 5] = eps_p_new(1, 2);
   pSTrial_[idx9 + 6] = eps_p_new(2, 0); pSTrial_[idx9 + 7] = eps_p_new(2, 1); pSTrial_[idx9 + 8] = eps_p_new(2, 2);
+
+  // 输出 Von Mises 应力
+  vonMises_[particleId] = (f <= 1e-8 * yieldStress_) ? q_trial : (yieldStress_ + hardeningModulus_ * alpha_new);
+
 
   // 第一类 P-K 应力在大转动下应满足 P = F * S。但在古典小应变下 P ≈ sigma
   Eigen::Matrix3d P1 = sigma;

@@ -177,10 +177,6 @@ void ADR_Integrator::run(PDCommon::Core::PDContext &ctx,
 
         bcManager.applyConstraints(currentLF); // 始终强制冻结位移边界
 
-        for (auto &kernel : kernels) {
-          kernel->postCompute(ctx);
-        }
-
         computeConvergenceCriteria(); // 收集收敛 TOL 数据
 
         timer.tock();
@@ -226,6 +222,12 @@ void ADR_Integrator::run(PDCommon::Core::PDContext &ctx,
             PDCommon::Utils::StringUtils::toScientific(TOL2_) +
             " | TOL3(Res): " +
             PDCommon::Utils::StringUtils::toScientific(TOL3_));
+      }
+
+      // [物理场后处理演算 (含断裂发生)]
+      // 在ADR充分收敛/退出后执行，基于完全剥离了虚假动能的准静态分布进行断裂判定
+      for (auto &kernel : kernels) {
+        kernel->postCompute(ctx);
       }
 
       // [状态递进]
