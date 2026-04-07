@@ -143,16 +143,25 @@ bool GrpdMeshReader::read(const std::string &filepath) {
 
         // ===== *LOAD 段：解析载荷条目 → meshData_.loads =====
         if (state == ParseState::READING_LOADS) {
-          if (tokens.size() < 4)
+          if (tokens.size() < 5)
             return true;
 
           try {
             LoadEntry entry;
             entry.nodeID = std::stoi(tokens[0]);
-            entry.bcID = std::stoi(tokens[1]);
-            entry.type = tokens[2];
-            for (size_t i = 3; i < tokens.size(); ++i) {
-              entry.values.push_back(std::stod(tokens[i]));
+            entry.step = std::stoi(tokens[1]);
+            entry.bcID = std::stoi(tokens[2]);
+            entry.type = tokens[3];
+            for (size_t i = 4; i < tokens.size(); ++i) {
+                // 如果包含 %Table.txt% ，提取为 TableName
+                if (tokens[i].size() >= 2 && tokens[i].front() == '%' && tokens[i].back() == '%') {
+                    std::string tableName = tokens[i].substr(1, tokens[i].size() - 2);
+                    entry.tableNames.push_back(tableName);
+                    entry.values.push_back(1.0); // 被 Table 覆盖，提供 1.0 的放缩基准
+                } else {
+                    entry.tableNames.push_back("None");
+                    entry.values.push_back(std::stod(tokens[i]));
+                }
             }
             meshData_.loads.push_back(entry);
             loadCount++;

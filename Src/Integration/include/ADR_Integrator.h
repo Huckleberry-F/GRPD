@@ -61,11 +61,7 @@ private:
 
 
   // -----------------------------------------------------------------------
-  // ADR 专属参数（从 YAML Solver 段读取）
-  // -----------------------------------------------------------------------
-  // numLoadSteps_, numSubsteps_, loadStepConfigs_ 已移至 TimeIntegrator 基类
-
-  int kbc_ = 0;               ///< 加载控制：0=Ramp(坡道加载), 1=Step(阶跃突加)
+  // numLoadSteps_, numSubsteps_, loadStepConfigs_, kbc_ 已移至 TimeIntegrator 基类
   int maxPseudoSteps_ = 5000; ///< 每个 Substep 内允许的最大迭代数
   double dispTol_ = 1.0e-6;   ///< 位移收敛阈值 TOL2
   double forceTol_ = 1.0e-4;  ///< 力平衡收敛阈值 TOL3

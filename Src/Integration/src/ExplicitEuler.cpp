@@ -45,7 +45,10 @@ void ExplicitEuler::run(PDCommon::Core::PDContext &ctx,
   LOG_INFO("[ExplicitEuler] Starting Explicit Loop with " + 
            std::to_string(loadStepConfigs_.size()) + " LoadStep(s). Default dt = " + std::to_string(dt_));
 
-  bcManager.applyConstraints();
+  int initialStepId = loadStepConfigs_.empty() ? 0 : loadStepConfigs_[0].stepId;
+  int initKbc = loadStepConfigs_.empty() ? kbc_ : (loadStepConfigs_[0].kbc >= 0 ? loadStepConfigs_[0].kbc : kbc_);
+  double initLF = (initKbc == 1) ? 1.0 : 0.0;
+  bcManager.applyConstraints(initLF, initialStepId);
 
   PDCommon::Utils::Timer timer;
   timer.start();
@@ -57,10 +60,14 @@ void ExplicitEuler::run(PDCommon::Core::PDContext &ctx,
   for (size_t lstepIdx = 0; lstepIdx < loadStepConfigs_.size(); ++lstepIdx) {
     const auto& config = loadStepConfigs_[lstepIdx];
     double targetTime = config.targetTime;
-    double currentDt = (config.userDt > 0.0) ? config.userDt : dt_; 
+    double currentDt = (config.userDt > 0.0) ? config.userDt : dt_;
+    int currentKbc = (config.kbc >= 0) ? config.kbc : kbc_;
 
     LOG_INFO("=== Load Step " + std::to_string(config.stepId) + " / " +
-             std::to_string(loadStepConfigs_.size()) + " | TargetTime: " + std::to_string(targetTime) + " ===");
+             std::to_string(loadStepConfigs_.size()) + 
+             " | TargetTime: " + std::to_string(targetTime) + 
+             " | dt: " + std::to_string(currentDt) +
+             " | KBC: " + std::to_string(currentKbc) + " ===");
 
     while (currentTime < targetTime - 1e-12) {
       if (globalStepCounter % outputInterval == 0) {
@@ -83,11 +90,20 @@ void ExplicitEuler::run(PDCommon::Core::PDContext &ctx,
       // -------------------------------------------------------------
       // Generic Explicit Euler Pipeline
       // -------------------------------------------------------------
+      
+      double prevTargetTime = (lstepIdx == 0) ? 0.0 : loadStepConfigs_[lstepIdx - 1].targetTime;
+      double stepLoadFactor = 1.0;
+      if (targetTime > prevTargetTime) {
+         stepLoadFactor = (currentTime + currentDt - prevTargetTime) / (targetTime - prevTargetTime);
+      }
+      int currentKbc = (config.kbc >= 0) ? config.kbc : kbc_;
+      double activeLF = (currentKbc == 1) ? 1.0 : stepLoadFactor;
+
       evaluateForces(ctx, kernels, rateFieldNames_);
 
       updateKinematicsEuler(currentDt);
 
-      bcManager.applyConstraints();
+      bcManager.applyConstraints(activeLF, config.stepId);
 
       for (auto &kernel : kernels) {
         kernel->postCompute(ctx);
@@ -99,6 +115,9 @@ void ExplicitEuler::run(PDCommon::Core::PDContext &ctx,
       currentTime += currentDt;
       globalStepCounter++;
     }
+
+    // 该载荷步物理时间推进完毕，通知所有 BC 将当前极值固化为下一步的起点
+    bcManager.commitEndStep();
   }
 
   // 最终强制输出一次作为结束

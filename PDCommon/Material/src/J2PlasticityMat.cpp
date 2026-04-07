@@ -101,21 +101,23 @@ void J2PlasticityMat::commitState() {
   // 如果指针为空，放弃写入
   if (!eqPSOld_ || !eqPSTrial_ || !pSOld_ || !pSTrial_) return;
 
-  // 在 ADR 子步收敛时，推进状态 (Trial -> Old)
-  for (size_t i = 0; i < numParticles_; ++i) {
-    eqPSOld_[i] = eqPSTrial_[i];
-    
-    int idx9 = i * 9;
-    for (int j = 0; j < 9; ++j) {
-      pSOld_[idx9 + j] = pSTrial_[idx9 + j];
-    }
-
-    if (betaOld_ && betaTrial_) {
+    // 路线二：回归最纯粹且高效的 AoS 内存连体阵列！
+#pragma omp parallel for schedule(static)
+    for (int i = 0; i < static_cast<int>(numParticles_); ++i) {
+      eqPSOld_[i] = eqPSTrial_[i];
+      int idx9 = i * 9;
       for (int j = 0; j < 9; ++j) {
-        betaOld_[idx9 + j] = betaTrial_[idx9 + j];
+        pSOld_[idx9 + j] = pSTrial_[idx9 + j];
+      }
+
+      if (betaOld_ && betaTrial_) {
+        for (int j = 0; j < 9; ++j) {
+          betaOld_[idx9 + j] = betaTrial_[idx9 + j];
+        }
       }
     }
-  }
+
+
 }
 
 // ---------------------------------------------------------------------------
@@ -151,7 +153,8 @@ Eigen::Matrix3d J2PlasticityMat::ComputePK1Stress(const Eigen::Matrix3d &F, int 
     eps = 0.5 * (F + F.transpose()) - I;
   }
 
-  // 读取 Old 塑性应变
+  // --- 路线二：纯正 AoS 访存连段 ---
+  // 正如您所洞见的！9个分量紧密相连，一次 Cache Miss 即可将全部 72 字节拉入 CPU！
   Eigen::Matrix3d eps_p_old = Eigen::Matrix3d::Zero();
   int idx9 = particleId * 9;
   eps_p_old << pSOld_[idx9],     pSOld_[idx9 + 1], pSOld_[idx9 + 2],
@@ -180,35 +183,31 @@ Eigen::Matrix3d J2PlasticityMat::ComputePK1Stress(const Eigen::Matrix3d &F, int 
   double R = yieldStress_ + hardeningModulus_ * alpha_old;
   double f = q_trial - R;
 
-  Eigen::Matrix3d sigma = Eigen::Matrix3d::Zero();
-  Eigen::Matrix3d eps_p_new = eps_p_old;
-  double alpha_new = alpha_old;
+  // --- 方案 C 性能优化：无分支向量化 (Branchless Vectorization) ---
+  // 彻底抹除导致 AVX/SSE 崩溃退化的 if-else
+  bool isYielding = (f > 1e-8 * yieldStress_);
+  double dGamma = isYielding ? (f / (3.0 * mu_ + hardeningModulus_)) : 0.0;
 
-  if (f <= 1e-8 * yieldStress_) { // 弹性卸载/加载
-    sigma = S_trial + hydro_stress * I;
-  } else { // 塑性屈服 (Radial Return)
-    double dGamma = f / (3.0 * mu_ + hardeningModulus_);
-    Eigen::Matrix3d n_dir = Eigen::Matrix3d::Zero();
-    if (norm_S > 1e-16) {
-      n_dir = S_trial / norm_S;
-    }
-    Eigen::Matrix3d dEps_p = dGamma * std::sqrt(1.5) * n_dir;
-    
-    eps_p_new = eps_p_old + dEps_p;
-    alpha_new = alpha_old + dGamma;
-    
-    Eigen::Matrix3d S_new = S_trial - 2.0 * mu_ * dEps_p;
-    sigma = S_new + hydro_stress * I;
+  Eigen::Matrix3d n_dir = Eigen::Matrix3d::Zero();
+  if (norm_S > 1e-16) {
+    n_dir = S_trial / norm_S;
   }
+  
+  Eigen::Matrix3d dEps_p = dGamma * std::sqrt(1.5) * n_dir;
+  Eigen::Matrix3d eps_p_new = eps_p_old + dEps_p;
+  double alpha_new = alpha_old + dGamma;
+  
+  Eigen::Matrix3d S_new = S_trial - 2.0 * mu_ * dEps_p;
+  Eigen::Matrix3d sigma = S_new + hydro_stress * I;
 
-  // 记录到 Trial 缓冲 (由 ADR 独立判断收敛后才落盘到 Old)
+  // 记录到 Trial 缓冲
   eqPSTrial_[particleId] = alpha_new;
   pSTrial_[idx9]     = eps_p_new(0, 0); pSTrial_[idx9 + 1] = eps_p_new(0, 1); pSTrial_[idx9 + 2] = eps_p_new(0, 2);
   pSTrial_[idx9 + 3] = eps_p_new(1, 0); pSTrial_[idx9 + 4] = eps_p_new(1, 1); pSTrial_[idx9 + 5] = eps_p_new(1, 2);
   pSTrial_[idx9 + 6] = eps_p_new(2, 0); pSTrial_[idx9 + 7] = eps_p_new(2, 1); pSTrial_[idx9 + 8] = eps_p_new(2, 2);
 
-  // 输出 Von Mises 应力
-  vonMises_[particleId] = (f <= 1e-8 * yieldStress_) ? q_trial : (yieldStress_ + hardeningModulus_ * alpha_new);
+  // 输出 Von Mises 应力 (这也是无分支)
+  vonMises_[particleId] = isYielding ? (yieldStress_ + hardeningModulus_ * alpha_new) : q_trial;
 
 
   // 第一类 P-K 应力在大转动下应满足 P = F * S。但在古典小应变下 P ≈ sigma

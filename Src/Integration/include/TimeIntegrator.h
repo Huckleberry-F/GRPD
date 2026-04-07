@@ -63,9 +63,11 @@ protected:
     int numSubsteps = 1;     // 用于准静态步（如 ADR）定义细分
     double targetTime = 0.0; // 显式算法判定本段结束的目标物理时间
     double userDt = 0.0;     // 显式算法特定覆盖的步长 (0.0 表示自动计算)
+    int kbc = -1;            // 本步专用的 KBC 控制 (-1 表示使用全局配置)
   };
 
   std::vector<LoadStepConfig> loadStepConfigs_;
+  int kbc_ = 0;               ///< 加载控制：0=Ramp(坡道加载/查表), 1=Step(阶跃突加)
   int defaultNumLoadSteps_ = 10;
   int defaultNumSubsteps_ = 1;
   double defaultEndTime_ = 1.0;

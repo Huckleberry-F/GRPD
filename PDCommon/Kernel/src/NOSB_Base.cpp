@@ -199,4 +199,90 @@ void NOSB_Base::ComputeShapeTensors(PDContext &ctx) {
            "Inverse computed.");
 }
 
+// ---------------------------------------------------------------------------
+// 动态刷新形状张量逆 K⁻¹
+// ---------------------------------------------------------------------------
+void NOSB_Base::UpdateShapeTensors(PDContext &ctx) {
+  auto &manager = ctx.getParticleManager();
+  auto &neighborList = ctx.getNeighborList();
+  auto &fieldManager = ctx.getFieldManager();
+
+  const size_t numParticles = manager.getTotalParticles();
+  
+  auto *shapeInvField = fieldManager.getFieldAs<double>("ShapeTensorInv");
+  auto *coordsField = fieldManager.getFieldAs<double>("Coords");
+  auto *volumeField = fieldManager.getFieldAs<double>("Volume");
+  auto *damageField = fieldManager.getFieldAs<double>("Damage");
+  
+  if (!shapeInvField || !coordsField || !volumeField) return;
+
+  double *shapeInvPtr = shapeInvField->dataPtr();
+  const double *coords = coordsField->dataPtr();
+  const double *volumes = volumeField->dataPtr();
+  double *damagePtr = damageField ? damageField->dataPtr() : nullptr;
+  
+  const double *omegaPtr = neighborList.getBondFieldPtr("InfluenceWeight");
+  if (!omegaPtr) return;
+
+  const int dim = ctx.getDimension();
+  const int minNeighborsRequired = dim + 1;
+
+#pragma omp parallel for schedule(static)
+  for (int i = 0; i < static_cast<int>(numParticles); ++i) {
+    // 若该粒子已被先前的步骤彻底宣告死亡，则跳过计算以节省时间
+    if (damagePtr && damagePtr[i] >= 0.99) continue;
+
+    const int numNeighbors = neighborList.getNeighborCount(i);
+    const int *neighbors = neighborList.getNeighborIds(i);
+    const int offset = neighbors - neighborList.getNeighborIds(0);
+
+    // 统计有效邻居数
+    int validNeighborCount = 0;
+    for (int k = 0; k < numNeighbors; ++k) {
+      if (neighbors[k] != -1) ++validNeighborCount;
+    }
+
+    // 若判定存活键过少，无法维持连续体状态（K 退化），则底层击毙该点
+    if (validNeighborCount < minNeighborsRequired) {
+      Map<Matrix<double, 3, 3, RowMajor>> K_inv_map(&shapeInvPtr[i * 9]);
+      K_inv_map = Matrix3d::Identity();
+      if (damagePtr) damagePtr[i] = 1.0;
+      continue;
+    }
+
+    // 重构新 K 矩阵
+    Vector3d xi(coords[i * 3], coords[i * 3 + 1], coords[i * 3 + 2]);
+    Matrix3d K = Matrix3d::Zero();
+
+    for (int k = 0; k < numNeighbors; ++k) {
+      int j = neighbors[k];
+      if (j == -1) continue;
+
+      double omega = omegaPtr[offset + k];
+      Vector3d xj(coords[j * 3], coords[j * 3 + 1], coords[j * 3 + 2]);
+      Vector3d deltaX = xj - xi;
+      double vj = volumes[j];
+      
+      K += omega * (deltaX * deltaX.transpose()) * vj;
+    }
+
+    if (dim == 2) K(2, 2) = 1.0;
+
+    double trace_K = K.trace();
+    K += (trace_K * 2.5e-3 + 1e-15) * Matrix3d::Identity();
+
+    // 检查不可逆性
+    if (std::abs(K.determinant()) < 1e-12) {
+       Map<Matrix<double, 3, 3, RowMajor>> K_inv_map(&shapeInvPtr[i * 9]);
+       K_inv_map = Matrix3d::Identity();
+       if (damagePtr) damagePtr[i] = 1.0;
+       continue;
+    }
+
+    Matrix3d K_inv = K.inverse();
+    Map<Matrix<double, 3, 3, RowMajor>> K_inv_map(&shapeInvPtr[i * 9]);
+    K_inv_map = K_inv;
+  }
+}
+
 } // namespace PDCommon::Kernel

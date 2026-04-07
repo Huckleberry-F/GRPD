@@ -4,8 +4,10 @@
 
 add_library(Damage_Obj OBJECT 
     src/DamageRegistry.cpp
+    src/DamageModel.cpp
     src/CriticalStretch.cpp
     src/QuadCrack.cpp
+    src/EqPSDamage.cpp
 )
 
 target_sources(Damage_Obj PRIVATE
@@ -15,6 +17,7 @@ target_sources(Damage_Obj PRIVATE
     include/PreCrackModel.h
     include/PreCrackRegistry.h
     include/QuadCrack.h
+    include/EqPSDamage.h
 )
 
 target_include_directories(Damage_Obj PUBLIC include)

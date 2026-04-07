@@ -55,13 +55,16 @@ void InitConditions(PDCommon::Core::PDContext &ctx, const YAML::Node &config) {
     }
 
     bc->initialize(fieldManager, entry.nodeID, entry.values);
+    bc->setTableNames(entry.tableNames);  // 绑定表格映射名称
 
     bcStats[entry.type]++;
-    bcManager.addBC(std::move(bc));
+    bcManager.addBC(std::move(bc), entry.step);
   }
 
-  bcManager.applySources();
-  bcManager.applyConstraints();
+  // 初始施加（此时默认第一步的静态载荷，或者是通用全局载荷 Step = 0）
+  // 注意，后续在积分环中 ADR_Integrator 会负责按子步更新当前步的 BC
+  bcManager.applySources(0);
+  bcManager.applyConstraints(0);
 
   LOG_INFO("[InitConditions] Load statistics:");
   for (const auto &[type, count] : bcStats) {

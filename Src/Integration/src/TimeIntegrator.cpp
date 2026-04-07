@@ -24,6 +24,9 @@ void TimeIntegrator::configure(const YAML::Node &solverNode) {
       totalTime_ = solverNode["TotalTime"].as<double>();
       defaultEndTime_ = totalTime_;
     }
+    if (solverNode["KBC"]) {
+      kbc_ = solverNode["KBC"].as<int>();
+    }
     if (solverNode["NumLoadSteps"])
       defaultNumLoadSteps_ = solverNode["NumLoadSteps"].as<int>();
     if (solverNode["NumSubsteps"])
@@ -48,8 +51,17 @@ void TimeIntegrator::configure(const YAML::Node &solverNode) {
         if (stepNode["Step"]) config.stepId = stepNode["Step"].as<int>();
         
         config.numSubsteps = stepNode["NumSubsteps"] ? stepNode["NumSubsteps"].as<int>() : defaultNumSubsteps_;
-        config.targetTime = stepNode["TargetTime"] ? stepNode["TargetTime"].as<double>() : defaultEndTime_;
+        
+        if (stepNode["Time"]) {
+          config.targetTime = stepNode["Time"].as<double>();
+        } else if (stepNode["TargetTime"]) {
+          config.targetTime = stepNode["TargetTime"].as<double>();
+        } else {
+          config.targetTime = defaultEndTime_;
+        }
+
         if (stepNode["TimeStep_dt"]) config.userDt = stepNode["TimeStep_dt"].as<double>();
+        if (stepNode["KBC"]) config.kbc = stepNode["KBC"].as<int>();
         
         loadStepConfigs_.push_back(config);
       }

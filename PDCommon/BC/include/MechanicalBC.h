@@ -63,10 +63,14 @@ public:
     return true;
   } // Dirichlet: 直接设定位移值
 
+  void commitEndStep() override;
+
 private:
-  int particleId_;
-  double dispVal_[3];
-  bool applyDirs_[3];
+  size_t particleId_ = 0;
+  bool applyDirs_[3] = {true, true, true};
+  double dispVal_[3] = {0.0, 0.0, 0.0};
+  double prevVal_[3] = {0.0, 0.0, 0.0};
+  std::string tableName_[3];
 };
 
 /**

@@ -24,12 +24,10 @@ public:
   virtual void configure(const YAML::Node &node) = 0;
 
   /// @brief 初始化 / 预计算 (在第一个时间步前被调用一次)
-  /// 用于向 NeighborList 注册额外的 BondFields，或向 FieldManager 注册全局 Damage 场。
-  virtual void preCompute(PDCommon::Core::PDContext &ctx, int matId = -1) = 0;
+  /// 基类提供了公用的场申请与初始键统计逻辑，子类可覆盖但建议在开头调用基类的 preCompute。
+  virtual void preCompute(PDCommon::Core::PDContext &ctx, int matId = -1);
 
   /// @brief 计算损伤 / 判定键断裂
-  /// @details 通常在 postCompute 阶段调用，计算键的当前状态（伸长率/应力等），
-  /// 若达到失效条件，则置对应的 neighbour ID 为 -1。
   virtual void computeDamage(PDCommon::Core::PDContext &ctx, int matId = -1) = 0;
 
   /// @brief 返回本损伤模型的名字 (用于识别)
@@ -37,6 +35,15 @@ public:
 
 protected:
   DamageModel() = default;
+
+  // 全局缓存的每个节点的初始键数，由基类的 preCompute 统一分配和统计
+  std::vector<int> initialBondsCount_;
+
+  // 辅助函数：依据当前 activeBonds 安全地计算出 0~1 的损伤标量
+  inline double calculateDamageRatio(int particleIndex, int activeBonds) const {
+      if (initialBondsCount_.empty() || initialBondsCount_[particleIndex] <= 0) return 0.0;
+      return 1.0 - static_cast<double>(activeBonds) / static_cast<double>(initialBondsCount_[particleIndex]);
+  }
 };
 
 } // namespace PDCommon::Damage

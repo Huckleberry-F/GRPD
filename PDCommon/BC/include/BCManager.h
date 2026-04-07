@@ -32,20 +32,24 @@ public:
 
     /// @brief 添加一个边界条件实例（独占所有权）
     /// @param bc 边界条件实例的 unique_ptr
-    void addBC(std::unique_ptr<BC> bc);
+    /// @param step 隶属的载荷步(0为全局)
+    void addBC(std::unique_ptr<BC> bc, int step = 0);
 
     /// @brief 批量施加所有边界条件
-    void applyAll();
+    void applyAll(int currentStep = 0);
 
     /// @brief 仅施加源项型边界条件（如热流、对流）
-    void applySources();
+    void applySources(int currentStep = 0);
 
     /// @brief 仅施加约束型边界条件（如固定温度）
-    void applyConstraints();
+    void applyConstraints(int currentStep = 0);
 
-    /// @brief 按比例施加约束型边界条件（用于 ADR 准静态加载）
-    /// @param loadFactor 加载比例因子 [0.0, 1.0]
-    void applyConstraints(double loadFactor);
+    /// @brief 按比例施加约束型边界条件（通用：根据 KBC 和 local step load factor）
+    /// @param loadFactor 局部载荷系数或阶跃指示器 [0.0, 1.0]
+    void applyConstraints(double loadFactor, int currentStep = 0);
+
+    /// @brief 宣告一个 LoadStep 结束，同步更新所有的边界条件基准点
+    void commitEndStep();
 
     /// @brief 获取当前管理的边界条件总数
     size_t size() const;
@@ -54,8 +58,13 @@ public:
     void clear();
 
 private:
-    // 统一容器，通过多态调用 apply()
-    std::vector<std::unique_ptr<BC>> bcs_;
+    struct BCEntry {
+        int step;
+        std::unique_ptr<BC> bc;
+    };
+    
+    // 统一容器，存储附带 Step ID 的 BC
+    std::vector<BCEntry> bcs_;
 };
 
 } // namespace PDCommon::BC

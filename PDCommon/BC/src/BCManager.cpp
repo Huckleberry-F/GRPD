@@ -6,37 +6,51 @@
 
 namespace PDCommon::BC {
 
-void BCManager::addBC(std::unique_ptr<BC> bc) {
-    bcs_.push_back(std::move(bc));
+void BCManager::addBC(std::unique_ptr<BC> bc, int step) {
+    bcs_.push_back({step, std::move(bc)});
 }
 
-void BCManager::applyAll() {
-    for (auto &bc : bcs_) {
-        bc->apply();
-    }
-}
-
-void BCManager::applySources() {
-    for (auto &bc : bcs_) {
-        if (!bc->isConstraint()) {
-            bc->apply();
+void BCManager::applyAll(int currentStep) {
+    for (auto &entry : bcs_) {
+        if (entry.step == 0 || entry.step == currentStep) {
+            entry.bc->apply();
         }
     }
 }
 
-void BCManager::applyConstraints() {
-    for (auto &bc : bcs_) {
-        if (bc->isConstraint()) {
-            bc->apply();
+void BCManager::applySources(int currentStep) {
+    for (auto &entry : bcs_) {
+        if (entry.step == 0 || entry.step == currentStep) {
+            if (!entry.bc->isConstraint()) {
+                entry.bc->apply();
+            }
         }
     }
 }
 
-void BCManager::applyConstraints(double loadFactor) {
-    for (auto &bc : bcs_) {
-        if (bc->isConstraint()) {
-            bc->apply(loadFactor);
+void BCManager::applyConstraints(int currentStep) {
+    for (auto &entry : bcs_) {
+        if (entry.step == 0 || entry.step == currentStep) {
+            if (entry.bc->isConstraint()) {
+                entry.bc->apply();
+            }
         }
+    }
+}
+
+void BCManager::applyConstraints(double loadFactor, int currentStep) {
+    for (auto &entry : bcs_) {
+        if (entry.step == 0 || entry.step == currentStep) {
+            if (entry.bc->isConstraint()) {
+                entry.bc->apply(loadFactor); // ADR 等积分器依赖的原生 loadFactor 放缩
+            }
+        }
+    }
+}
+
+void BCManager::commitEndStep() {
+    for (auto &entry : bcs_) {
+        entry.bc->commitEndStep();
     }
 }
 

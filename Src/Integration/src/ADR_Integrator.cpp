@@ -21,8 +21,6 @@ namespace Src::Integration {
 void ADR_Integrator::configure(const YAML::Node &solverNode) {
   TimeIntegrator::configure(solverNode);
 
-  if (solverNode["KBC"])
-    kbc_ = solverNode["KBC"].as<int>();
   if (solverNode["MaxPseudoSteps"])
     maxPseudoSteps_ = solverNode["MaxPseudoSteps"].as<int>();
   if (solverNode["DispTol"])
@@ -33,6 +31,8 @@ void ADR_Integrator::configure(const YAML::Node &solverNode) {
     massScaleFactor_ = solverNode["MassScaleFactor"].as<double>();
   if (solverNode["RampIters"])
     rampItersOverride_ = solverNode["RampIters"].as<int>();
+  if (solverNode["RampWaveRatio"])
+    rampWaveRatio_ = solverNode["RampWaveRatio"].as<double>();
   if (solverNode["DampingMethod"])
     dampingMethod_ = solverNode["DampingMethod"].as<std::string>();
 }
@@ -111,8 +111,7 @@ void ADR_Integrator::run(PDCommon::Core::PDContext &ctx,
   initializeHistoryVariables();
 
   LOG_INFO("[ADR_Integrator] Starting Custom ADR: NumLoadSteps = " +
-           std::to_string(loadStepConfigs_.size()) + ", FirstStep NumSubsteps = " +
-           std::to_string(loadStepConfigs_.empty() ? 0 : loadStepConfigs_[0].numSubsteps) + ", KBC = " + std::to_string(kbc_) +
+           std::to_string(loadStepConfigs_.size()) +
            ", MassScale = " + std::to_string(massScaleFactor_) +
            ", DampingMethod = " + dampingMethod_ +
            ", dt = " + std::to_string(dt));
@@ -131,9 +130,12 @@ void ADR_Integrator::run(PDCommon::Core::PDContext &ctx,
     const auto& stepConfig = loadStepConfigs_[stepIdx];
     int step = stepConfig.stepId - 1; // mapping to internal index for logging
     int currentNumSubsteps = stepConfig.numSubsteps;
+    int currentKbc = (stepConfig.kbc >= 0) ? stepConfig.kbc : kbc_;
 
     LOG_INFO("=== Load Step " + std::to_string(stepConfig.stepId) + " / " +
-             std::to_string(loadStepConfigs_.size()) + " ===");
+             std::to_string(loadStepConfigs_.size()) + 
+             " | NumSubsteps: " + std::to_string(currentNumSubsteps) + 
+             " | KBC: " + std::to_string(currentKbc) + " ===");
 
     for (int sub = 0; sub < currentNumSubsteps; ++sub) {
       saveBaseDisplacement();
@@ -146,7 +148,8 @@ void ADR_Integrator::run(PDCommon::Core::PDContext &ctx,
                        static_cast<double>(sub) / currentNumSubsteps) /
                       loadStepConfigs_.size();
 
-      int rampIters = (kbc_ == 1) ? 0 : computeRampIters(ctx); // KBC=1阶跃
+      int currentKbc = (stepConfig.kbc >= 0) ? stepConfig.kbc : kbc_;
+      int rampIters = (currentKbc == 1) ? 0 : computeRampIters(ctx); // KBC=1阶跃
       LOG_INFO("    [Substep " + std::to_string(sub) +
                "] Computed RampIters: " + std::to_string(rampIters));
 
@@ -156,25 +159,33 @@ void ADR_Integrator::run(PDCommon::Core::PDContext &ctx,
       while (!converged && iter < maxPseudoSteps_) {
         bool inRampPhase = (iter < rampIters);
         double currentLF = targetLF;
+        
+        double baseLocalLF = static_cast<double>(sub + 1) / currentNumSubsteps; 
+        double prevLocalLF = static_cast<double>(sub) / currentNumSubsteps;
+        double currentLocalLF = baseLocalLF;
 
         if (inRampPhase) {
           currentLF = prevLF + (targetLF - prevLF) *
                                    (static_cast<double>(iter + 1) / rampIters);
+          currentLocalLF = prevLocalLF + (baseLocalLF - prevLocalLF) * 
+                                         (static_cast<double>(iter + 1) / rampIters);
         }
+        
+        double activeLF = (currentKbc == 1) ? 1.0 : currentLocalLF;
 
         saveOldDisplacement();
 
         timer.tick();
 
         // 💡 [核心工序流水线表达]
-        bcManager.applyConstraints(currentLF);
+        bcManager.applyConstraints(activeLF, stepConfig.stepId);
         evaluateForces(ctx, kernels, accFieldNames_);
-        bcManager.applyConstraints(currentLF); // 重施约束斩断支座虚假加速度
+        bcManager.applyConstraints(activeLF, stepConfig.stepId); // 重施约束斩断支座虚假加速度
 
         double cn = computeAdaptiveDamping(dt); // 依据响应提取耗散系数
         updateKinematicsLeapfrog(cn, dt);       // 积分器速度/位移步进推演
 
-        bcManager.applyConstraints(currentLF); // 始终强制冻结位移边界
+        bcManager.applyConstraints(activeLF, stepConfig.stepId); // 始终强制冻结位移边界
 
         computeConvergenceCriteria(); // 收集收敛 TOL 数据
 
@@ -198,9 +209,14 @@ void ADR_Integrator::run(PDCommon::Core::PDContext &ctx,
         }
 
         if (iter % outputInterval_ == 0 && iter > 0) {
+          double prevPhysicalTime = (stepIdx == 0) ? 0.0 : loadStepConfigs_[stepIdx - 1].targetTime;
+          double stepPhysicalTime = stepConfig.targetTime;
+          double currentPhysicalTime = prevPhysicalTime + currentLocalLF * (stepPhysicalTime - prevPhysicalTime);
+
           LOG_INFO(
               "    > Sub " + std::to_string(sub) + " Iter " +
-              std::to_string(iter) + " | LF: " + std::to_string(currentLF) +
+              std::to_string(iter) + " | Time: " + std::to_string(currentPhysicalTime) +
+              " | LocalLF: " + std::to_string(currentLocalLF) +
               " | Res: " + PDCommon::Utils::StringUtils::toScientific(TOL3_) +
               " | cn: " + PDCommon::Utils::StringUtils::toScientific(cn) +
               " | Speed: " + std::to_string(static_cast<int>(timer.pureSpeed())) +
@@ -237,9 +253,16 @@ void ADR_Integrator::run(PDCommon::Core::PDContext &ctx,
 
       if (outputCallback) {
         globalSubstepCounter++;
-        outputCallback(globalSubstepCounter, targetLF);
+        double prevPhysicalTime = (stepIdx == 0) ? 0.0 : loadStepConfigs_[stepIdx - 1].targetTime;
+        double stepPhysicalTime = stepConfig.targetTime;
+        double substepFraction = static_cast<double>(sub + 1) / currentNumSubsteps;
+        double currentPhysicalTime = prevPhysicalTime + substepFraction * (stepPhysicalTime - prevPhysicalTime);
+        outputCallback(globalSubstepCounter, currentPhysicalTime);
       }
     }
+
+    // 宣告本 LoadStep 彻底结束，让 Boundary Conditions 记忆最终态
+    bcManager.commitEndStep();
   }
 
   timer.logSummary("ADR_Integrator");

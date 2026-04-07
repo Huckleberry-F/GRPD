@@ -39,9 +39,11 @@ enum class ElementType {
 /// @brief 载荷/边界条件条目
 struct LoadEntry {
   int nodeID;       ///< 作用节点 ID
+  int step;         ///< 隶属的载荷步（0为全局共有）
   int bcID;         ///< 边界条件组 ID
   std::string type; ///< 边界条件类型 ("T", "FLUX" 等)
   std::vector<double> values; ///< 多维边界条件值数组
+  std::vector<std::string> tableNames; ///< 绑定的 Table 名称（如为空则为 "None"）
 };
 
 /// @brief 通用网格中间数据结构

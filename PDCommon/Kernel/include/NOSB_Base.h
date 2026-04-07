@@ -35,9 +35,11 @@ protected:
       return 0.0;
   }
 
-  /// @brief 计算形状张量逆 K⁻¹ 并存入 "ShapeTensorInv" 场
-  /// 这个算子纯几何依赖，热 (NOSB_T) 和 力 (NOSB_Mechanical) 均可继承复用
+  /// @brief 计算形状张量逆 K⁻¹ 并存入 "ShapeTensorInv" 场（初始分配与计算）
   void ComputeShapeTensors(PDCommon::Core::PDContext &ctx);
+
+  /// @brief 动态刷新形状张量及其逆矩阵（仅依赖当前存活的键）
+  void UpdateShapeTensors(PDCommon::Core::PDContext &ctx);
 };
 
 } // namespace PDCommon::Kernel

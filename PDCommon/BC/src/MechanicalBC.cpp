@@ -55,7 +55,8 @@ void DisplacementBC::apply(double loadFactor) {
   for (int d = 0; d < 3; ++d) {
     if (applyDirs_[d]) {
       // 按比例施加位移约束：u = dispVal * loadFactor
-      displacement_->set(particleId_, dispVal_[d] * loadFactor, d);
+      double activeVal = prevVal_[d] + (dispVal_[d] - prevVal_[d]) * loadFactor;
+      displacement_->set(particleId_, activeVal, d);
       if (velocity_)
         velocity_->set(particleId_, 0.0, d);
       if (acceleration_)
@@ -72,6 +73,16 @@ void DisplacementBC::setTableNames(const std::vector<std::string> &names) {
 }
 
 // 注意这里需要包含 Table.h, 我们之后再在文件顶部添加
+void DisplacementBC::commitEndStep() {
+  if (!displacement_ || particleId_ < 0) return;
+  // 从物理场中直接抽样当前颗粒末态的真实位移，作为下一步本约束继续加载的起点（0基点）
+  for (int d = 0; d < 3; ++d) {
+    if (applyDirs_[d]) {
+      prevVal_[d] = displacement_->get(particleId_, d);
+    }
+  }
+}
+
 void DisplacementBC::applyWithTime(double currentTime) {
   if (!displacement_)
     return;

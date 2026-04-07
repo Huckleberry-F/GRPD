@@ -37,7 +37,20 @@ def generate_from_yaml(yaml_path):
     output_file = os.path.join(yaml_dir, model_name + ".grpd")
     print(f"[INFO]  Output grpd path: {output_file}")
         
-    bc_configs = config.get('BoundaryConditions', [])
+    bc_entries = []
+    
+    # 1. 兼容原有的全局 BoundaryConditions (默认 Step = 0, 全时间通用)
+    if 'BoundaryConditions' in config:
+        for bc in config['BoundaryConditions']:
+            bc_entries.append({'step': 0, 'bc': bc})
+            
+    # 2. 读取按步骤划分的 LoadStep_Conditions
+    if 'LoadStep_Conditions' in config:
+        for step_node in config['LoadStep_Conditions']:
+            step_id = step_node.get('Step', 1)
+            bcs = step_node.get('BoundaryConditions', [])
+            for bc in bcs:
+                bc_entries.append({'step': step_id, 'bc': bc})
 
     # 存储所有物质点数据的全局大列表
     global_particles = []
@@ -323,10 +336,13 @@ def generate_from_yaml(yaml_path):
             
         # --- 写入边界条件块 ---
         f.write("*LOAD\n")
-        f.write(f"#{'ID':>19}, {'BcID':>19}, {'Type':>19}, {'Value(s)...':>19}\n")
+        f.write(f"#{'ID':>19}, {'Step':>19}, {'BcID':>19}, {'Type':>19}, {'Value(s)...':>19}\n")
         
         bc_count = 0
-        for bc in bc_configs:
+        for entry in bc_entries:
+            step_id = entry['step']
+            bc = entry['bc']
+            
             mask = in_box(all_x, all_y, all_z, bc['Box'])
             if np.sum(mask) == 0:
                 continue
@@ -335,16 +351,24 @@ def generate_from_yaml(yaml_path):
             bc_type = bc['Type']
             val_data = bc['Value'] 
             
-            # 核心升级：智能处理单参数与多参数
-            # 注意：PyYAML safe_load 可能将科学计数法(如 1.0e20)解析为字符串，需强制转 float
+            # 核心升级：智能处理单参数与多参数，并支持字符串型表格引用 %Table1.txt%
             if isinstance(val_data, list):
-                val_str = ",".join([f"{float(v):>20.6f}" for v in val_data])
+                val_strs = []
+                for v in val_data:
+                    if isinstance(v, str):
+                        val_strs.append(f"{v:>20}")
+                    else:
+                        val_strs.append(f"{float(v):>20.6f}")
+                val_str = ",".join(val_strs)
             else:
-                val_str = f"{float(val_data):>20.6f}"
+                if isinstance(val_data, str):
+                    val_str = f"{val_data:>20}"
+                else:
+                    val_str = f"{float(val_data):>20.6f}"
             
             for i in range(total_particles):
                 if mask[i]:
-                    line = f"{all_ids[i]:>20},{bc_id:>20},{bc_type:>20},{val_str}\n"
+                    line = f"{all_ids[i]:>20},{step_id:>20},{bc_id:>20},{bc_type:>20},{val_str}\n"
                     f.write(line)
                     bc_count += 1
 

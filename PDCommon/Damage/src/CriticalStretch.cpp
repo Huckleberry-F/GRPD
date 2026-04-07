@@ -28,42 +28,8 @@ void CriticalStretch::configure(const YAML::Node &node) {
 }
 
 void CriticalStretch::preCompute(PDCommon::Core::PDContext &ctx, int matId) {
-  auto &fieldManager = ctx.getFieldManager();
-  auto &manager = ctx.getParticleManager();
-  auto &neighborList = ctx.getNeighborList();
-  
-  const size_t numParticles = manager.getTotalParticles();
-
-  // 1. 获取全局断裂场变量
-  if (!fieldManager.hasField("Damage")) {
-    auto damageField = PDCommon::Field::FieldRegistry::getInstance().createField("DoubleField", "Damage", 1);
-    fieldManager.addField(std::move(damageField));
-  }
-  
-  auto *damageField = fieldManager.getFieldAs<double>("Damage");
-  damageField->resize(numParticles);
-  damageField->clearToZero();
-  
-  // 2. 统计初始键数量，用于后面计算 Damage (1 - 完好键/初始键)
-  initialBondsCount_.assign(numParticles, 0);
-  const auto &particles = manager.getAllParticles();
-  
-#pragma omp parallel for schedule(static)
-  for (int i = 0; i < static_cast<int>(numParticles); ++i) {
-    if (matId != -1 && particles[i].getMatId() != matId) {
-       continue;
-    }
-    const int numNeighbors = neighborList.getNeighborCount(i);
-    const int *neighbors = neighborList.getNeighborIds(i);
-    int count = 0;
-    for (int k = 0; k < numNeighbors; ++k) {
-      if (neighbors[k] != -1) {
-        count++;
-      }
-    }
-    initialBondsCount_[i] = count;
-  }
-  
+  // 调用基类的公共模板方法：申请 Damage 场并统计 initialBondsCount_
+  DamageModel::preCompute(ctx, matId);
   LOG_INFO("[CriticalStretch] Initialized. Critical Stretch = " + std::to_string(criticalStretch_));
 }
 
@@ -126,14 +92,8 @@ void CriticalStretch::computeDamage(PDCommon::Core::PDContext &ctx, int matId) {
           neighbors[k] = -1;
       }
     }
-    
-    // 更新 Damage 指数 (0.0 表示完好，1.0 表示全断)
-    int initialBonds = initialBondsCount_[i];
-    if (initialBonds > 0) {
-        damagePtr[i] = 1.0 - static_cast<double>(activeBonds) / static_cast<double>(initialBonds);
-    } else {
-        damagePtr[i] = 0.0;
-    }
+    // 更新 Damage 指数，直接使用基类的内联模板方法
+    damagePtr[i] = calculateDamageRatio(i, activeBonds);
   }
 }
 

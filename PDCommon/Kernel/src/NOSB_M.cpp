@@ -55,6 +55,10 @@ void NOSB_M::ComputeMechanicalState(PDContext &ctx) {
     return;
   }
 
+  // 尝试获取 Damage 场（可能未启用损伤模型）
+  auto *damageField = fieldManager.getFieldAs<double>("Damage");
+  const double *damagePtr = damageField ? damageField->dataPtr() : nullptr;
+
   // 获取 HPC 指针
   auto *coordsField = fieldManager.getFieldAs<double>("Coords");
   auto *volumeField = fieldManager.getFieldAs<double>("Volume");
@@ -81,6 +85,22 @@ void NOSB_M::ComputeMechanicalState(PDContext &ctx) {
     // -----------------------------------------------------------------------
 #pragma omp for schedule(guided)
     for (int i = 0; i < static_cast<int>(numParticles); ++i) {
+      if (damagePtr && damagePtr[i] >= 0.99) {
+        int idx9 = i * 9;
+        FPtr[idx9] = FPtr[idx9 + 4] = FPtr[idx9 + 8] = 1.0;
+        FPtr[idx9 + 1] = FPtr[idx9 + 2] = FPtr[idx9 + 3] = 0.0;
+        FPtr[idx9 + 5] = FPtr[idx9 + 6] = FPtr[idx9 + 7] = 0.0;
+        
+        PK1Ptr[idx9] = PK1Ptr[idx9 + 1] = PK1Ptr[idx9 + 2] = 0.0;
+        PK1Ptr[idx9 + 3] = PK1Ptr[idx9 + 4] = PK1Ptr[idx9 + 5] = 0.0;
+        PK1Ptr[idx9 + 6] = PK1Ptr[idx9 + 7] = PK1Ptr[idx9 + 8] = 0.0;
+        
+        pkKinvCache_[idx9] = pkKinvCache_[idx9 + 1] = pkKinvCache_[idx9 + 2] = 0.0;
+        pkKinvCache_[idx9 + 3] = pkKinvCache_[idx9 + 4] = pkKinvCache_[idx9 + 5] = 0.0;
+        pkKinvCache_[idx9 + 6] = pkKinvCache_[idx9 + 7] = pkKinvCache_[idx9 + 8] = 0.0;
+        continue;
+      }
+
       double xi_x = coords[i * 3], xi_y = coords[i * 3 + 1],
              xi_z = coords[i * 3 + 2];
       double u_ix = dispPtr[i * 3], u_iy = dispPtr[i * 3 + 1],
@@ -351,12 +371,19 @@ void NOSB_M::computeForceState(PDCommon::Core::PDContext &ctx) {
 
 void NOSB_M::postCompute(PDCommon::Core::PDContext &ctx) {
   auto &matManager = ctx.getMaterialManager();
+  bool damageEvaluated = false;
   // 遍历所有注册在系统中的材料
   for (const auto &[name, mat] : matManager.getMaterials()) {
     if (mat && mat->getDamageModel()) {
       // 每个具体的断裂准则模型只会遍历自身对应的粒子
       mat->getDamageModel()->computeDamage(ctx, mat->getMatId());
+      damageEvaluated = true;
     }
+  }
+  
+  if (damageEvaluated) {
+    // 基于最新存活的键，实时刷新 K 矩阵并彻底摘除坏死点
+    UpdateShapeTensors(ctx);
   }
 }
 
