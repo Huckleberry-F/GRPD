@@ -25663,3 +25663,134 @@
 [INFO] Output format set to BINARY.
 [INFO] Successfully exported data for model: Box_Disp
 [INFO] [EngineManager] Post-processing Phase finished.
+
+[17:56:17] [INFO ] [EngineManager]
+    | ==================================================
+    | GRPD Solver Engine Initialized                 
+    | ==================================================
+
+[17:56:17] [INFO ] [EngineRegistry]
+    | Creating Engine instance: PD
+
+[17:56:17] [INFO ] [PDEngine]
+    | PD Engine instance created.
+    | ===============================================
+    | ========== Registered Types Summary ===========
+    | TimeIntegrator    : ADR, CentralDifference, Explicit, Staggered
+    | FieldRegistry     : DoubleField, IntField
+    | PhysicsFields     : Mechanical, Thermal
+    | BCRegistry        : BODY_FORCE, CONV, DISP, FLUX, PRESSURE, T, VELOCITY
+    | ReaderRegistry    : .grpd, .inp
+    | StabilizerRegistry: Mechanical_Silling, Mechanical_Wan, Mechanical_Zhang, Thermal_Silling,
+    | Thermal_Wan, Thermal_Zhang
+    | MaterialRegistry  : FourierThermalMat, J2PlasticityMat, LinearElasticMat
+    | KernelRegistry    : NOSB_M, NOSB_T
+    | EngineRegistry    : PD
+    | ===============================================
+
+[17:56:17] [INFO ] [EngineManager]
+    | Initializing solver: PD
+
+[17:56:17] [INFO ] [PDEngine]
+    | Initializing PD simulation context...
+
+[17:56:17] [INFO ] [InitModel]
+    | ==================================================
+    | Model pre-processing...
+    | ==================================================
+    | grpd path: D:\Project_C++\GRPD\Examples\Box_Disp_Transient\Box_Disp_Transient.grpd
+    | model name: Box_Disp_Transient
+    | Calling Python pre-processor to generate .grpd mesh...
+    | Mesh generated successfully by Python.
+
+[17:56:19] [INFO ] [Context Manager]
+    | Formalized model name to: Box_Disp_Transient
+    | Model dimension set to: 2D
+
+[17:56:19] [INFO ] [ReaderRegistry]
+    | Creating reader for: .grpd (name: Box_Disp_Transient)
+
+[17:56:19] [INFO ] [InitModel]
+    | Reading mesh file: D:\Project_C++\GRPD\Examples\Box_Disp_Transient\Box_Disp_Transient.grpd (reader:
+    | .grpd)
+
+[17:56:19] [INFO ] [GrpdMeshReader]
+    | Reading file: D:\Project_C++\GRPD\Examples\Box_Disp_Transient\Box_Disp_Transient.grpd
+    | Entering *PARTICLE section (Line 1)
+    | Entering *LOAD section (Line 320003)
+    | ============================================
+    | File reading complete!
+    | Total particles: 320000
+    | Total load entries: 400
+    | ============================================
+
+[17:56:20] [INFO ] [InitModel]
+    | Total particles loaded for model Box_Disp_Transient: 320000
+
+[17:56:20] [INFO ] [InitMaterial]
+    | ==================================================
+    | Entering Material Initialization Phase...
+    | ==================================================
+    | Instantiating material [1] of type: LinearElasticMat
+
+[17:56:20] [INFO ] [MaterialRegistry]
+    | Using factory to create material: Steel_Elastic (type: LinearElasticMat)
+
+[17:56:20] [INFO ] [Material]
+    | Attached DamageModel 'CriticalStretch' to material: Steel_Elastic
+
+[17:56:20] [INFO ] [LinearElasticMat]
+    | Material 'Steel_Elastic' is initialized. E = 191000.000000, nu = 0.300000, Density = 0.000000
+
+[17:56:20] [INFO ] [MaterialManager]
+    | Successfully added material instance: Steel_Elastic
+
+[17:56:20] [INFO ] [InitMaterial]
+    | Successfully registered material ID 1 (Steel_Elastic)
+    | Assigning material pointers to particles...
+    | Successfully assigned materials to 320000 particles.
+
+[17:56:20] [INFO ] [InitFields]
+    | ==================================================
+    | Entering Field Registration Phase...
+    | ==================================================
+
+[17:56:20] [INFO ] [FieldManager]
+    | Added field 'Displacement'.
+    | Added field 'Velocity'.
+    | Added field 'Acceleration'.
+
+[17:56:20] [INFO ] [MechanicalFields]
+    | Core fields registered: Displacement, Velocity, Acceleration.
+
+[17:56:20] [INFO ] [InitFields]
+    | Auto-registered PhysicsFields module: Mechanical
+
+[17:56:20] [INFO ] [FieldManager]
+    | Added field 'ID'.
+    | Added field 'PartID'.
+    | Added field 'MatID'.
+    | Added field 'Coords'.
+    | Added field 'Volume'.
+    | Resized all 8 fields for 320000 particles.
+
+[17:56:20] [INFO ] [InitFields]
+    | Binding high-speed material state pointers...
+
+[17:56:20] [INFO ] [MeshData]
+    | Populated particle geometry fields into FieldManager for 320000 particles.
+
+[17:56:20] [INFO ] [InitFields]
+    | All fields allocated for 320000 particles. Total fields: 8.
+
+[17:56:20] [INFO ] [InitConditions]
+    | ==================================================
+    | Entering Conditions Initialization Phase...
+    | ==================================================
+
+[17:56:20] [INFO ] [ReaderRegistry]
+    | Creating reader for: .grpd (name: LoadReader)
+
+[17:56:20] [INFO ] [GrpdMeshReader]
+    | Reading file: D:\Project_C++\GRPD\Examples\Box_Disp_Transient\Box_Disp_Transient.grpd
+    | Entering *PARTICLE section (Line 1)

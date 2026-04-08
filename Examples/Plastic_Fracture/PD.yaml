@@ -71,13 +71,13 @@ Materials:
     Density: 8.0e-9 # tonne/mm³
     YoungsModulus: 2.0e5 # MPa
     PoissonsRatio: 0.3
-    YieldStress: 350.0 # MPa 初屈服
+    YieldStress: 350000000.0 # MPa 初屈服
     HardeningModulus: 100.0 # MPa 塑性硬化
     HardeningType: "Isotropic"
     LargeDeformation: false
     Damage:
-      Type: "EqPlasticStrain"
-      Critical_EqPS: 0.1 # 极大地提升临界塑性，防止全场泛滥，只允许应力集中的缺口尖端撕裂
+      Type: "CriticalStretch"
+      Critical_EqPS: 0.02 # 极大地提升临界塑性，防止全场泛滥，只允许应力集中的缺口尖端撕裂
 
 # 7. 求解器与时间管理
 Solver:
