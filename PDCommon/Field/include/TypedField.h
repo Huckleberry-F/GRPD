@@ -10,7 +10,6 @@
 // ============================================================================
 
 #include "Field.h"
-#include <algorithm>
 #include <vector>
 
 namespace PDCommon::Field {
@@ -35,7 +34,8 @@ public:
 
   /// @brief 以 O(1) 的时间复杂度与另一个 TypedField 交换底层内存
   void swapDataWith(TypedField<T> &other) {
-    if (this->dim_ != other.dim_) return;
+    if (this->dim_ != other.dim_)
+      return;
     this->data_.swap(other.data_);
   }
 

@@ -4933,3 +4933,4449 @@
     | Starting Explicit Loop with 2 LoadStep(s). Default dt = 0.000000
     | === Load Step 1 / 2 | TargetTime: 0.000004 | dt: 0.000000 | KBC: 1 ===
     | --- Step 0 | Time: 0.000000  |  Pure Compute: 0.000000s  |  Total: 0.000000s  |  Speed: 0 steps/s
+
+[16:09:24] [INFO ] [EngineManager]
+    | ==================================================
+    | GRPD Solver Engine Initialized                 
+    | ==================================================
+
+[16:09:24] [INFO ] [EngineRegistry]
+    | Creating Engine instance: PD
+
+[16:09:24] [INFO ] [PDEngine]
+    | PD Engine instance created.
+    | ===============================================
+    | ========== Registered Types Summary ===========
+    | TimeIntegrator    : ADR, CentralDifference, Explicit, Staggered
+    | FieldRegistry     : DoubleField, IntField
+    | PhysicsFields     : Mechanical, Thermal
+    | BCRegistry        : AX, AY, AZ, CONV, FLUX, PX, PY, PZ, T, UX, UY, UZ, VX, VY, VZ
+    | ReaderRegistry    : .grpd, .inp
+    | StabilizerRegistry: Mechanical_Silling, Mechanical_Wan, Mechanical_Zhang, Thermal_Silling,
+    | Thermal_Wan, Thermal_Zhang
+    | MaterialRegistry  : FourierThermalMat, J2PlasticityMat, JCPlasticityMat, LinearElasticMat
+    | KernelRegistry    : NOSB_M, NOSB_T
+    | EngineRegistry    : PD
+    | ===============================================
+
+[16:09:24] [INFO ] [EngineManager]
+    | Initializing solver: PD
+
+[16:09:24] [INFO ] [PDEngine]
+    | Initializing PD simulation context...
+
+[16:09:24] [INFO ] [InitModel]
+    | ==================================================
+    | Model pre-processing...
+    | ==================================================
+    | grpd path: D:\Project_C++\GRPD\Examples\Bullet\Bullet.grpd
+    | model name: Bullet
+    | Found existing .grpd mesh file at: D:\Project_C++\GRPD\Examples\Bullet\Bullet.grpd. Skipping
+    | generation.
+
+[16:09:24] [INFO ] [Context Manager]
+    | Formalized model name to: Bullet
+    | Model dimension set to: 2D
+
+[16:09:24] [INFO ] [ReaderRegistry]
+    | Creating reader for: .grpd (name: Bullet)
+
+[16:09:24] [INFO ] [InitModel]
+    | Reading mesh file: D:\Project_C++\GRPD\Examples\Bullet\Bullet.grpd (reader: .grpd)
+
+[16:09:24] [INFO ] [GrpdMeshReader]
+    | Reading file: D:\Project_C++\GRPD\Examples\Bullet\Bullet.grpd
+    | Entering *PARTICLE section (Line 1)
+    | Pre-allocated memory for 195798 particles (Zero-Reallocation)
+    | Entering *LOAD section (Line 195802)
+    | ============================================
+    | File reading complete!
+    | Total particles: 195798
+    | Total load entries: 9120
+    | ============================================
+
+[16:09:25] [INFO ] [ParticleManager]
+    | Pre-allocated memory for 195798 particles
+
+[16:09:25] [INFO ] [InitModel]
+    | Total particles loaded for model Bullet: 195798
+
+[16:09:25] [INFO ] [InitMaterial]
+    | ==================================================
+    | Entering Material Initialization Phase...
+    | ==================================================
+    | Instantiating material [1] of type: J2PlasticityMat
+
+[16:09:25] [INFO ] [MaterialRegistry]
+    | Using factory to create material: Steel_Plastic (type: J2PlasticityMat)
+
+[16:09:25] [INFO ] [EqPSFracture]
+    | Configured Critical_EqPS = 0.200000
+
+[16:09:25] [INFO ] [Material]
+    | Attached FractureModel 'EqPSFracture' to material: Steel_Plastic
+
+[16:09:25] [INFO ] [J2PlasticityMat]
+    | Hardening Type: Isotropic
+
+[16:09:25] [INFO ] [MaterialManager]
+    | Successfully added material instance: Steel_Plastic
+
+[16:09:25] [INFO ] [InitMaterial]
+    | Successfully registered material ID 1 (Steel_Plastic)
+    | Assigning material pointers to particles...
+    | Successfully assigned materials to 195798 particles.
+
+[16:09:25] [INFO ] [InitFields]
+    | ==================================================
+    | Entering Field Registration Phase...
+    | ==================================================
+
+[16:09:25] [INFO ] [FieldManager]
+    | Added field 'Displacement'.
+    | Added field 'Velocity'.
+    | Added field 'Acceleration'.
+
+[16:09:25] [INFO ] [MechanicalFields]
+    | Core fields registered: Displacement, Velocity, Acceleration.
+
+[16:09:25] [INFO ] [InitFields]
+    | Auto-registered PhysicsFields module: Mechanical
+
+[16:09:25] [INFO ] [FieldManager]
+    | Added field 'ID'.
+    | Added field 'PartID'.
+    | Added field 'MatID'.
+    | Added field 'Coords'.
+    | Added field 'Volume'.
+    | Added field 'ActiveStatus'.
+
+[16:09:25] [INFO ] [InitFields]
+    | Global ActiveStatus field registered.
+
+[16:09:25] [INFO ] [FieldManager]
+    | Added field 'EqPlasticStrain_Old'.
+    | Added field 'EqPlasticStrain_Trial'.
+    | Added field 'PlasticStrain_Old'.
+    | Added field 'PlasticStrain_Trial'.
+    | Added field 'VonMisesStress'.
+    | Resized all 14 fields for 195798 particles.
+
+[16:09:25] [INFO ] [InitFields]
+    | ActiveStatus initialized to 1 for all particles.
+    | Binding high-speed material state pointers...
+
+[16:09:25] [INFO ] [MeshData]
+    | Populated particle geometry fields into FieldManager for 195798 particles.
+
+[16:09:25] [INFO ] [InitFields]
+    | All fields allocated for 195798 particles. Total fields: 14.
+
+[16:09:25] [INFO ] [InitConditions]
+    | ==================================================
+    | Entering Conditions Initialization Phase...
+    | ==================================================
+
+[16:09:25] [INFO ] [ReaderRegistry]
+    | Creating reader for: .grpd (name: LoadReader)
+
+[16:09:25] [INFO ] [GrpdMeshReader]
+    | Reading file: D:\Project_C++\GRPD\Examples\Bullet\Bullet.grpd
+    | Entering *PARTICLE section (Line 1)
+    | Pre-allocated memory for 195798 particles (Zero-Reallocation)
+    | Entering *LOAD section (Line 195802)
+    | ============================================
+    | File reading complete!
+    | Total particles: 195798
+    | Total load entries: 9120
+    | ============================================
+
+[16:09:25] [INFO ] [InitConditions]
+    | Load statistics:
+    | - VZ : 9120
+    | Boundary conditions initialization complete.
+
+[16:09:25] [INFO ] [InitNeighbors]
+    | ==================================================
+    | Entering Neighbor Search Phase...
+    | ==================================================
+    | Horizon radius: 0.603000
+
+[16:09:25] [INFO ] [NeighborList]
+    | Starting full-flat CSR search for 195798 particles, horizon = 0.603000
+    | Cell grid: 17 x 17 x 39 = 11271 cells
+    | Flat cell list built in 3.000021 ms
+    | Pass 1 (count) done in 41.000128 ms
+    | Total bonds: 22473366, Memory: 257 MB
+    | Pass 2 (fill) done in 131.000042 ms
+    | Max neighbors: 122
+    | Total time: 175.000191 ms
+
+[16:09:26] [INFO ] [FieldManager]
+    | Added field 'NeighborCount'.
+
+[16:09:26] [INFO ] [InitNeighbors]
+    | NeighborCount field populated for 195798 particles.
+
+[16:09:26] [INFO ] [FieldManager]
+    | Added field 'BondIntegrity'.
+
+[16:09:26] [INFO ] [InitNeighbors]
+    | Global BondIntegrity scalar field properly initialized to 0.0
+    | Neighbor search phase complete.
+    | Initializing Material-specific BondIntegrity Models...
+    | Material BondIntegrity Models initialized. Total Active Models: 1
+
+[16:09:26] [INFO ] [InitPreCracks]
+    | Detected PreCracks configuration. Initializing geometric cuts...
+
+[16:09:26] [INFO ] [InitSolverComponents]
+    | ==================================================
+    | Entering Solver Components Assembly Phase...
+    | ==================================================
+    | Building Time Integrator: CentralDifference
+
+[16:09:26] [INFO ] [TimeIntegrator]
+    | Explicitly set OMP Threads to: 16
+
+[16:09:26] [INFO ] [InitSolverComponents]
+    | Time Integrator configured.
+    | Building Space Kernel: NOSB_M
+
+[16:09:26] [INFO ] [NOSB_Base]
+    | Applied KernelWeightType: Linear
+    | Applied ZeroEnergyG0: 0.100000
+    | Applied ZeroEnergyMethod string: Zhang
+
+[16:09:26] [INFO ] [InitSolverComponents]
+    | Space Kernel 'NOSB_M' configured.
+    | Total kernels assembled: 1
+
+[16:09:26] [INFO ] [PDEngine]
+    | PD simulation context initialized successfully.
+
+[16:09:26] [INFO ] [EngineManager]
+    | All solvers initialized. Total: 1
+    | ==================================================
+    | Entering Main Solver Phase
+    | ==================================================
+    | Solving: PD
+
+[16:09:26] [INFO ] [PDEngine]
+    | Starting PD Engine Solve Phase...
+
+[16:09:26] [INFO ] [CentralDifference]
+    | Identified 2nd-order ODE coupling: Displacement <- Velocity <- Acceleration
+
+[16:09:26] [INFO ] [FieldManager]
+    | Added field 'ShapeTensorInv'.
+    | Added field 'VHorizon'.
+
+[16:09:26] [INFO ] [NOSB_Base]
+    | Computing InfluenceWeight + Shape Tensor Inverse (K^-1)...
+    | All NOSB base fields registered and Shape Tensor Inverse computed.
+
+[16:09:26] [INFO ] [FieldManager]
+    | Added field 'DeformationGradient'.
+    | Added field 'PK1Stress'.
+
+[16:09:26] [INFO ] [NOSB_M]
+    | Instantiated MechanicalStabilizer globally in Phase 0 using strategy: Zhang
+
+[16:09:26] [INFO ] [CentralDifference]
+    | Auto CFL dt: dx = 0.200000, c = 4886205.071423, massScale = 1.000000, dt = 0.000000
+    | Starting Explicit Loop with 2 LoadStep(s). Default dt = 0.000000
+    | === Load Step 1 / 2 | TargetTime: 0.000004 | dt: 0.000000 | KBC: 1 ===
+    | --- Step 0 | Time: 0.000000  |  Pure Compute: 0.000000s  |  Total: 0.001505s  |  Speed: 0 steps/s
+
+[16:10:48] [INFO ] [EngineManager]
+    | ==================================================
+    | GRPD Solver Engine Initialized                 
+    | ==================================================
+
+[16:10:48] [INFO ] [EngineRegistry]
+    | Creating Engine instance: PD
+
+[16:10:48] [INFO ] [PDEngine]
+    | PD Engine instance created.
+    | ===============================================
+    | ========== Registered Types Summary ===========
+    | TimeIntegrator    : ADR, CentralDifference, Explicit, Staggered
+    | FieldRegistry     : DoubleField, IntField
+    | PhysicsFields     : Mechanical, Thermal
+    | BCRegistry        : AX, AY, AZ, CONV, FLUX, PX, PY, PZ, T, UX, UY, UZ, VX, VY, VZ
+    | ReaderRegistry    : .grpd, .inp
+    | StabilizerRegistry: Mechanical_Silling, Mechanical_Wan, Mechanical_Zhang, Thermal_Silling,
+    | Thermal_Wan, Thermal_Zhang
+    | MaterialRegistry  : FourierThermalMat, J2PlasticityMat, JCPlasticityMat, LinearElasticMat
+    | KernelRegistry    : NOSB_M, NOSB_T
+    | EngineRegistry    : PD
+    | ===============================================
+
+[16:10:48] [INFO ] [EngineManager]
+    | Initializing solver: PD
+
+[16:10:48] [INFO ] [PDEngine]
+    | Initializing PD simulation context...
+
+[16:10:48] [INFO ] [InitModel]
+    | ==================================================
+    | Model pre-processing...
+    | ==================================================
+    | grpd path: D:\Project_C++\GRPD\Examples\Bullet\Bullet.grpd
+    | model name: Bullet
+    | Found existing .grpd mesh file at: D:\Project_C++\GRPD\Examples\Bullet\Bullet.grpd. Skipping
+    | generation.
+
+[16:10:48] [INFO ] [Context Manager]
+    | Formalized model name to: Bullet
+    | Model dimension set to: 2D
+
+[16:10:48] [INFO ] [ReaderRegistry]
+    | Creating reader for: .grpd (name: Bullet)
+
+[16:10:48] [INFO ] [InitModel]
+    | Reading mesh file: D:\Project_C++\GRPD\Examples\Bullet\Bullet.grpd (reader: .grpd)
+
+[16:10:48] [INFO ] [GrpdMeshReader]
+    | Reading file: D:\Project_C++\GRPD\Examples\Bullet\Bullet.grpd
+    | Entering *PARTICLE section (Line 1)
+    | Pre-allocated memory for 5351 particles (Zero-Reallocation)
+    | Entering *LOAD section (Line 5355)
+    | ============================================
+    | File reading complete!
+    | Total particles: 5351
+    | Total load entries: 406
+    | ============================================
+
+[16:10:48] [INFO ] [ParticleManager]
+    | Pre-allocated memory for 5351 particles
+
+[16:10:48] [INFO ] [InitModel]
+    | Total particles loaded for model Bullet: 5351
+
+[16:10:48] [INFO ] [InitMaterial]
+    | ==================================================
+    | Entering Material Initialization Phase...
+    | ==================================================
+    | Instantiating material [1] of type: J2PlasticityMat
+
+[16:10:48] [INFO ] [MaterialRegistry]
+    | Using factory to create material: Steel_Plastic (type: J2PlasticityMat)
+
+[16:10:48] [INFO ] [EqPSFracture]
+    | Configured Critical_EqPS = 0.200000
+
+[16:10:48] [INFO ] [Material]
+    | Attached FractureModel 'EqPSFracture' to material: Steel_Plastic
+
+[16:10:48] [INFO ] [J2PlasticityMat]
+    | Hardening Type: Isotropic
+
+[16:10:48] [INFO ] [MaterialManager]
+    | Successfully added material instance: Steel_Plastic
+
+[16:10:48] [INFO ] [InitMaterial]
+    | Successfully registered material ID 1 (Steel_Plastic)
+    | Assigning material pointers to particles...
+    | Successfully assigned materials to 5351 particles.
+
+[16:10:48] [INFO ] [InitFields]
+    | ==================================================
+    | Entering Field Registration Phase...
+    | ==================================================
+
+[16:10:48] [INFO ] [FieldManager]
+    | Added field 'Displacement'.
+    | Added field 'Velocity'.
+    | Added field 'Acceleration'.
+
+[16:10:48] [INFO ] [MechanicalFields]
+    | Core fields registered: Displacement, Velocity, Acceleration.
+
+[16:10:48] [INFO ] [InitFields]
+    | Auto-registered PhysicsFields module: Mechanical
+
+[16:10:48] [INFO ] [FieldManager]
+    | Added field 'ID'.
+    | Added field 'PartID'.
+    | Added field 'MatID'.
+    | Added field 'Coords'.
+    | Added field 'Volume'.
+    | Added field 'ActiveStatus'.
+
+[16:10:48] [INFO ] [InitFields]
+    | Global ActiveStatus field registered.
+
+[16:10:48] [INFO ] [FieldManager]
+    | Added field 'EqPlasticStrain_Old'.
+    | Added field 'EqPlasticStrain_Trial'.
+    | Added field 'PlasticStrain_Old'.
+    | Added field 'PlasticStrain_Trial'.
+    | Added field 'VonMisesStress'.
+    | Resized all 14 fields for 5351 particles.
+
+[16:10:48] [INFO ] [InitFields]
+    | ActiveStatus initialized to 1 for all particles.
+    | Binding high-speed material state pointers...
+
+[16:10:48] [INFO ] [MeshData]
+    | Populated particle geometry fields into FieldManager for 5351 particles.
+
+[16:10:48] [INFO ] [InitFields]
+    | All fields allocated for 5351 particles. Total fields: 14.
+
+[16:10:48] [INFO ] [InitConditions]
+    | ==================================================
+    | Entering Conditions Initialization Phase...
+    | ==================================================
+
+[16:10:48] [INFO ] [ReaderRegistry]
+    | Creating reader for: .grpd (name: LoadReader)
+
+[16:10:48] [INFO ] [GrpdMeshReader]
+    | Reading file: D:\Project_C++\GRPD\Examples\Bullet\Bullet.grpd
+    | Entering *PARTICLE section (Line 1)
+    | Pre-allocated memory for 5351 particles (Zero-Reallocation)
+    | Entering *LOAD section (Line 5355)
+    | ============================================
+    | File reading complete!
+    | Total particles: 5351
+    | Total load entries: 406
+    | ============================================
+
+[16:10:48] [INFO ] [InitConditions]
+    | Load statistics:
+    | - VX : 406
+    | Boundary conditions initialization complete.
+
+[16:10:48] [INFO ] [InitNeighbors]
+    | ==================================================
+    | Entering Neighbor Search Phase...
+    | ==================================================
+    | Horizon radius: 0.603000
+
+[16:10:48] [INFO ] [NeighborList]
+    | Starting full-flat CSR search for 5351 particles, horizon = 0.603000
+    | Cell grid: 39 x 17 x 1 = 663 cells
+    | Flat cell list built in 0.000000 ms
+    | Pass 1 (count) done in 0.000000 ms
+    | Total bonds: 144030, Memory: 1 MB
+    | Pass 2 (fill) done in 1.000166 ms
+    | Max neighbors: 28
+    | Total time: 1.000166 ms
+
+[16:10:48] [INFO ] [FieldManager]
+    | Added field 'NeighborCount'.
+
+[16:10:48] [INFO ] [InitNeighbors]
+    | NeighborCount field populated for 5351 particles.
+
+[16:10:48] [INFO ] [FieldManager]
+    | Added field 'BondIntegrity'.
+
+[16:10:48] [INFO ] [InitNeighbors]
+    | Global BondIntegrity scalar field properly initialized to 0.0
+    | Neighbor search phase complete.
+    | Initializing Material-specific BondIntegrity Models...
+    | Material BondIntegrity Models initialized. Total Active Models: 1
+
+[16:10:48] [INFO ] [InitPreCracks]
+    | Detected PreCracks configuration. Initializing geometric cuts...
+
+[16:10:48] [INFO ] [InitSolverComponents]
+    | ==================================================
+    | Entering Solver Components Assembly Phase...
+    | ==================================================
+    | Building Time Integrator: CentralDifference
+
+[16:10:48] [INFO ] [TimeIntegrator]
+    | Explicitly set OMP Threads to: 16
+
+[16:10:48] [INFO ] [InitSolverComponents]
+    | Time Integrator configured.
+    | Building Space Kernel: NOSB_M
+
+[16:10:48] [INFO ] [NOSB_Base]
+    | Applied KernelWeightType: Linear
+    | Applied ZeroEnergyG0: 0.100000
+    | Applied ZeroEnergyMethod string: Zhang
+
+[16:10:48] [INFO ] [InitSolverComponents]
+    | Space Kernel 'NOSB_M' configured.
+    | Total kernels assembled: 1
+
+[16:10:48] [INFO ] [PDEngine]
+    | PD simulation context initialized successfully.
+
+[16:10:48] [INFO ] [EngineManager]
+    | All solvers initialized. Total: 1
+    | ==================================================
+    | Entering Main Solver Phase
+    | ==================================================
+    | Solving: PD
+
+[16:10:48] [INFO ] [PDEngine]
+    | Starting PD Engine Solve Phase...
+
+[16:10:48] [INFO ] [CentralDifference]
+    | Identified 2nd-order ODE coupling: Displacement <- Velocity <- Acceleration
+
+[16:10:48] [INFO ] [FieldManager]
+    | Added field 'ShapeTensorInv'.
+    | Added field 'VHorizon'.
+
+[16:10:48] [INFO ] [NOSB_Base]
+    | Computing InfluenceWeight + Shape Tensor Inverse (K^-1)...
+    | All NOSB base fields registered and Shape Tensor Inverse computed.
+
+[16:10:48] [INFO ] [FieldManager]
+    | Added field 'DeformationGradient'.
+    | Added field 'PK1Stress'.
+
+[16:10:48] [INFO ] [NOSB_M]
+    | Instantiated MechanicalStabilizer globally in Phase 0 using strategy: Zhang
+
+[16:10:48] [INFO ] [CentralDifference]
+    | Auto CFL dt: dx = 0.200000, c = 4886205.071423, massScale = 1.000000, dt = 0.000000
+    | Starting Explicit Loop with 2 LoadStep(s). Default dt = 0.000000
+    | === Load Step 1 / 2 | TargetTime: 0.000004 | dt: 0.000000 | KBC: 1 ===
+    | --- Step 0 | Time: 0.000000  |  Pure Compute: 0.000000s  |  Total: 0.000000s  |  Speed: 0 steps/s
+    | === Load Step 2 / 2 | TargetTime: 0.000087 | dt: 0.000000 | KBC: 1 ===
+    | --- Step 500 | Time: 0.000004  |  Pure Compute: 1.426330s  |  Total: 1.432738s  |  Speed: 350
+    | steps/s
+    | --- Step 1000 | Time: 0.000009  |  Pure Compute: 3.256488s  |  Total: 3.277279s  |  Speed: 307
+    | steps/s
+    | --- Step 1500 | Time: 0.000013  |  Pure Compute: 5.391611s  |  Total: 5.426037s  |  Speed: 278
+    | steps/s
+    | --- Step 2000 | Time: 0.000017  |  Pure Compute: 7.026172s  |  Total: 7.065572s  |  Speed: 284
+    | steps/s
+    | --- Step 2500 | Time: 0.000022  |  Pure Compute: 8.737278s  |  Total: 8.791338s  |  Speed: 286
+    | steps/s
+    | --- Step 3000 | Time: 0.000026  |  Pure Compute: 10.551491s  |  Total: 10.618930s  |  Speed: 284
+    | steps/s
+    | --- Step 3500 | Time: 0.000030  |  Pure Compute: 12.184832s  |  Total: 12.265942s  |  Speed: 287
+    | steps/s
+    | --- Step 4000 | Time: 0.000035  |  Pure Compute: 13.643201s  |  Total: 13.730652s  |  Speed: 293
+    | steps/s
+    | --- Step 4500 | Time: 0.000039  |  Pure Compute: 15.171446s  |  Total: 15.270371s  |  Speed: 296
+    | steps/s
+    | --- Step 5000 | Time: 0.000043  |  Pure Compute: 16.466394s  |  Total: 16.578472s  |  Speed: 303
+    | steps/s
+    | --- Step 5500 | Time: 0.000048  |  Pure Compute: 17.638172s  |  Total: 17.762885s  |  Speed: 311
+    | steps/s
+    | --- Step 6000 | Time: 0.000052  |  Pure Compute: 18.676304s  |  Total: 18.804854s  |  Speed: 321
+    | steps/s
+    | --- Step 6500 | Time: 0.000057  |  Pure Compute: 19.686796s  |  Total: 19.826918s  |  Speed: 330
+    | steps/s
+    | --- Step 7000 | Time: 0.000061  |  Pure Compute: 20.686657s  |  Total: 20.839087s  |  Speed: 338
+    | steps/s
+    | --- Step 7500 | Time: 0.000065  |  Pure Compute: 21.755375s  |  Total: 21.910257s  |  Speed: 344
+    | steps/s
+    | --- Step 8000 | Time: 0.000070  |  Pure Compute: 22.792525s  |  Total: 22.962127s  |  Speed: 350
+    | steps/s
+    | --- Step 8500 | Time: 0.000074  |  Pure Compute: 23.887050s  |  Total: 24.060235s  |  Speed: 355
+    | steps/s
+    | --- Step 9000 | Time: 0.000078  |  Pure Compute: 24.963902s  |  Total: 25.148739s  |  Speed: 360
+    | steps/s
+    | --- Step 9500 | Time: 0.000083  |  Pure Compute: 25.939758s  |  Total: 26.135618s  |  Speed: 366
+    | steps/s
+    | Finished. Total: 27.118794s  |  Pure Compute avg: 0.002691 s/step
+
+[16:11:15] [INFO ] [PDEngine]
+    | PD Engine Solve Phase Finished.
+
+[16:11:15] [INFO ] [EngineManager]
+    | Main Solver Phase finished.
+    | ==================================================
+    | Entering Post-processing Phase
+    | ==================================================
+    | Outputting: PD
+    | Post-processing Phase finished.
+
+[16:14:07] [INFO ] [EngineManager]
+    | ==================================================
+    | GRPD Solver Engine Initialized                 
+    | ==================================================
+
+[16:14:07] [INFO ] [EngineRegistry]
+    | Creating Engine instance: PD
+
+[16:14:07] [INFO ] [PDEngine]
+    | PD Engine instance created.
+    | ===============================================
+    | ========== Registered Types Summary ===========
+    | TimeIntegrator    : ADR, CentralDifference, Explicit, Staggered
+    | FieldRegistry     : DoubleField, IntField
+    | PhysicsFields     : Mechanical, Thermal
+    | BCRegistry        : AX, AY, AZ, CONV, FLUX, PX, PY, PZ, T, UX, UY, UZ, VX, VY, VZ
+    | ReaderRegistry    : .grpd, .inp
+    | StabilizerRegistry: Mechanical_Silling, Mechanical_Wan, Mechanical_Zhang, Thermal_Silling,
+    | Thermal_Wan, Thermal_Zhang
+    | MaterialRegistry  : FourierThermalMat, J2PlasticityMat, JCPlasticityMat, LinearElasticMat
+    | KernelRegistry    : NOSB_M, NOSB_T
+    | EngineRegistry    : PD
+    | ===============================================
+
+[16:14:07] [INFO ] [EngineManager]
+    | Initializing solver: PD
+
+[16:14:07] [INFO ] [PDEngine]
+    | Initializing PD simulation context...
+
+[16:14:07] [INFO ] [InitModel]
+    | ==================================================
+    | Model pre-processing...
+    | ==================================================
+    | grpd path: D:\Project_C++\GRPD\Examples\Bullet\Bullet.grpd
+    | model name: Bullet
+    | Calling Python pre-processor to generate .grpd mesh...
+    | Mesh generated successfully by Python.
+
+[16:14:09] [INFO ] [Context Manager]
+    | Formalized model name to: Bullet
+    | Model dimension set to: 2D
+
+[16:14:09] [INFO ] [ReaderRegistry]
+    | Creating reader for: .grpd (name: Bullet)
+
+[16:14:09] [INFO ] [InitModel]
+    | Reading mesh file: D:\Project_C++\GRPD\Examples\Bullet\Bullet.grpd (reader: .grpd)
+
+[16:14:09] [INFO ] [GrpdMeshReader]
+    | Reading file: D:\Project_C++\GRPD\Examples\Bullet\Bullet.grpd
+    | Entering *PARTICLE section (Line 1)
+    | Pre-allocated memory for 21453 particles (Zero-Reallocation)
+    | Entering *LOAD section (Line 21457)
+    | ============================================
+    | File reading complete!
+    | Total particles: 21453
+    | Total load entries: 1702
+    | ============================================
+
+[16:14:09] [INFO ] [ParticleManager]
+    | Pre-allocated memory for 21453 particles
+
+[16:14:09] [INFO ] [InitModel]
+    | Total particles loaded for model Bullet: 21453
+
+[16:14:09] [INFO ] [InitMaterial]
+    | ==================================================
+    | Entering Material Initialization Phase...
+    | ==================================================
+    | Instantiating material [1] of type: J2PlasticityMat
+
+[16:14:09] [INFO ] [MaterialRegistry]
+    | Using factory to create material: Steel_Plastic (type: J2PlasticityMat)
+
+[16:14:09] [INFO ] [EqPSFracture]
+    | Configured Critical_EqPS = 0.200000
+
+[16:14:09] [INFO ] [Material]
+    | Attached FractureModel 'EqPSFracture' to material: Steel_Plastic
+
+[16:14:09] [INFO ] [J2PlasticityMat]
+    | Hardening Type: Isotropic
+
+[16:14:09] [INFO ] [MaterialManager]
+    | Successfully added material instance: Steel_Plastic
+
+[16:14:09] [INFO ] [InitMaterial]
+    | Successfully registered material ID 1 (Steel_Plastic)
+    | Assigning material pointers to particles...
+    | Successfully assigned materials to 21453 particles.
+
+[16:14:09] [INFO ] [InitFields]
+    | ==================================================
+    | Entering Field Registration Phase...
+    | ==================================================
+
+[16:14:09] [INFO ] [FieldManager]
+    | Added field 'Displacement'.
+    | Added field 'Velocity'.
+    | Added field 'Acceleration'.
+
+[16:14:09] [INFO ] [MechanicalFields]
+    | Core fields registered: Displacement, Velocity, Acceleration.
+
+[16:14:09] [INFO ] [InitFields]
+    | Auto-registered PhysicsFields module: Mechanical
+
+[16:14:09] [INFO ] [FieldManager]
+    | Added field 'ID'.
+    | Added field 'PartID'.
+    | Added field 'MatID'.
+    | Added field 'Coords'.
+    | Added field 'Volume'.
+    | Added field 'ActiveStatus'.
+
+[16:14:09] [INFO ] [InitFields]
+    | Global ActiveStatus field registered.
+
+[16:14:09] [INFO ] [FieldManager]
+    | Added field 'EqPlasticStrain_Old'.
+    | Added field 'EqPlasticStrain_Trial'.
+    | Added field 'PlasticStrain_Old'.
+    | Added field 'PlasticStrain_Trial'.
+    | Added field 'VonMisesStress'.
+    | Resized all 14 fields for 21453 particles.
+
+[16:14:09] [INFO ] [InitFields]
+    | ActiveStatus initialized to 1 for all particles.
+    | Binding high-speed material state pointers...
+
+[16:14:09] [INFO ] [MeshData]
+    | Populated particle geometry fields into FieldManager for 21453 particles.
+
+[16:14:09] [INFO ] [InitFields]
+    | All fields allocated for 21453 particles. Total fields: 14.
+
+[16:14:09] [INFO ] [InitConditions]
+    | ==================================================
+    | Entering Conditions Initialization Phase...
+    | ==================================================
+
+[16:14:09] [INFO ] [ReaderRegistry]
+    | Creating reader for: .grpd (name: LoadReader)
+
+[16:14:09] [INFO ] [GrpdMeshReader]
+    | Reading file: D:\Project_C++\GRPD\Examples\Bullet\Bullet.grpd
+    | Entering *PARTICLE section (Line 1)
+    | Pre-allocated memory for 21453 particles (Zero-Reallocation)
+    | Entering *LOAD section (Line 21457)
+    | ============================================
+    | File reading complete!
+    | Total particles: 21453
+    | Total load entries: 1702
+    | ============================================
+
+[16:14:09] [INFO ] [InitConditions]
+    | Load statistics:
+    | - VX : 1702
+    | Boundary conditions initialization complete.
+
+[16:14:09] [INFO ] [InitNeighbors]
+    | ==================================================
+    | Entering Neighbor Search Phase...
+    | ==================================================
+    | Horizon radius: 0.603000
+
+[16:14:09] [INFO ] [NeighborList]
+    | Starting full-flat CSR search for 21453 particles, horizon = 0.603000
+    | Cell grid: 39 x 17 x 1 = 663 cells
+    | Flat cell list built in 1.000166 ms
+    | Pass 1 (count) done in 3.999949 ms
+    | Total bonds: 2311282, Memory: 26 MB
+    | Pass 2 (fill) done in 10.999918 ms
+    | Max neighbors: 112
+    | Total time: 16.000032 ms
+
+[16:14:09] [INFO ] [FieldManager]
+    | Added field 'NeighborCount'.
+
+[16:14:09] [INFO ] [InitNeighbors]
+    | NeighborCount field populated for 21453 particles.
+
+[16:14:09] [INFO ] [FieldManager]
+    | Added field 'BondIntegrity'.
+
+[16:14:09] [INFO ] [InitNeighbors]
+    | Global BondIntegrity scalar field properly initialized to 0.0
+    | Neighbor search phase complete.
+    | Initializing Material-specific BondIntegrity Models...
+    | Material BondIntegrity Models initialized. Total Active Models: 1
+
+[16:14:09] [INFO ] [InitPreCracks]
+    | Detected PreCracks configuration. Initializing geometric cuts...
+
+[16:14:09] [INFO ] [InitSolverComponents]
+    | ==================================================
+    | Entering Solver Components Assembly Phase...
+    | ==================================================
+    | Building Time Integrator: CentralDifference
+
+[16:14:09] [INFO ] [TimeIntegrator]
+    | Explicitly set OMP Threads to: 16
+
+[16:14:09] [INFO ] [InitSolverComponents]
+    | Time Integrator configured.
+    | Building Space Kernel: NOSB_M
+
+[16:14:09] [INFO ] [NOSB_Base]
+    | Applied KernelWeightType: Linear
+    | Applied ZeroEnergyG0: 0.100000
+    | Applied ZeroEnergyMethod string: Zhang
+
+[16:14:09] [INFO ] [InitSolverComponents]
+    | Space Kernel 'NOSB_M' configured.
+    | Total kernels assembled: 1
+
+[16:14:09] [INFO ] [PDEngine]
+    | PD simulation context initialized successfully.
+
+[16:14:09] [INFO ] [EngineManager]
+    | All solvers initialized. Total: 1
+    | ==================================================
+    | Entering Main Solver Phase
+    | ==================================================
+    | Solving: PD
+
+[16:14:09] [INFO ] [PDEngine]
+    | Starting PD Engine Solve Phase...
+
+[16:14:09] [INFO ] [CentralDifference]
+    | Identified 2nd-order ODE coupling: Displacement <- Velocity <- Acceleration
+
+[16:14:09] [INFO ] [FieldManager]
+    | Added field 'ShapeTensorInv'.
+    | Added field 'VHorizon'.
+
+[16:14:09] [INFO ] [NOSB_Base]
+    | Computing InfluenceWeight + Shape Tensor Inverse (K^-1)...
+    | All NOSB base fields registered and Shape Tensor Inverse computed.
+
+[16:14:09] [INFO ] [FieldManager]
+    | Added field 'DeformationGradient'.
+    | Added field 'PK1Stress'.
+
+[16:14:09] [INFO ] [NOSB_M]
+    | Instantiated MechanicalStabilizer globally in Phase 0 using strategy: Zhang
+
+[16:14:09] [INFO ] [CentralDifference]
+    | Auto CFL dt: dx = 0.100000, c = 4886205.071423, massScale = 1.000000, dt = 0.000000
+    | Starting Explicit Loop with 2 LoadStep(s). Default dt = 0.000000
+    | === Load Step 1 / 2 | TargetTime: 0.000004 | dt: 0.000000 | KBC: 1 ===
+    | --- Step 0 | Time: 0.000000  |  Pure Compute: 0.000000s  |  Total: 0.000000s  |  Speed: 0 steps/s
+    | === Load Step 2 / 2 | TargetTime: 0.000087 | dt: 0.000000 | KBC: 1 ===
+    | --- Step 500 | Time: 0.000004  |  Pure Compute: 10.632864s  |  Total: 10.648853s  |  Speed: 47
+    | steps/s
+    | --- Step 1000 | Time: 0.000009  |  Pure Compute: 18.921200s  |  Total: 18.956087s  |  Speed: 52
+    | steps/s
+    | --- Step 1500 | Time: 0.000013  |  Pure Compute: 28.742934s  |  Total: 28.787219s  |  Speed: 52
+    | steps/s
+    | --- Step 2000 | Time: 0.000017  |  Pure Compute: 40.004196s  |  Total: 40.072121s  |  Speed: 49
+    | steps/s
+    | --- Step 2500 | Time: 0.000022  |  Pure Compute: 50.238340s  |  Total: 50.322183s  |  Speed: 49
+    | steps/s
+    | --- Step 3000 | Time: 0.000026  |  Pure Compute: 61.460296s  |  Total: 61.559692s  |  Speed: 48
+    | steps/s
+    | --- Step 3500 | Time: 0.000030  |  Pure Compute: 73.062007s  |  Total: 73.180168s  |  Speed: 47
+    | steps/s
+    | --- Step 4000 | Time: 0.000035  |  Pure Compute: 84.785475s  |  Total: 84.922648s  |  Speed: 47
+    | steps/s
+    | --- Step 4500 | Time: 0.000039  |  Pure Compute: 96.360177s  |  Total: 96.510723s  |  Speed: 46
+    | steps/s
+    | --- Step 5000 | Time: 0.000043  |  Pure Compute: 108.036590s  |  Total: 108.208079s  |  Speed: 46
+    | steps/s
+    | --- Step 5500 | Time: 0.000048  |  Pure Compute: 116.992188s  |  Total: 117.182383s  |  Speed: 47
+    | steps/s
+
+[16:19:56] [INFO ] [EngineManager]
+    | ==================================================
+    | GRPD Solver Engine Initialized                 
+    | ==================================================
+
+[16:19:56] [INFO ] [EngineRegistry]
+    | Creating Engine instance: PD
+
+[16:19:56] [INFO ] [PDEngine]
+    | PD Engine instance created.
+    | ===============================================
+    | ========== Registered Types Summary ===========
+    | TimeIntegrator    : ADR, CentralDifference, Explicit, Staggered
+    | FieldRegistry     : DoubleField, IntField
+    | PhysicsFields     : Mechanical, Thermal
+    | BCRegistry        : AX, AY, AZ, CONV, FLUX, PX, PY, PZ, T, UX, UY, UZ, VX, VY, VZ
+    | ReaderRegistry    : .grpd, .inp
+    | StabilizerRegistry: Mechanical_Silling, Mechanical_Wan, Mechanical_Zhang, Thermal_Silling,
+    | Thermal_Wan, Thermal_Zhang
+    | MaterialRegistry  : FourierThermalMat, J2PlasticityMat, JCPlasticityMat, LinearElasticMat
+    | KernelRegistry    : NOSB_M, NOSB_T
+    | EngineRegistry    : PD
+    | ===============================================
+
+[16:19:56] [INFO ] [EngineManager]
+    | Initializing solver: PD
+
+[16:19:56] [INFO ] [PDEngine]
+    | Initializing PD simulation context...
+
+[16:19:56] [INFO ] [InitModel]
+    | ==================================================
+    | Model pre-processing...
+    | ==================================================
+    | grpd path: D:\Project_C++\GRPD\Examples\Bullet\Bullet.grpd
+    | model name: Bullet
+    | Found existing .grpd mesh file at: D:\Project_C++\GRPD\Examples\Bullet\Bullet.grpd. Skipping
+    | generation.
+
+[16:19:56] [INFO ] [Context Manager]
+    | Formalized model name to: Bullet
+    | Model dimension set to: 2D
+
+[16:19:56] [INFO ] [ReaderRegistry]
+    | Creating reader for: .grpd (name: Bullet)
+
+[16:19:56] [INFO ] [InitModel]
+    | Reading mesh file: D:\Project_C++\GRPD\Examples\Bullet\Bullet.grpd (reader: .grpd)
+
+[16:19:56] [INFO ] [GrpdMeshReader]
+    | Reading file: D:\Project_C++\GRPD\Examples\Bullet\Bullet.grpd
+    | Entering *PARTICLE section (Line 1)
+    | Pre-allocated memory for 21453 particles (Zero-Reallocation)
+    | Entering *LOAD section (Line 21457)
+    | ============================================
+    | File reading complete!
+    | Total particles: 21453
+    | Total load entries: 1702
+    | ============================================
+
+[16:19:56] [INFO ] [ParticleManager]
+    | Pre-allocated memory for 21453 particles
+
+[16:19:56] [INFO ] [InitModel]
+    | Total particles loaded for model Bullet: 21453
+
+[16:19:56] [INFO ] [InitMaterial]
+    | ==================================================
+    | Entering Material Initialization Phase...
+    | ==================================================
+    | Instantiating material [1] of type: J2PlasticityMat
+
+[16:19:56] [INFO ] [MaterialRegistry]
+    | Using factory to create material: Steel_Plastic (type: J2PlasticityMat)
+
+[16:19:56] [INFO ] [EqPSFracture]
+    | Configured Critical_EqPS = 0.200000
+
+[16:19:56] [INFO ] [Material]
+    | Attached FractureModel 'EqPSFracture' to material: Steel_Plastic
+
+[16:19:56] [INFO ] [J2PlasticityMat]
+    | Hardening Type: Isotropic
+
+[16:19:56] [INFO ] [MaterialManager]
+    | Successfully added material instance: Steel_Plastic
+
+[16:19:56] [INFO ] [InitMaterial]
+    | Successfully registered material ID 1 (Steel_Plastic)
+    | Assigning material pointers to particles...
+    | Successfully assigned materials to 21453 particles.
+
+[16:19:56] [INFO ] [InitFields]
+    | ==================================================
+    | Entering Field Registration Phase...
+    | ==================================================
+
+[16:19:56] [INFO ] [FieldManager]
+    | Added field 'Displacement'.
+    | Added field 'Velocity'.
+    | Added field 'Acceleration'.
+
+[16:19:56] [INFO ] [MechanicalFields]
+    | Core fields registered: Displacement, Velocity, Acceleration.
+
+[16:19:56] [INFO ] [InitFields]
+    | Auto-registered PhysicsFields module: Mechanical
+
+[16:19:56] [INFO ] [FieldManager]
+    | Added field 'ID'.
+    | Added field 'PartID'.
+    | Added field 'MatID'.
+    | Added field 'Coords'.
+    | Added field 'Volume'.
+    | Added field 'ActiveStatus'.
+
+[16:19:56] [INFO ] [InitFields]
+    | Global ActiveStatus field registered.
+
+[16:19:56] [INFO ] [FieldManager]
+    | Added field 'EqPlasticStrain_Old'.
+    | Added field 'EqPlasticStrain_Trial'.
+    | Added field 'PlasticStrain_Old'.
+    | Added field 'PlasticStrain_Trial'.
+    | Added field 'VonMisesStress'.
+    | Resized all 14 fields for 21453 particles.
+
+[16:19:56] [INFO ] [InitFields]
+    | ActiveStatus initialized to 1 for all particles.
+    | Binding high-speed material state pointers...
+
+[16:19:56] [INFO ] [MeshData]
+    | Populated particle geometry fields into FieldManager for 21453 particles.
+
+[16:19:56] [INFO ] [InitFields]
+    | All fields allocated for 21453 particles. Total fields: 14.
+
+[16:19:56] [INFO ] [InitConditions]
+    | ==================================================
+    | Entering Conditions Initialization Phase...
+    | ==================================================
+
+[16:19:56] [INFO ] [ReaderRegistry]
+    | Creating reader for: .grpd (name: LoadReader)
+
+[16:19:56] [INFO ] [GrpdMeshReader]
+    | Reading file: D:\Project_C++\GRPD\Examples\Bullet\Bullet.grpd
+    | Entering *PARTICLE section (Line 1)
+    | Pre-allocated memory for 21453 particles (Zero-Reallocation)
+    | Entering *LOAD section (Line 21457)
+    | ============================================
+    | File reading complete!
+    | Total particles: 21453
+    | Total load entries: 1702
+    | ============================================
+
+[16:19:56] [INFO ] [InitConditions]
+    | Load statistics:
+    | - VX : 1702
+    | Boundary conditions initialization complete.
+
+[16:19:56] [INFO ] [InitNeighbors]
+    | ==================================================
+    | Entering Neighbor Search Phase...
+    | ==================================================
+    | Horizon radius: 0.603000
+
+[16:19:56] [INFO ] [NeighborList]
+    | Starting full-flat CSR search for 21453 particles, horizon = 0.603000
+    | Cell grid: 39 x 17 x 1 = 663 cells
+    | Flat cell list built in 0.999928 ms
+    | Pass 1 (count) done in 3.999949 ms
+    | Total bonds: 2311282, Memory: 26 MB
+    | Pass 2 (fill) done in 13.000011 ms
+    | Max neighbors: 112
+    | Total time: 17.999887 ms
+
+[16:19:56] [INFO ] [FieldManager]
+    | Added field 'NeighborCount'.
+
+[16:19:56] [INFO ] [InitNeighbors]
+    | NeighborCount field populated for 21453 particles.
+
+[16:19:56] [INFO ] [FieldManager]
+    | Added field 'BondIntegrity'.
+
+[16:19:56] [INFO ] [InitNeighbors]
+    | Global BondIntegrity scalar field properly initialized to 0.0
+    | Neighbor search phase complete.
+    | Initializing Material-specific BondIntegrity Models...
+    | Material BondIntegrity Models initialized. Total Active Models: 1
+
+[16:19:56] [INFO ] [InitPreCracks]
+    | Detected PreCracks configuration. Initializing geometric cuts...
+
+[16:19:56] [INFO ] [QuadCrack]
+    | Successfully configured QuadCrack with normal: (0.000000, -1.000000, 0.000000)
+    | Evaluating bond breakage for crack...
+    | Cut 22560 bonds traversing the preset crack.
+
+[16:19:56] [INFO ] [InitPreCracks]
+    | Applied PreCrack of type: QuadCrack
+
+[16:19:56] [INFO ] [InitSolverComponents]
+    | ==================================================
+    | Entering Solver Components Assembly Phase...
+    | ==================================================
+    | Building Time Integrator: CentralDifference
+
+[16:19:56] [INFO ] [TimeIntegrator]
+    | Explicitly set OMP Threads to: 16
+
+[16:19:56] [INFO ] [InitSolverComponents]
+    | Time Integrator configured.
+    | Building Space Kernel: NOSB_M
+
+[16:19:56] [INFO ] [NOSB_Base]
+    | Applied KernelWeightType: Linear
+    | Applied ZeroEnergyG0: 0.100000
+    | Applied ZeroEnergyMethod string: Zhang
+
+[16:19:56] [INFO ] [InitSolverComponents]
+    | Space Kernel 'NOSB_M' configured.
+    | Total kernels assembled: 1
+
+[16:19:56] [INFO ] [PDEngine]
+    | PD simulation context initialized successfully.
+
+[16:19:56] [INFO ] [EngineManager]
+    | All solvers initialized. Total: 1
+    | ==================================================
+    | Entering Main Solver Phase
+    | ==================================================
+    | Solving: PD
+
+[16:19:56] [INFO ] [PDEngine]
+    | Starting PD Engine Solve Phase...
+
+[16:19:56] [INFO ] [CentralDifference]
+    | Identified 2nd-order ODE coupling: Displacement <- Velocity <- Acceleration
+
+[16:19:56] [INFO ] [FieldManager]
+    | Added field 'ShapeTensorInv'.
+    | Added field 'VHorizon'.
+
+[16:19:56] [INFO ] [NOSB_Base]
+    | Computing InfluenceWeight + Shape Tensor Inverse (K^-1)...
+    | All NOSB base fields registered and Shape Tensor Inverse computed.
+
+[16:19:56] [INFO ] [FieldManager]
+    | Added field 'DeformationGradient'.
+    | Added field 'PK1Stress'.
+
+[16:19:56] [INFO ] [NOSB_M]
+    | Instantiated MechanicalStabilizer globally in Phase 0 using strategy: Zhang
+
+[16:19:56] [INFO ] [CentralDifference]
+    | Auto CFL dt: dx = 0.100000, c = 4886205.071423, massScale = 1.000000, dt = 0.000000
+    | Starting Explicit Loop with 2 LoadStep(s). Default dt = 0.000000
+    | === Load Step 1 / 2 | TargetTime: 0.000004 | dt: 0.000000 | KBC: 1 ===
+    | --- Step 0 | Time: 0.000000  |  Pure Compute: 0.000000s  |  Total: 0.001038s  |  Speed: 0 steps/s
+    | --- Step 200 | Time: 0.000002  |  Pure Compute: 3.379157s  |  Total: 3.387338s  |  Speed: 59 steps/s
+    | --- Step 400 | Time: 0.000003  |  Pure Compute: 8.062682s  |  Total: 8.078647s  |  Speed: 49 steps/s
+    | === Load Step 2 / 2 | TargetTime: 0.000087 | dt: 0.000000 | KBC: 1 ===
+    | --- Step 600 | Time: 0.000005  |  Pure Compute: 12.519017s  |  Total: 12.554081s  |  Speed: 47
+    | steps/s
+    | --- Step 800 | Time: 0.000007  |  Pure Compute: 16.955616s  |  Total: 16.999346s  |  Speed: 47
+    | steps/s
+    | --- Step 1000 | Time: 0.000009  |  Pure Compute: 21.160946s  |  Total: 21.221744s  |  Speed: 47
+    | steps/s
+    | --- Step 1200 | Time: 0.000010  |  Pure Compute: 25.288417s  |  Total: 25.365543s  |  Speed: 47
+    | steps/s
+    | --- Step 1400 | Time: 0.000012  |  Pure Compute: 29.630743s  |  Total: 29.725420s  |  Speed: 47
+    | steps/s
+    | --- Step 1600 | Time: 0.000014  |  Pure Compute: 33.781721s  |  Total: 33.884786s  |  Speed: 47
+    | steps/s
+    | --- Step 1800 | Time: 0.000016  |  Pure Compute: 37.012279s  |  Total: 37.124233s  |  Speed: 48
+    | steps/s
+    | --- Step 2000 | Time: 0.000017  |  Pure Compute: 39.818908s  |  Total: 39.946391s  |  Speed: 50
+    | steps/s
+    | --- Step 2200 | Time: 0.000019  |  Pure Compute: 42.598342s  |  Total: 42.733782s  |  Speed: 51
+    | steps/s
+    | --- Step 2400 | Time: 0.000021  |  Pure Compute: 45.898264s  |  Total: 46.047577s  |  Speed: 52
+    | steps/s
+    | --- Step 2600 | Time: 0.000023  |  Pure Compute: 48.985937s  |  Total: 49.146257s  |  Speed: 53
+    | steps/s
+    | --- Step 2800 | Time: 0.000024  |  Pure Compute: 53.360712s  |  Total: 53.536502s  |  Speed: 52
+    | steps/s
+    | --- Step 3000 | Time: 0.000026  |  Pure Compute: 57.413975s  |  Total: 57.606104s  |  Speed: 52
+    | steps/s
+    | --- Step 3200 | Time: 0.000028  |  Pure Compute: 61.399291s  |  Total: 61.608944s  |  Speed: 52
+    | steps/s
+    | --- Step 3400 | Time: 0.000030  |  Pure Compute: 65.300407s  |  Total: 65.517724s  |  Speed: 52
+    | steps/s
+    | --- Step 3600 | Time: 0.000031  |  Pure Compute: 69.277746s  |  Total: 69.511865s  |  Speed: 51
+    | steps/s
+    | --- Step 3800 | Time: 0.000033  |  Pure Compute: 73.634388s  |  Total: 73.885846s  |  Speed: 51
+    | steps/s
+    | --- Step 4000 | Time: 0.000035  |  Pure Compute: 77.794955s  |  Total: 78.053999s  |  Speed: 51
+    | steps/s
+    | --- Step 4200 | Time: 0.000037  |  Pure Compute: 82.162242s  |  Total: 82.436704s  |  Speed: 51
+    | steps/s
+    | --- Step 4400 | Time: 0.000038  |  Pure Compute: 86.639490s  |  Total: 86.932523s  |  Speed: 50
+    | steps/s
+    | --- Step 4600 | Time: 0.000040  |  Pure Compute: 91.185611s  |  Total: 91.488711s  |  Speed: 50
+    | steps/s
+    | --- Step 4800 | Time: 0.000042  |  Pure Compute: 95.637165s  |  Total: 95.948270s  |  Speed: 50
+    | steps/s
+    | --- Step 5000 | Time: 0.000043  |  Pure Compute: 100.098956s  |  Total: 100.429951s  |  Speed: 49
+    | steps/s
+    | --- Step 5200 | Time: 0.000045  |  Pure Compute: 104.462910s  |  Total: 104.810287s  |  Speed: 49
+    | steps/s
+    | --- Step 5400 | Time: 0.000047  |  Pure Compute: 109.367073s  |  Total: 109.733924s  |  Speed: 49
+    | steps/s
+    | --- Step 5600 | Time: 0.000049  |  Pure Compute: 113.590547s  |  Total: 113.973094s  |  Speed: 49
+    | steps/s
+    | --- Step 5800 | Time: 0.000050  |  Pure Compute: 118.344060s  |  Total: 118.732040s  |  Speed: 49
+    | steps/s
+    | --- Step 6000 | Time: 0.000052  |  Pure Compute: 122.864252s  |  Total: 123.269361s  |  Speed: 48
+    | steps/s
+    | --- Step 6200 | Time: 0.000054  |  Pure Compute: 127.792962s  |  Total: 128.218197s  |  Speed: 48
+    | steps/s
+    | --- Step 6400 | Time: 0.000056  |  Pure Compute: 132.002461s  |  Total: 132.442850s  |  Speed: 48
+    | steps/s
+    | --- Step 6600 | Time: 0.000057  |  Pure Compute: 136.589605s  |  Total: 137.038916s  |  Speed: 48
+    | steps/s
+    | --- Step 6800 | Time: 0.000059  |  Pure Compute: 140.922677s  |  Total: 141.388081s  |  Speed: 48
+    | steps/s
+    | --- Step 7000 | Time: 0.000061  |  Pure Compute: 145.671348s  |  Total: 146.144910s  |  Speed: 48
+    | steps/s
+    | --- Step 7200 | Time: 0.000063  |  Pure Compute: 149.855077s  |  Total: 150.345610s  |  Speed: 48
+    | steps/s
+    | --- Step 7400 | Time: 0.000064  |  Pure Compute: 154.207687s  |  Total: 154.714020s  |  Speed: 47
+    | steps/s
+    | --- Step 7600 | Time: 0.000066  |  Pure Compute: 157.498825s  |  Total: 158.024628s  |  Speed: 48
+    | steps/s
+    | --- Step 7800 | Time: 0.000068  |  Pure Compute: 160.604556s  |  Total: 161.145222s  |  Speed: 48
+    | steps/s
+    | --- Step 8000 | Time: 0.000070  |  Pure Compute: 163.589530s  |  Total: 164.144864s  |  Speed: 48
+    | steps/s
+    | --- Step 8200 | Time: 0.000071  |  Pure Compute: 166.508944s  |  Total: 167.080505s  |  Speed: 49
+    | steps/s
+    | --- Step 8400 | Time: 0.000073  |  Pure Compute: 169.530267s  |  Total: 170.116889s  |  Speed: 49
+    | steps/s
+    | --- Step 8600 | Time: 0.000075  |  Pure Compute: 173.572312s  |  Total: 174.165584s  |  Speed: 49
+    | steps/s
+    | --- Step 8800 | Time: 0.000077  |  Pure Compute: 177.685687s  |  Total: 178.287429s  |  Speed: 49
+    | steps/s
+    | --- Step 9000 | Time: 0.000078  |  Pure Compute: 181.832633s  |  Total: 182.441968s  |  Speed: 49
+    | steps/s
+    | --- Step 9200 | Time: 0.000080  |  Pure Compute: 186.057484s  |  Total: 186.675366s  |  Speed: 49
+    | steps/s
+    | --- Step 9400 | Time: 0.000082  |  Pure Compute: 190.195312s  |  Total: 190.830151s  |  Speed: 49
+    | steps/s
+    | --- Step 9600 | Time: 0.000084  |  Pure Compute: 194.342853s  |  Total: 194.993358s  |  Speed: 49
+    | steps/s
+    | --- Step 9800 | Time: 0.000085  |  Pure Compute: 199.106578s  |  Total: 199.773428s  |  Speed: 49
+    | steps/s
+    | Finished. Total: 204.479931s  |  Pure Compute avg: 0.020378 s/step
+
+[16:23:21] [INFO ] [PDEngine]
+    | PD Engine Solve Phase Finished.
+
+[16:23:21] [INFO ] [EngineManager]
+    | Main Solver Phase finished.
+    | ==================================================
+    | Entering Post-processing Phase
+    | ==================================================
+    | Outputting: PD
+    | Post-processing Phase finished.
+
+[16:23:37] [INFO ] [EngineManager]
+    | ==================================================
+    | GRPD Solver Engine Initialized                 
+    | ==================================================
+
+[16:23:37] [INFO ] [EngineRegistry]
+    | Creating Engine instance: PD
+
+[16:23:37] [INFO ] [PDEngine]
+    | PD Engine instance created.
+    | ===============================================
+    | ========== Registered Types Summary ===========
+    | TimeIntegrator    : ADR, CentralDifference, Explicit, Staggered
+    | FieldRegistry     : DoubleField, IntField
+    | PhysicsFields     : Mechanical, Thermal
+    | BCRegistry        : AX, AY, AZ, CONV, FLUX, PX, PY, PZ, T, UX, UY, UZ, VX, VY, VZ
+    | ReaderRegistry    : .grpd, .inp
+    | StabilizerRegistry: Mechanical_Silling, Mechanical_Wan, Mechanical_Zhang, Thermal_Silling,
+    | Thermal_Wan, Thermal_Zhang
+    | MaterialRegistry  : FourierThermalMat, J2PlasticityMat, JCPlasticityMat, LinearElasticMat
+    | KernelRegistry    : NOSB_M, NOSB_T
+    | EngineRegistry    : PD
+    | ===============================================
+
+[16:23:37] [INFO ] [EngineManager]
+    | Initializing solver: PD
+
+[16:23:37] [INFO ] [PDEngine]
+    | Initializing PD simulation context...
+
+[16:23:37] [INFO ] [InitModel]
+    | ==================================================
+    | Model pre-processing...
+    | ==================================================
+    | grpd path: D:\Project_C++\GRPD\Examples\Bullet\Bullet.grpd
+    | model name: Bullet
+    | Found existing .grpd mesh file at: D:\Project_C++\GRPD\Examples\Bullet\Bullet.grpd. Skipping
+    | generation.
+
+[16:23:37] [INFO ] [Context Manager]
+    | Formalized model name to: Bullet
+    | Model dimension set to: 2D
+
+[16:23:37] [INFO ] [ReaderRegistry]
+    | Creating reader for: .grpd (name: Bullet)
+
+[16:23:37] [INFO ] [InitModel]
+    | Reading mesh file: D:\Project_C++\GRPD\Examples\Bullet\Bullet.grpd (reader: .grpd)
+
+[16:23:37] [INFO ] [GrpdMeshReader]
+    | Reading file: D:\Project_C++\GRPD\Examples\Bullet\Bullet.grpd
+    | Entering *PARTICLE section (Line 1)
+    | Pre-allocated memory for 21453 particles (Zero-Reallocation)
+    | Entering *LOAD section (Line 21457)
+    | ============================================
+    | File reading complete!
+    | Total particles: 21453
+    | Total load entries: 1702
+    | ============================================
+
+[16:23:37] [INFO ] [ParticleManager]
+    | Pre-allocated memory for 21453 particles
+
+[16:23:37] [INFO ] [InitModel]
+    | Total particles loaded for model Bullet: 21453
+
+[16:23:37] [INFO ] [InitMaterial]
+    | ==================================================
+    | Entering Material Initialization Phase...
+    | ==================================================
+    | Instantiating material [1] of type: J2PlasticityMat
+
+[16:23:37] [INFO ] [MaterialRegistry]
+    | Using factory to create material: Steel_Plastic (type: J2PlasticityMat)
+
+[16:23:37] [INFO ] [EqPSFracture]
+    | Configured Critical_EqPS = 0.200000
+
+[16:23:37] [INFO ] [Material]
+    | Attached FractureModel 'EqPSFracture' to material: Steel_Plastic
+
+[16:23:37] [INFO ] [J2PlasticityMat]
+    | Hardening Type: Isotropic
+
+[16:23:37] [INFO ] [MaterialManager]
+    | Successfully added material instance: Steel_Plastic
+
+[16:23:37] [INFO ] [InitMaterial]
+    | Successfully registered material ID 1 (Steel_Plastic)
+    | Assigning material pointers to particles...
+    | Successfully assigned materials to 21453 particles.
+
+[16:23:37] [INFO ] [InitFields]
+    | ==================================================
+    | Entering Field Registration Phase...
+    | ==================================================
+
+[16:23:37] [INFO ] [FieldManager]
+    | Added field 'Displacement'.
+    | Added field 'Velocity'.
+    | Added field 'Acceleration'.
+
+[16:23:37] [INFO ] [MechanicalFields]
+    | Core fields registered: Displacement, Velocity, Acceleration.
+
+[16:23:37] [INFO ] [InitFields]
+    | Auto-registered PhysicsFields module: Mechanical
+
+[16:23:37] [INFO ] [FieldManager]
+    | Added field 'ID'.
+    | Added field 'PartID'.
+    | Added field 'MatID'.
+    | Added field 'Coords'.
+    | Added field 'Volume'.
+    | Added field 'ActiveStatus'.
+
+[16:23:37] [INFO ] [InitFields]
+    | Global ActiveStatus field registered.
+
+[16:23:37] [INFO ] [FieldManager]
+    | Added field 'EqPlasticStrain_Old'.
+    | Added field 'EqPlasticStrain_Trial'.
+    | Added field 'PlasticStrain_Old'.
+    | Added field 'PlasticStrain_Trial'.
+    | Added field 'VonMisesStress'.
+    | Resized all 14 fields for 21453 particles.
+
+[16:23:38] [INFO ] [InitFields]
+    | ActiveStatus initialized to 1 for all particles.
+    | Binding high-speed material state pointers...
+
+[16:23:38] [INFO ] [MeshData]
+    | Populated particle geometry fields into FieldManager for 21453 particles.
+
+[16:23:38] [INFO ] [InitFields]
+    | All fields allocated for 21453 particles. Total fields: 14.
+
+[16:23:38] [INFO ] [InitConditions]
+    | ==================================================
+    | Entering Conditions Initialization Phase...
+    | ==================================================
+
+[16:23:38] [INFO ] [ReaderRegistry]
+    | Creating reader for: .grpd (name: LoadReader)
+
+[16:23:38] [INFO ] [GrpdMeshReader]
+    | Reading file: D:\Project_C++\GRPD\Examples\Bullet\Bullet.grpd
+    | Entering *PARTICLE section (Line 1)
+    | Pre-allocated memory for 21453 particles (Zero-Reallocation)
+    | Entering *LOAD section (Line 21457)
+    | ============================================
+    | File reading complete!
+    | Total particles: 21453
+    | Total load entries: 1702
+    | ============================================
+
+[16:23:38] [INFO ] [InitConditions]
+    | Load statistics:
+    | - VX : 1702
+    | Boundary conditions initialization complete.
+
+[16:23:38] [INFO ] [InitNeighbors]
+    | ==================================================
+    | Entering Neighbor Search Phase...
+    | ==================================================
+    | Horizon radius: 0.603000
+
+[16:23:38] [INFO ] [NeighborList]
+    | Starting full-flat CSR search for 21453 particles, horizon = 0.603000
+    | Cell grid: 39 x 17 x 1 = 663 cells
+    | Flat cell list built in 0.999928 ms
+    | Pass 1 (count) done in 5.000114 ms
+    | Total bonds: 2311282, Memory: 26 MB
+    | Pass 2 (fill) done in 16.000032 ms
+    | Max neighbors: 112
+    | Total time: 22.000074 ms
+
+[16:23:38] [INFO ] [FieldManager]
+    | Added field 'NeighborCount'.
+
+[16:23:38] [INFO ] [InitNeighbors]
+    | NeighborCount field populated for 21453 particles.
+
+[16:23:38] [INFO ] [FieldManager]
+    | Added field 'BondIntegrity'.
+
+[16:23:38] [INFO ] [InitNeighbors]
+    | Global BondIntegrity scalar field properly initialized to 0.0
+    | Neighbor search phase complete.
+    | Initializing Material-specific BondIntegrity Models...
+    | Material BondIntegrity Models initialized. Total Active Models: 1
+
+[16:23:38] [INFO ] [InitPreCracks]
+    | Detected PreCracks configuration. Initializing geometric cuts...
+
+[16:23:38] [INFO ] [QuadCrack]
+    | Successfully configured QuadCrack with normal: (0.000000, -1.000000, 0.000000)
+    | Evaluating bond breakage for crack...
+    | Cut 15410 bonds traversing the preset crack.
+
+[16:23:38] [INFO ] [InitPreCracks]
+    | Applied PreCrack of type: QuadCrack
+
+[16:23:38] [INFO ] [InitSolverComponents]
+    | ==================================================
+    | Entering Solver Components Assembly Phase...
+    | ==================================================
+    | Building Time Integrator: CentralDifference
+
+[16:23:38] [INFO ] [TimeIntegrator]
+    | Explicitly set OMP Threads to: 16
+
+[16:23:38] [INFO ] [InitSolverComponents]
+    | Time Integrator configured.
+    | Building Space Kernel: NOSB_M
+
+[16:23:38] [INFO ] [NOSB_Base]
+    | Applied KernelWeightType: Linear
+    | Applied ZeroEnergyG0: 0.100000
+    | Applied ZeroEnergyMethod string: Zhang
+
+[16:23:38] [INFO ] [InitSolverComponents]
+    | Space Kernel 'NOSB_M' configured.
+    | Total kernels assembled: 1
+
+[16:23:38] [INFO ] [PDEngine]
+    | PD simulation context initialized successfully.
+
+[16:23:38] [INFO ] [EngineManager]
+    | All solvers initialized. Total: 1
+    | ==================================================
+    | Entering Main Solver Phase
+    | ==================================================
+    | Solving: PD
+
+[16:23:38] [INFO ] [PDEngine]
+    | Starting PD Engine Solve Phase...
+
+[16:23:38] [INFO ] [CentralDifference]
+    | Identified 2nd-order ODE coupling: Displacement <- Velocity <- Acceleration
+
+[16:23:38] [INFO ] [FieldManager]
+    | Added field 'ShapeTensorInv'.
+    | Added field 'VHorizon'.
+
+[16:23:38] [INFO ] [NOSB_Base]
+    | Computing InfluenceWeight + Shape Tensor Inverse (K^-1)...
+    | All NOSB base fields registered and Shape Tensor Inverse computed.
+
+[16:23:38] [INFO ] [FieldManager]
+    | Added field 'DeformationGradient'.
+    | Added field 'PK1Stress'.
+
+[16:23:38] [INFO ] [NOSB_M]
+    | Instantiated MechanicalStabilizer globally in Phase 0 using strategy: Zhang
+
+[16:23:38] [INFO ] [CentralDifference]
+    | Auto CFL dt: dx = 0.100000, c = 4886205.071423, massScale = 1.000000, dt = 0.000000
+    | Starting Explicit Loop with 2 LoadStep(s). Default dt = 0.000000
+    | === Load Step 1 / 2 | TargetTime: 0.000004 | dt: 0.000000 | KBC: 1 ===
+    | --- Step 0 | Time: 0.000000  |  Pure Compute: 0.000000s  |  Total: 0.000504s  |  Speed: 0 steps/s
+    | --- Step 200 | Time: 0.000002  |  Pure Compute: 4.342873s  |  Total: 4.356182s  |  Speed: 46 steps/s
+    | --- Step 400 | Time: 0.000003  |  Pure Compute: 9.416096s  |  Total: 9.449009s  |  Speed: 42 steps/s
+    | === Load Step 2 / 2 | TargetTime: 0.000087 | dt: 0.000000 | KBC: 1 ===
+    | --- Step 600 | Time: 0.000005  |  Pure Compute: 13.696911s  |  Total: 13.749300s  |  Speed: 43
+    | steps/s
+    | --- Step 800 | Time: 0.000007  |  Pure Compute: 18.098892s  |  Total: 18.160577s  |  Speed: 44
+    | steps/s
+    | --- Step 1000 | Time: 0.000009  |  Pure Compute: 21.486660s  |  Total: 21.564407s  |  Speed: 46
+    | steps/s
+    | --- Step 1200 | Time: 0.000010  |  Pure Compute: 24.603434s  |  Total: 24.696679s  |  Speed: 48
+    | steps/s
+    | --- Step 1400 | Time: 0.000012  |  Pure Compute: 27.883639s  |  Total: 27.992563s  |  Speed: 50
+    | steps/s
+    | --- Step 1600 | Time: 0.000014  |  Pure Compute: 30.787278s  |  Total: 30.912454s  |  Speed: 51
+    | steps/s
+    | --- Step 1800 | Time: 0.000016  |  Pure Compute: 33.784321s  |  Total: 33.924333s  |  Speed: 53
+    | steps/s
+    | --- Step 2000 | Time: 0.000017  |  Pure Compute: 37.556571s  |  Total: 37.712692s  |  Speed: 53
+    | steps/s
+    | --- Step 2200 | Time: 0.000019  |  Pure Compute: 41.460336s  |  Total: 41.632429s  |  Speed: 53
+    | steps/s
+    | --- Step 2400 | Time: 0.000021  |  Pure Compute: 45.489154s  |  Total: 45.678034s  |  Speed: 52
+    | steps/s
+    | --- Step 2600 | Time: 0.000023  |  Pure Compute: 49.096893s  |  Total: 49.294282s  |  Speed: 52
+    | steps/s
+    | --- Step 2800 | Time: 0.000024  |  Pure Compute: 53.015247s  |  Total: 53.221636s  |  Speed: 52
+    | steps/s
+    | --- Step 3000 | Time: 0.000026  |  Pure Compute: 56.609485s  |  Total: 56.831851s  |  Speed: 52
+    | steps/s
+    | --- Step 3200 | Time: 0.000028  |  Pure Compute: 60.391411s  |  Total: 60.629713s  |  Speed: 52
+    | steps/s
+    | --- Step 3400 | Time: 0.000030  |  Pure Compute: 64.943340s  |  Total: 65.188282s  |  Speed: 52
+    | steps/s
+    | --- Step 3600 | Time: 0.000031  |  Pure Compute: 70.026132s  |  Total: 70.283914s  |  Speed: 51
+    | steps/s
+    | --- Step 3800 | Time: 0.000033  |  Pure Compute: 74.949636s  |  Total: 75.229010s  |  Speed: 50
+    | steps/s
+    | --- Step 4000 | Time: 0.000035  |  Pure Compute: 79.326506s  |  Total: 79.623817s  |  Speed: 50
+    | steps/s
+    | --- Step 4200 | Time: 0.000037  |  Pure Compute: 84.045545s  |  Total: 84.351059s  |  Speed: 49
+    | steps/s
+    | --- Step 4400 | Time: 0.000038  |  Pure Compute: 87.295703s  |  Total: 87.622308s  |  Speed: 50
+    | steps/s
+    | --- Step 4600 | Time: 0.000040  |  Pure Compute: 90.727366s  |  Total: 91.060795s  |  Speed: 50
+    | steps/s
+    | --- Step 4800 | Time: 0.000042  |  Pure Compute: 93.792106s  |  Total: 94.142401s  |  Speed: 51
+    | steps/s
+    | --- Step 5000 | Time: 0.000043  |  Pure Compute: 96.891131s  |  Total: 97.256924s  |  Speed: 51
+    | steps/s
+    | --- Step 5200 | Time: 0.000045  |  Pure Compute: 99.951361s  |  Total: 100.333342s  |  Speed: 52
+    | steps/s
+    | --- Step 5400 | Time: 0.000047  |  Pure Compute: 104.001626s  |  Total: 104.400263s  |  Speed: 51
+    | steps/s
+    | --- Step 5600 | Time: 0.000049  |  Pure Compute: 108.345881s  |  Total: 108.761399s  |  Speed: 51
+    | steps/s
+    | --- Step 5800 | Time: 0.000050  |  Pure Compute: 112.828116s  |  Total: 113.258049s  |  Speed: 51
+    | steps/s
+    | --- Step 6000 | Time: 0.000052  |  Pure Compute: 117.380173s  |  Total: 117.825804s  |  Speed: 51
+    | steps/s
+    | --- Step 6200 | Time: 0.000054  |  Pure Compute: 121.950280s  |  Total: 122.404558s  |  Speed: 50
+    | steps/s
+    | --- Step 6400 | Time: 0.000056  |  Pure Compute: 126.401089s  |  Total: 126.863576s  |  Speed: 50
+    | steps/s
+    | --- Step 6600 | Time: 0.000057  |  Pure Compute: 131.491048s  |  Total: 131.969539s  |  Speed: 50
+    | steps/s
+    | --- Step 6800 | Time: 0.000059  |  Pure Compute: 136.839192s  |  Total: 137.335089s  |  Speed: 49
+    | steps/s
+    | --- Step 7000 | Time: 0.000061  |  Pure Compute: 141.529218s  |  Total: 142.043990s  |  Speed: 49
+    | steps/s
+    | --- Step 7200 | Time: 0.000063  |  Pure Compute: 146.179351s  |  Total: 146.702031s  |  Speed: 49
+    | steps/s
+    | --- Step 7400 | Time: 0.000064  |  Pure Compute: 165.085340s  |  Total: 165.623090s  |  Speed: 44
+    | steps/s
+    | --- Step 7600 | Time: 0.000066  |  Pure Compute: 175.377744s  |  Total: 176.026812s  |  Speed: 43
+    | steps/s
+    | --- Step 7800 | Time: 0.000068  |  Pure Compute: 180.667662s  |  Total: 181.339911s  |  Speed: 43
+    | steps/s
+    | --- Step 8000 | Time: 0.000070  |  Pure Compute: 185.543283s  |  Total: 186.232120s  |  Speed: 43
+    | steps/s
+    | --- Step 8200 | Time: 0.000071  |  Pure Compute: 190.160927s  |  Total: 190.858968s  |  Speed: 43
+    | steps/s
+    | --- Step 8400 | Time: 0.000073  |  Pure Compute: 194.333688s  |  Total: 195.049936s  |  Speed: 43
+    | steps/s
+    | --- Step 8600 | Time: 0.000075  |  Pure Compute: 198.501770s  |  Total: 199.234193s  |  Speed: 43
+    | steps/s
+    | --- Step 8800 | Time: 0.000077  |  Pure Compute: 202.714873s  |  Total: 203.464593s  |  Speed: 43
+    | steps/s
+    | --- Step 9000 | Time: 0.000078  |  Pure Compute: 206.096473s  |  Total: 206.863488s  |  Speed: 43
+    | steps/s
+    | --- Step 9200 | Time: 0.000080  |  Pure Compute: 209.093440s  |  Total: 209.866094s  |  Speed: 43
+    | steps/s
+    | --- Step 9400 | Time: 0.000082  |  Pure Compute: 211.984806s  |  Total: 212.771436s  |  Speed: 44
+    | steps/s
+    | --- Step 9600 | Time: 0.000084  |  Pure Compute: 215.147815s  |  Total: 215.950015s  |  Speed: 44
+    | steps/s
+    | --- Step 9800 | Time: 0.000085  |  Pure Compute: 218.070810s  |  Total: 218.879700s  |  Speed: 44
+    | steps/s
+    | Finished. Total: 222.239391s  |  Pure Compute avg: 0.022141 s/step
+
+[16:27:20] [INFO ] [PDEngine]
+    | PD Engine Solve Phase Finished.
+
+[16:27:20] [INFO ] [EngineManager]
+    | Main Solver Phase finished.
+    | ==================================================
+    | Entering Post-processing Phase
+    | ==================================================
+    | Outputting: PD
+    | Post-processing Phase finished.
+
+[16:32:46] [INFO ] [EngineManager]
+    | ==================================================
+    | GRPD Solver Engine Initialized                 
+    | ==================================================
+
+[16:32:46] [INFO ] [EngineRegistry]
+    | Creating Engine instance: PD
+
+[16:32:46] [INFO ] [PDEngine]
+    | PD Engine instance created.
+    | ===============================================
+    | ========== Registered Types Summary ===========
+    | TimeIntegrator    : ADR, CentralDifference, Explicit, Staggered
+    | FieldRegistry     : DoubleField, IntField
+    | PhysicsFields     : Mechanical, Thermal
+    | BCRegistry        : AX, AY, AZ, CONV, FLUX, PX, PY, PZ, T, UX, UY, UZ, VX, VY, VZ
+    | ReaderRegistry    : .grpd, .inp
+    | StabilizerRegistry: Mechanical_Silling, Mechanical_Wan, Mechanical_Zhang, Thermal_Silling,
+    | Thermal_Wan, Thermal_Zhang
+    | MaterialRegistry  : FourierThermalMat, J2PlasticityMat, JCPlasticityMat, LinearElasticMat
+    | KernelRegistry    : NOSB_M, NOSB_T
+    | EngineRegistry    : PD
+    | ===============================================
+
+[16:32:46] [INFO ] [EngineManager]
+    | Initializing solver: PD
+
+[16:32:46] [INFO ] [PDEngine]
+    | Initializing PD simulation context...
+
+[16:32:46] [INFO ] [InitModel]
+    | ==================================================
+    | Model pre-processing...
+    | ==================================================
+    | grpd path: D:\Project_C++\GRPD\Examples\Bullet\Bullet.grpd
+    | model name: Bullet
+    | Calling Python pre-processor to generate .grpd mesh...
+    | Mesh generated successfully by Python.
+
+[16:32:49] [INFO ] [Context Manager]
+    | Formalized model name to: Bullet
+    | Model dimension set to: 2D
+
+[16:32:49] [INFO ] [ReaderRegistry]
+    | Creating reader for: .grpd (name: Bullet)
+
+[16:32:49] [INFO ] [InitModel]
+    | Reading mesh file: D:\Project_C++\GRPD\Examples\Bullet\Bullet.grpd (reader: .grpd)
+
+[16:32:49] [INFO ] [GrpdMeshReader]
+    | Reading file: D:\Project_C++\GRPD\Examples\Bullet\Bullet.grpd
+    | Entering *PARTICLE section (Line 1)
+    | Pre-allocated memory for 21453 particles (Zero-Reallocation)
+    | Entering *LOAD section (Line 21457)
+    | ============================================
+    | File reading complete!
+    | Total particles: 21453
+    | Total load entries: 30208
+    | ============================================
+
+[16:32:49] [INFO ] [ParticleManager]
+    | Pre-allocated memory for 21453 particles
+
+[16:32:49] [INFO ] [InitModel]
+    | Total particles loaded for model Bullet: 21453
+
+[16:32:49] [INFO ] [InitMaterial]
+    | ==================================================
+    | Entering Material Initialization Phase...
+    | ==================================================
+    | Instantiating material [1] of type: J2PlasticityMat
+
+[16:32:49] [INFO ] [MaterialRegistry]
+    | Using factory to create material: Steel_Plastic (type: J2PlasticityMat)
+
+[16:32:49] [INFO ] [EqPSFracture]
+    | Configured Critical_EqPS = 0.200000
+
+[16:32:49] [INFO ] [Material]
+    | Attached FractureModel 'EqPSFracture' to material: Steel_Plastic
+
+[16:32:49] [INFO ] [J2PlasticityMat]
+    | Hardening Type: Isotropic
+
+[16:32:49] [INFO ] [MaterialManager]
+    | Successfully added material instance: Steel_Plastic
+
+[16:32:49] [INFO ] [InitMaterial]
+    | Successfully registered material ID 1 (Steel_Plastic)
+    | Assigning material pointers to particles...
+    | Successfully assigned materials to 21453 particles.
+
+[16:32:49] [INFO ] [InitFields]
+    | ==================================================
+    | Entering Field Registration Phase...
+    | ==================================================
+
+[16:32:49] [INFO ] [FieldManager]
+    | Added field 'Displacement'.
+    | Added field 'Velocity'.
+    | Added field 'Acceleration'.
+
+[16:32:49] [INFO ] [MechanicalFields]
+    | Core fields registered: Displacement, Velocity, Acceleration.
+
+[16:32:49] [INFO ] [InitFields]
+    | Auto-registered PhysicsFields module: Mechanical
+
+[16:32:49] [INFO ] [FieldManager]
+    | Added field 'ID'.
+    | Added field 'PartID'.
+    | Added field 'MatID'.
+    | Added field 'Coords'.
+    | Added field 'Volume'.
+    | Added field 'ActiveStatus'.
+
+[16:32:49] [INFO ] [InitFields]
+    | Global ActiveStatus field registered.
+
+[16:32:49] [INFO ] [FieldManager]
+    | Added field 'EqPlasticStrain_Old'.
+    | Added field 'EqPlasticStrain_Trial'.
+    | Added field 'PlasticStrain_Old'.
+    | Added field 'PlasticStrain_Trial'.
+    | Added field 'VonMisesStress'.
+    | Resized all 14 fields for 21453 particles.
+
+[16:32:49] [INFO ] [InitFields]
+    | ActiveStatus initialized to 1 for all particles.
+    | Binding high-speed material state pointers...
+
+[16:32:49] [INFO ] [MeshData]
+    | Populated particle geometry fields into FieldManager for 21453 particles.
+
+[16:32:49] [INFO ] [InitFields]
+    | All fields allocated for 21453 particles. Total fields: 14.
+
+[16:32:49] [INFO ] [InitConditions]
+    | ==================================================
+    | Entering Conditions Initialization Phase...
+    | ==================================================
+
+[16:32:49] [INFO ] [ReaderRegistry]
+    | Creating reader for: .grpd (name: LoadReader)
+
+[16:32:49] [INFO ] [GrpdMeshReader]
+    | Reading file: D:\Project_C++\GRPD\Examples\Bullet\Bullet.grpd
+    | Entering *PARTICLE section (Line 1)
+    | Pre-allocated memory for 21453 particles (Zero-Reallocation)
+    | Entering *LOAD section (Line 21457)
+    | ============================================
+    | File reading complete!
+    | Total particles: 21453
+    | Total load entries: 30208
+    | ============================================
+
+[16:32:49] [INFO ] [InitConditions]
+    | Load statistics:
+    | - VX : 15104
+    | - VY : 15104
+    | Boundary conditions initialization complete.
+
+[16:32:49] [INFO ] [InitNeighbors]
+    | ==================================================
+    | Entering Neighbor Search Phase...
+    | ==================================================
+    | Horizon radius: 0.603000
+
+[16:32:49] [INFO ] [NeighborList]
+    | Starting full-flat CSR search for 21453 particles, horizon = 0.603000
+    | Cell grid: 39 x 17 x 1 = 663 cells
+    | Flat cell list built in 1.999855 ms
+    | Pass 1 (count) done in 2.000093 ms
+    | Total bonds: 2311282, Memory: 26 MB
+    | Pass 2 (fill) done in 13.999939 ms
+    | Max neighbors: 112
+    | Total time: 17.999887 ms
+
+[16:32:49] [INFO ] [FieldManager]
+    | Added field 'NeighborCount'.
+
+[16:32:49] [INFO ] [InitNeighbors]
+    | NeighborCount field populated for 21453 particles.
+
+[16:32:49] [INFO ] [FieldManager]
+    | Added field 'BondIntegrity'.
+
+[16:32:49] [INFO ] [InitNeighbors]
+    | Global BondIntegrity scalar field properly initialized to 0.0
+    | Neighbor search phase complete.
+    | Initializing Material-specific BondIntegrity Models...
+    | Material BondIntegrity Models initialized. Total Active Models: 1
+
+[16:32:49] [INFO ] [InitPreCracks]
+    | Detected PreCracks configuration. Initializing geometric cuts...
+
+[16:32:49] [INFO ] [QuadCrack]
+    | Successfully configured QuadCrack with normal: (0.000000, -1.000000, 0.000000)
+    | Evaluating bond breakage for crack...
+    | Cut 15410 bonds traversing the preset crack.
+
+[16:32:49] [INFO ] [InitPreCracks]
+    | Applied PreCrack of type: QuadCrack
+
+[16:32:49] [INFO ] [InitSolverComponents]
+    | ==================================================
+    | Entering Solver Components Assembly Phase...
+    | ==================================================
+    | Building Time Integrator: CentralDifference
+
+[16:32:49] [INFO ] [TimeIntegrator]
+    | Explicitly set OMP Threads to: 16
+
+[16:32:49] [INFO ] [InitSolverComponents]
+    | Time Integrator configured.
+    | Building Space Kernel: NOSB_M
+
+[16:32:49] [INFO ] [NOSB_Base]
+    | Applied KernelWeightType: Linear
+    | Applied ZeroEnergyG0: 0.100000
+    | Applied ZeroEnergyMethod string: Zhang
+
+[16:32:49] [INFO ] [InitSolverComponents]
+    | Space Kernel 'NOSB_M' configured.
+    | Total kernels assembled: 1
+
+[16:32:49] [INFO ] [PDEngine]
+    | PD simulation context initialized successfully.
+
+[16:32:49] [INFO ] [EngineManager]
+    | All solvers initialized. Total: 1
+    | ==================================================
+    | Entering Main Solver Phase
+    | ==================================================
+    | Solving: PD
+
+[16:32:49] [INFO ] [PDEngine]
+    | Starting PD Engine Solve Phase...
+
+[16:32:49] [INFO ] [CentralDifference]
+    | Identified 2nd-order ODE coupling: Displacement <- Velocity <- Acceleration
+
+[16:32:49] [INFO ] [FieldManager]
+    | Added field 'ShapeTensorInv'.
+    | Added field 'VHorizon'.
+
+[16:32:49] [INFO ] [NOSB_Base]
+    | Computing InfluenceWeight + Shape Tensor Inverse (K^-1)...
+    | All NOSB base fields registered and Shape Tensor Inverse computed.
+
+[16:32:49] [INFO ] [FieldManager]
+    | Added field 'DeformationGradient'.
+    | Added field 'PK1Stress'.
+
+[16:32:49] [INFO ] [NOSB_M]
+    | Instantiated MechanicalStabilizer globally in Phase 0 using strategy: Zhang
+
+[16:32:49] [INFO ] [CentralDifference]
+    | Auto CFL dt: dx = 0.100000, c = 4886205.071423, massScale = 1.000000, dt = 0.000000
+    | Starting Explicit Loop with 2 LoadStep(s). Default dt = 0.000000
+    | === Load Step 1 / 2 | TargetTime: 0.000004 | dt: 0.000000 | KBC: 1 ===
+    | --- Step 0 | Time: 0.000000  |  Pure Compute: 0.000000s  |  Total: 0.001008s  |  Speed: 0 steps/s
+    | --- Step 200 | Time: 0.000002  |  Pure Compute: 4.956904s  |  Total: 4.966151s  |  Speed: 40 steps/s
+    | --- Step 400 | Time: 0.000003  |  Pure Compute: 9.807239s  |  Total: 9.827326s  |  Speed: 40 steps/s
+    | === Load Step 2 / 2 | TargetTime: 0.000087 | dt: 0.000000 | KBC: 1 ===
+    | --- Step 600 | Time: 0.000005  |  Pure Compute: 14.361712s  |  Total: 14.393743s  |  Speed: 41
+    | steps/s
+    | --- Step 800 | Time: 0.000007  |  Pure Compute: 17.974459s  |  Total: 18.023443s  |  Speed: 44
+    | steps/s
+    | --- Step 1000 | Time: 0.000009  |  Pure Compute: 21.528099s  |  Total: 21.585002s  |  Speed: 46
+    | steps/s
+    | --- Step 1200 | Time: 0.000010  |  Pure Compute: 25.005538s  |  Total: 25.081937s  |  Speed: 47
+    | steps/s
+    | --- Step 1400 | Time: 0.000012  |  Pure Compute: 28.375445s  |  Total: 28.461904s  |  Speed: 49
+    | steps/s
+    | --- Step 1600 | Time: 0.000014  |  Pure Compute: 31.690588s  |  Total: 31.791421s  |  Speed: 50
+    | steps/s
+    | --- Step 1800 | Time: 0.000016  |  Pure Compute: 35.281826s  |  Total: 35.398359s  |  Speed: 51
+    | steps/s
+    | --- Step 2000 | Time: 0.000017  |  Pure Compute: 39.469623s  |  Total: 39.603175s  |  Speed: 50
+    | steps/s
+    | --- Step 2200 | Time: 0.000019  |  Pure Compute: 43.608851s  |  Total: 43.758085s  |  Speed: 50
+    | steps/s
+    | --- Step 2400 | Time: 0.000021  |  Pure Compute: 47.517415s  |  Total: 47.684469s  |  Speed: 50
+    | steps/s
+    | --- Step 2600 | Time: 0.000023  |  Pure Compute: 51.757179s  |  Total: 51.939833s  |  Speed: 50
+    | steps/s
+    | --- Step 2800 | Time: 0.000024  |  Pure Compute: 55.828196s  |  Total: 56.027853s  |  Speed: 50
+    | steps/s
+    | --- Step 3000 | Time: 0.000026  |  Pure Compute: 59.809653s  |  Total: 60.026107s  |  Speed: 50
+    | steps/s
+    | --- Step 3200 | Time: 0.000028  |  Pure Compute: 63.875160s  |  Total: 64.108508s  |  Speed: 50
+    | steps/s
+    | --- Step 3400 | Time: 0.000030  |  Pure Compute: 67.780393s  |  Total: 68.028665s  |  Speed: 50
+    | steps/s
+    | --- Step 3600 | Time: 0.000031  |  Pure Compute: 71.554049s  |  Total: 71.823360s  |  Speed: 50
+    | steps/s
+    | --- Step 3800 | Time: 0.000033  |  Pure Compute: 75.589200s  |  Total: 75.874224s  |  Speed: 50
+    | steps/s
+    | --- Step 4000 | Time: 0.000035  |  Pure Compute: 79.443510s  |  Total: 79.744123s  |  Speed: 50
+    | steps/s
+    | --- Step 4200 | Time: 0.000037  |  Pure Compute: 83.512109s  |  Total: 83.828463s  |  Speed: 50
+    | steps/s
+    | --- Step 4400 | Time: 0.000038  |  Pure Compute: 87.580967s  |  Total: 87.903105s  |  Speed: 50
+    | steps/s
+    | --- Step 4600 | Time: 0.000040  |  Pure Compute: 91.567284s  |  Total: 91.907031s  |  Speed: 50
+    | steps/s
+    | --- Step 4800 | Time: 0.000042  |  Pure Compute: 95.716387s  |  Total: 96.070678s  |  Speed: 50
+    | steps/s
+    | --- Step 5000 | Time: 0.000043  |  Pure Compute: 100.124860s  |  Total: 100.494528s  |  Speed: 49
+    | steps/s
+    | --- Step 5200 | Time: 0.000045  |  Pure Compute: 103.794539s  |  Total: 104.181370s  |  Speed: 50
+    | steps/s
+    | --- Step 5400 | Time: 0.000047  |  Pure Compute: 106.932258s  |  Total: 107.326972s  |  Speed: 50
+    | steps/s
+    | --- Step 5600 | Time: 0.000049  |  Pure Compute: 109.675754s  |  Total: 110.086327s  |  Speed: 51
+    | steps/s
+    | --- Step 5800 | Time: 0.000050  |  Pure Compute: 112.588431s  |  Total: 113.013638s  |  Speed: 51
+    | steps/s
+    | --- Step 6000 | Time: 0.000052  |  Pure Compute: 115.164789s  |  Total: 115.604649s  |  Speed: 52
+    | steps/s
+    | --- Step 6200 | Time: 0.000054  |  Pure Compute: 117.904314s  |  Total: 118.358887s  |  Speed: 52
+    | steps/s
+    | --- Step 6400 | Time: 0.000056  |  Pure Compute: 120.502633s  |  Total: 120.971605s  |  Speed: 53
+    | steps/s
+    | --- Step 6600 | Time: 0.000057  |  Pure Compute: 123.251759s  |  Total: 123.728112s  |  Speed: 53
+    | steps/s
+    | --- Step 6800 | Time: 0.000059  |  Pure Compute: 125.885986s  |  Total: 126.377167s  |  Speed: 54
+    | steps/s
+    | --- Step 7000 | Time: 0.000061  |  Pure Compute: 128.618295s  |  Total: 129.123705s  |  Speed: 54
+    | steps/s
+    | --- Step 7200 | Time: 0.000063  |  Pure Compute: 131.298086s  |  Total: 131.818524s  |  Speed: 54
+    | steps/s
+    | --- Step 7400 | Time: 0.000064  |  Pure Compute: 133.992356s  |  Total: 134.527009s  |  Speed: 55
+    | steps/s
+    | --- Step 7600 | Time: 0.000066  |  Pure Compute: 136.787172s  |  Total: 137.337903s  |  Speed: 55
+    | steps/s
+    | --- Step 7800 | Time: 0.000068  |  Pure Compute: 139.474368s  |  Total: 140.029962s  |  Speed: 55
+    | steps/s
+    | --- Step 8000 | Time: 0.000070  |  Pure Compute: 142.811027s  |  Total: 143.379967s  |  Speed: 56
+    | steps/s
+    | --- Step 8200 | Time: 0.000071  |  Pure Compute: 146.856514s  |  Total: 147.433682s  |  Speed: 55
+    | steps/s
+    | --- Step 8400 | Time: 0.000073  |  Pure Compute: 150.816392s  |  Total: 151.406928s  |  Speed: 55
+    | steps/s
+    | --- Step 8600 | Time: 0.000075  |  Pure Compute: 155.080685s  |  Total: 155.688879s  |  Speed: 55
+    | steps/s
+    | --- Step 8800 | Time: 0.000077  |  Pure Compute: 159.375743s  |  Total: 159.990734s  |  Speed: 55
+    | steps/s
+    | --- Step 9000 | Time: 0.000078  |  Pure Compute: 163.523662s  |  Total: 164.158013s  |  Speed: 55
+    | steps/s
+    | --- Step 9200 | Time: 0.000080  |  Pure Compute: 167.597685s  |  Total: 168.247406s  |  Speed: 54
+    | steps/s
+    | --- Step 9400 | Time: 0.000082  |  Pure Compute: 171.650172s  |  Total: 172.319266s  |  Speed: 54
+    | steps/s
+    | --- Step 9600 | Time: 0.000084  |  Pure Compute: 174.835126s  |  Total: 175.523476s  |  Speed: 54
+    | steps/s
+
+[16:54:03] [INFO ] [EngineManager]
+    | ==================================================
+    | GRPD Solver Engine Initialized                 
+    | ==================================================
+
+[16:54:03] [INFO ] [EngineRegistry]
+    | Creating Engine instance: PD
+
+[16:54:03] [INFO ] [PDEngine]
+    | PD Engine instance created.
+    | ===============================================
+    | ========== Registered Types Summary ===========
+    | TimeIntegrator    : ADR, CentralDifference, Explicit, Staggered
+    | FieldRegistry     : DoubleField, IntField
+    | PhysicsFields     : Mechanical, Thermal
+    | BCRegistry        : AX, AY, AZ, CONV, FLUX, PX, PY, PZ, T, UX, UY, UZ, VX, VY, VZ
+    | ReaderRegistry    : .grpd, .inp
+    | StabilizerRegistry: Mechanical_Silling, Mechanical_Wan, Mechanical_Zhang, Thermal_Silling,
+    | Thermal_Wan, Thermal_Zhang
+    | MaterialRegistry  : FourierThermalMat, J2PlasticityMat, JCPlasticityMat, LinearElasticMat
+    | KernelRegistry    : NOSB_M, NOSB_T
+    | EngineRegistry    : PD
+    | ===============================================
+
+[16:54:03] [INFO ] [EngineManager]
+    | Initializing solver: PD
+
+[16:54:03] [INFO ] [PDEngine]
+    | Initializing PD simulation context...
+
+[16:54:03] [INFO ] [InitModel]
+    | ==================================================
+    | Model pre-processing...
+    | ==================================================
+    | grpd path: D:\Project_C++\GRPD\Examples\Bullet\Bullet.grpd
+    | model name: Bullet
+    | Calling Python pre-processor to generate .grpd mesh...
+    | Mesh generated successfully by Python.
+
+[16:54:06] [INFO ] [Context Manager]
+    | Formalized model name to: Bullet
+    | Model dimension set to: 2D
+
+[16:54:06] [INFO ] [ReaderRegistry]
+    | Creating reader for: .grpd (name: Bullet)
+
+[16:54:06] [INFO ] [InitModel]
+    | Reading mesh file: D:\Project_C++\GRPD\Examples\Bullet\Bullet.grpd (reader: .grpd)
+
+[16:54:06] [INFO ] [GrpdMeshReader]
+    | Reading file: D:\Project_C++\GRPD\Examples\Bullet\Bullet.grpd
+    | Entering *PARTICLE section (Line 1)
+    | Pre-allocated memory for 21453 particles (Zero-Reallocation)
+    | Entering *LOAD section (Line 21457)
+    | ============================================
+    | File reading complete!
+    | Total particles: 21453
+    | Total load entries: 548
+    | ============================================
+
+[16:54:06] [INFO ] [ParticleManager]
+    | Pre-allocated memory for 21453 particles
+
+[16:54:06] [INFO ] [InitModel]
+    | Total particles loaded for model Bullet: 21453
+
+[16:54:06] [INFO ] [InitMaterial]
+    | ==================================================
+    | Entering Material Initialization Phase...
+    | ==================================================
+    | Instantiating material [1] of type: J2PlasticityMat
+
+[16:54:06] [INFO ] [MaterialRegistry]
+    | Using factory to create material: Steel_Plastic (type: J2PlasticityMat)
+
+[16:54:06] [INFO ] [EqPSFracture]
+    | Configured Critical_EqPS = 0.200000
+
+[16:54:06] [INFO ] [Material]
+    | Attached FractureModel 'EqPSFracture' to material: Steel_Plastic
+
+[16:54:06] [INFO ] [J2PlasticityMat]
+    | Hardening Type: Isotropic
+
+[16:54:06] [INFO ] [MaterialManager]
+    | Successfully added material instance: Steel_Plastic
+
+[16:54:06] [INFO ] [InitMaterial]
+    | Successfully registered material ID 1 (Steel_Plastic)
+    | Assigning material pointers to particles...
+    | Successfully assigned materials to 21453 particles.
+
+[16:54:06] [INFO ] [InitFields]
+    | ==================================================
+    | Entering Field Registration Phase...
+    | ==================================================
+
+[16:54:06] [INFO ] [FieldManager]
+    | Added field 'Displacement'.
+    | Added field 'Velocity'.
+    | Added field 'Acceleration'.
+
+[16:54:06] [INFO ] [MechanicalFields]
+    | Core fields registered: Displacement, Velocity, Acceleration.
+
+[16:54:06] [INFO ] [InitFields]
+    | Auto-registered PhysicsFields module: Mechanical
+
+[16:54:06] [INFO ] [FieldManager]
+    | Added field 'ID'.
+    | Added field 'PartID'.
+    | Added field 'MatID'.
+    | Added field 'Coords'.
+    | Added field 'Volume'.
+    | Added field 'ActiveStatus'.
+
+[16:54:06] [INFO ] [InitFields]
+    | Global ActiveStatus field registered.
+
+[16:54:06] [INFO ] [FieldManager]
+    | Added field 'EqPlasticStrain_Old'.
+    | Added field 'EqPlasticStrain_Trial'.
+    | Added field 'PlasticStrain_Old'.
+    | Added field 'PlasticStrain_Trial'.
+    | Added field 'VonMisesStress'.
+    | Resized all 14 fields for 21453 particles.
+
+[16:54:06] [INFO ] [InitFields]
+    | ActiveStatus initialized to 1 for all particles.
+    | Binding high-speed material state pointers...
+
+[16:54:06] [INFO ] [MeshData]
+    | Populated particle geometry fields into FieldManager for 21453 particles.
+
+[16:54:06] [INFO ] [InitFields]
+    | All fields allocated for 21453 particles. Total fields: 14.
+
+[16:54:06] [INFO ] [InitConditions]
+    | ==================================================
+    | Entering Conditions Initialization Phase...
+    | ==================================================
+
+[16:54:06] [INFO ] [ReaderRegistry]
+    | Creating reader for: .grpd (name: LoadReader)
+
+[16:54:06] [INFO ] [GrpdMeshReader]
+    | Reading file: D:\Project_C++\GRPD\Examples\Bullet\Bullet.grpd
+    | Entering *PARTICLE section (Line 1)
+    | Pre-allocated memory for 21453 particles (Zero-Reallocation)
+    | Entering *LOAD section (Line 21457)
+    | ============================================
+    | File reading complete!
+    | Total particles: 21453
+    | Total load entries: 548
+    | ============================================
+
+[16:54:06] [INFO ] [InitConditions]
+    | Load statistics:
+    | - VX : 274
+    | - VY : 274
+    | Boundary conditions initialization complete.
+
+[16:54:06] [INFO ] [InitNeighbors]
+    | ==================================================
+    | Entering Neighbor Search Phase...
+    | ==================================================
+    | Horizon radius: 0.603000
+
+[16:54:06] [INFO ] [NeighborList]
+    | Starting full-flat CSR search for 21453 particles, horizon = 0.603000
+    | Cell grid: 39 x 17 x 1 = 663 cells
+    | Flat cell list built in 0.999928 ms
+    | Pass 1 (count) done in 2.000093 ms
+    | Total bonds: 2311282, Memory: 26 MB
+    | Pass 2 (fill) done in 11.999846 ms
+    | Max neighbors: 112
+    | Total time: 14.999866 ms
+
+[16:54:06] [INFO ] [FieldManager]
+    | Added field 'NeighborCount'.
+
+[16:54:06] [INFO ] [InitNeighbors]
+    | NeighborCount field populated for 21453 particles.
+
+[16:54:06] [INFO ] [FieldManager]
+    | Added field 'BondIntegrity'.
+
+[16:54:06] [INFO ] [InitNeighbors]
+    | Global BondIntegrity scalar field properly initialized to 0.0
+    | Neighbor search phase complete.
+    | Initializing Material-specific BondIntegrity Models...
+    | Material BondIntegrity Models initialized. Total Active Models: 1
+
+[16:54:06] [INFO ] [InitPreCracks]
+    | Detected PreCracks configuration. Initializing geometric cuts...
+
+[16:54:06] [INFO ] [QuadCrack]
+    | Successfully configured QuadCrack with normal: (0.000000, -1.000000, 0.000000)
+    | Evaluating bond breakage for crack...
+    | Cut 15410 bonds traversing the preset crack.
+
+[16:54:06] [INFO ] [InitPreCracks]
+    | Applied PreCrack of type: QuadCrack
+
+[16:54:06] [INFO ] [InitSolverComponents]
+    | ==================================================
+    | Entering Solver Components Assembly Phase...
+    | ==================================================
+    | Building Time Integrator: CentralDifference
+
+[16:54:06] [INFO ] [TimeIntegrator]
+    | Explicitly set OMP Threads to: 16
+
+[16:54:06] [INFO ] [InitSolverComponents]
+    | Time Integrator configured.
+    | Building Space Kernel: NOSB_M
+
+[16:54:06] [INFO ] [NOSB_Base]
+    | Applied KernelWeightType: Linear
+    | Applied ZeroEnergyG0: 0.100000
+    | Applied ZeroEnergyMethod string: Zhang
+
+[16:54:06] [INFO ] [InitSolverComponents]
+    | Space Kernel 'NOSB_M' configured.
+    | Total kernels assembled: 1
+
+[16:54:06] [INFO ] [PDEngine]
+    | PD simulation context initialized successfully.
+
+[16:54:06] [INFO ] [EngineManager]
+    | All solvers initialized. Total: 1
+    | ==================================================
+    | Entering Main Solver Phase
+    | ==================================================
+    | Solving: PD
+
+[16:54:06] [INFO ] [PDEngine]
+    | Starting PD Engine Solve Phase...
+
+[16:54:06] [INFO ] [CentralDifference]
+    | Identified 2nd-order ODE coupling: Displacement <- Velocity <- Acceleration
+
+[16:54:06] [INFO ] [FieldManager]
+    | Added field 'ShapeTensorInv'.
+    | Added field 'VHorizon'.
+
+[16:54:06] [INFO ] [NOSB_Base]
+    | Computing InfluenceWeight + Shape Tensor Inverse (K^-1)...
+    | All NOSB base fields registered and Shape Tensor Inverse computed.
+
+[16:54:06] [INFO ] [FieldManager]
+    | Added field 'DeformationGradient'.
+    | Added field 'PK1Stress'.
+
+[16:54:06] [INFO ] [NOSB_M]
+    | Instantiated MechanicalStabilizer globally in Phase 0 using strategy: Zhang
+
+[16:54:06] [INFO ] [CentralDifference]
+    | Auto CFL dt: dx = 0.100000, c = 4886205.071423, massScale = 1.000000, dt = 0.000000
+    | Starting Explicit Loop with 2 LoadStep(s). Default dt = 0.000000
+    | === Load Step 1 / 2 | TargetTime: 0.000004 | dt: 0.000000 | KBC: 1 ===
+    | --- Step 0 | Time: 0.000000  |  Pure Compute: 0.000000s  |  Total: 0.000000s  |  Speed: 0 steps/s
+    | --- Step 200 | Time: 0.000002  |  Pure Compute: 3.789651s  |  Total: 3.803036s  |  Speed: 52 steps/s
+    | --- Step 400 | Time: 0.000003  |  Pure Compute: 7.709451s  |  Total: 7.732015s  |  Speed: 51 steps/s
+    | === Load Step 2 / 2 | TargetTime: 0.000087 | dt: 0.000000 | KBC: 1 ===
+    | --- Step 600 | Time: 0.000005  |  Pure Compute: 11.201999s  |  Total: 11.234555s  |  Speed: 53
+    | steps/s
+    | --- Step 800 | Time: 0.000007  |  Pure Compute: 14.379758s  |  Total: 14.423065s  |  Speed: 55
+    | steps/s
+    | --- Step 1000 | Time: 0.000009  |  Pure Compute: 17.766582s  |  Total: 17.828390s  |  Speed: 56
+    | steps/s
+    | --- Step 1200 | Time: 0.000010  |  Pure Compute: 21.254774s  |  Total: 21.336149s  |  Speed: 56
+    | steps/s
+    | --- Step 1400 | Time: 0.000012  |  Pure Compute: 25.608827s  |  Total: 25.707931s  |  Speed: 54
+    | steps/s
+    | --- Step 1600 | Time: 0.000014  |  Pure Compute: 29.996971s  |  Total: 30.109316s  |  Speed: 53
+    | steps/s
+    | --- Step 1800 | Time: 0.000016  |  Pure Compute: 34.478810s  |  Total: 34.613422s  |  Speed: 52
+    | steps/s
+    | --- Step 2000 | Time: 0.000017  |  Pure Compute: 38.829055s  |  Total: 38.985283s  |  Speed: 51
+    | steps/s
+    | --- Step 2200 | Time: 0.000019  |  Pure Compute: 43.129380s  |  Total: 43.296584s  |  Speed: 51
+    | steps/s
+    | --- Step 2400 | Time: 0.000021  |  Pure Compute: 47.185693s  |  Total: 47.363353s  |  Speed: 50
+    | steps/s
+    | --- Step 2600 | Time: 0.000023  |  Pure Compute: 51.800521s  |  Total: 51.988155s  |  Speed: 50
+    | steps/s
+    | --- Step 2800 | Time: 0.000024  |  Pure Compute: 56.501036s  |  Total: 56.709237s  |  Speed: 49
+    | steps/s
+    | --- Step 3000 | Time: 0.000026  |  Pure Compute: 60.755993s  |  Total: 60.974712s  |  Speed: 49
+    | steps/s
+    | --- Step 3200 | Time: 0.000028  |  Pure Compute: 64.398031s  |  Total: 64.626679s  |  Speed: 49
+    | steps/s
+    | --- Step 3400 | Time: 0.000030  |  Pure Compute: 67.349003s  |  Total: 67.595077s  |  Speed: 50
+    | steps/s
+    | --- Step 3600 | Time: 0.000031  |  Pure Compute: 70.335976s  |  Total: 70.593351s  |  Speed: 51
+    | steps/s
+    | --- Step 3800 | Time: 0.000033  |  Pure Compute: 73.481814s  |  Total: 73.746798s  |  Speed: 51
+    | steps/s
+    | --- Step 4000 | Time: 0.000035  |  Pure Compute: 76.423787s  |  Total: 76.705788s  |  Speed: 52
+    | steps/s
+    | --- Step 4200 | Time: 0.000037  |  Pure Compute: 79.357118s  |  Total: 79.658980s  |  Speed: 52
+    | steps/s
+    | --- Step 4400 | Time: 0.000038  |  Pure Compute: 82.395949s  |  Total: 82.716953s  |  Speed: 53
+    | steps/s
+    | --- Step 4600 | Time: 0.000040  |  Pure Compute: 85.728605s  |  Total: 86.058696s  |  Speed: 53
+    | steps/s
+    | --- Step 4800 | Time: 0.000042  |  Pure Compute: 89.682688s  |  Total: 90.031978s  |  Speed: 53
+    | steps/s
+    | --- Step 5000 | Time: 0.000043  |  Pure Compute: 94.131322s  |  Total: 94.490009s  |  Speed: 53
+    | steps/s
+    | --- Step 5200 | Time: 0.000045  |  Pure Compute: 98.358725s  |  Total: 98.739710s  |  Speed: 52
+    | steps/s
+    | --- Step 5400 | Time: 0.000047  |  Pure Compute: 102.830000s  |  Total: 103.223400s  |  Speed: 52
+    | steps/s
+    | --- Step 5600 | Time: 0.000049  |  Pure Compute: 107.512602s  |  Total: 107.917538s  |  Speed: 52
+    | steps/s
+    | --- Step 5800 | Time: 0.000050  |  Pure Compute: 112.154017s  |  Total: 112.580595s  |  Speed: 51
+    | steps/s
+    | --- Step 6000 | Time: 0.000052  |  Pure Compute: 116.877662s  |  Total: 117.321511s  |  Speed: 51
+    | steps/s
+    | --- Step 6200 | Time: 0.000054  |  Pure Compute: 121.200566s  |  Total: 121.664510s  |  Speed: 51
+    | steps/s
+    | --- Step 6400 | Time: 0.000056  |  Pure Compute: 125.526770s  |  Total: 126.001029s  |  Speed: 50
+    | steps/s
+    | --- Step 6600 | Time: 0.000057  |  Pure Compute: 129.543516s  |  Total: 130.035502s  |  Speed: 50
+    | steps/s
+    | --- Step 6800 | Time: 0.000059  |  Pure Compute: 132.436291s  |  Total: 132.939090s  |  Speed: 51
+    | steps/s
+    | --- Step 7000 | Time: 0.000061  |  Pure Compute: 135.431139s  |  Total: 135.949437s  |  Speed: 51
+    | steps/s
+    | --- Step 7200 | Time: 0.000063  |  Pure Compute: 138.341019s  |  Total: 138.868046s  |  Speed: 52
+    | steps/s
+    | --- Step 7400 | Time: 0.000064  |  Pure Compute: 141.372193s  |  Total: 141.912670s  |  Speed: 52
+    | steps/s
+    | --- Step 7600 | Time: 0.000066  |  Pure Compute: 144.421881s  |  Total: 144.979110s  |  Speed: 52
+    | steps/s
+    | --- Step 7800 | Time: 0.000068  |  Pure Compute: 147.470469s  |  Total: 148.046066s  |  Speed: 52
+    | steps/s
+    | --- Step 8000 | Time: 0.000070  |  Pure Compute: 150.334190s  |  Total: 150.918437s  |  Speed: 53
+    | steps/s
+    | --- Step 8200 | Time: 0.000071  |  Pure Compute: 154.235332s  |  Total: 154.829649s  |  Speed: 53
+    | steps/s
+    | --- Step 8400 | Time: 0.000073  |  Pure Compute: 158.564905s  |  Total: 159.178482s  |  Speed: 52
+    | steps/s
+    | --- Step 8600 | Time: 0.000075  |  Pure Compute: 162.512049s  |  Total: 163.136208s  |  Speed: 52
+    | steps/s
+    | --- Step 8800 | Time: 0.000077  |  Pure Compute: 166.759180s  |  Total: 167.403525s  |  Speed: 52
+    | steps/s
+    | --- Step 9000 | Time: 0.000078  |  Pure Compute: 171.006224s  |  Total: 171.659685s  |  Speed: 52
+    | steps/s
+    | --- Step 9200 | Time: 0.000080  |  Pure Compute: 174.891555s  |  Total: 175.565474s  |  Speed: 52
+    | steps/s
+    | --- Step 9400 | Time: 0.000082  |  Pure Compute: 178.916205s  |  Total: 179.600405s  |  Speed: 52
+    | steps/s
+    | --- Step 9600 | Time: 0.000084  |  Pure Compute: 182.895895s  |  Total: 183.590338s  |  Speed: 52
+    | steps/s
+    | --- Step 9800 | Time: 0.000085  |  Pure Compute: 185.870679s  |  Total: 186.573767s  |  Speed: 52
+    | steps/s
+    | Finished. Total: 189.673136s  |  Pure Compute avg: 0.018895 s/step
+
+[16:57:16] [INFO ] [PDEngine]
+    | PD Engine Solve Phase Finished.
+
+[16:57:16] [INFO ] [EngineManager]
+    | Main Solver Phase finished.
+    | ==================================================
+    | Entering Post-processing Phase
+    | ==================================================
+    | Outputting: PD
+    | Post-processing Phase finished.
+
+[17:00:35] [INFO ] [EngineManager]
+    | ==================================================
+    | GRPD Solver Engine Initialized                 
+    | ==================================================
+
+[17:00:35] [INFO ] [EngineRegistry]
+    | Creating Engine instance: PD
+
+[17:00:35] [INFO ] [PDEngine]
+    | PD Engine instance created.
+    | ===============================================
+    | ========== Registered Types Summary ===========
+    | TimeIntegrator    : ADR, CentralDifference, Explicit, Staggered
+    | FieldRegistry     : DoubleField, IntField
+    | PhysicsFields     : Mechanical, Thermal
+    | BCRegistry        : AX, AY, AZ, CONV, FLUX, PX, PY, PZ, T, UX, UY, UZ, VX, VY, VZ
+    | ReaderRegistry    : .grpd, .inp
+    | StabilizerRegistry: Mechanical_Silling, Mechanical_Wan, Mechanical_Zhang, Thermal_Silling,
+    | Thermal_Wan, Thermal_Zhang
+    | MaterialRegistry  : FourierThermalMat, J2PlasticityMat, JCPlasticityMat, LinearElasticMat
+    | KernelRegistry    : NOSB_M, NOSB_T
+    | EngineRegistry    : PD
+    | ===============================================
+
+[17:00:35] [INFO ] [EngineManager]
+    | Initializing solver: PD
+
+[17:00:35] [INFO ] [PDEngine]
+    | Initializing PD simulation context...
+
+[17:00:35] [INFO ] [InitModel]
+    | ==================================================
+    | Model pre-processing...
+    | ==================================================
+    | grpd path: D:\Project_C++\GRPD\Examples\Bullet\Bullet.grpd
+    | model name: Bullet
+    | Calling Python pre-processor to generate .grpd mesh...
+    | Mesh generated successfully by Python.
+
+[17:00:37] [INFO ] [Context Manager]
+    | Formalized model name to: Bullet
+    | Model dimension set to: 2D
+
+[17:00:37] [INFO ] [ReaderRegistry]
+    | Creating reader for: .grpd (name: Bullet)
+
+[17:00:37] [INFO ] [InitModel]
+    | Reading mesh file: D:\Project_C++\GRPD\Examples\Bullet\Bullet.grpd (reader: .grpd)
+
+[17:00:37] [INFO ] [GrpdMeshReader]
+    | Reading file: D:\Project_C++\GRPD\Examples\Bullet\Bullet.grpd
+    | Entering *PARTICLE section (Line 1)
+    | Pre-allocated memory for 21453 particles (Zero-Reallocation)
+    | Entering *LOAD section (Line 21457)
+    | ============================================
+    | File reading complete!
+    | Total particles: 21453
+    | Total load entries: 548
+    | ============================================
+
+[17:00:38] [INFO ] [ParticleManager]
+    | Pre-allocated memory for 21453 particles
+
+[17:00:38] [INFO ] [InitModel]
+    | Total particles loaded for model Bullet: 21453
+
+[17:00:38] [INFO ] [InitMaterial]
+    | ==================================================
+    | Entering Material Initialization Phase...
+    | ==================================================
+    | Instantiating material [1] of type: J2PlasticityMat
+
+[17:00:38] [INFO ] [MaterialRegistry]
+    | Using factory to create material: Steel_Plastic (type: J2PlasticityMat)
+
+[17:00:38] [INFO ] [EqPSFracture]
+    | Configured Critical_EqPS = 0.200000
+
+[17:00:38] [INFO ] [Material]
+    | Attached FractureModel 'EqPSFracture' to material: Steel_Plastic
+
+[17:00:38] [INFO ] [J2PlasticityMat]
+    | Hardening Type: Isotropic
+
+[17:00:38] [INFO ] [MaterialManager]
+    | Successfully added material instance: Steel_Plastic
+
+[17:00:38] [INFO ] [InitMaterial]
+    | Successfully registered material ID 1 (Steel_Plastic)
+    | Assigning material pointers to particles...
+    | Successfully assigned materials to 21453 particles.
+
+[17:00:38] [INFO ] [InitFields]
+    | ==================================================
+    | Entering Field Registration Phase...
+    | ==================================================
+
+[17:00:38] [INFO ] [FieldManager]
+    | Added field 'Displacement'.
+    | Added field 'Velocity'.
+    | Added field 'Acceleration'.
+
+[17:00:38] [INFO ] [MechanicalFields]
+    | Core fields registered: Displacement, Velocity, Acceleration.
+
+[17:00:38] [INFO ] [InitFields]
+    | Auto-registered PhysicsFields module: Mechanical
+
+[17:00:38] [INFO ] [FieldManager]
+    | Added field 'ID'.
+    | Added field 'PartID'.
+    | Added field 'MatID'.
+    | Added field 'Coords'.
+    | Added field 'Volume'.
+    | Added field 'ActiveStatus'.
+
+[17:00:38] [INFO ] [InitFields]
+    | Global ActiveStatus field registered.
+
+[17:00:38] [INFO ] [FieldManager]
+    | Added field 'EqPlasticStrain_Old'.
+    | Added field 'EqPlasticStrain_Trial'.
+    | Added field 'PlasticStrain_Old'.
+    | Added field 'PlasticStrain_Trial'.
+    | Added field 'VonMisesStress'.
+    | Resized all 14 fields for 21453 particles.
+
+[17:00:38] [INFO ] [InitFields]
+    | ActiveStatus initialized to 1 for all particles.
+    | Binding high-speed material state pointers...
+
+[17:00:38] [INFO ] [MeshData]
+    | Populated particle geometry fields into FieldManager for 21453 particles.
+
+[17:00:38] [INFO ] [InitFields]
+    | All fields allocated for 21453 particles. Total fields: 14.
+
+[17:00:38] [INFO ] [InitConditions]
+    | ==================================================
+    | Entering Conditions Initialization Phase...
+    | ==================================================
+
+[17:00:38] [INFO ] [ReaderRegistry]
+    | Creating reader for: .grpd (name: LoadReader)
+
+[17:00:38] [INFO ] [GrpdMeshReader]
+    | Reading file: D:\Project_C++\GRPD\Examples\Bullet\Bullet.grpd
+    | Entering *PARTICLE section (Line 1)
+    | Pre-allocated memory for 21453 particles (Zero-Reallocation)
+    | Entering *LOAD section (Line 21457)
+    | ============================================
+    | File reading complete!
+    | Total particles: 21453
+    | Total load entries: 548
+    | ============================================
+
+[17:00:38] [INFO ] [InitConditions]
+    | Load statistics:
+    | - VX : 274
+    | - VY : 274
+    | Boundary conditions initialization complete.
+
+[17:00:38] [INFO ] [InitNeighbors]
+    | ==================================================
+    | Entering Neighbor Search Phase...
+    | ==================================================
+    | Horizon radius: 0.603000
+
+[17:00:38] [INFO ] [NeighborList]
+    | Starting full-flat CSR search for 21453 particles, horizon = 0.603000
+    | Cell grid: 39 x 17 x 1 = 663 cells
+    | Flat cell list built in 0.000000 ms
+    | Pass 1 (count) done in 3.000021 ms
+    | Total bonds: 2311282, Memory: 26 MB
+    | Pass 2 (fill) done in 10.999918 ms
+    | Max neighbors: 112
+    | Total time: 13.999939 ms
+
+[17:00:38] [INFO ] [FieldManager]
+    | Added field 'NeighborCount'.
+
+[17:00:38] [INFO ] [InitNeighbors]
+    | NeighborCount field populated for 21453 particles.
+
+[17:00:38] [INFO ] [FieldManager]
+    | Added field 'BondIntegrity'.
+
+[17:00:38] [INFO ] [InitNeighbors]
+    | Global BondIntegrity scalar field properly initialized to 0.0
+    | Neighbor search phase complete.
+    | Initializing Material-specific BondIntegrity Models...
+    | Material BondIntegrity Models initialized. Total Active Models: 1
+
+[17:00:38] [INFO ] [InitPreCracks]
+    | Detected PreCracks configuration. Initializing geometric cuts...
+
+[17:00:38] [INFO ] [QuadCrack]
+    | Successfully configured QuadCrack with normal: (0.000000, -1.000000, 0.000000)
+    | Evaluating bond breakage for crack...
+    | Cut 15410 bonds traversing the preset crack.
+
+[17:00:38] [INFO ] [InitPreCracks]
+    | Applied PreCrack of type: QuadCrack
+
+[17:00:38] [INFO ] [InitSolverComponents]
+    | ==================================================
+    | Entering Solver Components Assembly Phase...
+    | ==================================================
+    | Building Time Integrator: CentralDifference
+
+[17:00:38] [INFO ] [TimeIntegrator]
+    | Explicitly set OMP Threads to: 16
+
+[17:00:38] [INFO ] [InitSolverComponents]
+    | Time Integrator configured.
+    | Building Space Kernel: NOSB_M
+
+[17:00:38] [INFO ] [NOSB_Base]
+    | Applied KernelWeightType: Linear
+    | Applied ZeroEnergyG0: 0.100000
+    | Applied ZeroEnergyMethod string: Zhang
+
+[17:00:38] [INFO ] [InitSolverComponents]
+    | Space Kernel 'NOSB_M' configured.
+    | Total kernels assembled: 1
+
+[17:00:38] [INFO ] [PDEngine]
+    | PD simulation context initialized successfully.
+
+[17:00:38] [INFO ] [EngineManager]
+    | All solvers initialized. Total: 1
+    | ==================================================
+    | Entering Main Solver Phase
+    | ==================================================
+    | Solving: PD
+
+[17:00:38] [INFO ] [PDEngine]
+    | Starting PD Engine Solve Phase...
+
+[17:00:38] [INFO ] [CentralDifference]
+    | Identified 2nd-order ODE coupling: Displacement <- Velocity <- Acceleration
+
+[17:00:38] [INFO ] [FieldManager]
+    | Added field 'ShapeTensorInv'.
+    | Added field 'VHorizon'.
+
+[17:00:38] [INFO ] [NOSB_Base]
+    | Computing InfluenceWeight + Shape Tensor Inverse (K^-1)...
+    | All NOSB base fields registered and Shape Tensor Inverse computed.
+
+[17:00:38] [INFO ] [FieldManager]
+    | Added field 'DeformationGradient'.
+    | Added field 'PK1Stress'.
+
+[17:00:38] [INFO ] [NOSB_M]
+    | Instantiated MechanicalStabilizer globally in Phase 0 using strategy: Zhang
+
+[17:00:38] [INFO ] [CentralDifference]
+    | Auto CFL dt: dx = 0.100000, c = 4886205.071423, massScale = 1.000000, dt = 0.000000
+    | Starting Explicit Loop with 2 LoadStep(s). Default dt = 0.000000
+    | === Load Step 1 / 2 | TargetTime: 0.000004 | dt: 0.000000 | KBC: 1 ===
+    | --- Step 0 | Time: 0.000000  |  Pure Compute: 0.000000s  |  Total: 0.000000s  |  Speed: 0 steps/s
+    | --- Step 200 | Time: 0.000002  |  Pure Compute: 3.060482s  |  Total: 3.072226s  |  Speed: 65 steps/s
+    | --- Step 400 | Time: 0.000003  |  Pure Compute: 6.231551s  |  Total: 6.258561s  |  Speed: 64 steps/s
+    | === Load Step 2 / 2 | TargetTime: 0.000087 | dt: 0.000000 | KBC: 1 ===
+    | --- Step 600 | Time: 0.000005  |  Pure Compute: 9.904900s  |  Total: 9.948294s  |  Speed: 60 steps/s
+    | --- Step 800 | Time: 0.000007  |  Pure Compute: 13.922382s  |  Total: 13.984482s  |  Speed: 57
+    | steps/s
+    | --- Step 1000 | Time: 0.000009  |  Pure Compute: 17.939003s  |  Total: 18.019367s  |  Speed: 55
+    | steps/s
+    | --- Step 1200 | Time: 0.000010  |  Pure Compute: 22.129624s  |  Total: 22.226939s  |  Speed: 54
+    | steps/s
+    | --- Step 1400 | Time: 0.000012  |  Pure Compute: 26.331300s  |  Total: 26.444735s  |  Speed: 53
+    | steps/s
+    | --- Step 1600 | Time: 0.000014  |  Pure Compute: 30.193236s  |  Total: 30.315764s  |  Speed: 52
+    | steps/s
+    | --- Step 1800 | Time: 0.000016  |  Pure Compute: 34.480457s  |  Total: 34.621246s  |  Speed: 52
+    | steps/s
+    | --- Step 2000 | Time: 0.000017  |  Pure Compute: 38.618989s  |  Total: 38.769139s  |  Speed: 51
+    | steps/s
+    | --- Step 2200 | Time: 0.000019  |  Pure Compute: 42.857638s  |  Total: 43.015323s  |  Speed: 51
+    | steps/s
+    | --- Step 2400 | Time: 0.000021  |  Pure Compute: 46.758243s  |  Total: 46.931168s  |  Speed: 51
+    | steps/s
+    | --- Step 2600 | Time: 0.000023  |  Pure Compute: 50.425803s  |  Total: 50.605997s  |  Speed: 51
+    | steps/s
+    | --- Step 2800 | Time: 0.000024  |  Pure Compute: 53.346091s  |  Total: 53.533447s  |  Speed: 52
+    | steps/s
+    | --- Step 3000 | Time: 0.000026  |  Pure Compute: 56.325209s  |  Total: 56.526738s  |  Speed: 53
+    | steps/s
+    | --- Step 3200 | Time: 0.000028  |  Pure Compute: 59.446961s  |  Total: 59.655536s  |  Speed: 53
+    | steps/s
+    | --- Step 3400 | Time: 0.000030  |  Pure Compute: 62.313935s  |  Total: 62.530254s  |  Speed: 54
+    | steps/s
+    | --- Step 3600 | Time: 0.000031  |  Pure Compute: 65.441965s  |  Total: 65.664220s  |  Speed: 55
+    | steps/s
+    | --- Step 3800 | Time: 0.000033  |  Pure Compute: 69.134309s  |  Total: 69.370369s  |  Speed: 54
+    | steps/s
+    | --- Step 4000 | Time: 0.000035  |  Pure Compute: 72.210494s  |  Total: 72.462788s  |  Speed: 55
+    | steps/s
+    | --- Step 4200 | Time: 0.000037  |  Pure Compute: 76.336142s  |  Total: 76.603693s  |  Speed: 55
+    | steps/s
+    | --- Step 4400 | Time: 0.000038  |  Pure Compute: 80.917661s  |  Total: 81.193270s  |  Speed: 54
+    | steps/s
+    | --- Step 4600 | Time: 0.000040  |  Pure Compute: 85.465955s  |  Total: 85.756052s  |  Speed: 53
+    | steps/s
+    | --- Step 4800 | Time: 0.000042  |  Pure Compute: 89.540013s  |  Total: 89.852098s  |  Speed: 53
+    | steps/s
+    | --- Step 5000 | Time: 0.000043  |  Pure Compute: 93.574977s  |  Total: 93.907099s  |  Speed: 53
+    | steps/s
+    | --- Step 5200 | Time: 0.000045  |  Pure Compute: 97.944232s  |  Total: 98.297433s  |  Speed: 53
+    | steps/s
+    | --- Step 5400 | Time: 0.000047  |  Pure Compute: 102.279409s  |  Total: 102.653957s  |  Speed: 52
+    | steps/s
+    | --- Step 5600 | Time: 0.000049  |  Pure Compute: 107.062212s  |  Total: 107.450955s  |  Speed: 52
+    | steps/s
+    | --- Step 5800 | Time: 0.000050  |  Pure Compute: 112.139980s  |  Total: 112.552436s  |  Speed: 51
+    | steps/s
+    | --- Step 6000 | Time: 0.000052  |  Pure Compute: 116.628735s  |  Total: 117.065418s  |  Speed: 51
+    | steps/s
+    | --- Step 6200 | Time: 0.000054  |  Pure Compute: 121.471762s  |  Total: 121.931540s  |  Speed: 51
+    | steps/s
+    | --- Step 6400 | Time: 0.000056  |  Pure Compute: 126.683234s  |  Total: 127.156951s  |  Speed: 50
+    | steps/s
+    | --- Step 6600 | Time: 0.000057  |  Pure Compute: 130.431582s  |  Total: 130.930121s  |  Speed: 50
+    | steps/s
+    | --- Step 6800 | Time: 0.000059  |  Pure Compute: 133.512219s  |  Total: 134.028492s  |  Speed: 50
+    | steps/s
+    | --- Step 7000 | Time: 0.000061  |  Pure Compute: 136.663579s  |  Total: 137.197242s  |  Speed: 51
+    | steps/s
+    | --- Step 7200 | Time: 0.000063  |  Pure Compute: 139.685062s  |  Total: 140.236269s  |  Speed: 51
+    | steps/s
+    | --- Step 7400 | Time: 0.000064  |  Pure Compute: 142.879292s  |  Total: 143.447417s  |  Speed: 51
+    | steps/s
+    | --- Step 7600 | Time: 0.000066  |  Pure Compute: 145.943601s  |  Total: 146.529783s  |  Speed: 52
+    | steps/s
+    | --- Step 7800 | Time: 0.000068  |  Pure Compute: 149.093984s  |  Total: 149.691248s  |  Speed: 52
+    | steps/s
+    | --- Step 8000 | Time: 0.000070  |  Pure Compute: 152.210597s  |  Total: 152.826409s  |  Speed: 52
+    | steps/s
+    | --- Step 8200 | Time: 0.000071  |  Pure Compute: 155.421566s  |  Total: 156.054820s  |  Speed: 52
+    | steps/s
+    | --- Step 8400 | Time: 0.000073  |  Pure Compute: 159.259984s  |  Total: 159.902558s  |  Speed: 52
+    | steps/s
+    | --- Step 8600 | Time: 0.000075  |  Pure Compute: 163.847198s  |  Total: 164.501343s  |  Speed: 52
+    | steps/s
+    | --- Step 8800 | Time: 0.000077  |  Pure Compute: 168.198432s  |  Total: 168.875584s  |  Speed: 52
+    | steps/s
+    | --- Step 9000 | Time: 0.000078  |  Pure Compute: 172.974249s  |  Total: 173.671471s  |  Speed: 52
+    | steps/s
+    | --- Step 9200 | Time: 0.000080  |  Pure Compute: 177.257271s  |  Total: 177.967920s  |  Speed: 51
+    | steps/s
+    | --- Step 9400 | Time: 0.000082  |  Pure Compute: 181.149632s  |  Total: 181.881560s  |  Speed: 51
+    | steps/s
+    | --- Step 9600 | Time: 0.000084  |  Pure Compute: 185.390016s  |  Total: 186.134784s  |  Speed: 51
+    | steps/s
+    | --- Step 9800 | Time: 0.000085  |  Pure Compute: 189.966026s  |  Total: 190.723679s  |  Speed: 51
+    | steps/s
+    | Finished. Total: 195.022295s  |  Pure Compute avg: 0.019423 s/step
+
+[17:03:53] [INFO ] [PDEngine]
+    | PD Engine Solve Phase Finished.
+
+[17:03:53] [INFO ] [EngineManager]
+    | Main Solver Phase finished.
+    | ==================================================
+    | Entering Post-processing Phase
+    | ==================================================
+    | Outputting: PD
+    | Post-processing Phase finished.
+
+[17:04:25] [INFO ] [EngineManager]
+    | ==================================================
+    | GRPD Solver Engine Initialized                 
+    | ==================================================
+
+[17:04:25] [INFO ] [EngineRegistry]
+    | Creating Engine instance: PD
+
+[17:04:25] [INFO ] [PDEngine]
+    | PD Engine instance created.
+    | ===============================================
+    | ========== Registered Types Summary ===========
+    | TimeIntegrator    : ADR, CentralDifference, Explicit, Staggered
+    | FieldRegistry     : DoubleField, IntField
+    | PhysicsFields     : Mechanical, Thermal
+    | BCRegistry        : AX, AY, AZ, CONV, FLUX, PX, PY, PZ, T, UX, UY, UZ, VX, VY, VZ
+    | ReaderRegistry    : .grpd, .inp
+    | StabilizerRegistry: Mechanical_Silling, Mechanical_Wan, Mechanical_Zhang, Thermal_Silling,
+    | Thermal_Wan, Thermal_Zhang
+    | MaterialRegistry  : FourierThermalMat, J2PlasticityMat, JCPlasticityMat, LinearElasticMat
+    | KernelRegistry    : NOSB_M, NOSB_T
+    | EngineRegistry    : PD
+    | ===============================================
+
+[17:04:25] [INFO ] [EngineManager]
+    | Initializing solver: PD
+
+[17:04:25] [INFO ] [PDEngine]
+    | Initializing PD simulation context...
+
+[17:04:25] [INFO ] [InitModel]
+    | ==================================================
+    | Model pre-processing...
+    | ==================================================
+    | grpd path: D:\Project_C++\GRPD\Examples\Bullet\Bullet.grpd
+    | model name: Bullet
+    | Calling Python pre-processor to generate .grpd mesh...
+    | Mesh generated successfully by Python.
+
+[17:04:27] [INFO ] [Context Manager]
+    | Formalized model name to: Bullet
+    | Model dimension set to: 2D
+
+[17:04:27] [INFO ] [ReaderRegistry]
+    | Creating reader for: .grpd (name: Bullet)
+
+[17:04:27] [INFO ] [InitModel]
+    | Reading mesh file: D:\Project_C++\GRPD\Examples\Bullet\Bullet.grpd (reader: .grpd)
+
+[17:04:27] [INFO ] [GrpdMeshReader]
+    | Reading file: D:\Project_C++\GRPD\Examples\Bullet\Bullet.grpd
+    | Entering *PARTICLE section (Line 1)
+    | Pre-allocated memory for 21453 particles (Zero-Reallocation)
+    | Entering *LOAD section (Line 21457)
+    | ============================================
+    | File reading complete!
+    | Total particles: 21453
+    | Total load entries: 548
+    | ============================================
+
+[17:04:27] [INFO ] [ParticleManager]
+    | Pre-allocated memory for 21453 particles
+
+[17:04:27] [INFO ] [InitModel]
+    | Total particles loaded for model Bullet: 21453
+
+[17:04:27] [INFO ] [InitMaterial]
+    | ==================================================
+    | Entering Material Initialization Phase...
+    | ==================================================
+    | Instantiating material [1] of type: J2PlasticityMat
+
+[17:04:27] [INFO ] [MaterialRegistry]
+    | Using factory to create material: Steel_Plastic (type: J2PlasticityMat)
+
+[17:04:27] [INFO ] [EqPSFracture]
+    | Configured Critical_EqPS = 0.200000
+
+[17:04:27] [INFO ] [Material]
+    | Attached FractureModel 'EqPSFracture' to material: Steel_Plastic
+
+[17:04:27] [INFO ] [J2PlasticityMat]
+    | Hardening Type: Isotropic
+
+[17:04:27] [INFO ] [MaterialManager]
+    | Successfully added material instance: Steel_Plastic
+
+[17:04:27] [INFO ] [InitMaterial]
+    | Successfully registered material ID 1 (Steel_Plastic)
+    | Assigning material pointers to particles...
+    | Successfully assigned materials to 21453 particles.
+
+[17:04:27] [INFO ] [InitFields]
+    | ==================================================
+    | Entering Field Registration Phase...
+    | ==================================================
+
+[17:04:27] [INFO ] [FieldManager]
+    | Added field 'Displacement'.
+    | Added field 'Velocity'.
+    | Added field 'Acceleration'.
+
+[17:04:27] [INFO ] [MechanicalFields]
+    | Core fields registered: Displacement, Velocity, Acceleration.
+
+[17:04:27] [INFO ] [InitFields]
+    | Auto-registered PhysicsFields module: Mechanical
+
+[17:04:27] [INFO ] [FieldManager]
+    | Added field 'ID'.
+    | Added field 'PartID'.
+    | Added field 'MatID'.
+    | Added field 'Coords'.
+    | Added field 'Volume'.
+    | Added field 'ActiveStatus'.
+
+[17:04:27] [INFO ] [InitFields]
+    | Global ActiveStatus field registered.
+
+[17:04:27] [INFO ] [FieldManager]
+    | Added field 'EqPlasticStrain_Old'.
+    | Added field 'EqPlasticStrain_Trial'.
+    | Added field 'PlasticStrain_Old'.
+    | Added field 'PlasticStrain_Trial'.
+    | Added field 'VonMisesStress'.
+    | Resized all 14 fields for 21453 particles.
+
+[17:04:27] [INFO ] [InitFields]
+    | ActiveStatus initialized to 1 for all particles.
+    | Binding high-speed material state pointers...
+
+[17:04:27] [INFO ] [MeshData]
+    | Populated particle geometry fields into FieldManager for 21453 particles.
+
+[17:04:27] [INFO ] [InitFields]
+    | All fields allocated for 21453 particles. Total fields: 14.
+
+[17:04:27] [INFO ] [InitConditions]
+    | ==================================================
+    | Entering Conditions Initialization Phase...
+    | ==================================================
+
+[17:04:27] [INFO ] [ReaderRegistry]
+    | Creating reader for: .grpd (name: LoadReader)
+
+[17:04:27] [INFO ] [GrpdMeshReader]
+    | Reading file: D:\Project_C++\GRPD\Examples\Bullet\Bullet.grpd
+    | Entering *PARTICLE section (Line 1)
+    | Pre-allocated memory for 21453 particles (Zero-Reallocation)
+    | Entering *LOAD section (Line 21457)
+    | ============================================
+    | File reading complete!
+    | Total particles: 21453
+    | Total load entries: 548
+    | ============================================
+
+[17:04:28] [INFO ] [InitConditions]
+    | Load statistics:
+    | - VX : 274
+    | - VY : 274
+    | Boundary conditions initialization complete.
+
+[17:04:28] [INFO ] [InitNeighbors]
+    | ==================================================
+    | Entering Neighbor Search Phase...
+    | ==================================================
+    | Horizon radius: 0.603000
+
+[17:04:28] [INFO ] [NeighborList]
+    | Starting full-flat CSR search for 21453 particles, horizon = 0.603000
+    | Cell grid: 39 x 17 x 1 = 663 cells
+    | Flat cell list built in 1.999855 ms
+    | Pass 1 (count) done in 2.000093 ms
+    | Total bonds: 2311282, Memory: 26 MB
+    | Pass 2 (fill) done in 10.999918 ms
+    | Max neighbors: 112
+    | Total time: 14.999866 ms
+
+[17:04:28] [INFO ] [FieldManager]
+    | Added field 'NeighborCount'.
+
+[17:04:28] [INFO ] [InitNeighbors]
+    | NeighborCount field populated for 21453 particles.
+
+[17:04:28] [INFO ] [FieldManager]
+    | Added field 'BondIntegrity'.
+
+[17:04:28] [INFO ] [InitNeighbors]
+    | Global BondIntegrity scalar field properly initialized to 0.0
+    | Neighbor search phase complete.
+    | Initializing Material-specific BondIntegrity Models...
+    | Material BondIntegrity Models initialized. Total Active Models: 1
+
+[17:04:28] [INFO ] [InitPreCracks]
+    | Detected PreCracks configuration. Initializing geometric cuts...
+
+[17:04:28] [INFO ] [QuadCrack]
+    | Successfully configured QuadCrack with normal: (0.000000, -1.000000, 0.000000)
+    | Evaluating bond breakage for crack...
+    | Cut 15410 bonds traversing the preset crack.
+
+[17:04:28] [INFO ] [InitPreCracks]
+    | Applied PreCrack of type: QuadCrack
+
+[17:04:28] [INFO ] [InitSolverComponents]
+    | ==================================================
+    | Entering Solver Components Assembly Phase...
+    | ==================================================
+    | Building Time Integrator: CentralDifference
+
+[17:04:28] [INFO ] [TimeIntegrator]
+    | Explicitly set OMP Threads to: 16
+
+[17:04:28] [INFO ] [InitSolverComponents]
+    | Time Integrator configured.
+    | Building Space Kernel: NOSB_M
+
+[17:04:28] [INFO ] [NOSB_Base]
+    | Applied KernelWeightType: Linear
+    | Applied ZeroEnergyG0: 0.100000
+    | Applied ZeroEnergyMethod string: Zhang
+
+[17:04:28] [INFO ] [InitSolverComponents]
+    | Space Kernel 'NOSB_M' configured.
+    | Total kernels assembled: 1
+
+[17:04:28] [INFO ] [PDEngine]
+    | PD simulation context initialized successfully.
+
+[17:04:28] [INFO ] [EngineManager]
+    | All solvers initialized. Total: 1
+    | ==================================================
+    | Entering Main Solver Phase
+    | ==================================================
+    | Solving: PD
+
+[17:04:28] [INFO ] [PDEngine]
+    | Starting PD Engine Solve Phase...
+
+[17:04:28] [INFO ] [CentralDifference]
+    | Identified 2nd-order ODE coupling: Displacement <- Velocity <- Acceleration
+
+[17:04:28] [INFO ] [FieldManager]
+    | Added field 'ShapeTensorInv'.
+    | Added field 'VHorizon'.
+
+[17:04:28] [INFO ] [NOSB_Base]
+    | Computing InfluenceWeight + Shape Tensor Inverse (K^-1)...
+    | All NOSB base fields registered and Shape Tensor Inverse computed.
+
+[17:04:28] [INFO ] [FieldManager]
+    | Added field 'DeformationGradient'.
+    | Added field 'PK1Stress'.
+
+[17:04:28] [INFO ] [NOSB_M]
+    | Instantiated MechanicalStabilizer globally in Phase 0 using strategy: Zhang
+
+[17:04:28] [INFO ] [CentralDifference]
+    | Auto CFL dt: dx = 0.100000, c = 4886205.071423, massScale = 1.000000, dt = 0.000000
+    | Starting Explicit Loop with 2 LoadStep(s). Default dt = 0.000000
+    | === Load Step 1 / 2 | TargetTime: 0.000004 | dt: 0.000000 | KBC: 1 ===
+    | --- Step 0 | Time: 0.000000  |  Pure Compute: 0.000000s  |  Total: 0.000000s  |  Speed: 0 steps/s
+    | --- Step 200 | Time: 0.000002  |  Pure Compute: 3.152488s  |  Total: 3.168407s  |  Speed: 63 steps/s
+    | --- Step 400 | Time: 0.000003  |  Pure Compute: 6.474100s  |  Total: 6.500950s  |  Speed: 61 steps/s
+    | === Load Step 2 / 2 | TargetTime: 0.000087 | dt: 0.000000 | KBC: 1 ===
+    | --- Step 600 | Time: 0.000005  |  Pure Compute: 9.676576s  |  Total: 9.714598s  |  Speed: 62 steps/s
+    | --- Step 800 | Time: 0.000007  |  Pure Compute: 13.095671s  |  Total: 13.144946s  |  Speed: 61
+    | steps/s
+    | --- Step 1000 | Time: 0.000009  |  Pure Compute: 16.394352s  |  Total: 16.461467s  |  Speed: 60
+    | steps/s
+    | --- Step 1200 | Time: 0.000010  |  Pure Compute: 20.819716s  |  Total: 20.900020s  |  Speed: 57
+    | steps/s
+    | --- Step 1400 | Time: 0.000012  |  Pure Compute: 25.195102s  |  Total: 25.298608s  |  Speed: 55
+    | steps/s
+    | --- Step 1600 | Time: 0.000014  |  Pure Compute: 29.222589s  |  Total: 29.336726s  |  Speed: 54
+    | steps/s
+    | --- Step 1800 | Time: 0.000016  |  Pure Compute: 33.902219s  |  Total: 34.025950s  |  Speed: 53
+    | steps/s
+    | --- Step 2000 | Time: 0.000017  |  Pure Compute: 37.723335s  |  Total: 37.856895s  |  Speed: 53
+    | steps/s
+    | --- Step 2200 | Time: 0.000019  |  Pure Compute: 42.077531s  |  Total: 42.226011s  |  Speed: 52
+    | steps/s
+    | --- Step 2400 | Time: 0.000021  |  Pure Compute: 46.195474s  |  Total: 46.360619s  |  Speed: 51
+    | steps/s
+    | --- Step 2600 | Time: 0.000023  |  Pure Compute: 49.714316s  |  Total: 49.900865s  |  Speed: 52
+    | steps/s
+    | --- Step 2800 | Time: 0.000024  |  Pure Compute: 52.759796s  |  Total: 52.964336s  |  Speed: 53
+    | steps/s
+    | --- Step 3000 | Time: 0.000026  |  Pure Compute: 55.958633s  |  Total: 56.171900s  |  Speed: 53
+    | steps/s
+    | --- Step 3200 | Time: 0.000028  |  Pure Compute: 58.944425s  |  Total: 59.175908s  |  Speed: 54
+    | steps/s
+    | --- Step 3400 | Time: 0.000030  |  Pure Compute: 62.089275s  |  Total: 62.339319s  |  Speed: 54
+    | steps/s
+    | --- Step 3600 | Time: 0.000031  |  Pure Compute: 65.248551s  |  Total: 65.505709s  |  Speed: 55
+    | steps/s
+    | --- Step 3800 | Time: 0.000033  |  Pure Compute: 69.481273s  |  Total: 69.757550s  |  Speed: 54
+    | steps/s
+    | --- Step 4000 | Time: 0.000035  |  Pure Compute: 73.287801s  |  Total: 73.585954s  |  Speed: 54
+    | steps/s
+    | --- Step 4200 | Time: 0.000037  |  Pure Compute: 77.991753s  |  Total: 78.299497s  |  Speed: 53
+    | steps/s
+    | --- Step 4400 | Time: 0.000038  |  Pure Compute: 82.049585s  |  Total: 82.368914s  |  Speed: 53
+    | steps/s
+    | --- Step 4600 | Time: 0.000040  |  Pure Compute: 86.094390s  |  Total: 86.421327s  |  Speed: 53
+    | steps/s
+    | --- Step 4800 | Time: 0.000042  |  Pure Compute: 90.317665s  |  Total: 90.660831s  |  Speed: 53
+    | steps/s
+    | --- Step 5000 | Time: 0.000043  |  Pure Compute: 94.426863s  |  Total: 94.786229s  |  Speed: 52
+    | steps/s
+    | --- Step 5200 | Time: 0.000045  |  Pure Compute: 97.724467s  |  Total: 98.096456s  |  Speed: 53
+    | steps/s
+    | --- Step 5400 | Time: 0.000047  |  Pure Compute: 100.600114s  |  Total: 100.988197s  |  Speed: 53
+    | steps/s
+    | --- Step 5600 | Time: 0.000049  |  Pure Compute: 103.606555s  |  Total: 104.009123s  |  Speed: 54
+    | steps/s
+    | --- Step 5800 | Time: 0.000050  |  Pure Compute: 106.410813s  |  Total: 106.830064s  |  Speed: 54
+    | steps/s
+    | --- Step 6000 | Time: 0.000052  |  Pure Compute: 109.699587s  |  Total: 110.135464s  |  Speed: 54
+    | steps/s
+
+[17:06:35] [INFO ] [EngineManager]
+    | ==================================================
+    | GRPD Solver Engine Initialized                 
+    | ==================================================
+
+[17:06:35] [INFO ] [EngineRegistry]
+    | Creating Engine instance: PD
+
+[17:06:35] [INFO ] [PDEngine]
+    | PD Engine instance created.
+    | ===============================================
+    | ========== Registered Types Summary ===========
+    | TimeIntegrator    : ADR, CentralDifference, Explicit, Staggered
+    | FieldRegistry     : DoubleField, IntField
+    | PhysicsFields     : Mechanical, Thermal
+    | BCRegistry        : AX, AY, AZ, CONV, FLUX, PX, PY, PZ, T, UX, UY, UZ, VX, VY, VZ
+    | ReaderRegistry    : .grpd, .inp
+    | StabilizerRegistry: Mechanical_Silling, Mechanical_Wan, Mechanical_Zhang, Thermal_Silling,
+    | Thermal_Wan, Thermal_Zhang
+    | MaterialRegistry  : FourierThermalMat, J2PlasticityMat, JCPlasticityMat, LinearElasticMat
+    | KernelRegistry    : NOSB_M, NOSB_T
+    | EngineRegistry    : PD
+    | ===============================================
+
+[17:06:35] [INFO ] [EngineManager]
+    | Initializing solver: PD
+
+[17:06:35] [INFO ] [PDEngine]
+    | Initializing PD simulation context...
+
+[17:06:35] [INFO ] [InitModel]
+    | ==================================================
+    | Model pre-processing...
+    | ==================================================
+    | grpd path: D:\Project_C++\GRPD\Examples\Bullet\Bullet.grpd
+    | model name: Bullet
+    | Found existing .grpd mesh file at: D:\Project_C++\GRPD\Examples\Bullet\Bullet.grpd. Skipping
+    | generation.
+
+[17:06:35] [INFO ] [Context Manager]
+    | Formalized model name to: Bullet
+    | Model dimension set to: 2D
+
+[17:06:35] [INFO ] [ReaderRegistry]
+    | Creating reader for: .grpd (name: Bullet)
+
+[17:06:35] [INFO ] [InitModel]
+    | Reading mesh file: D:\Project_C++\GRPD\Examples\Bullet\Bullet.grpd (reader: .grpd)
+
+[17:06:35] [INFO ] [GrpdMeshReader]
+    | Reading file: D:\Project_C++\GRPD\Examples\Bullet\Bullet.grpd
+    | Entering *PARTICLE section (Line 1)
+    | Pre-allocated memory for 21453 particles (Zero-Reallocation)
+    | Entering *LOAD section (Line 21457)
+    | ============================================
+    | File reading complete!
+    | Total particles: 21453
+    | Total load entries: 548
+    | ============================================
+
+[17:06:35] [INFO ] [ParticleManager]
+    | Pre-allocated memory for 21453 particles
+
+[17:06:35] [INFO ] [InitModel]
+    | Total particles loaded for model Bullet: 21453
+
+[17:06:35] [INFO ] [InitMaterial]
+    | ==================================================
+    | Entering Material Initialization Phase...
+    | ==================================================
+    | Instantiating material [1] of type: J2PlasticityMat
+
+[17:06:35] [INFO ] [MaterialRegistry]
+    | Using factory to create material: Steel_Plastic (type: J2PlasticityMat)
+
+[17:06:35] [INFO ] [EqPSFracture]
+    | Configured Critical_EqPS = 0.200000
+
+[17:06:35] [INFO ] [Material]
+    | Attached FractureModel 'EqPSFracture' to material: Steel_Plastic
+
+[17:06:35] [INFO ] [J2PlasticityMat]
+    | Hardening Type: Isotropic
+
+[17:06:35] [INFO ] [MaterialManager]
+    | Successfully added material instance: Steel_Plastic
+
+[17:06:35] [INFO ] [InitMaterial]
+    | Successfully registered material ID 1 (Steel_Plastic)
+    | Assigning material pointers to particles...
+    | Successfully assigned materials to 21453 particles.
+
+[17:06:35] [INFO ] [InitFields]
+    | ==================================================
+    | Entering Field Registration Phase...
+    | ==================================================
+
+[17:06:35] [INFO ] [FieldManager]
+    | Added field 'Displacement'.
+    | Added field 'Velocity'.
+    | Added field 'Acceleration'.
+
+[17:06:35] [INFO ] [MechanicalFields]
+    | Core fields registered: Displacement, Velocity, Acceleration.
+
+[17:06:35] [INFO ] [InitFields]
+    | Auto-registered PhysicsFields module: Mechanical
+
+[17:06:35] [INFO ] [FieldManager]
+    | Added field 'ID'.
+    | Added field 'PartID'.
+    | Added field 'MatID'.
+    | Added field 'Coords'.
+    | Added field 'Volume'.
+    | Added field 'ActiveStatus'.
+
+[17:06:35] [INFO ] [InitFields]
+    | Global ActiveStatus field registered.
+
+[17:06:35] [INFO ] [FieldManager]
+    | Added field 'EqPlasticStrain_Old'.
+    | Added field 'EqPlasticStrain_Trial'.
+    | Added field 'PlasticStrain_Old'.
+    | Added field 'PlasticStrain_Trial'.
+    | Added field 'VonMisesStress'.
+    | Resized all 14 fields for 21453 particles.
+
+[17:06:35] [INFO ] [InitFields]
+    | ActiveStatus initialized to 1 for all particles.
+    | Binding high-speed material state pointers...
+
+[17:06:35] [INFO ] [MeshData]
+    | Populated particle geometry fields into FieldManager for 21453 particles.
+
+[17:06:35] [INFO ] [InitFields]
+    | All fields allocated for 21453 particles. Total fields: 14.
+
+[17:06:35] [INFO ] [InitConditions]
+    | ==================================================
+    | Entering Conditions Initialization Phase...
+    | ==================================================
+
+[17:06:35] [INFO ] [ReaderRegistry]
+    | Creating reader for: .grpd (name: LoadReader)
+
+[17:06:35] [INFO ] [GrpdMeshReader]
+    | Reading file: D:\Project_C++\GRPD\Examples\Bullet\Bullet.grpd
+    | Entering *PARTICLE section (Line 1)
+    | Pre-allocated memory for 21453 particles (Zero-Reallocation)
+    | Entering *LOAD section (Line 21457)
+    | ============================================
+    | File reading complete!
+    | Total particles: 21453
+    | Total load entries: 548
+    | ============================================
+
+[17:06:36] [INFO ] [InitConditions]
+    | Load statistics:
+    | - VX : 274
+    | - VY : 274
+    | Boundary conditions initialization complete.
+
+[17:06:36] [INFO ] [InitNeighbors]
+    | ==================================================
+    | Entering Neighbor Search Phase...
+    | ==================================================
+    | Horizon radius: 0.301500
+
+[17:06:36] [INFO ] [NeighborList]
+    | Starting full-flat CSR search for 21453 particles, horizon = 0.301500
+    | Cell grid: 78 x 33 x 1 = 2574 cells
+    | Flat cell list built in 0.999928 ms
+    | Pass 1 (count) done in 2.000093 ms
+    | Total bonds: 588960, Memory: 6 MB
+    | Pass 2 (fill) done in 6.000042 ms
+    | Max neighbors: 28
+    | Total time: 9.000063 ms
+
+[17:06:36] [INFO ] [FieldManager]
+    | Added field 'NeighborCount'.
+
+[17:06:36] [INFO ] [InitNeighbors]
+    | NeighborCount field populated for 21453 particles.
+
+[17:06:36] [INFO ] [FieldManager]
+    | Added field 'BondIntegrity'.
+
+[17:06:36] [INFO ] [InitNeighbors]
+    | Global BondIntegrity scalar field properly initialized to 0.0
+    | Neighbor search phase complete.
+    | Initializing Material-specific BondIntegrity Models...
+    | Material BondIntegrity Models initialized. Total Active Models: 1
+
+[17:06:36] [INFO ] [InitPreCracks]
+    | Detected PreCracks configuration. Initializing geometric cuts...
+
+[17:06:36] [INFO ] [QuadCrack]
+    | Successfully configured QuadCrack with normal: (0.000000, -1.000000, 0.000000)
+    | Evaluating bond breakage for crack...
+    | Cut 1962 bonds traversing the preset crack.
+
+[17:06:36] [INFO ] [InitPreCracks]
+    | Applied PreCrack of type: QuadCrack
+
+[17:06:36] [INFO ] [InitSolverComponents]
+    | ==================================================
+    | Entering Solver Components Assembly Phase...
+    | ==================================================
+    | Building Time Integrator: CentralDifference
+
+[17:06:36] [INFO ] [TimeIntegrator]
+    | Explicitly set OMP Threads to: 16
+
+[17:06:36] [INFO ] [InitSolverComponents]
+    | Time Integrator configured.
+    | Building Space Kernel: NOSB_M
+
+[17:06:36] [INFO ] [NOSB_Base]
+    | Applied KernelWeightType: Linear
+    | Applied ZeroEnergyG0: 0.100000
+    | Applied ZeroEnergyMethod string: Zhang
+
+[17:06:36] [INFO ] [InitSolverComponents]
+    | Space Kernel 'NOSB_M' configured.
+    | Total kernels assembled: 1
+
+[17:06:36] [INFO ] [PDEngine]
+    | PD simulation context initialized successfully.
+
+[17:06:36] [INFO ] [EngineManager]
+    | All solvers initialized. Total: 1
+    | ==================================================
+    | Entering Main Solver Phase
+    | ==================================================
+    | Solving: PD
+
+[17:06:36] [INFO ] [PDEngine]
+    | Starting PD Engine Solve Phase...
+
+[17:06:36] [INFO ] [CentralDifference]
+    | Identified 2nd-order ODE coupling: Displacement <- Velocity <- Acceleration
+
+[17:06:36] [INFO ] [FieldManager]
+    | Added field 'ShapeTensorInv'.
+    | Added field 'VHorizon'.
+
+[17:06:36] [INFO ] [NOSB_Base]
+    | Computing InfluenceWeight + Shape Tensor Inverse (K^-1)...
+    | All NOSB base fields registered and Shape Tensor Inverse computed.
+
+[17:06:36] [INFO ] [FieldManager]
+    | Added field 'DeformationGradient'.
+    | Added field 'PK1Stress'.
+
+[17:06:36] [INFO ] [NOSB_M]
+    | Instantiated MechanicalStabilizer globally in Phase 0 using strategy: Zhang
+
+[17:06:36] [INFO ] [CentralDifference]
+    | Auto CFL dt: dx = 0.100000, c = 4886205.071423, massScale = 1.000000, dt = 0.000000
+    | Starting Explicit Loop with 2 LoadStep(s). Default dt = 0.000000
+    | === Load Step 1 / 2 | TargetTime: 0.000004 | dt: 0.000000 | KBC: 1 ===
+    | --- Step 0 | Time: 0.000000  |  Pure Compute: 0.000000s  |  Total: 0.000000s  |  Speed: 0 steps/s
+    | --- Step 200 | Time: 0.000002  |  Pure Compute: 1.434604s  |  Total: 1.449854s  |  Speed: 139
+    | steps/s
+    | --- Step 400 | Time: 0.000003  |  Pure Compute: 2.400162s  |  Total: 2.423992s  |  Speed: 166
+    | steps/s
+    | === Load Step 2 / 2 | TargetTime: 0.000087 | dt: 0.000000 | KBC: 1 ===
+    | --- Step 600 | Time: 0.000005  |  Pure Compute: 3.384335s  |  Total: 3.415488s  |  Speed: 177
+    | steps/s
+    | --- Step 800 | Time: 0.000007  |  Pure Compute: 4.620514s  |  Total: 4.668397s  |  Speed: 173
+    | steps/s
+    | --- Step 1000 | Time: 0.000009  |  Pure Compute: 5.928838s  |  Total: 5.987850s  |  Speed: 168
+    | steps/s
+    | --- Step 1200 | Time: 0.000010  |  Pure Compute: 7.315268s  |  Total: 7.380658s  |  Speed: 164
+    | steps/s
+    | --- Step 1400 | Time: 0.000012  |  Pure Compute: 9.021060s  |  Total: 9.095847s  |  Speed: 155
+    | steps/s
+    | --- Step 1600 | Time: 0.000014  |  Pure Compute: 10.445145s  |  Total: 10.537721s  |  Speed: 153
+    | steps/s
+    | --- Step 1800 | Time: 0.000016  |  Pure Compute: 11.916062s  |  Total: 12.024872s  |  Speed: 151
+    | steps/s
+    | --- Step 2000 | Time: 0.000017  |  Pure Compute: 13.400646s  |  Total: 13.520962s  |  Speed: 149
+    | steps/s
+    | --- Step 2200 | Time: 0.000019  |  Pure Compute: 15.037690s  |  Total: 15.166612s  |  Speed: 146
+    | steps/s
+    | --- Step 2400 | Time: 0.000021  |  Pure Compute: 16.468754s  |  Total: 16.614474s  |  Speed: 145
+    | steps/s
+    | --- Step 2600 | Time: 0.000023  |  Pure Compute: 17.831391s  |  Total: 17.995003s  |  Speed: 145
+    | steps/s
+    | --- Step 2800 | Time: 0.000024  |  Pure Compute: 19.205896s  |  Total: 19.387988s  |  Speed: 145
+    | steps/s
+    | --- Step 3000 | Time: 0.000026  |  Pure Compute: 20.747272s  |  Total: 20.946397s  |  Speed: 144
+    | steps/s
+    | --- Step 3200 | Time: 0.000028  |  Pure Compute: 22.160477s  |  Total: 22.379673s  |  Speed: 144
+    | steps/s
+    | --- Step 3400 | Time: 0.000030  |  Pure Compute: 23.676014s  |  Total: 23.907207s  |  Speed: 143
+    | steps/s
+    | --- Step 3600 | Time: 0.000031  |  Pure Compute: 25.069075s  |  Total: 25.321665s  |  Speed: 143
+    | steps/s
+    | --- Step 3800 | Time: 0.000033  |  Pure Compute: 26.303250s  |  Total: 26.573658s  |  Speed: 144
+    | steps/s
+    | --- Step 4000 | Time: 0.000035  |  Pure Compute: 27.314451s  |  Total: 27.600776s  |  Speed: 146
+    | steps/s
+    | --- Step 4200 | Time: 0.000037  |  Pure Compute: 28.306057s  |  Total: 28.608051s  |  Speed: 148
+    | steps/s
+    | --- Step 4400 | Time: 0.000038  |  Pure Compute: 29.332054s  |  Total: 29.652018s  |  Speed: 150
+    | steps/s
+    | --- Step 4600 | Time: 0.000040  |  Pure Compute: 30.319435s  |  Total: 30.656258s  |  Speed: 151
+    | steps/s
+    | --- Step 4800 | Time: 0.000042  |  Pure Compute: 31.384735s  |  Total: 31.735828s  |  Speed: 152
+    | steps/s
+    | --- Step 5000 | Time: 0.000043  |  Pure Compute: 32.466214s  |  Total: 32.826926s  |  Speed: 154
+    | steps/s
+    | --- Step 5200 | Time: 0.000045  |  Pure Compute: 33.525616s  |  Total: 33.902370s  |  Speed: 155
+    | steps/s
+    | --- Step 5400 | Time: 0.000047  |  Pure Compute: 34.553533s  |  Total: 34.939411s  |  Speed: 156
+    | steps/s
+    | --- Step 5600 | Time: 0.000049  |  Pure Compute: 35.610990s  |  Total: 36.014803s  |  Speed: 157
+    | steps/s
+    | --- Step 5800 | Time: 0.000050  |  Pure Compute: 36.654676s  |  Total: 37.067371s  |  Speed: 158
+    | steps/s
+    | --- Step 6000 | Time: 0.000052  |  Pure Compute: 37.843988s  |  Total: 38.273665s  |  Speed: 158
+    | steps/s
+    | --- Step 6200 | Time: 0.000054  |  Pure Compute: 38.973563s  |  Total: 39.420707s  |  Speed: 159
+    | steps/s
+    | --- Step 6400 | Time: 0.000056  |  Pure Compute: 39.990661s  |  Total: 40.445535s  |  Speed: 160
+    | steps/s
+    | --- Step 6600 | Time: 0.000057  |  Pure Compute: 41.019745s  |  Total: 41.483667s  |  Speed: 160
+    | steps/s
+    | --- Step 6800 | Time: 0.000059  |  Pure Compute: 42.080148s  |  Total: 42.551151s  |  Speed: 161
+    | steps/s
+    | --- Step 7000 | Time: 0.000061  |  Pure Compute: 43.220126s  |  Total: 43.708221s  |  Speed: 161
+    | steps/s
+    | --- Step 7200 | Time: 0.000063  |  Pure Compute: 44.425826s  |  Total: 44.929533s  |  Speed: 162
+    | steps/s
+    | --- Step 7400 | Time: 0.000064  |  Pure Compute: 45.705883s  |  Total: 46.217978s  |  Speed: 161
+    | steps/s
+    | --- Step 7600 | Time: 0.000066  |  Pure Compute: 47.062964s  |  Total: 47.583806s  |  Speed: 161
+    | steps/s
+    | --- Step 7800 | Time: 0.000068  |  Pure Compute: 48.473483s  |  Total: 49.002060s  |  Speed: 160
+    | steps/s
+    | --- Step 8000 | Time: 0.000070  |  Pure Compute: 49.944330s  |  Total: 50.481001s  |  Speed: 160
+    | steps/s
+    | --- Step 8200 | Time: 0.000071  |  Pure Compute: 51.277601s  |  Total: 51.829870s  |  Speed: 159
+    | steps/s
+    | --- Step 8400 | Time: 0.000073  |  Pure Compute: 52.543878s  |  Total: 53.111220s  |  Speed: 159
+    | steps/s
+    | --- Step 8600 | Time: 0.000075  |  Pure Compute: 53.804116s  |  Total: 54.379154s  |  Speed: 159
+    | steps/s
+    | --- Step 8800 | Time: 0.000077  |  Pure Compute: 55.277276s  |  Total: 55.860990s  |  Speed: 159
+    | steps/s
+    | --- Step 9000 | Time: 0.000078  |  Pure Compute: 56.581898s  |  Total: 57.182583s  |  Speed: 159
+    | steps/s
+    | --- Step 9200 | Time: 0.000080  |  Pure Compute: 57.861179s  |  Total: 58.468767s  |  Speed: 159
+    | steps/s
+    | --- Step 9400 | Time: 0.000082  |  Pure Compute: 59.264408s  |  Total: 59.880663s  |  Speed: 158
+    | steps/s
+    | --- Step 9600 | Time: 0.000084  |  Pure Compute: 60.557115s  |  Total: 61.180739s  |  Speed: 158
+    | steps/s
+    | --- Step 9800 | Time: 0.000085  |  Pure Compute: 62.031711s  |  Total: 62.662394s  |  Speed: 157
+    | steps/s
+    | Finished. Total: 64.100249s  |  Pure Compute avg: 0.006345 s/step
+
+[17:07:40] [INFO ] [PDEngine]
+    | PD Engine Solve Phase Finished.
+
+[17:07:40] [INFO ] [EngineManager]
+    | Main Solver Phase finished.
+    | ==================================================
+    | Entering Post-processing Phase
+    | ==================================================
+    | Outputting: PD
+    | Post-processing Phase finished.
+
+[17:09:38] [INFO ] [EngineManager]
+    | ==================================================
+    | GRPD Solver Engine Initialized                 
+    | ==================================================
+
+[17:09:38] [INFO ] [EngineRegistry]
+    | Creating Engine instance: PD
+
+[17:09:38] [INFO ] [PDEngine]
+    | PD Engine instance created.
+    | ===============================================
+    | ========== Registered Types Summary ===========
+    | TimeIntegrator    : ADR, CentralDifference, Explicit, Staggered
+    | FieldRegistry     : DoubleField, IntField
+    | PhysicsFields     : Mechanical, Thermal
+    | BCRegistry        : AX, AY, AZ, CONV, FLUX, PX, PY, PZ, T, UX, UY, UZ, VX, VY, VZ
+    | ReaderRegistry    : .grpd, .inp
+    | StabilizerRegistry: Mechanical_Silling, Mechanical_Wan, Mechanical_Zhang, Thermal_Silling,
+    | Thermal_Wan, Thermal_Zhang
+    | MaterialRegistry  : FourierThermalMat, J2PlasticityMat, JCPlasticityMat, LinearElasticMat
+    | KernelRegistry    : NOSB_M, NOSB_T
+    | EngineRegistry    : PD
+    | ===============================================
+
+[17:09:38] [INFO ] [EngineManager]
+    | Initializing solver: PD
+
+[17:09:38] [INFO ] [PDEngine]
+    | Initializing PD simulation context...
+
+[17:09:38] [INFO ] [InitModel]
+    | ==================================================
+    | Model pre-processing...
+    | ==================================================
+    | grpd path: D:\Project_C++\GRPD\Examples\Bullet\Bullet.grpd
+    | model name: Bullet
+    | Calling Python pre-processor to generate .grpd mesh...
+    | Mesh generated successfully by Python.
+
+[17:09:40] [INFO ] [Context Manager]
+    | Formalized model name to: Bullet
+    | Model dimension set to: 2D
+
+[17:09:40] [INFO ] [ReaderRegistry]
+    | Creating reader for: .grpd (name: Bullet)
+
+[17:09:40] [INFO ] [InitModel]
+    | Reading mesh file: D:\Project_C++\GRPD\Examples\Bullet\Bullet.grpd (reader: .grpd)
+
+[17:09:40] [INFO ] [GrpdMeshReader]
+    | Reading file: D:\Project_C++\GRPD\Examples\Bullet\Bullet.grpd
+    | Entering *PARTICLE section (Line 1)
+    | Pre-allocated memory for 21453 particles (Zero-Reallocation)
+    | Entering *LOAD section (Line 21457)
+    | ============================================
+    | File reading complete!
+    | Total particles: 21453
+    | Total load entries: 548
+    | ============================================
+
+[17:09:40] [INFO ] [ParticleManager]
+    | Pre-allocated memory for 21453 particles
+
+[17:09:40] [INFO ] [InitModel]
+    | Total particles loaded for model Bullet: 21453
+
+[17:09:40] [INFO ] [InitMaterial]
+    | ==================================================
+    | Entering Material Initialization Phase...
+    | ==================================================
+    | Instantiating material [1] of type: J2PlasticityMat
+
+[17:09:40] [INFO ] [MaterialRegistry]
+    | Using factory to create material: Steel_Plastic (type: J2PlasticityMat)
+
+[17:09:40] [INFO ] [EqPSFracture]
+    | Configured Critical_EqPS = 0.500000
+
+[17:09:40] [INFO ] [Material]
+    | Attached FractureModel 'EqPSFracture' to material: Steel_Plastic
+
+[17:09:40] [INFO ] [J2PlasticityMat]
+    | Hardening Type: Isotropic
+
+[17:09:40] [INFO ] [MaterialManager]
+    | Successfully added material instance: Steel_Plastic
+
+[17:09:40] [INFO ] [InitMaterial]
+    | Successfully registered material ID 1 (Steel_Plastic)
+    | Assigning material pointers to particles...
+    | Successfully assigned materials to 21453 particles.
+
+[17:09:40] [INFO ] [InitFields]
+    | ==================================================
+    | Entering Field Registration Phase...
+    | ==================================================
+
+[17:09:40] [INFO ] [FieldManager]
+    | Added field 'Displacement'.
+    | Added field 'Velocity'.
+    | Added field 'Acceleration'.
+
+[17:09:40] [INFO ] [MechanicalFields]
+    | Core fields registered: Displacement, Velocity, Acceleration.
+
+[17:09:40] [INFO ] [InitFields]
+    | Auto-registered PhysicsFields module: Mechanical
+
+[17:09:40] [INFO ] [FieldManager]
+    | Added field 'ID'.
+    | Added field 'PartID'.
+    | Added field 'MatID'.
+    | Added field 'Coords'.
+    | Added field 'Volume'.
+    | Added field 'ActiveStatus'.
+
+[17:09:40] [INFO ] [InitFields]
+    | Global ActiveStatus field registered.
+
+[17:09:40] [INFO ] [FieldManager]
+    | Added field 'EqPlasticStrain_Old'.
+    | Added field 'EqPlasticStrain_Trial'.
+    | Added field 'PlasticStrain_Old'.
+    | Added field 'PlasticStrain_Trial'.
+    | Added field 'VonMisesStress'.
+    | Resized all 14 fields for 21453 particles.
+
+[17:09:40] [INFO ] [InitFields]
+    | ActiveStatus initialized to 1 for all particles.
+    | Binding high-speed material state pointers...
+
+[17:09:40] [INFO ] [MeshData]
+    | Populated particle geometry fields into FieldManager for 21453 particles.
+
+[17:09:40] [INFO ] [InitFields]
+    | All fields allocated for 21453 particles. Total fields: 14.
+
+[17:09:40] [INFO ] [InitConditions]
+    | ==================================================
+    | Entering Conditions Initialization Phase...
+    | ==================================================
+
+[17:09:40] [INFO ] [ReaderRegistry]
+    | Creating reader for: .grpd (name: LoadReader)
+
+[17:09:40] [INFO ] [GrpdMeshReader]
+    | Reading file: D:\Project_C++\GRPD\Examples\Bullet\Bullet.grpd
+    | Entering *PARTICLE section (Line 1)
+    | Pre-allocated memory for 21453 particles (Zero-Reallocation)
+    | Entering *LOAD section (Line 21457)
+    | ============================================
+    | File reading complete!
+    | Total particles: 21453
+    | Total load entries: 548
+    | ============================================
+
+[17:09:40] [INFO ] [InitConditions]
+    | Load statistics:
+    | - VX : 274
+    | - VY : 274
+    | Boundary conditions initialization complete.
+
+[17:09:40] [INFO ] [InitNeighbors]
+    | ==================================================
+    | Entering Neighbor Search Phase...
+    | ==================================================
+    | Horizon radius: 0.301500
+
+[17:09:40] [INFO ] [NeighborList]
+    | Starting full-flat CSR search for 21453 particles, horizon = 0.301500
+    | Cell grid: 78 x 33 x 1 = 2574 cells
+    | Flat cell list built in 0.999928 ms
+    | Pass 1 (count) done in 0.999928 ms
+    | Total bonds: 588960, Memory: 6 MB
+    | Pass 2 (fill) done in 3.000021 ms
+    | Max neighbors: 28
+    | Total time: 4.999876 ms
+
+[17:09:41] [INFO ] [FieldManager]
+    | Added field 'NeighborCount'.
+
+[17:09:41] [INFO ] [InitNeighbors]
+    | NeighborCount field populated for 21453 particles.
+
+[17:09:41] [INFO ] [FieldManager]
+    | Added field 'BondIntegrity'.
+
+[17:09:41] [INFO ] [InitNeighbors]
+    | Global BondIntegrity scalar field properly initialized to 0.0
+    | Neighbor search phase complete.
+    | Initializing Material-specific BondIntegrity Models...
+    | Material BondIntegrity Models initialized. Total Active Models: 1
+
+[17:09:41] [INFO ] [InitPreCracks]
+    | Detected PreCracks configuration. Initializing geometric cuts...
+
+[17:09:41] [INFO ] [QuadCrack]
+    | Successfully configured QuadCrack with normal: (0.000000, -1.000000, 0.000000)
+    | Evaluating bond breakage for crack...
+    | Cut 1962 bonds traversing the preset crack.
+
+[17:09:41] [INFO ] [InitPreCracks]
+    | Applied PreCrack of type: QuadCrack
+
+[17:09:41] [INFO ] [InitSolverComponents]
+    | ==================================================
+    | Entering Solver Components Assembly Phase...
+    | ==================================================
+    | Building Time Integrator: CentralDifference
+
+[17:09:41] [INFO ] [TimeIntegrator]
+    | Explicitly set OMP Threads to: 16
+
+[17:09:41] [INFO ] [InitSolverComponents]
+    | Time Integrator configured.
+    | Building Space Kernel: NOSB_M
+
+[17:09:41] [INFO ] [NOSB_Base]
+    | Applied KernelWeightType: Linear
+    | Applied ZeroEnergyG0: 0.100000
+    | Applied ZeroEnergyMethod string: Zhang
+
+[17:09:41] [INFO ] [InitSolverComponents]
+    | Space Kernel 'NOSB_M' configured.
+    | Total kernels assembled: 1
+
+[17:09:41] [INFO ] [PDEngine]
+    | PD simulation context initialized successfully.
+
+[17:09:41] [INFO ] [EngineManager]
+    | All solvers initialized. Total: 1
+    | ==================================================
+    | Entering Main Solver Phase
+    | ==================================================
+    | Solving: PD
+
+[17:09:41] [INFO ] [PDEngine]
+    | Starting PD Engine Solve Phase...
+
+[17:09:41] [INFO ] [CentralDifference]
+    | Identified 2nd-order ODE coupling: Displacement <- Velocity <- Acceleration
+
+[17:09:41] [INFO ] [FieldManager]
+    | Added field 'ShapeTensorInv'.
+    | Added field 'VHorizon'.
+
+[17:09:41] [INFO ] [NOSB_Base]
+    | Computing InfluenceWeight + Shape Tensor Inverse (K^-1)...
+    | All NOSB base fields registered and Shape Tensor Inverse computed.
+
+[17:09:41] [INFO ] [FieldManager]
+    | Added field 'DeformationGradient'.
+    | Added field 'PK1Stress'.
+
+[17:09:41] [INFO ] [NOSB_M]
+    | Instantiated MechanicalStabilizer globally in Phase 0 using strategy: Zhang
+
+[17:09:41] [INFO ] [CentralDifference]
+    | Auto CFL dt: dx = 0.100000, c = 4886205.071423, massScale = 1.000000, dt = 0.000000
+    | Starting Explicit Loop with 2 LoadStep(s). Default dt = 0.000000
+    | === Load Step 1 / 2 | TargetTime: 0.000004 | dt: 0.000000 | KBC: 1 ===
+    | --- Step 0 | Time: 0.000000  |  Pure Compute: 0.000000s  |  Total: 0.000000s  |  Speed: 0 steps/s
+    | --- Step 200 | Time: 0.000002  |  Pure Compute: 1.250454s  |  Total: 1.264497s  |  Speed: 159
+    | steps/s
+    | --- Step 400 | Time: 0.000003  |  Pure Compute: 2.017588s  |  Total: 2.044190s  |  Speed: 198
+    | steps/s
+    | === Load Step 2 / 2 | TargetTime: 0.000087 | dt: 0.000000 | KBC: 1 ===
+    | --- Step 600 | Time: 0.000005  |  Pure Compute: 3.284206s  |  Total: 3.324511s  |  Speed: 182
+    | steps/s
+    | --- Step 800 | Time: 0.000007  |  Pure Compute: 4.467399s  |  Total: 4.523079s  |  Speed: 179
+    | steps/s
+    | --- Step 1000 | Time: 0.000009  |  Pure Compute: 5.574344s  |  Total: 5.636487s  |  Speed: 179
+    | steps/s
+    | --- Step 1200 | Time: 0.000010  |  Pure Compute: 7.112282s  |  Total: 7.190459s  |  Speed: 168
+    | steps/s
+    | --- Step 1400 | Time: 0.000012  |  Pure Compute: 8.499810s  |  Total: 8.592836s  |  Speed: 164
+    | steps/s
+    | --- Step 1600 | Time: 0.000014  |  Pure Compute: 9.987845s  |  Total: 10.089277s  |  Speed: 160
+    | steps/s
+    | --- Step 1800 | Time: 0.000016  |  Pure Compute: 11.617076s  |  Total: 11.728634s  |  Speed: 154
+    | steps/s
+    | --- Step 2000 | Time: 0.000017  |  Pure Compute: 13.064482s  |  Total: 13.187895s  |  Speed: 153
+    | steps/s
+    | --- Step 2200 | Time: 0.000019  |  Pure Compute: 14.870267s  |  Total: 15.012897s  |  Speed: 147
+    | steps/s
+    | --- Step 2400 | Time: 0.000021  |  Pure Compute: 16.285847s  |  Total: 16.444927s  |  Speed: 147
+    | steps/s
+    | --- Step 2600 | Time: 0.000023  |  Pure Compute: 17.547031s  |  Total: 17.728998s  |  Speed: 148
+    | steps/s
+    | --- Step 2800 | Time: 0.000024  |  Pure Compute: 18.951968s  |  Total: 19.144354s  |  Speed: 147
+    | steps/s
+    | --- Step 3000 | Time: 0.000026  |  Pure Compute: 20.408244s  |  Total: 20.620742s  |  Speed: 146
+    | steps/s
+    | --- Step 3200 | Time: 0.000028  |  Pure Compute: 21.960493s  |  Total: 22.194021s  |  Speed: 145
+    | steps/s
+    | --- Step 3400 | Time: 0.000030  |  Pure Compute: 23.379813s  |  Total: 23.623244s  |  Speed: 145
+    | steps/s
+    | --- Step 3600 | Time: 0.000031  |  Pure Compute: 24.714565s  |  Total: 24.968785s  |  Speed: 145
+    | steps/s
+    | --- Step 3800 | Time: 0.000033  |  Pure Compute: 26.310222s  |  Total: 26.581038s  |  Speed: 144
+    | steps/s
+    | --- Step 4000 | Time: 0.000035  |  Pure Compute: 28.055926s  |  Total: 28.351573s  |  Speed: 142
+    | steps/s
+    | --- Step 4200 | Time: 0.000037  |  Pure Compute: 29.483265s  |  Total: 29.799096s  |  Speed: 142
+    | steps/s
+    | --- Step 4400 | Time: 0.000038  |  Pure Compute: 31.063269s  |  Total: 31.397780s  |  Speed: 141
+    | steps/s
+    | --- Step 4600 | Time: 0.000040  |  Pure Compute: 32.645912s  |  Total: 32.998301s  |  Speed: 140
+    | steps/s
+    | --- Step 4800 | Time: 0.000042  |  Pure Compute: 34.344235s  |  Total: 34.709015s  |  Speed: 139
+    | steps/s
+    | --- Step 5000 | Time: 0.000043  |  Pure Compute: 35.852214s  |  Total: 36.237801s  |  Speed: 139
+    | steps/s
+    | --- Step 5200 | Time: 0.000045  |  Pure Compute: 37.620973s  |  Total: 38.016699s  |  Speed: 138
+    | steps/s
+    | --- Step 5400 | Time: 0.000047  |  Pure Compute: 39.772942s  |  Total: 40.189687s  |  Speed: 135
+    | steps/s
+    | --- Step 5600 | Time: 0.000049  |  Pure Compute: 41.347680s  |  Total: 41.789430s  |  Speed: 135
+    | steps/s
+    | --- Step 5800 | Time: 0.000050  |  Pure Compute: 42.702982s  |  Total: 43.157500s  |  Speed: 135
+    | steps/s
+    | --- Step 6000 | Time: 0.000052  |  Pure Compute: 44.037468s  |  Total: 44.505162s  |  Speed: 136
+    | steps/s
+    | --- Step 6200 | Time: 0.000054  |  Pure Compute: 45.555692s  |  Total: 46.035126s  |  Speed: 136
+    | steps/s
+    | --- Step 6400 | Time: 0.000056  |  Pure Compute: 46.966847s  |  Total: 47.467313s  |  Speed: 136
+    | steps/s
+    | --- Step 6600 | Time: 0.000057  |  Pure Compute: 48.658617s  |  Total: 49.175773s  |  Speed: 135
+    | steps/s
+    | --- Step 6800 | Time: 0.000059  |  Pure Compute: 50.627291s  |  Total: 51.167680s  |  Speed: 134
+    | steps/s
+    | --- Step 7000 | Time: 0.000061  |  Pure Compute: 52.338450s  |  Total: 52.899694s  |  Speed: 133
+    | steps/s
+    | --- Step 7200 | Time: 0.000063  |  Pure Compute: 54.101842s  |  Total: 54.679276s  |  Speed: 133
+    | steps/s
+    | --- Step 7400 | Time: 0.000064  |  Pure Compute: 55.712456s  |  Total: 56.300973s  |  Speed: 132
+    | steps/s
+    | --- Step 7600 | Time: 0.000066  |  Pure Compute: 57.639114s  |  Total: 58.239327s  |  Speed: 131
+    | steps/s
+    | --- Step 7800 | Time: 0.000068  |  Pure Compute: 59.471239s  |  Total: 60.091370s  |  Speed: 131
+    | steps/s
+    | --- Step 8000 | Time: 0.000070  |  Pure Compute: 61.233583s  |  Total: 61.866177s  |  Speed: 130
+    | steps/s
+    | --- Step 8200 | Time: 0.000071  |  Pure Compute: 63.197431s  |  Total: 63.849858s  |  Speed: 129
+    | steps/s
+    | --- Step 8400 | Time: 0.000073  |  Pure Compute: 64.912440s  |  Total: 65.584735s  |  Speed: 129
+    | steps/s
+    | --- Step 8600 | Time: 0.000075  |  Pure Compute: 66.336730s  |  Total: 67.024995s  |  Speed: 129
+    | steps/s
+    | --- Step 8800 | Time: 0.000077  |  Pure Compute: 67.857409s  |  Total: 68.553925s  |  Speed: 129
+    | steps/s
+    | --- Step 9000 | Time: 0.000078  |  Pure Compute: 69.565058s  |  Total: 70.272833s  |  Speed: 129
+    | steps/s
+    | --- Step 9200 | Time: 0.000080  |  Pure Compute: 71.205824s  |  Total: 71.928732s  |  Speed: 129
+    | steps/s
+    | --- Step 9400 | Time: 0.000082  |  Pure Compute: 72.780401s  |  Total: 73.519736s  |  Speed: 129
+    | steps/s
+    | --- Step 9600 | Time: 0.000084  |  Pure Compute: 74.026973s  |  Total: 74.783397s  |  Speed: 129
+    | steps/s
+    | --- Step 9800 | Time: 0.000085  |  Pure Compute: 75.050388s  |  Total: 75.819813s  |  Speed: 130
+    | steps/s
+    | Finished. Total: 76.895204s  |  Pure Compute avg: 0.007610 s/step
+
+[17:10:57] [INFO ] [PDEngine]
+    | PD Engine Solve Phase Finished.
+
+[17:10:57] [INFO ] [EngineManager]
+    | Main Solver Phase finished.
+    | ==================================================
+    | Entering Post-processing Phase
+    | ==================================================
+    | Outputting: PD
+    | Post-processing Phase finished.
+
+[17:18:43] [INFO ] [EngineManager]
+    | ==================================================
+    | GRPD Solver Engine Initialized                 
+    | ==================================================
+
+[17:18:43] [INFO ] [EngineRegistry]
+    | Creating Engine instance: PD
+
+[17:18:43] [INFO ] [PDEngine]
+    | PD Engine instance created.
+    | ===============================================
+    | ========== Registered Types Summary ===========
+    | TimeIntegrator    : ADR, CentralDifference, Explicit, Staggered
+    | FieldRegistry     : DoubleField, IntField
+    | PhysicsFields     : Mechanical, Thermal
+    | BCRegistry        : AX, AY, AZ, CONV, FLUX, PX, PY, PZ, T, UX, UY, UZ, VX, VY, VZ
+    | ReaderRegistry    : .grpd, .inp
+    | StabilizerRegistry: Mechanical_Silling, Mechanical_Wan, Mechanical_Zhang, Thermal_Silling,
+    | Thermal_Wan, Thermal_Zhang
+    | MaterialRegistry  : FourierThermalMat, J2PlasticityMat, JCPlasticityMat, LinearElasticMat
+    | KernelRegistry    : NOSB_M, NOSB_T
+    | EngineRegistry    : PD
+    | ===============================================
+
+[17:18:43] [INFO ] [EngineManager]
+    | Initializing solver: PD
+
+[17:18:43] [INFO ] [PDEngine]
+    | Initializing PD simulation context...
+
+[17:18:43] [INFO ] [InitModel]
+    | ==================================================
+    | Model pre-processing...
+    | ==================================================
+    | grpd path: D:\Project_C++\GRPD\Examples\Bullet\Bullet.grpd
+    | model name: Bullet
+    | Calling Python pre-processor to generate .grpd mesh...
+    | Mesh generated successfully by Python.
+
+[17:18:45] [INFO ] [Context Manager]
+    | Formalized model name to: Bullet
+    | Model dimension set to: 2D
+
+[17:18:45] [INFO ] [ReaderRegistry]
+    | Creating reader for: .grpd (name: Bullet)
+
+[17:18:45] [INFO ] [InitModel]
+    | Reading mesh file: D:\Project_C++\GRPD\Examples\Bullet\Bullet.grpd (reader: .grpd)
+
+[17:18:45] [INFO ] [GrpdMeshReader]
+    | Reading file: D:\Project_C++\GRPD\Examples\Bullet\Bullet.grpd
+    | Entering *PARTICLE section (Line 1)
+    | Pre-allocated memory for 21453 particles (Zero-Reallocation)
+    | Entering *LOAD section (Line 21457)
+    | ============================================
+    | File reading complete!
+    | Total particles: 21453
+    | Total load entries: 548
+    | ============================================
+
+[17:18:45] [INFO ] [ParticleManager]
+    | Pre-allocated memory for 21453 particles
+
+[17:18:45] [INFO ] [InitModel]
+    | Total particles loaded for model Bullet: 21453
+
+[17:18:45] [INFO ] [InitMaterial]
+    | ==================================================
+    | Entering Material Initialization Phase...
+    | ==================================================
+    | Instantiating material [1] of type: J2PlasticityMat
+
+[17:18:45] [INFO ] [MaterialRegistry]
+    | Using factory to create material: Steel_Plastic (type: J2PlasticityMat)
+
+[17:18:45] [INFO ] [EqPSFracture]
+    | Configured Critical_EqPS = 0.050000
+
+[17:18:45] [INFO ] [Material]
+    | Attached FractureModel 'EqPSFracture' to material: Steel_Plastic
+
+[17:18:45] [INFO ] [J2PlasticityMat]
+    | Hardening Type: Isotropic
+
+[17:18:45] [INFO ] [MaterialManager]
+    | Successfully added material instance: Steel_Plastic
+
+[17:18:45] [INFO ] [InitMaterial]
+    | Successfully registered material ID 1 (Steel_Plastic)
+    | Assigning material pointers to particles...
+    | Successfully assigned materials to 21453 particles.
+
+[17:18:45] [INFO ] [InitFields]
+    | ==================================================
+    | Entering Field Registration Phase...
+    | ==================================================
+
+[17:18:45] [INFO ] [FieldManager]
+    | Added field 'Displacement'.
+    | Added field 'Velocity'.
+    | Added field 'Acceleration'.
+
+[17:18:45] [INFO ] [MechanicalFields]
+    | Core fields registered: Displacement, Velocity, Acceleration.
+
+[17:18:45] [INFO ] [InitFields]
+    | Auto-registered PhysicsFields module: Mechanical
+
+[17:18:45] [INFO ] [FieldManager]
+    | Added field 'ID'.
+    | Added field 'PartID'.
+    | Added field 'MatID'.
+    | Added field 'Coords'.
+    | Added field 'Volume'.
+    | Added field 'ActiveStatus'.
+
+[17:18:45] [INFO ] [InitFields]
+    | Global ActiveStatus field registered.
+
+[17:18:45] [INFO ] [FieldManager]
+    | Added field 'EqPlasticStrain_Old'.
+    | Added field 'EqPlasticStrain_Trial'.
+    | Added field 'PlasticStrain_Old'.
+    | Added field 'PlasticStrain_Trial'.
+    | Added field 'VonMisesStress'.
+    | Resized all 14 fields for 21453 particles.
+
+[17:18:45] [INFO ] [InitFields]
+    | ActiveStatus initialized to 1 for all particles.
+    | Binding high-speed material state pointers...
+
+[17:18:45] [INFO ] [MeshData]
+    | Populated particle geometry fields into FieldManager for 21453 particles.
+
+[17:18:45] [INFO ] [InitFields]
+    | All fields allocated for 21453 particles. Total fields: 14.
+
+[17:18:45] [INFO ] [InitConditions]
+    | ==================================================
+    | Entering Conditions Initialization Phase...
+    | ==================================================
+
+[17:18:45] [INFO ] [ReaderRegistry]
+    | Creating reader for: .grpd (name: LoadReader)
+
+[17:18:45] [INFO ] [GrpdMeshReader]
+    | Reading file: D:\Project_C++\GRPD\Examples\Bullet\Bullet.grpd
+    | Entering *PARTICLE section (Line 1)
+    | Pre-allocated memory for 21453 particles (Zero-Reallocation)
+    | Entering *LOAD section (Line 21457)
+    | ============================================
+    | File reading complete!
+    | Total particles: 21453
+    | Total load entries: 548
+    | ============================================
+
+[17:18:45] [INFO ] [InitConditions]
+    | Load statistics:
+    | - VX : 274
+    | - VY : 274
+    | Boundary conditions initialization complete.
+
+[17:18:45] [INFO ] [InitNeighbors]
+    | ==================================================
+    | Entering Neighbor Search Phase...
+    | ==================================================
+    | Horizon radius: 0.301500
+
+[17:18:45] [INFO ] [NeighborList]
+    | Starting full-flat CSR search for 21453 particles, horizon = 0.301500
+    | Cell grid: 78 x 33 x 1 = 2574 cells
+    | Flat cell list built in 0.000000 ms
+    | Pass 1 (count) done in 3.999949 ms
+    | Total bonds: 588960, Memory: 6 MB
+    | Pass 2 (fill) done in 4.000187 ms
+    | Max neighbors: 28
+    | Total time: 8.000135 ms
+
+[17:18:45] [INFO ] [FieldManager]
+    | Added field 'NeighborCount'.
+
+[17:18:46] [INFO ] [InitNeighbors]
+    | NeighborCount field populated for 21453 particles.
+
+[17:18:46] [INFO ] [FieldManager]
+    | Added field 'BondIntegrity'.
+
+[17:18:46] [INFO ] [InitNeighbors]
+    | Global BondIntegrity scalar field properly initialized to 0.0
+    | Neighbor search phase complete.
+    | Initializing Material-specific BondIntegrity Models...
+    | Material BondIntegrity Models initialized. Total Active Models: 1
+
+[17:18:46] [INFO ] [InitPreCracks]
+    | Detected PreCracks configuration. Initializing geometric cuts...
+
+[17:18:46] [INFO ] [QuadCrack]
+    | Successfully configured QuadCrack with normal: (0.000000, -1.000000, 0.000000)
+    | Evaluating bond breakage for crack...
+    | Cut 1962 bonds traversing the preset crack.
+
+[17:18:46] [INFO ] [InitPreCracks]
+    | Applied PreCrack of type: QuadCrack
+
+[17:18:46] [INFO ] [InitSolverComponents]
+    | ==================================================
+    | Entering Solver Components Assembly Phase...
+    | ==================================================
+    | Building Time Integrator: CentralDifference
+
+[17:18:46] [INFO ] [TimeIntegrator]
+    | Explicitly set OMP Threads to: 16
+
+[17:18:46] [INFO ] [InitSolverComponents]
+    | Time Integrator configured.
+    | Building Space Kernel: NOSB_M
+
+[17:18:46] [INFO ] [NOSB_Base]
+    | Applied KernelWeightType: Linear
+    | Applied ZeroEnergyG0: 0.100000
+    | Applied ZeroEnergyMethod string: Zhang
+
+[17:18:46] [INFO ] [InitSolverComponents]
+    | Space Kernel 'NOSB_M' configured.
+    | Total kernels assembled: 1
+
+[17:18:46] [INFO ] [PDEngine]
+    | PD simulation context initialized successfully.
+
+[17:18:46] [INFO ] [EngineManager]
+    | All solvers initialized. Total: 1
+    | ==================================================
+    | Entering Main Solver Phase
+    | ==================================================
+    | Solving: PD
+
+[17:18:46] [INFO ] [PDEngine]
+    | Starting PD Engine Solve Phase...
+
+[17:18:46] [INFO ] [CentralDifference]
+    | Identified 2nd-order ODE coupling: Displacement <- Velocity <- Acceleration
+
+[17:18:46] [INFO ] [FieldManager]
+    | Added field 'ShapeTensorInv'.
+    | Added field 'VHorizon'.
+
+[17:18:46] [INFO ] [NOSB_Base]
+    | Computing InfluenceWeight + Shape Tensor Inverse (K^-1)...
+    | All NOSB base fields registered and Shape Tensor Inverse computed.
+
+[17:18:46] [INFO ] [FieldManager]
+    | Added field 'DeformationGradient'.
+    | Added field 'PK1Stress'.
+
+[17:18:46] [INFO ] [NOSB_M]
+    | Instantiated MechanicalStabilizer globally in Phase 0 using strategy: Zhang
+
+[17:18:46] [INFO ] [CentralDifference]
+    | Auto CFL dt: dx = 0.100000, c = 4886205.071423, massScale = 1.000000, dt = 0.000000
+    | Starting Explicit Loop with 2 LoadStep(s). Default dt = 0.000000
+    | === Load Step 1 / 2 | TargetTime: 0.000004 | dt: 0.000000 | KBC: 1 ===
+    | --- Step 0 | Time: 0.000000  |  Pure Compute: 0.000000s  |  Total: 0.000000s  |  Speed: 0 steps/s
+    | --- Step 200 | Time: 0.000002  |  Pure Compute: 1.345912s  |  Total: 1.350501s  |  Speed: 148
+    | steps/s
+    | --- Step 400 | Time: 0.000003  |  Pure Compute: 2.415444s  |  Total: 2.435712s  |  Speed: 165
+    | steps/s
+    | === Load Step 2 / 2 | TargetTime: 0.000087 | dt: 0.000000 | KBC: 1 ===
+    | --- Step 600 | Time: 0.000005  |  Pure Compute: 3.698122s  |  Total: 3.725085s  |  Speed: 162
+    | steps/s
+    | --- Step 800 | Time: 0.000007  |  Pure Compute: 5.062685s  |  Total: 5.097604s  |  Speed: 158
+    | steps/s
+    | --- Step 1000 | Time: 0.000009  |  Pure Compute: 6.625860s  |  Total: 6.669362s  |  Speed: 150
+    | steps/s
+    | --- Step 1200 | Time: 0.000010  |  Pure Compute: 8.138126s  |  Total: 8.189355s  |  Speed: 147
+    | steps/s
+    | --- Step 1400 | Time: 0.000012  |  Pure Compute: 9.949184s  |  Total: 10.009288s  |  Speed: 140
+    | steps/s
+    | --- Step 1600 | Time: 0.000014  |  Pure Compute: 11.561307s  |  Total: 11.629594s  |  Speed: 138
+    | steps/s
+    | --- Step 1800 | Time: 0.000016  |  Pure Compute: 12.869555s  |  Total: 12.945566s  |  Speed: 139
+    | steps/s
+    | --- Step 2000 | Time: 0.000017  |  Pure Compute: 14.079284s  |  Total: 14.162334s  |  Speed: 142
+    | steps/s
+    | --- Step 2200 | Time: 0.000019  |  Pure Compute: 15.458862s  |  Total: 15.548804s  |  Speed: 142
+    | steps/s
+    | --- Step 2400 | Time: 0.000021  |  Pure Compute: 16.685184s  |  Total: 16.782496s  |  Speed: 143
+    | steps/s
+    | --- Step 2600 | Time: 0.000023  |  Pure Compute: 17.974330s  |  Total: 18.080864s  |  Speed: 144
+    | steps/s
+    | --- Step 2800 | Time: 0.000024  |  Pure Compute: 19.586437s  |  Total: 19.701136s  |  Speed: 142
+    | steps/s
+    | --- Step 3000 | Time: 0.000026  |  Pure Compute: 21.271947s  |  Total: 21.395726s  |  Speed: 141
+    | steps/s
+    | --- Step 3200 | Time: 0.000028  |  Pure Compute: 22.951622s  |  Total: 23.092964s  |  Speed: 139
+    | steps/s
+    | --- Step 3400 | Time: 0.000030  |  Pure Compute: 24.398490s  |  Total: 24.547999s  |  Speed: 139
+    | steps/s
+    | --- Step 3600 | Time: 0.000031  |  Pure Compute: 25.726516s  |  Total: 25.891676s  |  Speed: 139
+    | steps/s
+    | --- Step 3800 | Time: 0.000033  |  Pure Compute: 27.046477s  |  Total: 27.226302s  |  Speed: 140
+    | steps/s
+    | --- Step 4000 | Time: 0.000035  |  Pure Compute: 28.541097s  |  Total: 28.738326s  |  Speed: 140
+    | steps/s
+    | --- Step 4200 | Time: 0.000037  |  Pure Compute: 29.971171s  |  Total: 30.185704s  |  Speed: 140
+    | steps/s
+    | --- Step 4400 | Time: 0.000038  |  Pure Compute: 31.276868s  |  Total: 31.508557s  |  Speed: 140
+    | steps/s
+    | --- Step 4600 | Time: 0.000040  |  Pure Compute: 32.778584s  |  Total: 33.027608s  |  Speed: 140
+    | steps/s
+    | --- Step 4800 | Time: 0.000042  |  Pure Compute: 34.219147s  |  Total: 34.483971s  |  Speed: 140
+    | steps/s
+    | --- Step 5000 | Time: 0.000043  |  Pure Compute: 35.944886s  |  Total: 36.217235s  |  Speed: 139
+    | steps/s
+    | --- Step 5200 | Time: 0.000045  |  Pure Compute: 37.447536s  |  Total: 37.736732s  |  Speed: 138
+    | steps/s
+    | --- Step 5400 | Time: 0.000047  |  Pure Compute: 38.765566s  |  Total: 39.071414s  |  Speed: 139
+    | steps/s
+    | --- Step 5600 | Time: 0.000049  |  Pure Compute: 40.002783s  |  Total: 40.325503s  |  Speed: 139
+    | steps/s
+    | --- Step 5800 | Time: 0.000050  |  Pure Compute: 41.238857s  |  Total: 41.576516s  |  Speed: 140
+    | steps/s
+    | --- Step 6000 | Time: 0.000052  |  Pure Compute: 42.671216s  |  Total: 43.016645s  |  Speed: 140
+    | steps/s
+    | --- Step 6200 | Time: 0.000054  |  Pure Compute: 43.960482s  |  Total: 44.322499s  |  Speed: 141
+    | steps/s
+    | --- Step 6400 | Time: 0.000056  |  Pure Compute: 45.289951s  |  Total: 45.659752s  |  Speed: 141
+    | steps/s
+    | --- Step 6600 | Time: 0.000057  |  Pure Compute: 46.597914s  |  Total: 46.974331s  |  Speed: 141
+    | steps/s
+    | --- Step 6800 | Time: 0.000059  |  Pure Compute: 48.068621s  |  Total: 48.453216s  |  Speed: 141
+    | steps/s
+    | --- Step 7000 | Time: 0.000061  |  Pure Compute: 49.397761s  |  Total: 49.798237s  |  Speed: 141
+    | steps/s
+    | --- Step 7200 | Time: 0.000063  |  Pure Compute: 50.699604s  |  Total: 51.117874s  |  Speed: 142
+    | steps/s
+    | --- Step 7400 | Time: 0.000064  |  Pure Compute: 52.045066s  |  Total: 52.472155s  |  Speed: 142
+    | steps/s
+    | --- Step 7600 | Time: 0.000066  |  Pure Compute: 53.595156s  |  Total: 54.029272s  |  Speed: 141
+    | steps/s
+    | --- Step 7800 | Time: 0.000068  |  Pure Compute: 55.121377s  |  Total: 55.571431s  |  Speed: 141
+    | steps/s
+    | --- Step 8000 | Time: 0.000070  |  Pure Compute: 56.436365s  |  Total: 56.903518s  |  Speed: 141
+    | steps/s
+    | --- Step 8200 | Time: 0.000071  |  Pure Compute: 57.942421s  |  Total: 58.417112s  |  Speed: 141
+    | steps/s
+    | --- Step 8400 | Time: 0.000073  |  Pure Compute: 59.451320s  |  Total: 59.934953s  |  Speed: 141
+    | steps/s
+    | --- Step 8600 | Time: 0.000075  |  Pure Compute: 61.065909s  |  Total: 61.557999s  |  Speed: 140
+    | steps/s
+    | --- Step 8800 | Time: 0.000077  |  Pure Compute: 62.540768s  |  Total: 63.050627s  |  Speed: 140
+    | steps/s
+    | --- Step 9000 | Time: 0.000078  |  Pure Compute: 64.212166s  |  Total: 64.732056s  |  Speed: 140
+    | steps/s
+    | --- Step 9200 | Time: 0.000080  |  Pure Compute: 65.414191s  |  Total: 65.942175s  |  Speed: 140
+    | steps/s
+    | --- Step 9400 | Time: 0.000082  |  Pure Compute: 66.589304s  |  Total: 67.124006s  |  Speed: 141
+    | steps/s
+    | --- Step 9600 | Time: 0.000084  |  Pure Compute: 67.632696s  |  Total: 68.174602s  |  Speed: 141
+    | steps/s
+    | --- Step 9800 | Time: 0.000085  |  Pure Compute: 68.680290s  |  Total: 69.238228s  |  Speed: 142
+    | steps/s
+    | Finished. Total: 70.325503s  |  Pure Compute avg: 0.006975 s/step
+
+[17:19:56] [INFO ] [PDEngine]
+    | PD Engine Solve Phase Finished.
+
+[17:19:56] [INFO ] [EngineManager]
+    | Main Solver Phase finished.
+    | ==================================================
+    | Entering Post-processing Phase
+    | ==================================================
+    | Outputting: PD
+    | Post-processing Phase finished.
+
+[17:21:17] [INFO ] [EngineManager]
+    | ==================================================
+    | GRPD Solver Engine Initialized                 
+    | ==================================================
+
+[17:21:17] [INFO ] [EngineRegistry]
+    | Creating Engine instance: PD
+
+[17:21:17] [INFO ] [PDEngine]
+    | PD Engine instance created.
+    | ===============================================
+    | ========== Registered Types Summary ===========
+    | TimeIntegrator    : ADR, CentralDifference, Explicit, Staggered
+    | FieldRegistry     : DoubleField, IntField
+    | PhysicsFields     : Mechanical, Thermal
+    | BCRegistry        : AX, AY, AZ, CONV, FLUX, PX, PY, PZ, T, UX, UY, UZ, VX, VY, VZ
+    | ReaderRegistry    : .grpd, .inp
+    | StabilizerRegistry: Mechanical_Silling, Mechanical_Wan, Mechanical_Zhang, Thermal_Silling,
+    | Thermal_Wan, Thermal_Zhang
+    | MaterialRegistry  : FourierThermalMat, J2PlasticityMat, JCPlasticityMat, LinearElasticMat
+    | KernelRegistry    : NOSB_M, NOSB_T
+    | EngineRegistry    : PD
+    | ===============================================
+
+[17:21:17] [INFO ] [EngineManager]
+    | Initializing solver: PD
+
+[17:21:17] [INFO ] [PDEngine]
+    | Initializing PD simulation context...
+
+[17:21:17] [INFO ] [InitModel]
+    | ==================================================
+    | Model pre-processing...
+    | ==================================================
+    | grpd path: D:\Project_C++\GRPD\Examples\Bullet\Bullet.grpd
+    | model name: Bullet
+    | Calling Python pre-processor to generate .grpd mesh...
+    | Mesh generated successfully by Python.
+
+[17:21:19] [INFO ] [Context Manager]
+    | Formalized model name to: Bullet
+    | Model dimension set to: 2D
+
+[17:21:19] [INFO ] [ReaderRegistry]
+    | Creating reader for: .grpd (name: Bullet)
+
+[17:21:19] [INFO ] [InitModel]
+    | Reading mesh file: D:\Project_C++\GRPD\Examples\Bullet\Bullet.grpd (reader: .grpd)
+
+[17:21:19] [INFO ] [GrpdMeshReader]
+    | Reading file: D:\Project_C++\GRPD\Examples\Bullet\Bullet.grpd
+    | Entering *PARTICLE section (Line 1)
+    | Pre-allocated memory for 21453 particles (Zero-Reallocation)
+    | Entering *LOAD section (Line 21457)
+    | ============================================
+    | File reading complete!
+    | Total particles: 21453
+    | Total load entries: 548
+    | ============================================
+
+[17:21:19] [INFO ] [ParticleManager]
+    | Pre-allocated memory for 21453 particles
+
+[17:21:19] [INFO ] [InitModel]
+    | Total particles loaded for model Bullet: 21453
+
+[17:21:19] [INFO ] [InitMaterial]
+    | ==================================================
+    | Entering Material Initialization Phase...
+    | ==================================================
+    | Instantiating material [1] of type: J2PlasticityMat
+
+[17:21:19] [INFO ] [MaterialRegistry]
+    | Using factory to create material: Steel_Plastic (type: J2PlasticityMat)
+
+[17:21:19] [INFO ] [EqPSFracture]
+    | Configured Critical_EqPS = 0.050000
+
+[17:21:19] [INFO ] [Material]
+    | Attached FractureModel 'EqPSFracture' to material: Steel_Plastic
+
+[17:21:19] [INFO ] [J2PlasticityMat]
+    | Hardening Type: Isotropic
+
+[17:21:19] [INFO ] [MaterialManager]
+    | Successfully added material instance: Steel_Plastic
+
+[17:21:19] [INFO ] [InitMaterial]
+    | Successfully registered material ID 1 (Steel_Plastic)
+    | Assigning material pointers to particles...
+    | Successfully assigned materials to 21453 particles.
+
+[17:21:19] [INFO ] [InitFields]
+    | ==================================================
+    | Entering Field Registration Phase...
+    | ==================================================
+
+[17:21:19] [INFO ] [FieldManager]
+    | Added field 'Displacement'.
+    | Added field 'Velocity'.
+    | Added field 'Acceleration'.
+
+[17:21:19] [INFO ] [MechanicalFields]
+    | Core fields registered: Displacement, Velocity, Acceleration.
+
+[17:21:19] [INFO ] [InitFields]
+    | Auto-registered PhysicsFields module: Mechanical
+
+[17:21:19] [INFO ] [FieldManager]
+    | Added field 'ID'.
+    | Added field 'PartID'.
+    | Added field 'MatID'.
+    | Added field 'Coords'.
+    | Added field 'Volume'.
+    | Added field 'ActiveStatus'.
+
+[17:21:19] [INFO ] [InitFields]
+    | Global ActiveStatus field registered.
+
+[17:21:19] [INFO ] [FieldManager]
+    | Added field 'EqPlasticStrain_Old'.
+    | Added field 'EqPlasticStrain_Trial'.
+    | Added field 'PlasticStrain_Old'.
+    | Added field 'PlasticStrain_Trial'.
+    | Added field 'VonMisesStress'.
+    | Resized all 14 fields for 21453 particles.
+
+[17:21:19] [INFO ] [InitFields]
+    | ActiveStatus initialized to 1 for all particles.
+    | Binding high-speed material state pointers...
+
+[17:21:19] [INFO ] [MeshData]
+    | Populated particle geometry fields into FieldManager for 21453 particles.
+
+[17:21:19] [INFO ] [InitFields]
+    | All fields allocated for 21453 particles. Total fields: 14.
+
+[17:21:19] [INFO ] [InitConditions]
+    | ==================================================
+    | Entering Conditions Initialization Phase...
+    | ==================================================
+
+[17:21:19] [INFO ] [ReaderRegistry]
+    | Creating reader for: .grpd (name: LoadReader)
+
+[17:21:19] [INFO ] [GrpdMeshReader]
+    | Reading file: D:\Project_C++\GRPD\Examples\Bullet\Bullet.grpd
+    | Entering *PARTICLE section (Line 1)
+    | Pre-allocated memory for 21453 particles (Zero-Reallocation)
+    | Entering *LOAD section (Line 21457)
+    | ============================================
+    | File reading complete!
+    | Total particles: 21453
+    | Total load entries: 548
+    | ============================================
+
+[17:21:19] [INFO ] [InitConditions]
+    | Load statistics:
+    | - VX : 274
+    | - VY : 274
+    | Boundary conditions initialization complete.
+
+[17:21:19] [INFO ] [InitNeighbors]
+    | ==================================================
+    | Entering Neighbor Search Phase...
+    | ==================================================
+    | Horizon radius: 0.301500
+
+[17:21:19] [INFO ] [NeighborList]
+    | Starting full-flat CSR search for 21453 particles, horizon = 0.301500
+    | Cell grid: 78 x 33 x 1 = 2574 cells
+    | Flat cell list built in 0.999928 ms
+    | Pass 1 (count) done in 2.000093 ms
+    | Total bonds: 588960, Memory: 6 MB
+    | Pass 2 (fill) done in 5.000114 ms
+    | Max neighbors: 28
+    | Total time: 8.000135 ms
+
+[17:21:19] [INFO ] [FieldManager]
+    | Added field 'NeighborCount'.
+
+[17:21:19] [INFO ] [InitNeighbors]
+    | NeighborCount field populated for 21453 particles.
+
+[17:21:19] [INFO ] [FieldManager]
+    | Added field 'BondIntegrity'.
+
+[17:21:19] [INFO ] [InitNeighbors]
+    | Global BondIntegrity scalar field properly initialized to 0.0
+    | Neighbor search phase complete.
+    | Initializing Material-specific BondIntegrity Models...
+    | Material BondIntegrity Models initialized. Total Active Models: 1
+
+[17:21:19] [INFO ] [InitPreCracks]
+    | Detected PreCracks configuration. Initializing geometric cuts...
+
+[17:21:19] [INFO ] [QuadCrack]
+    | Successfully configured QuadCrack with normal: (0.000000, -1.000000, 0.000000)
+    | Evaluating bond breakage for crack...
+    | Cut 1962 bonds traversing the preset crack.
+
+[17:21:19] [INFO ] [InitPreCracks]
+    | Applied PreCrack of type: QuadCrack
+
+[17:21:19] [INFO ] [InitSolverComponents]
+    | ==================================================
+    | Entering Solver Components Assembly Phase...
+    | ==================================================
+    | Building Time Integrator: CentralDifference
+
+[17:21:19] [INFO ] [TimeIntegrator]
+    | Explicitly set OMP Threads to: 16
+
+[17:21:19] [INFO ] [InitSolverComponents]
+    | Time Integrator configured.
+    | Building Space Kernel: NOSB_M
+
+[17:21:19] [INFO ] [NOSB_Base]
+    | Applied KernelWeightType: Linear
+    | Applied ZeroEnergyG0: 0.100000
+    | Applied ZeroEnergyMethod string: Zhang
+
+[17:21:19] [INFO ] [InitSolverComponents]
+    | Space Kernel 'NOSB_M' configured.
+    | Total kernels assembled: 1
+
+[17:21:19] [INFO ] [PDEngine]
+    | PD simulation context initialized successfully.
+
+[17:21:19] [INFO ] [EngineManager]
+    | All solvers initialized. Total: 1
+    | ==================================================
+    | Entering Main Solver Phase
+    | ==================================================
+    | Solving: PD
+
+[17:21:19] [INFO ] [PDEngine]
+    | Starting PD Engine Solve Phase...
+
+[17:21:19] [INFO ] [CentralDifference]
+    | Identified 2nd-order ODE coupling: Displacement <- Velocity <- Acceleration
+
+[17:21:19] [INFO ] [FieldManager]
+    | Added field 'ShapeTensorInv'.
+    | Added field 'VHorizon'.
+
+[17:21:19] [INFO ] [NOSB_Base]
+    | Computing InfluenceWeight + Shape Tensor Inverse (K^-1)...
+    | All NOSB base fields registered and Shape Tensor Inverse computed.
+
+[17:21:19] [INFO ] [FieldManager]
+    | Added field 'DeformationGradient'.
+    | Added field 'PK1Stress'.
+
+[17:21:19] [INFO ] [NOSB_M]
+    | Instantiated MechanicalStabilizer globally in Phase 0 using strategy: Zhang
+
+[17:21:19] [INFO ] [CentralDifference]
+    | Auto CFL dt: dx = 0.100000, c = 4886205.071423, massScale = 1.000000, dt = 0.000000
+    | Starting Explicit Loop with 2 LoadStep(s). Default dt = 0.000000
+    | === Load Step 1 / 2 | TargetTime: 0.000004 | dt: 0.000000 | KBC: 1 ===
+    | --- Step 0 | Time: 0.000000  |  Pure Compute: 0.000000s  |  Total: 0.000000s  |  Speed: 0 steps/s
+    | === Load Step 2 / 2 | TargetTime: 0.000870 | dt: 0.000000 | KBC: 1 ===
+    | --- Step 2000 | Time: 0.000017  |  Pure Compute: 15.968435s  |  Total: 15.976214s  |  Speed: 125
+    | steps/s
+    | --- Step 4000 | Time: 0.000035  |  Pure Compute: 27.692051s  |  Total: 27.713960s  |  Speed: 144
+    | steps/s
+    | --- Step 6000 | Time: 0.000052  |  Pure Compute: 38.328012s  |  Total: 38.369921s  |  Speed: 156
+    | steps/s
+    | --- Step 8000 | Time: 0.000070  |  Pure Compute: 49.726476s  |  Total: 49.785440s  |  Speed: 160
+    | steps/s
+    | --- Step 10000 | Time: 0.000087  |  Pure Compute: 64.110241s  |  Total: 64.186671s  |  Speed: 155
+    | steps/s
+    | --- Step 12000 | Time: 0.000104  |  Pure Compute: 78.752800s  |  Total: 78.847930s  |  Speed: 152
+    | steps/s
+    | --- Step 14000 | Time: 0.000122  |  Pure Compute: 89.912121s  |  Total: 90.016659s  |  Speed: 155
+    | steps/s
+    | --- Step 16000 | Time: 0.000139  |  Pure Compute: 100.210001s  |  Total: 100.331840s  |  Speed: 159
+    | steps/s
+    | --- Step 18000 | Time: 0.000157  |  Pure Compute: 112.724758s  |  Total: 112.854481s  |  Speed: 159
+    | steps/s
+    | --- Step 20000 | Time: 0.000174  |  Pure Compute: 127.004836s  |  Total: 127.152304s  |  Speed: 157
+    | steps/s
+    | --- Step 22000 | Time: 0.000191  |  Pure Compute: 140.295947s  |  Total: 140.451538s  |  Speed: 156
+    | steps/s
+    | --- Step 24000 | Time: 0.000209  |  Pure Compute: 153.856554s  |  Total: 154.031531s  |  Speed: 155
+    | steps/s
+    | --- Step 26000 | Time: 0.000226  |  Pure Compute: 167.361440s  |  Total: 167.552484s  |  Speed: 155
+    | steps/s
+    | --- Step 28000 | Time: 0.000244  |  Pure Compute: 180.842227s  |  Total: 181.042220s  |  Speed: 154
+    | steps/s
+    | --- Step 30000 | Time: 0.000261  |  Pure Compute: 195.504163s  |  Total: 195.720010s  |  Speed: 153
+    | steps/s
+    | --- Step 32000 | Time: 0.000278  |  Pure Compute: 208.314442s  |  Total: 208.538115s  |  Speed: 153
+    | steps/s
+    | --- Step 34000 | Time: 0.000296  |  Pure Compute: 218.076881s  |  Total: 218.315672s  |  Speed: 155
+    | steps/s
+    | --- Step 36000 | Time: 0.000313  |  Pure Compute: 230.297159s  |  Total: 230.550158s  |  Speed: 156
+    | steps/s
+    | --- Step 38000 | Time: 0.000331  |  Pure Compute: 246.371624s  |  Total: 246.636746s  |  Speed: 154
+    | steps/s
+    | --- Step 40000 | Time: 0.000348  |  Pure Compute: 260.509484s  |  Total: 260.792147s  |  Speed: 153
+    | steps/s
+    | --- Step 42000 | Time: 0.000365  |  Pure Compute: 270.100086s  |  Total: 270.397339s  |  Speed: 155
+    | steps/s
+    | --- Step 44000 | Time: 0.000383  |  Pure Compute: 279.784448s  |  Total: 280.096075s  |  Speed: 157
+    | steps/s
+    | --- Step 46000 | Time: 0.000400  |  Pure Compute: 292.683782s  |  Total: 293.001271s  |  Speed: 157
+    | steps/s
+    | --- Step 48000 | Time: 0.000418  |  Pure Compute: 305.334460s  |  Total: 305.668088s  |  Speed: 157
+    | steps/s
+    | --- Step 50000 | Time: 0.000435  |  Pure Compute: 318.873514s  |  Total: 319.215758s  |  Speed: 156
+    | steps/s
+    | --- Step 52000 | Time: 0.000452  |  Pure Compute: 328.905063s  |  Total: 329.257972s  |  Speed: 158
+    | steps/s
+    | --- Step 54000 | Time: 0.000470  |  Pure Compute: 338.098699s  |  Total: 338.465696s  |  Speed: 159
+    | steps/s
+    | --- Step 56000 | Time: 0.000487  |  Pure Compute: 349.866571s  |  Total: 350.249281s  |  Speed: 160
+    | steps/s
+    | --- Step 58000 | Time: 0.000505  |  Pure Compute: 363.750738s  |  Total: 364.148632s  |  Speed: 159
+    | steps/s
+    | --- Step 60000 | Time: 0.000522  |  Pure Compute: 378.087393s  |  Total: 378.493201s  |  Speed: 158
+    | steps/s

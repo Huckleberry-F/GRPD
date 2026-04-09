@@ -3,8 +3,8 @@
 #include "FieldRegistry.h"
 #include "Logger.h"
 #include "MaterialRegistry.h"
-#include <cmath>
 #include <algorithm>
+#include <cmath>
 
 namespace PDCommon::Material {
 
@@ -16,7 +16,8 @@ JCPlasticityMat::JCPlasticityMat(const std::string &name)
     : J2PlasticityMat(name) {}
 
 void JCPlasticityMat::initialize(const YAML::Node &matNode) {
-  // 此时基类的 initialize 也会一并读取 J2 相关的 YieldStress, HardeningModulus 等
+  // 此时基类的 initialize 也会一并读取 J2 相关的 YieldStress, HardeningModulus
+  // 等
   J2PlasticityMat::initialize(matNode);
 
   if (matNode["JC_D1"]) {
@@ -31,13 +32,15 @@ void JCPlasticityMat::initialize(const YAML::Node &matNode) {
 
   useTriaxiality_ = (std::abs(D2_) > 1e-30 || std::abs(D3_) > 1e-30);
 
-  LOG_INFO("[JCPlasticityMat] Initialized JC Damage parameters: D1=" +
-           std::to_string(D1_) + " D2=" + std::to_string(D2_) +
-           " D3=" + std::to_string(D3_) + 
-           (useTriaxiality_ ? " [Triaxiality Active]" : " [Constant Threshold]"));
+  LOG_INFO(
+      "[JCPlasticityMat] Initialized JC Damage parameters: D1=" +
+      std::to_string(D1_) + " D2=" + std::to_string(D2_) +
+      " D3=" + std::to_string(D3_) +
+      (useTriaxiality_ ? " [Triaxiality Active]" : " [Constant Threshold]"));
 }
 
-void JCPlasticityMat::allocateStateVariables(PDCommon::Field::FieldManager &fm) {
+void JCPlasticityMat::allocateStateVariables(
+    PDCommon::Field::FieldManager &fm) {
   // 调用基类分配 J2 模型相关的状态变量
   J2PlasticityMat::allocateStateVariables(fm);
 
@@ -60,7 +63,8 @@ void JCPlasticityMat::bindStateVariables(PDCommon::Field::FieldManager &fm) {
 void JCPlasticityMat::commitState() {
   J2PlasticityMat::commitState();
 
-  if (!fieldDamageOld_ || !fieldDamageTrial_) return;
+  if (!fieldDamageOld_ || !fieldDamageTrial_)
+    return;
 
   // 极速 O(1) 交换损伤场！
   fieldDamageOld_->swapDataWith(*fieldDamageTrial_);
@@ -70,7 +74,8 @@ void JCPlasticityMat::commitState() {
   damageTrial_ = fieldDamageTrial_->dataPtr();
 }
 
-Eigen::Matrix3d JCPlasticityMat::ComputePK1Stress(const Eigen::Matrix3d &F, int particleId) const {
+Eigen::Matrix3d JCPlasticityMat::ComputePK1Stress(const Eigen::Matrix3d &F,
+                                                  int particleId) const {
   // 先通过基类求得应力和 J2 塑性应变 Trial 态
   Eigen::Matrix3d stress = J2PlasticityMat::ComputePK1Stress(F, particleId);
 
@@ -86,9 +91,9 @@ Eigen::Matrix3d JCPlasticityMat::ComputePK1Stress(const Eigen::Matrix3d &F, int 
 
   // 追踪静水压 (小变形时 PK1 对角线和依然接近 Cauchy 的迹)
   double sigma_m = stress.trace() / 3.0;
-
+  double sigma_eq = vonMises_[particleId];
   // 强制拉伸损伤判定：仅在拉伸状态（静水压 > 0）下才允许损伤累积
-  if (sigma_m <= 0.0) {
+  if (sigma_m / sigma_eq <= -0.333333333) {
     delta_eps_p = 0.0;
   }
 
@@ -97,13 +102,15 @@ Eigen::Matrix3d JCPlasticityMat::ComputePK1Stress(const Eigen::Matrix3d &F, int 
     double vm = vonMises_[particleId]; // J2 刚算出来的 Mises 应力
     double eta = sigma_m / std::max(vm, 1e-6);
     eps_f = D1_ + D2_ * std::exp(D3_ * eta);
-    if (eps_f < 0.0) eps_f = 0.0;
+    if (eps_f < 0.0)
+      eps_f = 0.0;
   }
 
   double dD = (eps_f > 1e-30) ? (delta_eps_p / eps_f) : 0.0;
-  
+
   double newDamage = damageOld_[particleId] + dD;
-  if (newDamage >= 1.0) newDamage = 1.0;
+  if (newDamage >= 1.0)
+    newDamage = 1.0;
 
   damageTrial_[particleId] = newDamage;
 

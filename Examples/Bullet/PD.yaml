@@ -15,10 +15,11 @@ Parts:
   - PartID: 1
     MatID: 1
     Dimension: 2
-    Thickness: 0.2
+    Thickness: 0.1 # 设置为 2D 时的代表厚度
     Source: "380_acp_bullet.stl" # 已经在当前 Bullet 目录下，直接引用即可
+    Rotate: [0.0, 90.0, 0.0] # 将 Z 轴平铺到 X 轴！
     RepairMesh: false
-    dx: 0.2 # 保持网格尺度一致
+    dx: 0.1 # 保持网格尺度一致
     Scale: 1.0
 
 # 3. 边界条件 (ANSYS APDL 单自由度风格)
@@ -26,34 +27,39 @@ LoadStep_Conditions:
   - Step: 1
     BoundaryConditions:
       - BcID: 1
-        Name: "Impact_P1"
-        Box: [-999.0, 999.0, -999.0, 999.0, 22.0, 999.0]
-        Type: "VZ"
-        Value: -300000.0 # 第一段：仅 Z 向 100 m/s，X/Y 自由
+        Name: "Spin_VX"
+        # 严格锁定红圈区域：尖端的下半部（X > 22.5, Y 在 -44.5 到 -42.5 之间）
+        Box: [22.5, 999.0, -44.5, -42.5, -999.0, 999.0]
+        Type: "VX"
+        Value: -100000.0 # 左方 (-X)
+      - BcID: 2
+        Name: "Spin_VY"
+        # 同样的红圈区域，施加向下的速度
+        Box: [22.5, 999.0, -44.5, -42.5, -999.0, 999.0]
+        Type: "VY"
+        Value: -10000.0 # 下方 (-Y)
   - Step: 2
     BoundaryConditions:
-      - BcID: 2
-        Name: "Impact_P2"
-        Box: [-999.0, 999.0, -999.0, 999.0, 22.0, 999.0]
-        Type: "VZ"
-        Value: -200000.0 # 第二段：仅 Z 向跃升至 300 m/s
+      - BcID: 3
+        Name: "Spin_VX_P2"
+        Box: [22.5, 999.0, -44.5, -42.5, -999.0, 999.0]
+        Type: "VX"
+        Value: -100000.0
+      - BcID: 4
+        Name: "Spin_VY_P2"
+        Box: [22.5, 999.0, -44.5, -42.5, -999.0, 999.0]
+        Type: "VY"
+        Value: -20000.0
 
 # 4. 预置裂纹 (PreCracks) - 模拟空尖弹 (JHP) 弹头顶端的十字预制引导槽
-# 弹体截面中心坐标约在 X=-37.2, Y=-41.1。我们仅在弹头处（Z=18.0 至 25.0）设置切割槽
 PreCracks:
   - Type: "QuadCrack"
-    # 十字引导槽 1：沿 X 轴劈穿弹尖
-    V1: [-43.0, -41.1, 18.0]
-    V2: [-31.0, -41.1, 18.0]
-    V3: [-31.0, -41.1, 25.0]
-    V4: [-43.0, -41.1, 25.0]
-  - Type: "QuadCrack"
-    # 十字引导槽 2：沿 Y 轴劈穿弹尖
-    V1: [-37.2, -47.0, 18.0]
-    V2: [-37.2, -35.0, 18.0]
-    V3: [-37.2, -35.0, 25.0]
-    V4: [-37.2, -47.0, 25.0]
-
+    # 【修正】子弹的尖头实际上位于 X = 18.0 到 24.0 之间！
+    # 利用薄板在尖头水平切一刀，引导爆开！
+    V1: [18.0, -41.1, -10.0]
+    V2: [25.0, -41.1, -10.0]
+    V3: [25.0, -41.1, 10.0]
+    V4: [18.0, -41.1, 10.0]
 # 5. 材质物理属性 (金属延性材料：J2 弹塑性 + 等效塑性应变断键模型)
 Materials:
   - MatID: 1
@@ -69,7 +75,7 @@ Materials:
     # 断裂模型
     Fracture:
       Type: "EqPSFracture"
-      Critical_EqPS: 0.2 # 核心实现：当双粒子的等效塑性应变达到 0.5 时，它们之间的键发生真正的物理断开
+      Critical_EqPS: 0.05 # 核心实现：当双粒子的等效塑性应变达到 0.5 时，它们之间的键发生真正的物理断开
 
 # 5. 求解器控制
 Solver:
@@ -83,12 +89,12 @@ Solver:
       TimeStep_dt: 8.7e-9
       KBC: 1 # KBC=1，代表恒速加载
     - Step: 2
-      Time: 8.7e-5
+      Time: 8.7e-4
       TimeStep_dt: 8.7e-9
       KBC: 1 # 跃升后的恒速加载
-  OutputInterval: 500 # 每 50 步输出一帧
+  OutputInterval: 2000 # 每 50 步输出一帧
   OMP_Threads: 16
-  Horizon: 0.603 # 邻域半径 3.015*dx
+  Horizon: 0.3015 # 邻域半径 3.015*dx
   KernelWeightType: "Linear"
   ZeroEnergyG0: 0.1 # 零能模式修正系数
   ZeroEnergyMethod: "Zhang" # [关键] 开启 Silling 修正

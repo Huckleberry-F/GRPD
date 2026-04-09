@@ -138,6 +138,24 @@ def generate_from_yaml(yaml_path):
                 mesh_o3d.scale(scale, center=(0, 0, 0))
                 print(f"[STL]  Applied scale factor: {scale}")
             
+            # 旋转支持 (可选，绕XYZ轴的角度，单位：度)
+            rotation = part.get('Rotate', [0.0, 0.0, 0.0])
+            if rotation != [0.0, 0.0, 0.0]:
+                R = mesh_o3d.get_rotation_matrix_from_xyz((
+                    np.radians(rotation[0]), 
+                    np.radians(rotation[1]), 
+                    np.radians(rotation[2])
+                ))
+                mesh_o3d.rotate(R, center=(0, 0, 0))
+                print(f"[STL]  Applied rotation: {rotation} degrees")
+                
+            # 平移支持 (可选)
+            translate = part.get('Translate', [0.0, 0.0, 0.0])
+            if translate != [0.0, 0.0, 0.0]:
+                mesh_o3d.translate(translate)
+                print(f"[STL]  Applied translation: {translate}")
+
+            
             # 在包围盒内生成均匀网格点
             bbox = mesh_o3d.get_axis_aligned_bounding_box()
             bbox_min = bbox.get_min_bound()
