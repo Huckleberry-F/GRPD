@@ -21647,3 +21647,126 @@
     |     Speed: 165 steps/s
     |     > Sub 5 Iter 4000 | Time: 8.000000 | LocalLF: 0.600000 | Res: 4.1036e-02 | cn: 9.6456e-01 |
     |     Speed: 164 steps/s
+    |     > Sub 5 Iter 5000 | Time: 8.000000 | LocalLF: 0.600000 | Res: 8.0398e-03 | cn: 9.6397e-01 |
+    |     Speed: 164 steps/s
+    |     > Sub 5 Iter 6000 | Time: 8.000000 | LocalLF: 0.600000 | Res: 1.4780e-03 | cn: 9.6377e-01 |
+    |     Speed: 163 steps/s
+    |     [Step 2 / Sub 5] Converged. Iter: 6228 | TOL1(V): 1.8552e-03 | TOL2(dU): 6.9938e-07 |
+    |     TOL3(Res): 9.9879e-04 | cn: 9.6327e-01
+    |     [Substep 6] Computed RampIters: 393
+    |     > Sub 6 Iter 1000 | Time: 8.500000 | LocalLF: 0.700000 | Res: 2.1899e+00 | cn: 1.9217e+00 |
+    |     Speed: 163 steps/s
+    |     > Sub 6 Iter 2000 | Time: 8.500000 | LocalLF: 0.700000 | Res: 6.7721e-01 | cn: 9.8132e-01 |
+    |     Speed: 163 steps/s
+    |     > Sub 6 Iter 3000 | Time: 8.500000 | LocalLF: 0.700000 | Res: 1.8751e-01 | cn: 9.6714e-01 |
+    |     Speed: 163 steps/s
+    |     > Sub 6 Iter 4000 | Time: 8.500000 | LocalLF: 0.700000 | Res: 4.1072e-02 | cn: 9.6457e-01 |
+    |     Speed: 163 steps/s
+    |     > Sub 6 Iter 5000 | Time: 8.500000 | LocalLF: 0.700000 | Res: 8.0485e-03 | cn: 9.6396e-01 |
+    |     Speed: 163 steps/s
+    |     > Sub 6 Iter 6000 | Time: 8.500000 | LocalLF: 0.700000 | Res: 1.4799e-03 | cn: 9.6375e-01 |
+    |     Speed: 163 steps/s
+    |     [Step 2 / Sub 6] Converged. Iter: 6229 | TOL1(V): 1.8544e-03 | TOL2(dU): 6.9894e-07 |
+    |     TOL3(Res): 9.9834e-04 | cn: 9.6324e-01
+    |     >> [*FRACTURE*] 8 points fractured in quasistatic equilibrium! Restarting pseudo-relaxation to
+    |     dissipate crack energy (FracIter: 1).
+    |     [Substep 6] Computed RampIters: 393
+    |     > Sub 6 Iter 1000 | Time: 8.500000 | LocalLF: 0.700000 | Res: 7.9627e-01 | cn: 2.7380e+00 |
+    |     Speed: 163 steps/s
+    |     > Sub 6 Iter 2000 | Time: 8.500000 | LocalLF: 0.700000 | Res: 8.4663e-02 | cn: 1.7026e+00 |
+    |     Speed: 163 steps/s
+    |     > Sub 6 Iter 3000 | Time: 8.500000 | LocalLF: 0.700000 | Res: 2.4440e-02 | cn: 9.6414e-01 |
+    |     Speed: 162 steps/s
+    |     > Sub 6 Iter 4000 | Time: 8.500000 | LocalLF: 0.700000 | Res: 6.4603e-03 | cn: 9.6378e-01 |
+    |     Speed: 162 steps/s
+    |     > Sub 6 Iter 5000 | Time: 8.500000 | LocalLF: 0.700000 | Res: 1.3879e-03 | cn: 9.6358e-01 |
+    |     Speed: 162 steps/s
+    |     [Step 2 / Sub 6] Converged. Iter: 5204 | TOL1(V): 1.7378e-03 | TOL2(dU): 6.4701e-07 |
+    |     TOL3(Res): 9.9993e-04 | cn: 9.6456e-01
+    |     >> [*FRACTURE*] 8 points fractured in quasistatic equilibrium! Restarting pseudo-relaxation to
+    |     dissipate crack energy (FracIter: 2).
+    |     [Substep 6] Computed RampIters: 393
+    |     > Sub 6 Iter 1000 | Time: 8.500000 | LocalLF: 0.700000 | Res: 8.7518e-01 | cn: 2.5596e+00 |
+    |     Speed: 161 steps/s
+    |     > Sub 6 Iter 2000 | Time: 8.500000 | LocalLF: 0.700000 | Res: 8.4353e-02 | cn: 1.7338e+00 |
+    |     Speed: 161 steps/s
+    |     > Sub 6 Iter 3000 | Time: 8.500000 | LocalLF: 0.700000 | Res: 2.5801e-02 | cn: 9.6840e-01 |
+    |     Speed: 161 steps/s
+    |     > Sub 6 Iter 4000 | Time: 8.500000 | LocalLF: 0.700000 | Res: 6.6838e-03 | cn: 9.6619e-01 |
+    |     Speed: 161 steps/s
+    |     > Sub 6 Iter 5000 | Time: 8.500000 | LocalLF: 0.700000 | Res: 1.4207e-03 | cn: 9.6563e-01 |
+    |     Speed: 161 steps/s
+    |     [Step 2 / Sub 6] Converged. Iter: 5217 | TOL1(V): 1.7432e-03 | TOL2(dU): 6.3618e-07 |
+    |     TOL3(Res): 9.9889e-04 | cn: 9.6680e-01
+    |     >> [*FRACTURE*] 4 points fractured in quasistatic equilibrium! Restarting pseudo-relaxation to
+    |     dissipate crack energy (FracIter: 3).
+    |     [Substep 6] Computed RampIters: 393
+    |     > Sub 6 Iter 1000 | Time: 8.500000 | LocalLF: 0.700000 | Res: 9.1466e-01 | cn: 2.4549e+00 |
+    |     Speed: 161 steps/s
+    |     > Sub 6 Iter 2000 | Time: 8.500000 | LocalLF: 0.700000 | Res: 8.6254e-02 | cn: 1.7088e+00 |
+    |     Speed: 161 steps/s
+    |     > Sub 6 Iter 3000 | Time: 8.500000 | LocalLF: 0.700000 | Res: 2.7896e-02 | cn: 9.7554e-01 |
+    |     Speed: 161 steps/s
+    |     > Sub 6 Iter 4000 | Time: 8.500000 | LocalLF: 0.700000 | Res: 7.0777e-03 | cn: 9.6926e-01 |
+    |     Speed: 161 steps/s
+    |     > Sub 6 Iter 5000 | Time: 8.500000 | LocalLF: 0.700000 | Res: 1.4882e-03 | cn: 9.6780e-01 |
+    |     Speed: 161 steps/s
+    |     [Step 2 / Sub 6] Converged. Iter: 5244 | TOL1(V): 1.7508e-03 | TOL2(dU): 6.2325e-07 |
+    |     TOL3(Res): 9.9942e-04 | cn: 9.6774e-01
+    |     [Substep 7] Computed RampIters: 393
+    |     > Sub 7 Iter 1000 | Time: 9.000000 | LocalLF: 0.800000 | Res: 2.1543e+00 | cn: 1.9631e+00 |
+    |     Speed: 161 steps/s
+    |     > Sub 7 Iter 2000 | Time: 9.000000 | LocalLF: 0.800000 | Res: 6.7815e-01 | cn: 9.6893e-01 |
+    |     Speed: 161 steps/s
+    |     > Sub 7 Iter 3000 | Time: 9.000000 | LocalLF: 0.800000 | Res: 1.8351e-01 | cn: 9.6580e-01 |
+    |     Speed: 161 steps/s
+    |     > Sub 7 Iter 4000 | Time: 9.000000 | LocalLF: 0.800000 | Res: 3.9723e-02 | cn: 9.6479e-01 |
+    |     Speed: 161 steps/s
+    |     > Sub 7 Iter 5000 | Time: 9.000000 | LocalLF: 0.800000 | Res: 7.7229e-03 | cn: 9.6461e-01 |
+    |     Speed: 161 steps/s
+    |     > Sub 7 Iter 6000 | Time: 9.000000 | LocalLF: 0.800000 | Res: 1.4112e-03 | cn: 9.6472e-01 |
+    |     Speed: 161 steps/s
+    |     [Step 2 / Sub 7] Converged. Iter: 6200 | TOL1(V): 1.8554e-03 | TOL2(dU): 7.0488e-07 |
+    |     TOL3(Res): 9.9906e-04 | cn: 9.6500e-01
+    |     [Substep 8] Computed RampIters: 393
+    |     > Sub 8 Iter 1000 | Time: 9.500000 | LocalLF: 0.900000 | Res: 2.1708e+00 | cn: 1.9452e+00 |
+    |     Speed: 160 steps/s
+    |     > Sub 8 Iter 2000 | Time: 9.500000 | LocalLF: 0.900000 | Res: 6.7830e-01 | cn: 9.7258e-01 |
+    |     Speed: 160 steps/s
+    |     > Sub 8 Iter 3000 | Time: 9.500000 | LocalLF: 0.900000 | Res: 1.8528e-01 | cn: 9.6590e-01 |
+    |     Speed: 160 steps/s
+    |     > Sub 8 Iter 4000 | Time: 9.500000 | LocalLF: 0.900000 | Res: 4.0303e-02 | cn: 9.6439e-01 |
+    |     Speed: 160 steps/s
+    |     > Sub 8 Iter 5000 | Time: 9.500000 | LocalLF: 0.900000 | Res: 7.8618e-03 | cn: 9.6407e-01 |
+    |     Speed: 160 steps/s
+    |     > Sub 8 Iter 6000 | Time: 9.500000 | LocalLF: 0.900000 | Res: 1.4404e-03 | cn: 9.6408e-01 |
+    |     Speed: 160 steps/s
+    |     [Step 2 / Sub 8] Converged. Iter: 6212 | TOL1(V): 1.8566e-03 | TOL2(dU): 7.0304e-07 |
+    |     TOL3(Res): 9.9970e-04 | cn: 9.6412e-01
+    |     [Substep 9] Computed RampIters: 393
+    |     > Sub 9 Iter 1000 | Time: 10.000000 | LocalLF: 1.000000 | Res: 2.1788e+00 | cn: 1.9357e+00 |
+    |     Speed: 160 steps/s
+    |     > Sub 9 Iter 2000 | Time: 10.000000 | LocalLF: 1.000000 | Res: 6.7818e-01 | cn: 9.7538e-01 |
+    |     Speed: 160 steps/s
+    |     > Sub 9 Iter 3000 | Time: 10.000000 | LocalLF: 1.000000 | Res: 1.8616e-01 | cn: 9.6631e-01 |
+    |     Speed: 160 steps/s
+    |     > Sub 9 Iter 4000 | Time: 10.000000 | LocalLF: 1.000000 | Res: 4.0597e-02 | cn: 9.6445e-01 |
+    |     Speed: 160 steps/s
+    |     > Sub 9 Iter 5000 | Time: 10.000000 | LocalLF: 1.000000 | Res: 7.9319e-03 | cn: 9.6403e-01 |
+    |     Speed: 160 steps/s
+    |     > Sub 9 Iter 6000 | Time: 10.000000 | LocalLF: 1.000000 | Res: 1.4550e-03 | cn: 9.6396e-01 |
+    |     Speed: 160 steps/s
+    |     [Step 2 / Sub 9] Converged. Iter: 6218 | TOL1(V): 1.8568e-03 | TOL2(dU): 7.0190e-07 |
+    |     TOL3(Res): 9.9987e-04 | cn: 9.6380e-01
+    | Finished. Total: 1450.598324s  |  Pure Compute avg: 0.006224 s/step
+
+[11:30:26] [INFO ] [PDEngine]
+    | PD Engine Solve Phase Finished.
+
+[11:30:26] [INFO ] [EngineManager]
+    | Main Solver Phase finished.
+    | ==================================================
+    | Entering Post-processing Phase
+    | ==================================================
+    | Outputting: PD
+    | Post-processing Phase finished.
