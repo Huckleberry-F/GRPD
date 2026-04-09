@@ -111,3 +111,5 @@ Writer:
       Dimension: 9
     - Name: "VonMisesStress"
       Dimension: 1
+
+# Updated for v3.1 project sync

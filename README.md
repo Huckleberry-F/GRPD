@@ -442,7 +442,7 @@ General-Peridynamics/
 - **非穿模近场斥力系统 (Short-Range Repulsive Contact)**: 开发针对高度破裂体素防止物理穿模的接触算法。在传统的键基作用外附加基于极短程搜索的罚函数排斥机制（Penalty Force/Lennard-Jones Repulsion），彻底解决碎片相撞带来的时空奇点与模型无阻挡穿越效应。
 - **绝热剪切热力深层耦合 (Adiabatic Heating)**: 打通 `ThermalFields` 与 `MechanicalFields` 的 FieldManager 壁垒通道，使 90% 的冲击塑性机械能能在瞬间转化为内能（发热），激发真实的软化。
 
-### ⚡ Phase 4. 高性能力量跃迁与集群计算架构 (Exascale Parallel Architecture)
+### ⚡ Phase 5. 高性能计算架构 (High-Performance Computing Architecture)
 
 - **AoSoA (分块包裹体系) 与 CUDA 生态跨越**: 计划在未来撕碎局部 C++ 面向对象枷锁，开启 `Warp=32` 大小的内存 `Chunk` 行列式（见文档《架构远景白皮书》），使底盘彻底拥抱物理内存合并访存 (Coalesced Memory Access) 以彻底发挥顶级 GPU 数据管线的 TB/s 脱缰算力。
 - **基于 METIS / Zoltan 的 MPI 分布式网格阵列**: 为引擎穿戴超级计算机切片协议，打破内存与主板封锁，在多节点集群上维持无感知的 Ghost Node (幽灵晕环) 云通信，支撑从百万级自由度向十亿级国之重器算例的大幅跨越。

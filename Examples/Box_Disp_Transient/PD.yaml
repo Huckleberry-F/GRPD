@@ -94,3 +94,5 @@ Writer:
       Dimension: 1
     - Name: "PK1Stress" # [关键] 输出损伤场以便 ParaView 渲染裂纹
       Dimension: 9
+
+# Updated for v3.1 project sync

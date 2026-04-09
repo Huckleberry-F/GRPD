@@ -106,3 +106,5 @@ Writer:
       Dimension: 9
     - Name: "Acceleration"
       Dimension: 3
+
+# Updated for v3.1 project sync
