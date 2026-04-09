@@ -7,9 +7,9 @@
 #include <cmath>
 #include <vector>
 
-REGISTER_PRECRACK_MODEL(QuadCrack, PDCommon::Damage::QuadCrack)
+REGISTER_PRECRACK_MODEL(QuadCrack, PDCommon::Fracture::QuadCrack)
 
-namespace PDCommon::Damage {
+namespace PDCommon::Fracture {
 
 void QuadCrack::configure(const YAML::Node &node) {
   auto readVec3 = [](const YAML::Node& n) -> Eigen::Vector3d {
@@ -129,4 +129,4 @@ void QuadCrack::apply(PDCommon::Core::PDContext &ctx) {
   LOG_INFO("[QuadCrack] Cut " + std::to_string(totalBondsBroken) + " bonds traversing the preset crack.");
 }
 
-} // namespace PDCommon::Damage
+} // namespace PDCommon::Fracture

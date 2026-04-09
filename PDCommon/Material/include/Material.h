@@ -15,8 +15,8 @@ namespace PDCommon::Field {
 class FieldManager;
 }
 
-namespace PDCommon::Damage {
-class DamageModel;
+namespace PDCommon::Fracture {
+class FractureModel;
 }
 
 namespace PDCommon::Material {
@@ -72,12 +72,12 @@ public:
   virtual void commitState() {}
 
   /// @brief 获取挂载在此材料下的损伤评估模型
-  PDCommon::Damage::DamageModel* getDamageModel() const;
+  PDCommon::Fracture::FractureModel* getFractureModel() const;
 
 protected:
   std::string name_; // 材料实例名称
   int matId_;        // 关联的整型标号
-  std::unique_ptr<PDCommon::Damage::DamageModel> damageModel_; // 专属损伤判定模型
+  std::unique_ptr<PDCommon::Fracture::FractureModel> fractureModel_; // 专属损伤判定模型
 };
 
 } // namespace PDCommon::Material

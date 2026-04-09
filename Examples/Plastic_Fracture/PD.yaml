@@ -35,7 +35,7 @@ LoadStep_Conditions:
         Box: [-999.0, 999.0, 97.0, 101.0, -999.0, 999.0]
         Type: "DISP"
         ApplyDir: [0, 1, 0] # 仅限定 Y 方向，允许横向受激产生泊松收缩
-        Value: [0.0, 3.0, 0.0] # 第一阶段目标：极快拉伸至 0.5
+        Value: [0.0, 2.0, 0.0] # 第一阶段目标：极快拉伸至 0.5
 
   - Step: 2
     BoundaryConditions:
@@ -44,22 +44,31 @@ LoadStep_Conditions:
         Box: [-999.0, 999.0, 97.0, 101.0, -999.0, 999.0]
         Type: "DISP"
         ApplyDir: [0, 1, 0]
-        Value: [0.0, 3.5, 0.0] # 第二阶段目标：接续极慢攀爬至 1.0
+        Value: [0.0, 5.0, 0.0] # 第二阶段目标：接续极慢攀爬至 1.0
+
+  - Step: 3
+    BoundaryConditions:
+      - BcID: 4
+        Name: "Grip_Top_Step2"
+        Box: [-999.0, 999.0, 97.0, 101.0, -999.0, 999.0]
+        Type: "DISP"
+        ApplyDir: [0, 1, 0]
+        Value: [0.0, 6.0, 0.0] # 第二阶段目标：接续极慢攀爬至 1.0
 
 # 5. 预置裂纹 (在试样中间 Y=50 处，沿 X 轴两侧切出一条对称的缺口平面)
 PreCracks:
   - CrackID: 1
     Type: "QuadCrack"
-    # 左侧缺口：X 从极远处切到 X = -3.0 位置，留下中间区域不切
+    # 左侧缺口：X 从极远处切到 X = -6.0 位置，留下中间区域不切
     V1: [-99.0, 50.0, -99.0]
     V2: [-99.0, 50.0, 99.0]
-    V3: [-3.0, 50.0, 99.0]
-    V4: [-3.0, 50.0, -99.0]
+    V3: [-6.0, 50.0, 99.0]
+    V4: [-6.0, 50.0, -99.0]
   - CrackID: 2
     Type: "QuadCrack"
-    # 右侧缺口：X 从 3.0 切到极远处位置，留下 X 在 [-3.0, 3.0] 的安全韧带
-    V1: [3.0, 50.0, -99.0]
-    V2: [3.0, 50.0, 99.0]
+    # 右侧缺口：X 从 6.0 切到极远处位置，留下 X 在 [-6.0, 6.0] 的安全韧带
+    V1: [6.0, 50.0, -99.0]
+    V2: [6.0, 50.0, 99.0]
     V3: [99.0, 50.0, 99.0]
     V4: [99.0, 50.0, -99.0]
 
@@ -67,17 +76,20 @@ PreCracks:
 Materials:
   - MatID: 1
     Name: "Ductile_Steel_3D"
-    Type: "J2PlasticityMat"
+    Type: "JCPlasticityMat"
     Density: 8.0e-9 # tonne/mm³
     YoungsModulus: 2.0e5 # MPa
     PoissonsRatio: 0.3
-    YieldStress: 350000000.0 # MPa 初屈服
-    HardeningModulus: 100.0 # MPa 塑性硬化
+    YieldStress: 350.0 # MPa 初屈服
+    HardeningModulus: 1000.0 # MPa 塑性硬化
     HardeningType: "Isotropic"
     LargeDeformation: false
-    Damage:
-      Type: "CriticalStretch"
-      Critical_EqPS: 0.02 # 极大地提升临界塑性，防止全场泛滥，只允许应力集中的缺口尖端撕裂
+    JC_D1: 0.05 # 基础断裂塑性应变阈值
+    JC_D2: 3.44 # 三轴度指数系数 (参考典型碳钢 JC 参数)
+    JC_D3: -2.12 # 三轴度指数因子 (负值表示拉伸三轴度越高越易断裂)
+    Fracture:
+      Type: "DamageValueFracture"
+      Critical_Damage: 0.99
 
 # 7. 求解器与时间管理
 Solver:
@@ -93,12 +105,17 @@ Solver:
     - Step: 2
       Time: 5.0
       KBC: 0 # 第二段：继续维持斜坡平滑，探查塑性大变形
-      NumSubsteps: 100 # 第二段为了精细捕捉塑性屈服大点和断裂跌落阶段，子步非常密集
+      NumSubsteps: 10 # 第二段为了精细捕捉塑性屈服大点和断裂跌落阶段，子步非常密集
+    - Step: 3
+      Time: 10.0
+      KBC: 0 # 第二段：继续维持斜坡平滑，探查塑性大变形
+      NumSubsteps: 10 # 第二段为了精细捕捉塑性屈服大点和断裂跌落阶段，子步非常密集
 
   MaxPseudoSteps: 15000
-  MassScaleFactor: 1.0e8
+  MassScaleFactor: 1.0e10
   RampWaveRatio: 10.0
   DampingMethod: "HybridKinetic"
+  Fracture_Strategy: "Staggered"
   DispTol: 1.0e-5
   ForceTol: 1.0e-3
   OutputInterval: 1000
@@ -117,7 +134,7 @@ Writer:
       Dimension: 1
     - Name: "Volume"
       Dimension: 1
-    - Name: "Damage"
+    - Name: "BondIntegrity"
       Dimension: 1
     - Name: "Displacement"
       Dimension: 3
@@ -126,6 +143,8 @@ Writer:
     - Name: "EqPlasticStrain_Old"
       Dimension: 1
     - Name: "VonMisesStress"
+      Dimension: 1
+    - Name: "Damage_Trial"
       Dimension: 1
     - Name: "ShapeTensorInv"
       Dimension: 9

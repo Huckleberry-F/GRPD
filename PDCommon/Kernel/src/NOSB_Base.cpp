@@ -45,7 +45,8 @@ void NOSB_Base::configure(const YAML::Node &solverNode) {
   // 3. 零能修正方案配置字符串
   if (solverNode["ZeroEnergyMethod"]) {
     zeroEnergyMethodStr_ = solverNode["ZeroEnergyMethod"].as<std::string>();
-    LOG_INFO("[NOSB_Base] Applied ZeroEnergyMethod string: " + zeroEnergyMethodStr_);
+    LOG_INFO("[NOSB_Base] Applied ZeroEnergyMethod string: " +
+             zeroEnergyMethodStr_);
   }
 }
 
@@ -64,7 +65,7 @@ void NOSB_Base::ComputeShapeTensors(PDContext &ctx) {
   // ===================================================================
   auto &reg = FieldRegistry::getInstance();
   auto shapeField = reg.createField("DoubleField", "ShapeTensorInv", 9);
-  auto vhField    = reg.createField("DoubleField", "VHorizon", 1);
+  auto vhField = reg.createField("DoubleField", "VHorizon", 1);
   fieldManager.addField(std::move(shapeField));
   fieldManager.addField(std::move(vhField));
   auto *shapeInvField = fieldManager.getFieldAs<double>("ShapeTensorInv");
@@ -208,29 +209,40 @@ void NOSB_Base::UpdateShapeTensors(PDContext &ctx) {
   auto &fieldManager = ctx.getFieldManager();
 
   const size_t numParticles = manager.getTotalParticles();
-  
+
   auto *shapeInvField = fieldManager.getFieldAs<double>("ShapeTensorInv");
   auto *coordsField = fieldManager.getFieldAs<double>("Coords");
   auto *volumeField = fieldManager.getFieldAs<double>("Volume");
-  auto *damageField = fieldManager.getFieldAs<double>("Damage");
-  
-  if (!shapeInvField || !coordsField || !volumeField) return;
+  auto *bondIntegrityField = fieldManager.getFieldAs<double>("BondIntegrity");
+  auto *activeStatusField = fieldManager.getFieldAs<int>("ActiveStatus");
+
+  if (!shapeInvField || !coordsField || !volumeField)
+    return;
 
   double *shapeInvPtr = shapeInvField->dataPtr();
   const double *coords = coordsField->dataPtr();
   const double *volumes = volumeField->dataPtr();
-  double *damagePtr = damageField ? damageField->dataPtr() : nullptr;
-  
+  double *bondIntegrityPtr =
+      bondIntegrityField ? bondIntegrityField->dataPtr() : nullptr;
+  int *activeStatusPtr =
+      activeStatusField ? activeStatusField->dataPtr() : nullptr;
+
   const double *omegaPtr = neighborList.getBondFieldPtr("InfluenceWeight");
-  if (!omegaPtr) return;
+  if (!omegaPtr)
+    return;
 
   const int dim = ctx.getDimension();
   const int minNeighborsRequired = dim + 1;
 
 #pragma omp parallel for schedule(static)
   for (int i = 0; i < static_cast<int>(numParticles); ++i) {
-    // 若该粒子已被先前的步骤彻底宣告死亡，则跳过计算以节省时间
-    if (damagePtr && damagePtr[i] >= 0.99) continue;
+    // 若该粒子已被宣告死亡，则跳过计算以节省时间并防止奇异性
+    if ((bondIntegrityPtr && bondIntegrityPtr[i] >= 0.99) ||
+        (activeStatusPtr && activeStatusPtr[i] == 0)) {
+      Map<Matrix<double, 3, 3, RowMajor>> K_inv_map(&shapeInvPtr[i * 9]);
+      K_inv_map = Matrix3d::Identity();
+      continue;
+    }
 
     const int numNeighbors = neighborList.getNeighborCount(i);
     const int *neighbors = neighborList.getNeighborIds(i);
@@ -239,14 +251,16 @@ void NOSB_Base::UpdateShapeTensors(PDContext &ctx) {
     // 统计有效邻居数
     int validNeighborCount = 0;
     for (int k = 0; k < numNeighbors; ++k) {
-      if (neighbors[k] != -1) ++validNeighborCount;
+      if (neighbors[k] != -1)
+        ++validNeighborCount;
     }
 
     // 若判定存活键过少，无法维持连续体状态（K 退化），则底层击毙该点
     if (validNeighborCount < minNeighborsRequired) {
       Map<Matrix<double, 3, 3, RowMajor>> K_inv_map(&shapeInvPtr[i * 9]);
       K_inv_map = Matrix3d::Identity();
-      if (damagePtr) damagePtr[i] = 1.0;
+      if (bondIntegrityPtr) bondIntegrityPtr[i] = 1.0;
+      if (activeStatusPtr) activeStatusPtr[i] = 0;
       continue;
     }
 
@@ -256,27 +270,30 @@ void NOSB_Base::UpdateShapeTensors(PDContext &ctx) {
 
     for (int k = 0; k < numNeighbors; ++k) {
       int j = neighbors[k];
-      if (j == -1) continue;
+      if (j == -1)
+        continue;
 
       double omega = omegaPtr[offset + k];
       Vector3d xj(coords[j * 3], coords[j * 3 + 1], coords[j * 3 + 2]);
       Vector3d deltaX = xj - xi;
       double vj = volumes[j];
-      
+
       K += omega * (deltaX * deltaX.transpose()) * vj;
     }
 
-    if (dim == 2) K(2, 2) = 1.0;
+    if (dim == 2)
+      K(2, 2) = 1.0;
 
     double trace_K = K.trace();
     K += (trace_K * 2.5e-3 + 1e-15) * Matrix3d::Identity();
 
     // 检查不可逆性
     if (std::abs(K.determinant()) < 1e-12) {
-       Map<Matrix<double, 3, 3, RowMajor>> K_inv_map(&shapeInvPtr[i * 9]);
-       K_inv_map = Matrix3d::Identity();
-       if (damagePtr) damagePtr[i] = 1.0;
-       continue;
+      Map<Matrix<double, 3, 3, RowMajor>> K_inv_map(&shapeInvPtr[i * 9]);
+      K_inv_map = Matrix3d::Identity();
+      if (bondIntegrityPtr) bondIntegrityPtr[i] = 1.0;
+      if (activeStatusPtr) activeStatusPtr[i] = 0;
+      continue;
     }
 
     Matrix3d K_inv = K.inverse();

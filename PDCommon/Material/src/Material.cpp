@@ -3,14 +3,15 @@
 // ============================================================================
 
 #include "Material.h"
-#include "DamageModel.h"
-#include "DamageRegistry.h"
+#include "FractureModel.h"
+#include "FractureRegistry.h"
 #include "Logger.h"
 
 namespace PDCommon::Material {
 
 // 基础类实现
-Material::Material(const std::string &name) : name_(name), matId_(-1), damageModel_(nullptr) {}
+Material::Material(const std::string &name)
+    : name_(name), matId_(-1), fractureModel_(nullptr) {}
 
 Material::~Material() = default;
 
@@ -23,26 +24,31 @@ int Material::getMatId() const { return matId_; }
 void Material::setMatId(int id) { matId_ = id; }
 
 void Material::initialize(const YAML::Node &matNode) {
-  // 解析依附于该材料独有的损伤准则
-  if (matNode["Damage"]) {
-      if (matNode["Damage"]["Type"]) {
-          std::string damageTypeStr = matNode["Damage"]["Type"].as<std::string>();
-          if (damageTypeStr != "None") {
-               if (PDCommon::Damage::DamageRegistry::getInstance().contains(damageTypeStr)) {
-                   damageModel_ = PDCommon::Damage::DamageRegistry::getInstance().create(damageTypeStr);
-                   if (damageModel_) {
-                       damageModel_->configure(matNode["Damage"]);
-                       LOG_INFO("[Material] Attached DamageModel '" + damageTypeStr + "' to material: " + name_);
-                   }
-               } else {
-                   LOG_ERROR("[Material] Damage model '" + damageTypeStr + "' not found in registry!");
-               }
+  // 解析依附于该材料独有的断裂准则 (新架构下键完整性评估属于 Fracture 模块)
+  if (matNode["Fracture"]) {
+    if (matNode["Fracture"]["Type"]) {
+      std::string damageTypeStr =
+          matNode["Fracture"]["Type"].as<std::string>();
+      if (damageTypeStr != "None") {
+        if (PDCommon::Fracture::FractureRegistry::getInstance().contains(
+                damageTypeStr)) {
+          fractureModel_ = PDCommon::Fracture::FractureRegistry::getInstance().create(
+              damageTypeStr);
+          if (fractureModel_) {
+            fractureModel_->configure(matNode["Fracture"]);
+            LOG_INFO("[Material] Attached FractureModel '" + damageTypeStr +
+                     "' to material: " + name_);
           }
+        } else {
+          LOG_ERROR("[Material] Fracture model '" + damageTypeStr +
+                    "' not found in registry!");
+        }
       }
+    }
   }
 }
-PDCommon::Damage::DamageModel* Material::getDamageModel() const {
-  return damageModel_.get();
+PDCommon::Fracture::FractureModel *Material::getFractureModel() const {
+  return fractureModel_.get();
 }
 
 void Material::allocateStateVariables(PDCommon::Field::FieldManager &fm) {

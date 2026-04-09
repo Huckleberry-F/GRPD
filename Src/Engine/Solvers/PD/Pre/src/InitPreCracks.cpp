@@ -13,8 +13,8 @@ void InitPreCracks(PDCommon::Core::PDContext &ctx, const YAML::Node &config) {
             for (auto crackNode : cracks) {
                 if (crackNode["Type"]) {
                     std::string type = crackNode["Type"].as<std::string>();
-                    if (PDCommon::Damage::PreCrackRegistry::getInstance().contains(type)) {
-                        auto crackModel = PDCommon::Damage::PreCrackRegistry::getInstance().create(type);
+                    if (PDCommon::Fracture::PreCrackRegistry::getInstance().contains(type)) {
+                        auto crackModel = PDCommon::Fracture::PreCrackRegistry::getInstance().create(type);
                         crackModel->configure(crackNode);
                         crackModel->apply(ctx);
                         LOG_INFO("[InitPreCracks] Applied PreCrack of type: " + type);

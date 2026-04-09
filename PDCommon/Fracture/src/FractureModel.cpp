@@ -1,8 +1,8 @@
 // ============================================================================
-// DamageModel.cpp - 提供所有的损伤模型通用底层逻辑
+// FractureModel.cpp - 提供所有的损伤模型通用底层逻辑
 // ============================================================================
 
-#include "DamageModel.h"
+#include "FractureModel.h"
 #include "PDContext.h"
 #include "FieldManager.h"
 #include "FieldRegistry.h"
@@ -10,9 +10,9 @@
 #include "NeighborList.h"
 #include <omp.h>
 
-namespace PDCommon::Damage {
+namespace PDCommon::Fracture {
 
-void DamageModel::preCompute(PDCommon::Core::PDContext &ctx, int matId) {
+void FractureModel::preCompute(PDCommon::Core::PDContext &ctx, int matId) {
   auto &fieldManager = ctx.getFieldManager();
   auto &manager = ctx.getParticleManager();
   auto &neighborList = ctx.getNeighborList();
@@ -20,14 +20,14 @@ void DamageModel::preCompute(PDCommon::Core::PDContext &ctx, int matId) {
   const size_t numParticles = manager.getTotalParticles();
 
   // 1. 获取并分配全局断裂场变量
-  if (!fieldManager.hasField("Damage")) {
-    auto damageField = PDCommon::Field::FieldRegistry::getInstance().createField("DoubleField", "Damage", 1);
-    fieldManager.addField(std::move(damageField));
+  if (!fieldManager.hasField("BondIntegrity")) {
+    auto bondIntegrityField = PDCommon::Field::FieldRegistry::getInstance().createField("DoubleField", "BondIntegrity", 1);
+    fieldManager.addField(std::move(bondIntegrityField));
   }
   
-  auto *damageField = fieldManager.getFieldAs<double>("Damage");
-  damageField->resize(numParticles);
-  damageField->clearToZero();
+  auto *bondIntegrityField = fieldManager.getFieldAs<double>("BondIntegrity");
+  bondIntegrityField->resize(numParticles);
+  bondIntegrityField->clearToZero();
   
   // 2. 统计所有节点的初始键数量，供后续所有衍生损伤模型计算比例使用
   initialBondsCount_.assign(numParticles, 0);
@@ -47,4 +47,4 @@ void DamageModel::preCompute(PDCommon::Core::PDContext &ctx, int matId) {
   }
 }
 
-} // namespace PDCommon::Damage
+} // namespace PDCommon::Fracture

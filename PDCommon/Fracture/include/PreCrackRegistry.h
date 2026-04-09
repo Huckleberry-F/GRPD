@@ -1,5 +1,5 @@
-#ifndef PDCOMMON_DAMAGE_PRECRACKREGISTRY_H
-#define PDCOMMON_DAMAGE_PRECRACKREGISTRY_H
+#ifndef PDCOMMON_FRACTURE_PRECRACKREGISTRY_H
+#define PDCOMMON_FRACTURE_PRECRACKREGISTRY_H
 
 #include "PreCrackModel.h"
 #include <functional>
@@ -7,7 +7,7 @@
 #include <memory>
 #include <string>
 
-namespace PDCommon::Damage {
+namespace PDCommon::Fracture {
 
 class PreCrackRegistry {
 public:
@@ -41,17 +41,17 @@ private:
   std::map<std::string, Creator> registry_;
 };
 
-} // namespace PDCommon::Damage
+} // namespace PDCommon::Fracture
 
 #define REGISTER_PRECRACK_MODEL(Type, Class)                                   \
   namespace {                                                                  \
   struct PreCrackRegister##Type {                                              \
     PreCrackRegister##Type() {                                                 \
-      PDCommon::Damage::PreCrackRegistry::getInstance().registerType(          \
+      PDCommon::Fracture::PreCrackRegistry::getInstance().registerType(          \
           #Type, []() { return std::make_unique<Class>(); });                  \
     }                                                                          \
   };                                                                           \
   static PreCrackRegister##Type global_PreCrackRegister##Type;                 \
   }
 
-#endif // PDCOMMON_DAMAGE_PRECRACKREGISTRY_H
+#endif // PDCOMMON_FRACTURE_PRECRACKREGISTRY_H

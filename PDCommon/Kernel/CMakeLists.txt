@@ -27,5 +27,5 @@ target_sources(Kernel_Obj PRIVATE
 
 target_include_directories(Kernel_Obj PUBLIC include)
 
-target_link_libraries(Kernel_Obj PRIVATE yaml-cpp OpenMP::OpenMP_CXX Utils_Obj Field_Obj Material_Obj Neighbor_Obj Core_Obj Model_Obj Damage_Obj)
+target_link_libraries(Kernel_Obj PRIVATE yaml-cpp OpenMP::OpenMP_CXX Utils_Obj Field_Obj Material_Obj Neighbor_Obj Core_Obj Model_Obj Fracture_Obj)
 target_link_libraries(Kernel_Obj PUBLIC Eigen3::Eigen)

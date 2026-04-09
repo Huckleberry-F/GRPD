@@ -1,10 +1,10 @@
-#ifndef PDCOMMON_DAMAGE_QUADCRACK_H
-#define PDCOMMON_DAMAGE_QUADCRACK_H
+#ifndef PDCOMMON_FRACTURE_QUADCRACK_H
+#define PDCOMMON_FRACTURE_QUADCRACK_H
 
 #include "PreCrackModel.h"
 #include <Eigen/Dense>
 
-namespace PDCommon::Damage {
+namespace PDCommon::Fracture {
 
 /// @brief 四边形面预置裂纹 (QuadCrack)
 /// 通过射线(键)与平面多边形求交判定，降维打击地覆盖 2D/3D 任意空间斜裂纹
@@ -24,6 +24,6 @@ private:
   bool doesIntersect(const Eigen::Vector3d &pA, const Eigen::Vector3d &pB) const;
 };
 
-} // namespace PDCommon::Damage
+} // namespace PDCommon::Fracture
 
-#endif // PDCOMMON_DAMAGE_QUADCRACK_H
+#endif // PDCOMMON_FRACTURE_QUADCRACK_H

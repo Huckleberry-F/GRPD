@@ -62,18 +62,9 @@ LinearElasticMat::ComputeEngineeringStress(const Eigen::Matrix3d &F) const {
 
 Eigen::Matrix3d
 LinearElasticMat::ComputePK1Stress(const Eigen::Matrix3d &F, int particleId) const {
-  // 小应变假设下的简易回拉（大变形应使用对数应变等其他形变度量）
-  // 计算右 Cauchy-Green 张量 C = F^T * F
-  Eigen::Matrix3d C = F.transpose() * F;
-  // 计算 Green-Lagrange 应变张量 E = 0.5 * (C - I)
-  Eigen::Matrix3d E = 0.5 * (C - Eigen::Matrix3d::Identity());
-
-  // 第二类 Piola-Kirchhoff 应力 S
-  double trace = E.trace();
-  Eigen::Matrix3d S =
-      lambda_ * trace * Eigen::Matrix3d::Identity() + 2.0 * mu_ * E;
-  // 第一类 Piola-Kirchhoff 应力 P = F * S
-  return F * S;
+  // 按照工程要求，小应变假设下直接回退到工程应力（柯西应力）
+  Eigen::Matrix3d strain = 0.5 * (F + F.transpose()) - Eigen::Matrix3d::Identity();
+  return ComputeEngineeringStress(strain);
 }
 
 void LinearElasticMat::allocateStateVariables(

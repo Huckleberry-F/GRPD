@@ -3,7 +3,7 @@
 // ============================================================================
 
 #include "NOSB_M.h"
-#include "DamageModel.h"
+#include "FractureModel.h"
 #include "FieldManager.h"
 #include "FieldRegistry.h"
 #include "KernelRegistry.h"
@@ -85,7 +85,7 @@ void NOSB_M::ComputeMechanicalState(PDContext &ctx) {
     // -----------------------------------------------------------------------
 #pragma omp for schedule(guided)
     for (int i = 0; i < static_cast<int>(numParticles); ++i) {
-      if (damagePtr && damagePtr[i] >= 0.99) {
+      if (activeStatusPtr && activeStatusPtr[i] == 0) {
         int idx9 = i * 9;
         FPtr[idx9] = FPtr[idx9 + 4] = FPtr[idx9 + 8] = 1.0;
         FPtr[idx9 + 1] = FPtr[idx9 + 2] = FPtr[idx9 + 3] = 0.0;
@@ -371,17 +371,17 @@ void NOSB_M::computeForceState(PDCommon::Core::PDContext &ctx) {
 
 void NOSB_M::postCompute(PDCommon::Core::PDContext &ctx) {
   auto &matManager = ctx.getMaterialManager();
-  bool damageEvaluated = false;
+  bool fractureEvaluated = false;
   // 遍历所有注册在系统中的材料
   for (const auto &[name, mat] : matManager.getMaterials()) {
-    if (mat && mat->getDamageModel()) {
+    if (mat && mat->getFractureModel()) {
       // 每个具体的断裂准则模型只会遍历自身对应的粒子
-      mat->getDamageModel()->computeDamage(ctx, mat->getMatId());
-      damageEvaluated = true;
+      mat->getFractureModel()->computeFracture(ctx, mat->getMatId());
+      fractureEvaluated = true;
     }
   }
   
-  if (damageEvaluated) {
+  if (fractureEvaluated) {
     // 基于最新存活的键，实时刷新 K 矩阵并彻底摘除坏死点
     UpdateShapeTensors(ctx);
   }

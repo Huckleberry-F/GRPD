@@ -30,7 +30,7 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
     Field_Obj
     Kernel_Obj
     Integration_Obj
-    Damage_Obj
+    Fracture_Obj
 )
 
 

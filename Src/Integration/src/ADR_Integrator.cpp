@@ -35,6 +35,8 @@ void ADR_Integrator::configure(const YAML::Node &solverNode) {
     rampWaveRatio_ = solverNode["RampWaveRatio"].as<double>();
   if (solverNode["DampingMethod"])
     dampingMethod_ = solverNode["DampingMethod"].as<std::string>();
+  if (solverNode["Fracture_Strategy"])
+    fractureStrategy_ = solverNode["Fracture_Strategy"].as<std::string>();
 }
 
 // ---------------------------------------------------------------------------
@@ -140,6 +142,17 @@ void ADR_Integrator::run(PDCommon::Core::PDContext &ctx,
     for (int sub = 0; sub < currentNumSubsteps; ++sub) {
       saveBaseDisplacement();
 
+      // =======================================================================
+      // 断裂稳定化机制分支 (Dual-Strategy Fracture Logic)
+      // =======================================================================
+      bool fractureStabilized = false;
+      int fracIter = 0;
+      // Staggered 模式最多重启15次；FastInnerLoop 模式仅进行 1 次外层循环
+      const int MAX_FRAC_ITERS = (fractureStrategy_ == "Staggered") ? 15 : 1; 
+
+      while (!fractureStabilized && fracIter < MAX_FRAC_ITERS) {
+        fractureStabilized = true;
+
       // [加载因子控制] 根据各自的子步数计算全局或局部LF
       double targetLF = (static_cast<double>(stepIdx) +
                          static_cast<double>(sub + 1) / currentNumSubsteps) /
@@ -181,6 +194,15 @@ void ADR_Integrator::run(PDCommon::Core::PDContext &ctx,
         bcManager.applyConstraints(activeLF, stepConfig.stepId);
         evaluateForces(ctx, kernels, accFieldNames_);
         bcManager.applyConstraints(activeLF, stepConfig.stepId); // 重施约束斩断支座虚假加速度
+
+        // 【混合加速断裂机制分支】：若开启 FastInnerLoop，则在内存循环中做极速判定
+        if (fractureStrategy_ == "FastInnerLoop") {
+            if (iter > rampIters + 20 && iter % 50 == 0) {
+                for (auto &kernel : kernels) {
+                    kernel->postCompute(ctx); // 立刻断键，利用余下步骤阻尼自然耗散
+                }
+            }
+        }
 
         double cn = computeAdaptiveDamping(dt); // 依据响应提取耗散系数
         updateKinematicsLeapfrog(cn, dt);       // 积分器速度/位移步进推演
@@ -239,11 +261,44 @@ void ADR_Integrator::run(PDCommon::Core::PDContext &ctx,
             PDCommon::Utils::StringUtils::toScientific(TOL3_));
       }
 
-      // [物理场后处理演算 (含断裂发生)]
-      // 在ADR充分收敛/退出后执行，基于完全剥离了虚假动能的准静态分布进行断裂判定
-      for (auto &kernel : kernels) {
-        kernel->postCompute(ctx);
+      if (fractureStrategy_ == "Staggered") {
+        // [物理场后处理演算 (含断裂发生)] - 严格交错机制下在静力平衡后执行
+        auto *activeStatusField = ctx.getFieldManager().getFieldAs<int>("ActiveStatus");
+        int healthBefore = 0;
+        if (activeStatusField) {
+          const int *ptr = activeStatusField->dataPtr();
+          int numParticles = ctx.getParticleManager().getTotalParticles();
+          for (int i = 0; i < numParticles; ++i) healthBefore += ptr[i];
+        }
+
+        for (auto &kernel : kernels) {
+          kernel->postCompute(ctx);
+        }
+
+        int healthAfter = 0;
+        if (activeStatusField) {
+          const int *ptr = activeStatusField->dataPtr();
+          int numParticles = ctx.getParticleManager().getTotalParticles();
+          for (int i = 0; i < numParticles; ++i) healthAfter += ptr[i];
+        }
+
+        if (healthAfter < healthBefore) {
+          fractureStabilized = false;
+          LOG_INFO("    >> [*FRACTURE*] " + std::to_string(healthBefore - healthAfter) + 
+                   " points fractured in quasistatic equilibrium! Restarting pseudo-relaxation to dissipate crack energy (FracIter: " + 
+                   std::to_string(fracIter + 1) + ").");
+          
+          isFirstExplicitTick_ = true;
+        }
+      } else {
+        // FastInnerLoop: 外层仅走1次，此处做最后一次保底收尾
+        for (auto &kernel : kernels) {
+          kernel->postCompute(ctx);
+        }
       }
+      
+      fracIter++;
+    } // 结束 Staggered / FastInner 外层循环
 
       // [状态递进]
       for (auto &[matName, matPtr] : ctx.getMaterialManager().getMaterials()) {

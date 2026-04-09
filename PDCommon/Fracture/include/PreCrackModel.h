@@ -1,11 +1,11 @@
-#ifndef PDCOMMON_DAMAGE_PRECRACKMODEL_H
-#define PDCOMMON_DAMAGE_PRECRACKMODEL_H
+#ifndef PDCOMMON_FRACTURE_PRECRACKMODEL_H
+#define PDCOMMON_FRACTURE_PRECRACKMODEL_H
 
 #include <yaml-cpp/yaml.h>
 #include "PDContext.h"
 #include <string>
 
-namespace PDCommon::Damage {
+namespace PDCommon::Fracture {
 
 /// @brief 预置裂纹抽象基类
 class PreCrackModel {
@@ -25,6 +25,6 @@ protected:
   std::string type_;
 };
 
-} // namespace PDCommon::Damage
+} // namespace PDCommon::Fracture
 
-#endif // PDCOMMON_DAMAGE_PRECRACKMODEL_H
+#endif // PDCOMMON_FRACTURE_PRECRACKMODEL_H

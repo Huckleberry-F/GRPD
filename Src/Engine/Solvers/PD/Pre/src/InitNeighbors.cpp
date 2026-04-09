@@ -53,18 +53,18 @@ void InitNeighbors(PDCommon::Core::PDContext &ctx,
              std::to_string(numParticles) + " particles.");
   }
 
-  // 为 DamageModel 及 Writer 提前注册全局 Damage 标量场 (防止第 0 步输出时找不到场)
-  if (!fieldManager.hasField("Damage")) {
-    auto damageFieldNew = PDCommon::Field::FieldRegistry::getInstance()
-        .createField("DoubleField", "Damage", 1);
-    fieldManager.addField(std::move(damageFieldNew));
-  }
-  auto *damageField = fieldManager.getFieldAs<double>("Damage");
-  if (damageField) {
-      damageField->resize(numParticles);
-      damageField->clearToZero();
-      LOG_INFO("[InitNeighbors] Global Damage scalar field properly initialized to 0.0");
-  }
+  // 为 FractureModel 及 Writer 提前注册全局 BondIntegrity 标量场 (防止第 0 步输出时找不到场)
+   if (!fieldManager.hasField("BondIntegrity")) {
+     auto bondIntegrityFieldNew = PDCommon::Field::FieldRegistry::getInstance()
+         .createField("DoubleField", "BondIntegrity", 1);
+     fieldManager.addField(std::move(bondIntegrityFieldNew));
+   }
+   auto *bondIntegrityField = fieldManager.getFieldAs<double>("BondIntegrity");
+   if (bondIntegrityField) {
+       bondIntegrityField->resize(numParticles);
+       bondIntegrityField->clearToZero();
+       LOG_INFO("[InitNeighbors] Global BondIntegrity scalar field properly initialized to 0.0");
+   }
 
   LOG_INFO("[InitNeighbors] Neighbor search phase complete.");
 }

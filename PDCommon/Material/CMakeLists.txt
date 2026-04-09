@@ -11,6 +11,7 @@ add_library(Material_Obj OBJECT
     src/FourierThermalMat.cpp
     src/LinearElasticMat.cpp
     src/J2PlasticityMat.cpp
+    src/JCPlasticityMat.cpp
 )
 
 # 2. Add header files to target
@@ -23,12 +24,13 @@ target_sources(Material_Obj PRIVATE
     include/MechanicalMaterial.h
     include/LinearElasticMat.h
     include/J2PlasticityMat.h
+    include/JCPlasticityMat.h
 )
 
 # 3. Set header include paths for this module
 # PUBLIC ensures targets linking to Material_Obj can see these headers
 target_include_directories(Material_Obj PUBLIC include)
-target_include_directories(Material_Obj PRIVATE ${PROJECT_SOURCE_DIR}/PDCommon/Damage/include)
+target_include_directories(Material_Obj PRIVATE ${PROJECT_SOURCE_DIR}/PDCommon/Fracture/include)
 
 # 4. Link dependencies
 # Note: For OBJECT libraries, this is mainly to propagate include paths

@@ -72,6 +72,9 @@ private:
   /// @brief 阻尼策略："Viscous"=Underwood粘性阻尼, "LocalKinetic"=局部动能阻尼
   std::string dampingMethod_ = "Viscous";
 
+  /// @brief 断裂评估策略："Staggered"=外部交错循环准静力严格断裂, "FastInnerLoop"=内部混合虚时极速发散断裂
+  std::string fractureStrategy_ = "Staggered";
+
   /// @brief 内部辅助：结合 CFL 计算物理波传播所需的最小平滑爬坡步数
   int computeRampIters(PDCommon::Core::PDContext &ctx);
 

@@ -85,7 +85,7 @@ void PDEngine::Initialize(const std::string &yamlPath) {
   Init::InitFields(pdContext_, config);
   Init::InitConditions(pdContext_, config);
   Init::InitNeighbors(pdContext_, config);
-  Init::InitDamageModels(pdContext_, config);
+  Init::InitFractureModels(pdContext_, config);
   Init::InitPreCracks(pdContext_, config);
   Init::InitSolverComponents(config, integrator_, kernels_);
 

@@ -83,6 +83,14 @@ void InitFields(PDCommon::Core::PDContext &ctx,
   size_t numParticles = ctx.getParticleManager().getTotalParticles();
   fieldManager.resizeAll(numParticles);
 
+  auto *activeStatusField = fieldManager.getFieldAs<int>("ActiveStatus");
+  if (activeStatusField) {
+    int *activeStatusPtr = activeStatusField->dataPtr();
+    for (size_t i = 0; i < numParticles; ++i) {
+      activeStatusPtr[i] = 1;
+    }
+    LOG_INFO("[InitFields] ActiveStatus initialized to 1 for all particles.");
+  }
   // 在全部场分配之后进行指针的高速挂载
   LOG_INFO("[InitFields] Binding high-speed material state pointers...");
   for (const auto &[matName, matPtr] : matManager.getMaterials()) {

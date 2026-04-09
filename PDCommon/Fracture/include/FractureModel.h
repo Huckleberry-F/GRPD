@@ -1,9 +1,9 @@
 // ============================================================================
-// DamageModel.h - 损伤/断裂模抽象基类
+// FractureModel.h - 损伤/断裂模抽象基类
 // ============================================================================
 
-#ifndef PDCOMMON_DAMAGE_DAMAGEMODEL_H
-#define PDCOMMON_DAMAGE_DAMAGEMODEL_H
+#ifndef PDCOMMON_FRACTURE_DAMAGEMODEL_H
+#define PDCOMMON_FRACTURE_DAMAGEMODEL_H
 
 #include <yaml-cpp/yaml.h>
 #include <string>
@@ -12,13 +12,13 @@ namespace PDCommon::Core {
 class PDContext;
 }
 
-namespace PDCommon::Damage {
+namespace PDCommon::Fracture {
 
 /// @brief 损伤评估抽象基类
 /// 提供统一接口供近场动力学核心 (PDKernel) 在适当的时机调用。
-class DamageModel {
+class FractureModel {
 public:
-  virtual ~DamageModel() = default;
+  virtual ~FractureModel() = default;
 
   /// @brief 从 YAML 加载模型参数
   virtual void configure(const YAML::Node &node) = 0;
@@ -28,24 +28,24 @@ public:
   virtual void preCompute(PDCommon::Core::PDContext &ctx, int matId = -1);
 
   /// @brief 计算损伤 / 判定键断裂
-  virtual void computeDamage(PDCommon::Core::PDContext &ctx, int matId = -1) = 0;
+  virtual void computeFracture(PDCommon::Core::PDContext &ctx, int matId = -1) = 0;
 
   /// @brief 返回本损伤模型的名字 (用于识别)
   virtual std::string getName() const = 0;
 
 protected:
-  DamageModel() = default;
+  FractureModel() = default;
 
   // 全局缓存的每个节点的初始键数，由基类的 preCompute 统一分配和统计
   std::vector<int> initialBondsCount_;
 
   // 辅助函数：依据当前 activeBonds 安全地计算出 0~1 的损伤标量
-  inline double calculateDamageRatio(int particleIndex, int activeBonds) const {
+  inline double calculateFractureRatio(int particleIndex, int activeBonds) const {
       if (initialBondsCount_.empty() || initialBondsCount_[particleIndex] <= 0) return 0.0;
       return 1.0 - static_cast<double>(activeBonds) / static_cast<double>(initialBondsCount_[particleIndex]);
   }
 };
 
-} // namespace PDCommon::Damage
+} // namespace PDCommon::Fracture
 
-#endif // PDCOMMON_DAMAGE_DAMAGEMODEL_H
+#endif // PDCOMMON_FRACTURE_DAMAGEMODEL_H

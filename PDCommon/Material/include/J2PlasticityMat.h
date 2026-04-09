@@ -45,7 +45,7 @@ public:
   double getYoungsModulus() const override { return youngsModulus_; }
   double getPoissonsRatio() const override { return poissonsRatio_; }
 
-private:
+protected:
   // 基本物理属性
   double density_{-1.0};
   double youngsModulus_{-1.0};
