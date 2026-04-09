@@ -55,9 +55,9 @@ void NOSB_M::ComputeMechanicalState(PDContext &ctx) {
     return;
   }
 
-  // 尝试获取 Damage 场（可能未启用损伤模型）
-  auto *damageField = fieldManager.getFieldAs<double>("Damage");
-  const double *damagePtr = damageField ? damageField->dataPtr() : nullptr;
+  auto *activeStatusField = fieldManager.getFieldAs<int>("ActiveStatus");
+  const int *activeStatusPtr =
+      activeStatusField ? activeStatusField->dataPtr() : nullptr;
 
   // 获取 HPC 指针
   auto *coordsField = fieldManager.getFieldAs<double>("Coords");

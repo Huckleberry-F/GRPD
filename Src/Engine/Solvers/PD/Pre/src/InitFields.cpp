@@ -52,6 +52,12 @@ void InitFields(PDCommon::Core::PDContext &ctx,
 
   PDCommon::IO::MeshData::ensureParticleFields(fieldManager);
 
+  if (!fieldManager.hasField("ActiveStatus")) {
+    auto activeStatusField = PDCommon::Field::FieldRegistry::getInstance()
+        .createField("IntField", "ActiveStatus", 1);
+    fieldManager.addField(std::move(activeStatusField));
+    LOG_INFO("[InitFields] Global ActiveStatus field registered.");
+  }
   auto &matManager = ctx.getMaterialManager();
   size_t maxSDVs = 0;
   for (const auto &[matName, matPtr] : matManager.getMaterials()) {
