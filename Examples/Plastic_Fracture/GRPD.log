@@ -21643,3 +21643,7 @@
     |     Speed: 165 steps/s
     |     > Sub 5 Iter 2000 | Time: 8.000000 | LocalLF: 0.600000 | Res: 6.7726e-01 | cn: 9.8089e-01 |
     |     Speed: 165 steps/s
+    |     > Sub 5 Iter 3000 | Time: 8.000000 | LocalLF: 0.600000 | Res: 1.8741e-01 | cn: 9.6708e-01 |
+    |     Speed: 165 steps/s
+    |     > Sub 5 Iter 4000 | Time: 8.000000 | LocalLF: 0.600000 | Res: 4.1036e-02 | cn: 9.6456e-01 |
+    |     Speed: 164 steps/s
