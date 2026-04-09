@@ -22,15 +22,21 @@ Parts:
     Scale: 1.0
 
 # 3. 边界条件
-BoundaryConditions:
-  - BcID: 1
-    Name: "Impact_Front"
-    # 380 ACP 子弹此时沿 Z 轴摆放 (Z 从 0 到 23.5)。我们假设 Z=23.5 是前端或后端。
-    # 抓取 Z > 22.0 的尖端区域，施加向 -Z 方向的超高速（压缩）模拟狠狠撞向坚硬阻碍物
-    # X, Y 方向自由 (1.0e20)
-    Box: [-999.0, 999.0, -999.0, 999.0, 22.0, 999.0]
-    Type: "VELOCITY"
-    Value: [1.0e20, 1.0e20, -300000.0] # Z 方向强压缩 300 m/s
+LoadStep_Conditions:
+  - Step: 1
+    BoundaryConditions:
+      - BcID: 1
+        Name: "Impact_P1"
+        Box: [-999.0, 999.0, -999.0, 999.0, 22.0, 999.0]
+        Type: "VELOCITY"
+        Value: [1.0e20, 1.0e20, -100000.0] # 第一段：100 m/s 相对较慢
+  - Step: 2
+    BoundaryConditions:
+      - BcID: 2
+        Name: "Impact_P2"
+        Box: [-999.0, 999.0, -999.0, 999.0, 22.0, 999.0]
+        Type: "VELOCITY"
+        Value: [1.0e20, 1.0e20, -300000.0] # 第二段：跃升至 300 m/s
 
 # 4. 预置裂纹 (PreCracks) - 模拟空尖弹 (JHP) 弹头顶端的十字预制引导槽
 # 弹体截面中心坐标约在 X=-37.2, Y=-41.1。我们仅在弹头处（Z=18.0 至 25.0）设置切割槽
@@ -48,18 +54,22 @@ PreCracks:
     V3: [-37.2, -35.0, 25.0]
     V4: [-37.2, -47.0, 25.0]
 
-# 5. 材质物理属性 (钢材的线弹性本构)
+# 5. 材质物理属性 (金属延性材料：J2 弹塑性 + 等效塑性应变断键模型)
 Materials:
   - MatID: 1
-    Name: "Steel_Elastic"
-    Type: "LinearElasticMat"
+    Name: "Steel_Plastic"
+    Type: "J2PlasticityMat"
     Density: 8.0e-9 # tonne/mm³
     YoungsModulus: 1.91e5 # MPa (N/mm²)
     PoissonsRatio: 0.3 # 泊松比
-    # 断裂损伤准则
-    Damage:
-      Type: "CriticalStretch"
-      Critical_Stretch: 0.02 # 超过此伸长率的键将动态断裂
+    YieldStress: 800.0 # MPa 强力子弹钢屈服极限
+    HardeningModulus: 1500.0 # MPa 塑性硬化模量
+    HardeningType: "Isotropic"
+    LargeDeformation: false
+    # 断裂模型
+    Fracture:
+      Type: "EqPSFracture"
+      Critical_EqPS: 0.05 # 核心实现：当双粒子的等效塑性应变达到 0.5 时，它们之间的键发生真正的物理断开
 
 # 5. 求解器控制
 Solver:
@@ -67,9 +77,16 @@ Solver:
   Type: "Mechanical" # [关键] 切换为力学引擎
   Kernel: "NOSB_M"
   TimeIntegrator: "CentralDifference" # [关键] 使用中心差分法
-  TotalTime: 8.7e-6 # 总时长 0.1 s
-  TimeStep_dt: 8.7e-9 # 中心差分的显式时间步(需很小以满足 CFL)
-  OutputInterval: 50 # 每 100 步输出一帧
+  LoadSteps:
+    - Step: 1
+      Time: 4.35e-6
+      TimeStep_dt: 8.7e-9
+      KBC: 1 # KBC=1，代表恒速加载
+    - Step: 2
+      Time: 8.7e-6
+      TimeStep_dt: 8.7e-9
+      KBC: 1 # 跃升后的恒速加载
+  OutputInterval: 50 # 每 50 步输出一帧
   OMP_Threads: 8
   Horizon: 0.603 # 邻域半径 3.015*dx
   KernelWeightType: "Linear"
@@ -91,7 +108,9 @@ Writer:
       Dimension: 3
     - Name: "DeformationGradient"
       Dimension: 9
-    - Name: "Damage" # [关键] 输出损伤场以便 ParaView 渲染裂纹
-      Dimension: 1
-    - Name: "PK1Stress" # [关键] 输出损伤场以便 ParaView 渲染裂纹
+    - Name: "PK1Stress"
       Dimension: 9
+    - Name: "EqPlasticStrain_Old"
+      Dimension: 1
+    - Name: "BondIntegrity"
+      Dimension: 1
