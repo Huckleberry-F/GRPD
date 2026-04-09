@@ -46,7 +46,7 @@ void CentralDifference::run(PDCommon::Core::PDContext &ctx,
   int initKbc = loadStepConfigs_.empty() ? kbc_ : (loadStepConfigs_[0].kbc >= 0 ? loadStepConfigs_[0].kbc : kbc_);
   double initLF = (initKbc == 1) ? 1.0 : 0.0;
   bcManager.applyConstraints(initLF, initialStepId);
-  evaluateForces(ctx, kernels, accFieldNames_);
+  evaluateForces(ctx, kernels, accFieldNames_, initialStepId, initLF);
 
   PDCommon::Utils::Timer timer;
   timer.start();
@@ -101,7 +101,7 @@ void CentralDifference::run(PDCommon::Core::PDContext &ctx,
       updateKinematicsStep1(currentDt);
       bcManager.applyConstraints(activeLF, config.stepId);
 
-      evaluateForces(ctx, kernels, accFieldNames_);
+      evaluateForces(ctx, kernels, accFieldNames_, config.stepId, activeLF);
 
       updateKinematicsStep2(currentDt);
       bcManager.applyConstraints(activeLF, config.stepId);
@@ -109,7 +109,14 @@ void CentralDifference::run(PDCommon::Core::PDContext &ctx,
       for (auto &kernel : kernels) {
         kernel->postCompute(ctx);
       }
+
+      // [状态递进]：非常关键！必须更新本构材料历史变量（如塑性应变 EqPS）
+      for (auto &[matName, matPtr] : ctx.getMaterialManager().getMaterials()) {
+        if (matPtr)
+          matPtr->commitState();
+      }
       // -------------------------------------------------------------
+
 
       timer.tock();
 

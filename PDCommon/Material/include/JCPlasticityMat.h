@@ -38,6 +38,9 @@ private:
   // 损伤场裸指针
   double *damageOld_{nullptr};
   double *damageTrial_{nullptr};
+
+  PDCommon::Field::TypedField<double> *fieldDamageOld_{nullptr};
+  PDCommon::Field::TypedField<double> *fieldDamageTrial_{nullptr};
 };
 
 } // namespace PDCommon::Material

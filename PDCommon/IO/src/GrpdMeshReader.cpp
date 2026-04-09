@@ -94,7 +94,7 @@ bool GrpdMeshReader::scanFile(const std::string &filepath,
 // ---------------------------------------------------------------------------
 // read: 一次扫描同时解析 *PARTICLE 和 *LOAD 段
 //   - *PARTICLE → meshData_ 的几何字段 (coords, nodeIDs, partIDs, matIDs, volumes)
-//   - *LOAD     → meshData_.loads
+//   - *LOAD     → meshData_.loads (ANSYS APDL 单自由度格式)
 // ---------------------------------------------------------------------------
 bool GrpdMeshReader::read(const std::string &filepath) {
   LOG_INFO("[GrpdMeshReader] Reading file: " + filepath);
@@ -107,8 +107,26 @@ bool GrpdMeshReader::read(const std::string &filepath) {
       filepath,
       [&](ParseState state, const std::vector<std::string> &tokens,
           int lineNumber) -> bool {
-        // ===== *PARTICLE 段：解析 ID, PartID, MatID, X, Y, Z, Volume =====
+        // ===== *PARTICLE 段 =====
         if (state == ParseState::READING_PARTICLES) {
+          // 先检查是否为 TotalParticles 元数据行（HPC 预分配）
+          if (tokens.size() == 2 && tokens[0] == "TotalParticles") {
+            try {
+              int total = std::stoi(tokens[1]);
+              meshData_.nodeIDs.reserve(total);
+              meshData_.partIDs.reserve(total);
+              meshData_.matIDs.reserve(total);
+              meshData_.coords.reserve(static_cast<size_t>(total) * 3);
+              meshData_.volumes.reserve(total);
+              LOG_INFO("[GrpdMeshReader] Pre-allocated memory for " +
+                       std::to_string(total) + " particles (Zero-Reallocation)");
+            } catch (...) {
+              LOG_WARNING("[GrpdMeshReader] Failed to parse TotalParticles, skipping pre-allocation");
+            }
+            return true;
+          }
+
+          // 标准粒子数据行：ID, PartID, MatID, X, Y, Z, Volume
           if (tokens.size() != 7) {
             LOG_WARNING("[GrpdMeshReader] Line " +
                         std::to_string(lineNumber) +
@@ -141,7 +159,9 @@ bool GrpdMeshReader::read(const std::string &filepath) {
           }
         }
 
-        // ===== *LOAD 段：解析载荷条目 → meshData_.loads =====
+        // ===== *LOAD 段：ANSYS APDL 单自由度格式 =====
+        // 新格式：NodeID, Step, BcID, DOF(UX/UY/VZ/T/FLUX...), Value
+        // 最少 5 列，可能有第 6 列用于 Table 引用
         if (state == ParseState::READING_LOADS) {
           if (tokens.size() < 5)
             return true;
@@ -151,18 +171,29 @@ bool GrpdMeshReader::read(const std::string &filepath) {
             entry.nodeID = std::stoi(tokens[0]);
             entry.step = std::stoi(tokens[1]);
             entry.bcID = std::stoi(tokens[2]);
-            entry.type = tokens[3];
-            for (size_t i = 4; i < tokens.size(); ++i) {
-                // 如果包含 %Table.txt% ，提取为 TableName
-                if (tokens[i].size() >= 2 && tokens[i].front() == '%' && tokens[i].back() == '%') {
-                    std::string tableName = tokens[i].substr(1, tokens[i].size() - 2);
-                    entry.tableNames.push_back(tableName);
-                    entry.values.push_back(1.0); // 被 Table 覆盖，提供 1.0 的放缩基准
-                } else {
-                    entry.tableNames.push_back("None");
-                    entry.values.push_back(std::stod(tokens[i]));
-                }
+            entry.type = tokens[3]; // DOF 标签：UX, UY, UZ, VX, VY, VZ, T, FLUX 等
+
+            // 第 5 列：数值或 %Table% 引用
+            if (tokens[4].size() >= 2 && tokens[4].front() == '%' && tokens[4].back() == '%') {
+              std::string tableName = tokens[4].substr(1, tokens[4].size() - 2);
+              entry.tableNames.push_back(tableName);
+              entry.values.push_back(1.0); // 被 Table 覆盖，提供 1.0 的放缩基准
+            } else {
+              entry.tableNames.push_back("None");
+              entry.values.push_back(std::stod(tokens[4]));
             }
+
+            // 第 6 列及之后：额外参数（如 ConvectionBC 的 T_inf 等）
+            for (size_t i = 5; i < tokens.size(); ++i) {
+              if (tokens[i].size() >= 2 && tokens[i].front() == '%' && tokens[i].back() == '%') {
+                entry.tableNames.push_back(tokens[i].substr(1, tokens[i].size() - 2));
+                entry.values.push_back(1.0);
+              } else {
+                entry.tableNames.push_back("None");
+                entry.values.push_back(std::stod(tokens[i]));
+              }
+            }
+
             meshData_.loads.push_back(entry);
             loadCount++;
           } catch (const std::exception &e) {

@@ -11,6 +11,7 @@
 // ============================================================================
 
 #include "MechanicalMaterial.h"
+#include "TypedField.h"
 #include <string>
 #include <yaml-cpp/yaml.h>
 
@@ -80,6 +81,14 @@ protected:
 
   // 4. 辅助推导输出：Von Mises 输出标量
   double *vonMises_{nullptr};
+
+  // 面向 O(1) 交换的 TypedField 原生指针句柄缓存
+  PDCommon::Field::TypedField<double> *fieldEqPSOld_{nullptr};
+  PDCommon::Field::TypedField<double> *fieldEqPSTrial_{nullptr};
+  PDCommon::Field::TypedField<double> *fieldPSOld_{nullptr};
+  PDCommon::Field::TypedField<double> *fieldPSTrial_{nullptr};
+  PDCommon::Field::TypedField<double> *fieldBetaOld_{nullptr};
+  PDCommon::Field::TypedField<double> *fieldBetaTrial_{nullptr};
 
   void computeLameParameters();
 };

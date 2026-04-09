@@ -325,6 +325,8 @@ def generate_from_yaml(yaml_path):
         
         # --- 写入几何块 ---
         f.write("*PARTICLE\n")
+        # HPC 前置预分配：向 C++ 引擎提前通告总粒子数，实现 Zero-Reallocation
+        f.write(f"TotalParticles,{total_particles}\n")
         # 表头也对其占位，方便阅读
         f.write(f"#{'ID':>19}, {'PartID':>19}, {'MatID':>19}, {'X':>19}, {'Y':>19}, {'Z':>19}, {'Volume':>19}\n")
         
@@ -334,9 +336,17 @@ def generate_from_yaml(yaml_path):
             line = f"{p['ID']:>20},{p['PartID']:>20},{p['MatID']:>20},{p['X']:>20.6f},{p['Y']:>20.6f},{p['Z']:>20.6f},{p['Volume']:>20.8f}\n"
             f.write(line)
             
-        # --- 写入边界条件块 ---
+        # --- 写入边界条件块 (ANSYS APDL 单自由度格式) ---
         f.write("*LOAD\n")
-        f.write(f"#{'ID':>19}, {'Step':>19}, {'BcID':>19}, {'Type':>19}, {'Value(s)...':>19}\n")
+        f.write(f"#{'ID':>19}, {'Step':>19}, {'BcID':>19}, {'DOF':>19}, {'Value':>19}\n")
+        
+        # DOF 类型映射表：从旧的组合类型 + 轴索引映射到 APDL 标签
+        _DOF_MAP = {
+            'DISP': ['UX', 'UY', 'UZ'],
+            'VELOCITY': ['VX', 'VY', 'VZ'],
+            'BODY_FORCE': ['AX', 'AY', 'AZ'],
+            'PRESSURE': ['PX', 'PY', 'PZ'],
+        }
         
         bc_count = 0
         for entry in bc_entries:
@@ -349,28 +359,54 @@ def generate_from_yaml(yaml_path):
             
             bc_id = bc.get('BcID', 0)
             bc_type = bc['Type']
-            val_data = bc['Value'] 
+            val_data = bc['Value']
+            apply_dir = bc.get('ApplyDir', None)
             
-            # 核心升级：智能处理单参数与多参数，并支持字符串型表格引用 %Table1.txt%
-            if isinstance(val_data, list):
-                val_strs = []
-                for v in val_data:
-                    if isinstance(v, str):
-                        val_strs.append(f"{v:>20}")
-                    else:
-                        val_strs.append(f"{float(v):>20.6f}")
-                val_str = ",".join(val_strs)
-            else:
-                if isinstance(val_data, str):
-                    val_str = f"{val_data:>20}"
+            # ============================================================
+            # ANSYS APDL 单自由度平铺爆炸
+            # ============================================================
+            
+            # 情况 1：已经是单自由度标签 (UX, UY, VZ, T, FLUX, CONV 等)
+            if bc_type not in _DOF_MAP:
+                # 直接写入，值可以是标量或列表
+                if isinstance(val_data, list):
+                    val_str = ",".join([f"{float(v):>20.6f}" if not isinstance(v, str) else f"{v:>20}" for v in val_data])
                 else:
-                    val_str = f"{float(val_data):>20.6f}"
-            
-            for i in range(total_particles):
-                if mask[i]:
-                    line = f"{all_ids[i]:>20},{step_id:>20},{bc_id:>20},{bc_type:>20},{val_str}\n"
-                    f.write(line)
-                    bc_count += 1
+                    val_str = f"{float(val_data):>20.6f}" if not isinstance(val_data, str) else f"{val_data:>20}"
+                
+                for i in range(total_particles):
+                    if mask[i]:
+                        line = f"{all_ids[i]:>20},{step_id:>20},{bc_id:>20},{bc_type:>20},{val_str}\n"
+                        f.write(line)
+                        bc_count += 1
+            else:
+                # 情况 2：旧式组合标签 (DISP, VELOCITY 等)，需要爆炸为单 DOF 行
+                dof_labels = _DOF_MAP[bc_type]
+                
+                # 确保 val_data 是列表
+                if not isinstance(val_data, list):
+                    val_data = [val_data]
+                
+                # 确定每个方向是否生效
+                for axis in range(min(len(val_data), 3)):
+                    # 检查 ApplyDir：如果显式声明了，按它来决定
+                    if apply_dir is not None:
+                        if axis < len(apply_dir) and not apply_dir[axis]:
+                            continue  # 该方向不约束，直接跳过，不生成行
+                    
+                    dof_label = dof_labels[axis]
+                    val = val_data[axis]
+                    
+                    if isinstance(val, str):
+                        val_str = f"{val:>20}"
+                    else:
+                        val_str = f"{float(val):>20.6f}"
+                    
+                    for i in range(total_particles):
+                        if mask[i]:
+                            line = f"{all_ids[i]:>20},{step_id:>20},{bc_id:>20},{dof_label:>20},{val_str}\n"
+                            f.write(line)
+                            bc_count += 1
 
     print(f"[DONE] Assembly complete! Parts: {len(parts)}, Total particles: {total_particles}")
     print(f"[DONE] Mapped {bc_count} boundary condition data points.")

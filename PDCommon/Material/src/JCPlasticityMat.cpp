@@ -50,20 +50,24 @@ void JCPlasticityMat::allocateStateVariables(PDCommon::Field::FieldManager &fm) 
 void JCPlasticityMat::bindStateVariables(PDCommon::Field::FieldManager &fm) {
   J2PlasticityMat::bindStateVariables(fm);
 
-  damageOld_ = fm.getFieldAs<double>("Damage_Old")->dataPtr();
-  damageTrial_ = fm.getFieldAs<double>("Damage_Trial")->dataPtr();
+  fieldDamageOld_ = fm.getFieldAs<double>("Damage_Old");
+  fieldDamageTrial_ = fm.getFieldAs<double>("Damage_Trial");
+
+  damageOld_ = fieldDamageOld_->dataPtr();
+  damageTrial_ = fieldDamageTrial_->dataPtr();
 }
 
 void JCPlasticityMat::commitState() {
   J2PlasticityMat::commitState();
 
-  if (!damageOld_ || !damageTrial_) return;
+  if (!fieldDamageOld_ || !fieldDamageTrial_) return;
 
-  size_t count = numParticles_;
-#pragma omp parallel for schedule(static)
-  for (int i = 0; i < static_cast<int>(count); ++i) {
-    damageOld_[i] = damageTrial_[i];
-  }
+  // 极速 O(1) 交换损伤场！
+  fieldDamageOld_->swapDataWith(*fieldDamageTrial_);
+
+  // 立即刷新内存地址
+  damageOld_ = fieldDamageOld_->dataPtr();
+  damageTrial_ = fieldDamageTrial_->dataPtr();
 }
 
 Eigen::Matrix3d JCPlasticityMat::ComputePK1Stress(const Eigen::Matrix3d &F, int particleId) const {
@@ -80,12 +84,17 @@ Eigen::Matrix3d JCPlasticityMat::ComputePK1Stress(const Eigen::Matrix3d &F, int 
   double alpha_new = eqPSTrial_[particleId];
   double delta_eps_p = std::max(0.0, alpha_new - alpha_old);
 
+  // 追踪静水压 (小变形时 PK1 对角线和依然接近 Cauchy 的迹)
+  double sigma_m = stress.trace() / 3.0;
+
+  // 强制拉伸损伤判定：仅在拉伸状态（静水压 > 0）下才允许损伤累积
+  if (sigma_m <= 0.0) {
+    delta_eps_p = 0.0;
+  }
+
   double eps_f = D1_;
   if (useTriaxiality_) {
-    // 追踪静水压和 Misses 应力
-    double sigma_m = stress.trace() / 3.0; // 小变形时 PK1 对角线和依然接近 Cauchy 的迹
-    double vm = vonMises_[particleId];     // J2 刚算出来的 Mises 应力
-    
+    double vm = vonMises_[particleId]; // J2 刚算出来的 Mises 应力
     double eta = sigma_m / std::max(vm, 1e-6);
     eps_f = D1_ + D2_ * std::exp(D3_ * eta);
     if (eps_f < 0.0) eps_f = 0.0;

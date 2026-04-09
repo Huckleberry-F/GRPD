@@ -82,7 +82,9 @@ void TimeIntegrator::configure(const YAML::Node &solverNode) {
 void TimeIntegrator::evaluateForces(
     PDCommon::Core::PDContext &ctx,
     std::vector<std::unique_ptr<PDKernel>> &kernels,
-    const std::vector<std::string> &rateFieldsToClear) {
+    const std::vector<std::string> &rateFieldsToClear,
+    int currentStep,
+    double activeLF) {
 
   auto &fieldManager = ctx.getFieldManager();
   auto &bcManager = ctx.getBCManager();
@@ -93,8 +95,8 @@ void TimeIntegrator::evaluateForces(
     if (field) field->clearToZero();
   }
 
-  // 2. 施加 Neumann 源项
-  bcManager.applySources();
+  // 2. 施加 Neumann 源项（按当前 LoadStep 和 activeLF 过滤与放缩）
+  bcManager.applySources(activeLF, currentStep);
 
   // 3. 计算内力
   for (auto &kernel : kernels) {

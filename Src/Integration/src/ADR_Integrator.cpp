@@ -192,7 +192,7 @@ void ADR_Integrator::run(PDCommon::Core::PDContext &ctx,
 
         // 💡 [核心工序流水线表达]
         bcManager.applyConstraints(activeLF, stepConfig.stepId);
-        evaluateForces(ctx, kernels, accFieldNames_);
+        evaluateForces(ctx, kernels, accFieldNames_, stepConfig.stepId, activeLF);
         bcManager.applyConstraints(activeLF, stepConfig.stepId); // 重施约束斩断支座虚假加速度
 
         // 【混合加速断裂机制分支】：若开启 FastInnerLoop，则在内存循环中做极速判定

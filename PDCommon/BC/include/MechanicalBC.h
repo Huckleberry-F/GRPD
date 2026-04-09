@@ -2,11 +2,11 @@
 #define PDCOMMON_BC_MECHANICAL_BC_H
 
 // ============================================================================
-// MechanicalBC.h - 力学边界条件派生体系
+// MechanicalBC.h - 力学边界条件派生体系 (ANSYS APDL 单自由度架构)
 // 责任：
 // 1. MechanicalBC 作为力学边界条件的中间抽象类，继承 BC 基类
-// 2. 派生出 DisplacementBC (Dirichlet), BodyForceBC / AccelerationBC (Neumann)
-// 架构规约：通过 REGISTER_BC_TYPE 宏在编译期自动注册到 BCRegistry
+// 2. 每个 BC 实例仅对应单一轴向（Single-DOF）：UX/UY/UZ, VX/VY/VZ 等
+// 3. 通过 REGISTER_BC_TYPE 宏在编译期自动注册到 BCRegistry
 // ============================================================================
 
 #include "BC.h"
@@ -30,26 +30,20 @@ protected:
   PDCommon::Field::TypedField<double> *displacement_;
   PDCommon::Field::TypedField<double> *velocity_;
   PDCommon::Field::TypedField<double> *acceleration_;
-
-  std::string tableName_[3] = {"", "", ""};
 };
 
 /**
- * @brief 位移边界条件 (Dirichlet)
- * u(x, t) = u_fixed
- * 也相应地将速度钳制为 0 (静态约束)
+ * @brief 单轴位移边界条件 (Dirichlet)
+ * 对应 APDL 中的 D, node, UX/UY/UZ, value
+ * 每个实例仅约束单一轴向的位移
  */
 class DisplacementBC : public MechanicalBC {
 public:
-  explicit DisplacementBC(const std::string &name)
-      : MechanicalBC(name), particleId_(-1) {
-    dispVal_[0] = 0.0;
-    dispVal_[1] = 0.0;
-    dispVal_[2] = 0.0;
-    applyDirs_[0] = false;
-    applyDirs_[1] = false;
-    applyDirs_[2] = false;
-  }
+  /// @param name 边界条件名称
+  /// @param axis 工作轴向 (0=X, 1=Y, 2=Z)
+  explicit DisplacementBC(const std::string &name, int axis = 0)
+      : MechanicalBC(name), particleId_(-1), axis_(axis),
+        dispVal_(0.0), prevVal_(0.0) {}
 
   void initialize(PDCommon::Field::FieldManager &fieldManager, int particleId,
                   const std::vector<double> &values) override;
@@ -66,101 +60,92 @@ public:
   void commitEndStep() override;
 
 private:
-  size_t particleId_ = 0;
-  bool applyDirs_[3] = {true, true, true};
-  double dispVal_[3] = {0.0, 0.0, 0.0};
-  double prevVal_[3] = {0.0, 0.0, 0.0};
-  std::string tableName_[3];
+  int particleId_;
+  int axis_;           // 工作轴 (0=X, 1=Y, 2=Z)
+  double dispVal_;     // 位移约束值
+  double prevVal_;     // 上一步的终态值（用于 Ramp 连续加载）
+  std::string tableName_; // 绑定的表格名称
 };
 
 /**
- * @brief 体力/加速度边界条件 (Neumann)
- * a(x, t) = a_fixed (例如重力场 9.8)
+ * @brief 单轴体力/加速度边界条件 (Neumann)
+ * 对应 APDL 中的 F, node, FX/FY/FZ, value
  */
 class BodyForceBC : public MechanicalBC {
 public:
-  explicit BodyForceBC(const std::string &name)
-      : MechanicalBC(name), particleId_(-1) {
-    accVal_[0] = 0.0;
-    accVal_[1] = 0.0;
-    accVal_[2] = 0.0;
-    applyDirs_[0] = false;
-    applyDirs_[1] = false;
-    applyDirs_[2] = false;
-  }
-
-  void initialize(PDCommon::Field::FieldManager &fieldManager, int particleId,
-                  const std::vector<double> &values) override;
-
-  void apply() override;
-  bool isConstraint() const override {
-    return false;
-  } // Neumann: 向加速度场累加
-
-private:
-  int particleId_;
-  double accVal_[3];
-  bool applyDirs_[3];
-};
-/**
- * @brief 速度边界条件 (Dirichlet)
- * v(x, t) = v_fixed
- */
-class VelocityBC : public MechanicalBC {
-public:
-  explicit VelocityBC(const std::string &name)
-      : MechanicalBC(name), particleId_(-1) {
-    velVal_[0] = 0.0;
-    velVal_[1] = 0.0;
-    velVal_[2] = 0.0;
-    applyDirs_[0] = false;
-    applyDirs_[1] = false;
-    applyDirs_[2] = false;
-  }
+  explicit BodyForceBC(const std::string &name, int axis = 0)
+      : MechanicalBC(name), particleId_(-1), axis_(axis), accVal_(0.0), prevVal_(0.0) {}
 
   void initialize(PDCommon::Field::FieldManager &fieldManager, int particleId,
                   const std::vector<double> &values) override;
 
   void apply() override;
   void apply(double loadFactor) override;
-  bool isConstraint() const override {
-    return false;
-  } // Dirichlet: 直接设定速度值
+  void commitEndStep() override;
 
-private:
-  int particleId_;
-  double velVal_[3];
-  bool applyDirs_[3];
-};
-
-/**
- * @brief 压力边界条件 (Neumann)
- * p(x, t) = p_fixed
- */
-class PressureBC : public MechanicalBC {
-public:
-  explicit PressureBC(const std::string &name)
-      : MechanicalBC(name), particleId_(-1) {
-    pressVal_[0] = 0.0;
-    pressVal_[1] = 0.0;
-    pressVal_[2] = 0.0;
-    applyDirs_[0] = false;
-    applyDirs_[1] = false;
-    applyDirs_[2] = false;
-  }
-
-  void initialize(PDCommon::Field::FieldManager &fieldManager, int particleId,
-                  const std::vector<double> &values) override;
-
-  void apply() override;
   bool isConstraint() const override {
     return false;
   } // Neumann: 向加速度场累加
 
 private:
   int particleId_;
-  double pressVal_[3];
-  bool applyDirs_[3];
+  int axis_;       // 工作轴 (0=X, 1=Y, 2=Z)
+  double accVal_;  // 体力/加速度值
+  double prevVal_; // 历史最终态值
+};
+
+/**
+ * @brief 单轴速度边界条件 (Dirichlet)
+ * 对应 APDL 中的 D, node, VX/VY/VZ, value (运动学约束)
+ */
+class VelocityBC : public MechanicalBC {
+public:
+  explicit VelocityBC(const std::string &name, int axis = 0)
+      : MechanicalBC(name), particleId_(-1), axis_(axis), velVal_(0.0), prevVal_(0.0) {}
+
+  void initialize(PDCommon::Field::FieldManager &fieldManager, int particleId,
+                  const std::vector<double> &values) override;
+
+  void apply() override;
+  void apply(double loadFactor) override;
+  void commitEndStep() override;
+
+  bool isConstraint() const override {
+    return true;
+  } // Dirichlet: 强制覆盖速度值
+
+private:
+  int particleId_;
+  int axis_;       // 工作轴 (0=X, 1=Y, 2=Z)
+  double velVal_;  // 速度约束值
+  double prevVal_; // 历史最终态值
+};
+
+/**
+ * @brief 单轴压力边界条件 (Neumann)
+ * 对应 APDL 中的压力施加
+ */
+class PressureBC : public MechanicalBC {
+public:
+  explicit PressureBC(const std::string &name, int axis = 0)
+      : MechanicalBC(name), particleId_(-1), axis_(axis), pressVal_(0.0), prevVal_(0.0) {}
+
+  void initialize(PDCommon::Field::FieldManager &fieldManager, int particleId,
+                  const std::vector<double> &values) override;
+
+  void apply() override;
+  void apply(double loadFactor) override;
+  void commitEndStep() override;
+
+  bool isConstraint() const override {
+    return false;
+  } // Neumann: 向加速度场累加
+
+private:
+  int particleId_;
+  int axis_;         // 工作轴 (0=X, 1=Y, 2=Z)
+  double pressVal_;  // 压力值
+  double prevVal_;   // 历史最终态值
 };
 
 } // namespace PDCommon::BC

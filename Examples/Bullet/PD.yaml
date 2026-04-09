@@ -14,29 +14,29 @@ Assembly: {}
 Parts:
   - PartID: 1
     MatID: 1
-    Dimension: 3
-    Thickness: 1.0
+    Dimension: 2
+    Thickness: 0.2
     Source: "380_acp_bullet.stl" # 已经在当前 Bullet 目录下，直接引用即可
     RepairMesh: false
     dx: 0.2 # 保持网格尺度一致
     Scale: 1.0
 
-# 3. 边界条件
+# 3. 边界条件 (ANSYS APDL 单自由度风格)
 LoadStep_Conditions:
   - Step: 1
     BoundaryConditions:
       - BcID: 1
         Name: "Impact_P1"
         Box: [-999.0, 999.0, -999.0, 999.0, 22.0, 999.0]
-        Type: "VELOCITY"
-        Value: [1.0e20, 1.0e20, -100000.0] # 第一段：100 m/s 相对较慢
+        Type: "VZ"
+        Value: -300000.0 # 第一段：仅 Z 向 100 m/s，X/Y 自由
   - Step: 2
     BoundaryConditions:
       - BcID: 2
         Name: "Impact_P2"
         Box: [-999.0, 999.0, -999.0, 999.0, 22.0, 999.0]
-        Type: "VELOCITY"
-        Value: [1.0e20, 1.0e20, -300000.0] # 第二段：跃升至 300 m/s
+        Type: "VZ"
+        Value: -200000.0 # 第二段：仅 Z 向跃升至 300 m/s
 
 # 4. 预置裂纹 (PreCracks) - 模拟空尖弹 (JHP) 弹头顶端的十字预制引导槽
 # 弹体截面中心坐标约在 X=-37.2, Y=-41.1。我们仅在弹头处（Z=18.0 至 25.0）设置切割槽
@@ -69,7 +69,7 @@ Materials:
     # 断裂模型
     Fracture:
       Type: "EqPSFracture"
-      Critical_EqPS: 0.05 # 核心实现：当双粒子的等效塑性应变达到 0.5 时，它们之间的键发生真正的物理断开
+      Critical_EqPS: 0.2 # 核心实现：当双粒子的等效塑性应变达到 0.5 时，它们之间的键发生真正的物理断开
 
 # 5. 求解器控制
 Solver:
@@ -83,11 +83,11 @@ Solver:
       TimeStep_dt: 8.7e-9
       KBC: 1 # KBC=1，代表恒速加载
     - Step: 2
-      Time: 8.7e-6
+      Time: 8.7e-5
       TimeStep_dt: 8.7e-9
       KBC: 1 # 跃升后的恒速加载
-  OutputInterval: 50 # 每 50 步输出一帧
-  OMP_Threads: 8
+  OutputInterval: 500 # 每 50 步输出一帧
+  OMP_Threads: 16
   Horizon: 0.603 # 邻域半径 3.015*dx
   KernelWeightType: "Linear"
   ZeroEnergyG0: 0.1 # 零能模式修正系数

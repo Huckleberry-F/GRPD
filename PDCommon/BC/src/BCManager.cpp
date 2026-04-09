@@ -10,29 +10,11 @@ void BCManager::addBC(std::unique_ptr<BC> bc, int step) {
     bcs_.push_back({step, std::move(bc)});
 }
 
-void BCManager::applyAll(int currentStep) {
-    for (auto &entry : bcs_) {
-        if (entry.step == 0 || entry.step == currentStep) {
-            entry.bc->apply();
-        }
-    }
-}
-
-void BCManager::applySources(int currentStep) {
+void BCManager::applySources(double loadFactor, int currentStep) {
     for (auto &entry : bcs_) {
         if (entry.step == 0 || entry.step == currentStep) {
             if (!entry.bc->isConstraint()) {
-                entry.bc->apply();
-            }
-        }
-    }
-}
-
-void BCManager::applyConstraints(int currentStep) {
-    for (auto &entry : bcs_) {
-        if (entry.step == 0 || entry.step == currentStep) {
-            if (entry.bc->isConstraint()) {
-                entry.bc->apply();
+                entry.bc->apply(loadFactor);
             }
         }
     }

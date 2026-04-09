@@ -96,6 +96,9 @@ void InitModel(PDCommon::Core::PDContext &ctx, const YAML::Node &config,
   const auto &meshData = reader->getMeshData();
   size_t numPts = meshData.nodeIDs.size();
 
+  // HPC 预分配：利用已知总粒子数，一次性锁定 ParticleManager 内存
+  manager.reserveMemory(numPts);
+
   for (size_t i = 0; i < numPts; ++i) {
     manager.addParticle(meshData.nodeIDs[i], meshData.partIDs[i],
                         meshData.matIDs[i], meshData.coords[i * 3 + 0],

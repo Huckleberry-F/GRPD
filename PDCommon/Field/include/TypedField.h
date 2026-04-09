@@ -33,6 +33,12 @@ public:
   TypedField(TypedField &&) = default;
   TypedField &operator=(TypedField &&) = default;
 
+  /// @brief 以 O(1) 的时间复杂度与另一个 TypedField 交换底层内存
+  void swapDataWith(TypedField<T> &other) {
+    if (this->dim_ != other.dim_) return;
+    this->data_.swap(other.data_);
+  }
+
   // -----------------------------------------------------------------------
   // 覆盖 Field 纯虚接口
   // -----------------------------------------------------------------------

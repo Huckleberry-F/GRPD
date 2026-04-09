@@ -99,7 +99,7 @@ void ExplicitEuler::run(PDCommon::Core::PDContext &ctx,
       int currentKbc = (config.kbc >= 0) ? config.kbc : kbc_;
       double activeLF = (currentKbc == 1) ? 1.0 : stepLoadFactor;
 
-      evaluateForces(ctx, kernels, rateFieldNames_);
+      evaluateForces(ctx, kernels, rateFieldNames_, config.stepId, activeLF);
 
       updateKinematicsEuler(currentDt);
 
@@ -107,6 +107,12 @@ void ExplicitEuler::run(PDCommon::Core::PDContext &ctx,
 
       for (auto &kernel : kernels) {
         kernel->postCompute(ctx);
+      }
+
+      // [状态递进]
+      for (auto &[matName, matPtr] : ctx.getMaterialManager().getMaterials()) {
+        if (matPtr)
+          matPtr->commitState();
       }
       // -------------------------------------------------------------
 

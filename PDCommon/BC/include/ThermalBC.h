@@ -44,7 +44,7 @@ class TemperatureBC : public ThermalBC {
 public:
     /// 工厂构造函数：仅传入名称
     explicit TemperatureBC(const std::string &name)
-        : ThermalBC(name), particleId_(-1), temperatureVal_(0.0) {}
+        : ThermalBC(name), particleId_(-1), temperatureVal_(0.0), prevVal_(0.0) {}
 
     /// 初始化：从 FieldManager 获取场指针，设置粒子 ID 和温度值
     void initialize(PDCommon::Field::FieldManager &fieldManager,
@@ -52,11 +52,14 @@ public:
                     const std::vector<double> &values) override;
 
     void apply() override;
+    void apply(double loadFactor) override;
+    void commitEndStep() override;
     bool isConstraint() const override { return true; }
 
 private:
     int particleId_;
     double temperatureVal_;
+    double prevVal_;
 };
 
 /**
@@ -67,7 +70,7 @@ class HeatFluxBC : public ThermalBC {
 public:
     /// 工厂构造函数
     explicit HeatFluxBC(const std::string &name)
-        : ThermalBC(name), particleId_(-1), flux_(0.0) {}
+        : ThermalBC(name), particleId_(-1), flux_(0.0), prevVal_(0.0) {}
 
     /// 初始化：从 FieldManager 获取场指针，设置粒子 ID 和热流密度
     void initialize(PDCommon::Field::FieldManager &fieldManager,
@@ -75,11 +78,14 @@ public:
                     const std::vector<double> &values) override;
 
     void apply() override;
+    void apply(double loadFactor) override;
+    void commitEndStep() override;
     bool isConstraint() const override { return false; }  // Neumann: 向变化率场累加
 
 private:
     int particleId_;
     double flux_;
+    double prevVal_;
 };
 
 /**
@@ -90,7 +96,7 @@ class ConvectionBC : public ThermalBC {
 public:
     /// 工厂构造函数
     explicit ConvectionBC(const std::string &name)
-        : ThermalBC(name), particleId_(-1), hConv_(0.0), tInf_(0.0) {}
+        : ThermalBC(name), particleId_(-1), hConv_(0.0), tInf_(0.0), prevTInf_(0.0) {}
 
     /// 初始化：从 FieldManager 获取场指针，设置粒子 ID、h 和 T_inf
     void initialize(PDCommon::Field::FieldManager &fieldManager,
@@ -98,12 +104,15 @@ public:
                     const std::vector<double> &values) override;
 
     void apply() override;
+    void apply(double loadFactor) override;
+    void commitEndStep() override;
     bool isConstraint() const override { return false; }  // Robin: 向变化率场累加
 
 private:
     int particleId_;
     double hConv_;
     double tInf_;
+    double prevTInf_; // tInf 随时间放缩
 };
 
 } // namespace PDCommon::BC

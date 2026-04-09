@@ -35,14 +35,8 @@ public:
     /// @param step 隶属的载荷步(0为全局)
     void addBC(std::unique_ptr<BC> bc, int step = 0);
 
-    /// @brief 批量施加所有边界条件
-    void applyAll(int currentStep = 0);
-
-    /// @brief 仅施加源项型边界条件（如热流、对流）
-    void applySources(int currentStep = 0);
-
-    /// @brief 仅施加约束型边界条件（如固定温度）
-    void applyConstraints(int currentStep = 0);
+    /// @brief 按比例施加源项型边界条件（根据 KBC 控制）
+    void applySources(double loadFactor, int currentStep = 0);
 
     /// @brief 按比例施加约束型边界条件（通用：根据 KBC 和 local step load factor）
     /// @param loadFactor 局部载荷系数或阶跃指示器 [0.0, 1.0]

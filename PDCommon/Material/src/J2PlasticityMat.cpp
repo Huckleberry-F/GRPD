@@ -92,17 +92,25 @@ void J2PlasticityMat::allocateStateVariables(
 void J2PlasticityMat::bindStateVariables(PDCommon::Field::FieldManager &fm) {
   numParticles_ = fm.getFieldAs<double>("EqPlasticStrain_Old")->size();
 
-  eqPSOld_ = fm.getFieldAs<double>("EqPlasticStrain_Old")->dataPtr();
-  eqPSTrial_ = fm.getFieldAs<double>("EqPlasticStrain_Trial")->dataPtr();
-  pSOld_ = fm.getFieldAs<double>("PlasticStrain_Old")->dataPtr();
-  pSTrial_ = fm.getFieldAs<double>("PlasticStrain_Trial")->dataPtr();
+  fieldEqPSOld_ = fm.getFieldAs<double>("EqPlasticStrain_Old");
+  fieldEqPSTrial_ = fm.getFieldAs<double>("EqPlasticStrain_Trial");
+  fieldPSOld_ = fm.getFieldAs<double>("PlasticStrain_Old");
+  fieldPSTrial_ = fm.getFieldAs<double>("PlasticStrain_Trial");
   vonMises_ = fm.getFieldAs<double>("VonMisesStress")->dataPtr();
+
+  eqPSOld_ = fieldEqPSOld_->dataPtr();
+  eqPSTrial_ = fieldEqPSTrial_->dataPtr();
+  pSOld_ = fieldPSOld_->dataPtr();
+  pSTrial_ = fieldPSTrial_->dataPtr();
 
   if (hardeningType_ == HardeningType::Kinematic ||
       hardeningType_ == HardeningType::Combined) {
 
-    betaOld_ = fm.getFieldAs<double>("BackStress_Old")->dataPtr();
-    betaTrial_ = fm.getFieldAs<double>("BackStress_Trial")->dataPtr();
+    fieldBetaOld_ = fm.getFieldAs<double>("BackStress_Old");
+    fieldBetaTrial_ = fm.getFieldAs<double>("BackStress_Trial");
+
+    betaOld_ = fieldBetaOld_->dataPtr();
+    betaTrial_ = fieldBetaTrial_->dataPtr();
   }
 }
 
@@ -113,24 +121,23 @@ void J2PlasticityMat::evaluate() {
 }
 
 void J2PlasticityMat::commitState() {
-  // 如果指针为空，放弃写入
-  if (!eqPSOld_ || !eqPSTrial_ || !pSOld_ || !pSTrial_)
+  if (!fieldEqPSOld_ || !fieldEqPSTrial_ || !fieldPSOld_ || !fieldPSTrial_)
     return;
 
-  // 路线二：回归最纯粹且高效的 AoS 内存连体阵列！
-#pragma omp parallel for schedule(static)
-  for (int i = 0; i < static_cast<int>(numParticles_); ++i) {
-    eqPSOld_[i] = eqPSTrial_[i];
-    int idx9 = i * 9;
-    for (int j = 0; j < 9; ++j) {
-      pSOld_[idx9 + j] = pSTrial_[idx9 + j];
-    }
+  // 极速 O(1) 交换！
+  fieldEqPSOld_->swapDataWith(*fieldEqPSTrial_);
+  fieldPSOld_->swapDataWith(*fieldPSTrial_);
 
-    if (betaOld_ && betaTrial_) {
-      for (int j = 0; j < 9; ++j) {
-        betaOld_[idx9 + j] = betaTrial_[idx9 + j];
-      }
-    }
+  // 内存首地址已变更，必须立即更新缓存的高速原生指针
+  eqPSOld_ = fieldEqPSOld_->dataPtr();
+  eqPSTrial_ = fieldEqPSTrial_->dataPtr();
+  pSOld_ = fieldPSOld_->dataPtr();
+  pSTrial_ = fieldPSTrial_->dataPtr();
+
+  if (fieldBetaOld_ && fieldBetaTrial_) {
+    fieldBetaOld_->swapDataWith(*fieldBetaTrial_);
+    betaOld_ = fieldBetaOld_->dataPtr();
+    betaTrial_ = fieldBetaTrial_->dataPtr();
   }
 }
 

@@ -25,6 +25,18 @@ void TemperatureBC::initialize(PDCommon::Field::FieldManager &fieldManager,
 
 void TemperatureBC::apply() { temperature_->set(particleId_, temperatureVal_); }
 
+void TemperatureBC::apply(double loadFactor) {
+  if (!temperature_) return;
+  double activeVal = prevVal_ + (temperatureVal_ - prevVal_) * loadFactor;
+  temperature_->set(particleId_, activeVal);
+}
+
+void TemperatureBC::commitEndStep() {
+  if (!temperature_ || particleId_ < 0) return;
+  prevVal_ = temperature_->get(particleId_);
+}
+
+
 // ===========================================================================
 // HeatFluxBC (Neumann)
 // ===========================================================================
@@ -47,6 +59,19 @@ void HeatFluxBC::apply() {
   tempRate_->add(particleId_, flux_);
   heatFlux_->set(particleId_, flux_);
 }
+
+void HeatFluxBC::apply(double loadFactor) {
+  if (!tempRate_ || !heatFlux_) return;
+  double activeVal = prevVal_ + (flux_ - prevVal_) * loadFactor;
+  tempRate_->add(particleId_, activeVal);
+  heatFlux_->set(particleId_, activeVal);
+}
+
+void HeatFluxBC::commitEndStep() {
+  if (particleId_ < 0) return;
+  prevVal_ = flux_; // 源项认为已经插值到达理想终态
+}
+
 
 // ===========================================================================
 // ConvectionBC (Robin)
@@ -74,6 +99,22 @@ void ConvectionBC::apply() {
   tempRate_->add(particleId_, qConv);
   heatFlux_->set(particleId_, qConv);
 }
+
+void ConvectionBC::apply(double loadFactor) {
+  if (!temperature_ || !tempRate_ || !heatFlux_) return;
+  // 对流中的 T_inf 根据 loadFactor 进行插值
+  double activeTInf = prevTInf_ + (tInf_ - prevTInf_) * loadFactor;
+  double currentT = temperature_->get(particleId_);
+  double qConv = hConv_ * (activeTInf - currentT);
+  tempRate_->add(particleId_, qConv);
+  heatFlux_->set(particleId_, qConv);
+}
+
+void ConvectionBC::commitEndStep() {
+  if (particleId_ < 0) return;
+  prevTInf_ = tInf_; // 对流温度认为已经插值到达理想终态
+}
+
 
 // ============================================================================
 // 编译期工厂注册：将具体子类以 .grpd 中的 Type 名注册到 BCRegistry

@@ -18,42 +18,39 @@ Parts:
     Offset: [0.0, 0.0, 0.0]
     dx: 0.25
 
-# 3. 全局常驻边界（Step 0，永远生效）
+# 3. 全局常驻边界（Step 0，永远生效）—— ANSYS APDL 单自由度风格
 BoundaryConditions:
   - BcID: 1
     Name: "Grip_Bottom"
     Box: [-999.0, 999.0, -1.0, 3.0, -999.0, 999.0]
     Type: "DISP"
-    Value: [0.0, 0.0, 0.0] # 模拟夹具完全夹死（X,Y,Z 都限制横向收缩）
+    Value: [0.0, 0.0, 0.0] # 夹具完全夹死（展开为 UX=0, UY=0, UZ=0 三条记录）
 
-# 4. 多级分步载荷配置（前处理几何阶段）
+# 4. 多级分步载荷配置 —— 仅拉伸 Y 向，直接用 UY 标签
 LoadStep_Conditions:
   - Step: 1
     BoundaryConditions:
       - BcID: 2
         Name: "Grip_Top_Step1"
         Box: [-999.0, 999.0, 97.0, 101.0, -999.0, 999.0]
-        Type: "DISP"
-        ApplyDir: [0, 1, 0] # 仅限定 Y 方向，允许横向受激产生泊松收缩
-        Value: [0.0, 2.0, 0.0] # 第一阶段目标：极快拉伸至 0.5
+        Type: "UY"
+        Value: 2.0 # 第一阶段目标：Y 向拉伸至 2.0，X/Z 自由泊松收缩
 
   - Step: 2
     BoundaryConditions:
       - BcID: 3
         Name: "Grip_Top_Step2"
         Box: [-999.0, 999.0, 97.0, 101.0, -999.0, 999.0]
-        Type: "DISP"
-        ApplyDir: [0, 1, 0]
-        Value: [0.0, 5.0, 0.0] # 第二阶段目标：接续极慢攀爬至 1.0
+        Type: "UY"
+        Value: 5.0 # 第二阶段目标：接续攀爬至 5.0
 
   - Step: 3
     BoundaryConditions:
       - BcID: 4
-        Name: "Grip_Top_Step2"
+        Name: "Grip_Top_Step3"
         Box: [-999.0, 999.0, 97.0, 101.0, -999.0, 999.0]
-        Type: "DISP"
-        ApplyDir: [0, 1, 0]
-        Value: [0.0, 6.0, 0.0] # 第二阶段目标：接续极慢攀爬至 1.0
+        Type: "UY"
+        Value: 6.0 # 第三阶段目标：接续攀爬至 6.0
 
 # 5. 预置裂纹 (在试样中间 Y=50 处，沿 X 轴两侧切出一条对称的缺口平面)
 PreCracks:

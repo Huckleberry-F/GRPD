@@ -99,7 +99,9 @@ protected:
   /// @param rateFieldsToClear  需要清零的率场名称列表（一阶=TempRate, 二阶=Acceleration）
   void evaluateForces(PDCommon::Core::PDContext &ctx,
                       std::vector<std::unique_ptr<PDKernel>> &kernels,
-                      const std::vector<std::string> &rateFieldsToClear);
+                      const std::vector<std::string> &rateFieldsToClear,
+                      int currentStep = 0,
+                      double activeLF = 1.0);
 
   /// @brief 从 Kernel 的注册列表中自动解算和匹配二阶 ODE 系统（如 U -> V -> A）
   /// @param kernels             所有算子内核集合
