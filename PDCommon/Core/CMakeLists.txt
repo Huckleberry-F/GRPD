@@ -16,4 +16,4 @@ target_sources(Core_Obj PRIVATE
 target_include_directories(Core_Obj PUBLIC include)
 
 # 4. Link dependencies: PUBLIC because headers include these modules
-target_link_libraries(Core_Obj PUBLIC Model_Obj Material_Obj Field_Obj Utils_Obj Neighbor_Obj BC_Obj yaml-cpp)
+target_link_libraries(Core_Obj PUBLIC Model_Obj Material_Obj Field_Obj Utils_Obj Neighbor_Obj BC_Obj Contact_Obj yaml-cpp)

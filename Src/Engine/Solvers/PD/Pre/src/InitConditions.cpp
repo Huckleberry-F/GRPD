@@ -11,8 +11,9 @@
 #include <string>
 #include <vector>
 
-
 namespace Src::Engine::Solvers::PD::Init {
+
+using PDCommon::BC::BC;
 
 // ============================================================================
 // 步骤 4：初始化并解析边界条件
@@ -20,9 +21,11 @@ namespace Src::Engine::Solvers::PD::Init {
 // 利用 BCRegistry 生成对应格式的条件多态实例并进行注册挂载。
 // ============================================================================
 void InitConditions(PDCommon::Core::PDContext &ctx, const YAML::Node &config) {
-  LOG_INFO("[InitConditions] ==================================================");
+  LOG_INFO(
+      "[InitConditions] ==================================================");
   LOG_INFO("[InitConditions] Entering Conditions Initialization Phase...");
-  LOG_INFO("[InitConditions] ==================================================");
+  LOG_INFO(
+      "[InitConditions] ==================================================");
 
   auto &ioMgr = PDCommon::IO::IOManager::getInstance();
   std::string grpdPath = ioMgr.getGrpdPath().string();
@@ -55,16 +58,15 @@ void InitConditions(PDCommon::Core::PDContext &ctx, const YAML::Node &config) {
     }
 
     bc->initialize(fieldManager, entry.nodeID, entry.values);
-    bc->setTableNames(entry.tableNames);  // 绑定表格映射名称
+    bc->setTableNames(entry.tableNames); // 绑定表格映射名称
 
     bcStats[entry.type]++;
     bcManager.addBC(std::move(bc), entry.step);
   }
 
   // 初始施加（此时默认第一步的静态载荷，或者是通用全局载荷 Step = 0）
-  // 注意，后续在积分环中 ADR_Integrator 会负责按子步更新当前步的 BC
-  bcManager.applySources(1.0, 0);
-  bcManager.applyConstraints(1.0, 0);
+  BC::applySources(ctx.getBCManager(), 1.0, 0);
+  BC::applyConstraints(ctx.getBCManager(), 1.0, 0);
 
   LOG_INFO("[InitConditions] Load statistics:");
   for (const auto &[type, count] : bcStats) {

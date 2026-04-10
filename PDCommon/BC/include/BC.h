@@ -6,18 +6,30 @@
 // 责任：
 // 1. 定义边界条件的通用接口 (apply, initialize)
 // 2. 作为所有物理场边界条件（热、力等）的根基类
+// 3. 提供静态调度辅助函数（applySources, applyConstraints, commitEndStep）
+//    使调用方无需手写循环，同时保持 Manager 为纯容器
 // 架构规约：对齐 Material 基类设计，支持注册工厂 + 多态调用
 // ============================================================================
 
+#include <memory>
 #include <string>
 #include <vector>
 
-// 前置声明，避免在基类头文件引入具体物理场依赖
+// 前置声明，避免在基类头文件引入具体依赖
 namespace PDCommon::Field {
 class FieldManager;
 }
 
 namespace PDCommon::BC {
+
+class BC;
+class BCManager;
+
+/// @brief 边界条件存储条目（附带载荷步 ID）
+struct BCEntry {
+    int step;                  ///< 隶属的载荷步 (0 = 全局，始终生效)
+    std::unique_ptr<BC> bc;    ///< 边界条件实例
+};
 
 class BC {
 public:
@@ -72,6 +84,21 @@ public:
 
   /// @brief 传入当前时间/进度，执行带 Table 查表的施加逻辑。默认退化为 apply()
   virtual void applyWithTime(double currentTime) { apply(1.0); }
+
+  // -----------------------------------------------------------------------
+  // 静态调度辅助函数（供 TimeIntegrator 等调用方使用，保持 Manager 纯容器）
+  // -----------------------------------------------------------------------
+
+  /// @brief 施加 Neumann 源项（仅作用于非约束型 BC）
+  static void applySources(BCManager &mgr,
+                           double loadFactor, int currentStep = 0);
+
+  /// @brief 施加 Dirichlet 约束（仅作用于约束型 BC）
+  static void applyConstraints(BCManager &mgr,
+                               double loadFactor, int currentStep = 0);
+
+  /// @brief 通知所有 BC 提交载荷步结束状态
+  static void commitEndStep(BCManager &mgr);
 
 protected:
   std::string name_; // 边界条件实例名称

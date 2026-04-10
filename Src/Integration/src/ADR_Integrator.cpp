@@ -18,6 +18,8 @@
 
 namespace Src::Integration {
 
+using PDCommon::BC::BC;
+
 void ADR_Integrator::configure(const YAML::Node &solverNode) {
   TimeIntegrator::configure(solverNode);
 
@@ -91,8 +93,6 @@ void ADR_Integrator::run(PDCommon::Core::PDContext &ctx,
                          std::vector<std::unique_ptr<PDKernel>> &kernels,
                          std::function<void(int, double)> outputCallback) {
 
-  auto &bcManager = ctx.getBCManager();
-
   // 1. 获取物理关联并分配历史信息
   extractSecondOrderTargets(kernels, ctx, soTargets_, accFieldNames_);
   if (soTargets_.empty()) {
@@ -129,14 +129,14 @@ void ADR_Integrator::run(PDCommon::Core::PDContext &ctx,
 
   // 2. 积分主循环
   for (size_t stepIdx = 0; stepIdx < loadStepConfigs_.size(); ++stepIdx) {
-    const auto& stepConfig = loadStepConfigs_[stepIdx];
+    const auto &stepConfig = loadStepConfigs_[stepIdx];
     int step = stepConfig.stepId - 1; // mapping to internal index for logging
     int currentNumSubsteps = stepConfig.numSubsteps;
     int currentKbc = (stepConfig.kbc >= 0) ? stepConfig.kbc : kbc_;
 
     LOG_INFO("=== Load Step " + std::to_string(stepConfig.stepId) + " / " +
-             std::to_string(loadStepConfigs_.size()) + 
-             " | NumSubsteps: " + std::to_string(currentNumSubsteps) + 
+             std::to_string(loadStepConfigs_.size()) +
+             " | NumSubsteps: " + std::to_string(currentNumSubsteps) +
              " | KBC: " + std::to_string(currentKbc) + " ===");
 
     for (int sub = 0; sub < currentNumSubsteps; ++sub) {
@@ -148,159 +148,178 @@ void ADR_Integrator::run(PDCommon::Core::PDContext &ctx,
       bool fractureStabilized = false;
       int fracIter = 0;
       // Staggered 模式最多重启15次；FastInnerLoop 模式仅进行 1 次外层循环
-      const int MAX_FRAC_ITERS = (fractureStrategy_ == "Staggered") ? 15 : 1; 
+      const int MAX_FRAC_ITERS = (fractureStrategy_ == "Staggered") ? 15 : 1;
 
       while (!fractureStabilized && fracIter < MAX_FRAC_ITERS) {
         fractureStabilized = true;
 
-      // [加载因子控制] 根据各自的子步数计算全局或局部LF
-      double targetLF = (static_cast<double>(stepIdx) +
-                         static_cast<double>(sub + 1) / currentNumSubsteps) /
+        // [加载因子控制] 根据各自的子步数计算全局或局部LF
+        double targetLF = (static_cast<double>(stepIdx) +
+                           static_cast<double>(sub + 1) / currentNumSubsteps) /
+                          loadStepConfigs_.size();
+        double prevLF = (static_cast<double>(stepIdx) +
+                         static_cast<double>(sub) / currentNumSubsteps) /
                         loadStepConfigs_.size();
-      double prevLF = (static_cast<double>(stepIdx) +
-                       static_cast<double>(sub) / currentNumSubsteps) /
-                      loadStepConfigs_.size();
 
-      int currentKbc = (stepConfig.kbc >= 0) ? stepConfig.kbc : kbc_;
-      int rampIters = (currentKbc == 1) ? 0 : computeRampIters(ctx); // KBC=1阶跃
-      LOG_INFO("    [Substep " + std::to_string(sub) +
-               "] Computed RampIters: " + std::to_string(rampIters));
+        int currentKbc = (stepConfig.kbc >= 0) ? stepConfig.kbc : kbc_;
+        int rampIters =
+            (currentKbc == 1) ? 0 : computeRampIters(ctx); // KBC=1阶跃
+        LOG_INFO("    [Substep " + std::to_string(sub) +
+                 "] Computed RampIters: " + std::to_string(rampIters));
 
-      bool converged = false;
-      int iter = 0;
+        bool converged = false;
+        int iter = 0;
 
-      while (!converged && iter < maxPseudoSteps_) {
-        bool inRampPhase = (iter < rampIters);
-        double currentLF = targetLF;
-        
-        double baseLocalLF = static_cast<double>(sub + 1) / currentNumSubsteps; 
-        double prevLocalLF = static_cast<double>(sub) / currentNumSubsteps;
-        double currentLocalLF = baseLocalLF;
+        while (!converged && iter < maxPseudoSteps_) {
+          bool inRampPhase = (iter < rampIters);
+          double currentLF = targetLF;
 
-        if (inRampPhase) {
-          currentLF = prevLF + (targetLF - prevLF) *
-                                   (static_cast<double>(iter + 1) / rampIters);
-          currentLocalLF = prevLocalLF + (baseLocalLF - prevLocalLF) * 
-                                         (static_cast<double>(iter + 1) / rampIters);
-        }
-        
-        double activeLF = (currentKbc == 1) ? 1.0 : currentLocalLF;
+          double baseLocalLF =
+              static_cast<double>(sub + 1) / currentNumSubsteps;
+          double prevLocalLF = static_cast<double>(sub) / currentNumSubsteps;
+          double currentLocalLF = baseLocalLF;
 
-        saveOldDisplacement();
+          if (inRampPhase) {
+            currentLF =
+                prevLF + (targetLF - prevLF) *
+                             (static_cast<double>(iter + 1) / rampIters);
+            currentLocalLF =
+                prevLocalLF + (baseLocalLF - prevLocalLF) *
+                                  (static_cast<double>(iter + 1) / rampIters);
+          }
 
-        timer.tick();
+          double activeLF = (currentKbc == 1) ? 1.0 : currentLocalLF;
 
-        // 💡 [核心工序流水线表达]
-        bcManager.applyConstraints(activeLF, stepConfig.stepId);
-        evaluateForces(ctx, kernels, accFieldNames_, stepConfig.stepId, activeLF);
-        bcManager.applyConstraints(activeLF, stepConfig.stepId); // 重施约束斩断支座虚假加速度
+          saveOldDisplacement();
 
-        // 【混合加速断裂机制分支】：若开启 FastInnerLoop，则在内存循环中做极速判定
-        if (fractureStrategy_ == "FastInnerLoop") {
+          timer.tick();
+
+          // ✨ [核心工序流水线表达]
+          BC::applyConstraints(ctx.getBCManager(), activeLF, stepConfig.stepId);
+          evaluateForces(ctx, kernels, accFieldNames_, stepConfig.stepId,
+                         activeLF);
+          BC::applyConstraints(ctx.getBCManager(), activeLF,
+                               stepConfig.stepId); // 重施约束斩断支座虚假加速度
+
+          // 【混合加速断裂机制分支】：若开启
+          // FastInnerLoop，则在内存循环中做极速判定
+          if (fractureStrategy_ == "FastInnerLoop") {
             if (iter > rampIters + 20 && iter % 50 == 0) {
-                for (auto &kernel : kernels) {
-                    kernel->postCompute(ctx); // 立刻断键，利用余下步骤阻尼自然耗散
-                }
+              for (auto &kernel : kernels) {
+                kernel->postCompute(ctx); // 立刻断键，利用余下步骤阻尼自然耗散
+              }
             }
+          }
+
+          double cn = computeAdaptiveDamping(dt); // 依据响应提取耗散系数
+          updateKinematicsLeapfrog(cn, dt);       // 积分器速度/位移步进推演
+
+          BC::applyConstraints(ctx.getBCManager(), activeLF,
+                               stepConfig.stepId); // 始终强制冻结位移边界
+
+          computeConvergenceCriteria(); // 收集收敛 TOL 数据
+
+          timer.tock();
+
+          // [收敛判定与日志输出]
+          if (!inRampPhase && iter > rampIters + 20) {
+            if (TOL2_ < dispTol_ && TOL3_ < forceTol_) {
+              converged = true;
+              LOG_INFO(
+                  "    [Step " + std::to_string(step) + " / Sub " +
+                  std::to_string(sub) + "] Converged. Iter: " +
+                  std::to_string(iter) + " | TOL1(V): " +
+                  PDCommon::Utils::StringUtils::toScientific(TOL1_) +
+                  " | TOL2(dU): " +
+                  PDCommon::Utils::StringUtils::toScientific(TOL2_) +
+                  " | TOL3(Res): " +
+                  PDCommon::Utils::StringUtils::toScientific(TOL3_) +
+                  " | cn: " + PDCommon::Utils::StringUtils::toScientific(cn));
+            }
+          }
+
+          if (iter % outputInterval_ == 0 && iter > 0) {
+            double prevPhysicalTime =
+                (stepIdx == 0) ? 0.0 : loadStepConfigs_[stepIdx - 1].targetTime;
+            double stepPhysicalTime = stepConfig.targetTime;
+            double currentPhysicalTime =
+                prevPhysicalTime +
+                currentLocalLF * (stepPhysicalTime - prevPhysicalTime);
+
+            LOG_INFO(
+                "    > Sub " + std::to_string(sub) + " Iter " +
+                std::to_string(iter) +
+                " | Time: " + std::to_string(currentPhysicalTime) +
+                " | LocalLF: " + std::to_string(currentLocalLF) +
+                " | Res: " + PDCommon::Utils::StringUtils::toScientific(TOL3_) +
+                " | cn: " + PDCommon::Utils::StringUtils::toScientific(cn) +
+                " | Speed: " +
+                std::to_string(static_cast<int>(timer.pureSpeed())) +
+                " steps/s" + (inRampPhase ? " [Ramping]" : ""));
+          }
+
+          iter++;
+          isFirstExplicitTick_ = false;
         }
 
-        double cn = computeAdaptiveDamping(dt); // 依据响应提取耗散系数
-        updateKinematicsLeapfrog(cn, dt);       // 积分器速度/位移步进推演
+        if (!converged) {
+          LOG_WARNING("    [Step " + std::to_string(step) + " / Sub " +
+                      std::to_string(sub) +
+                      "] Reached MaxPseudoSteps without convergence!" +
+                      " | TOL1(V): " +
+                      PDCommon::Utils::StringUtils::toScientific(TOL1_) +
+                      " | TOL2(dU): " +
+                      PDCommon::Utils::StringUtils::toScientific(TOL2_) +
+                      " | TOL3(Res): " +
+                      PDCommon::Utils::StringUtils::toScientific(TOL3_));
+        }
 
-        bcManager.applyConstraints(activeLF, stepConfig.stepId); // 始终强制冻结位移边界
+        if (fractureStrategy_ == "Staggered") {
+          // [物理场后处理演算 (含断裂发生)] - 严格交错机制下在静力平衡后执行
+          auto *activeStatusField =
+              ctx.getFieldManager().getFieldAs<int>("ActiveStatus");
+          int healthBefore = 0;
+          if (activeStatusField) {
+            const int *ptr = activeStatusField->dataPtr();
+            int numParticles = ctx.getParticleManager().getTotalParticles();
+            for (int i = 0; i < numParticles; ++i)
+              healthBefore += ptr[i];
+          }
 
-        computeConvergenceCriteria(); // 收集收敛 TOL 数据
+          for (auto &kernel : kernels) {
+            kernel->postCompute(ctx);
+          }
 
-        timer.tock();
+          int healthAfter = 0;
+          if (activeStatusField) {
+            const int *ptr = activeStatusField->dataPtr();
+            int numParticles = ctx.getParticleManager().getTotalParticles();
+            for (int i = 0; i < numParticles; ++i)
+              healthAfter += ptr[i];
+          }
 
-        // [收敛判定与日志输出]
-        if (!inRampPhase && iter > rampIters + 20) {
-          if (TOL2_ < dispTol_ && TOL3_ < forceTol_) {
-            converged = true;
-            LOG_INFO(
-                "    [Step " + std::to_string(step) + " / Sub " +
-                std::to_string(sub) +
-                "] Converged. Iter: " + std::to_string(iter) + " | TOL1(V): " +
-                PDCommon::Utils::StringUtils::toScientific(TOL1_) +
-                " | TOL2(dU): " +
-                PDCommon::Utils::StringUtils::toScientific(TOL2_) +
-                " | TOL3(Res): " +
-                PDCommon::Utils::StringUtils::toScientific(TOL3_) +
-                " | cn: " + PDCommon::Utils::StringUtils::toScientific(cn));
+          if (healthAfter < healthBefore) {
+            fractureStabilized = false;
+            LOG_INFO("    >> [*FRACTURE*] " +
+                     std::to_string(healthBefore - healthAfter) +
+                     " points fractured in quasistatic equilibrium! Restarting "
+                     "pseudo-relaxation to dissipate crack energy (FracIter: " +
+                     std::to_string(fracIter + 1) + ").");
+
+            isFirstExplicitTick_ = true;
+          }
+        } else {
+          // FastInnerLoop: 外层仅走1次，此处做最后一次保底收尾
+          for (auto &kernel : kernels) {
+            kernel->postCompute(ctx);
           }
         }
 
-        if (iter % outputInterval_ == 0 && iter > 0) {
-          double prevPhysicalTime = (stepIdx == 0) ? 0.0 : loadStepConfigs_[stepIdx - 1].targetTime;
-          double stepPhysicalTime = stepConfig.targetTime;
-          double currentPhysicalTime = prevPhysicalTime + currentLocalLF * (stepPhysicalTime - prevPhysicalTime);
-
-          LOG_INFO(
-              "    > Sub " + std::to_string(sub) + " Iter " +
-              std::to_string(iter) + " | Time: " + std::to_string(currentPhysicalTime) +
-              " | LocalLF: " + std::to_string(currentLocalLF) +
-              " | Res: " + PDCommon::Utils::StringUtils::toScientific(TOL3_) +
-              " | cn: " + PDCommon::Utils::StringUtils::toScientific(cn) +
-              " | Speed: " + std::to_string(static_cast<int>(timer.pureSpeed())) +
-              " steps/s" + (inRampPhase ? " [Ramping]" : ""));
-        }
-
-        iter++;
-        isFirstExplicitTick_ = false;
-      }
-
-      if (!converged) {
-        LOG_WARNING(
-            "    [Step " + std::to_string(step) + " / Sub " +
-            std::to_string(sub) +
-            "] Reached MaxPseudoSteps without convergence!" +
-            " | TOL1(V): " + PDCommon::Utils::StringUtils::toScientific(TOL1_) +
-            " | TOL2(dU): " +
-            PDCommon::Utils::StringUtils::toScientific(TOL2_) +
-            " | TOL3(Res): " +
-            PDCommon::Utils::StringUtils::toScientific(TOL3_));
-      }
-
-      if (fractureStrategy_ == "Staggered") {
-        // [物理场后处理演算 (含断裂发生)] - 严格交错机制下在静力平衡后执行
-        auto *activeStatusField = ctx.getFieldManager().getFieldAs<int>("ActiveStatus");
-        int healthBefore = 0;
-        if (activeStatusField) {
-          const int *ptr = activeStatusField->dataPtr();
-          int numParticles = ctx.getParticleManager().getTotalParticles();
-          for (int i = 0; i < numParticles; ++i) healthBefore += ptr[i];
-        }
-
-        for (auto &kernel : kernels) {
-          kernel->postCompute(ctx);
-        }
-
-        int healthAfter = 0;
-        if (activeStatusField) {
-          const int *ptr = activeStatusField->dataPtr();
-          int numParticles = ctx.getParticleManager().getTotalParticles();
-          for (int i = 0; i < numParticles; ++i) healthAfter += ptr[i];
-        }
-
-        if (healthAfter < healthBefore) {
-          fractureStabilized = false;
-          LOG_INFO("    >> [*FRACTURE*] " + std::to_string(healthBefore - healthAfter) + 
-                   " points fractured in quasistatic equilibrium! Restarting pseudo-relaxation to dissipate crack energy (FracIter: " + 
-                   std::to_string(fracIter + 1) + ").");
-          
-          isFirstExplicitTick_ = true;
-        }
-      } else {
-        // FastInnerLoop: 外层仅走1次，此处做最后一次保底收尾
-        for (auto &kernel : kernels) {
-          kernel->postCompute(ctx);
-        }
-      }
-      
-      fracIter++;
-    } // 结束 Staggered / FastInner 外层循环
+        fracIter++;
+      } // 结束 Staggered / FastInner 外层循环
 
       // [状态递进]
+      ctx.getFieldManager().executeAllRegisteredSwaps();
       for (auto &[matName, matPtr] : ctx.getMaterialManager().getMaterials()) {
         if (matPtr)
           matPtr->commitState();
@@ -308,16 +327,20 @@ void ADR_Integrator::run(PDCommon::Core::PDContext &ctx,
 
       if (outputCallback) {
         globalSubstepCounter++;
-        double prevPhysicalTime = (stepIdx == 0) ? 0.0 : loadStepConfigs_[stepIdx - 1].targetTime;
+        double prevPhysicalTime =
+            (stepIdx == 0) ? 0.0 : loadStepConfigs_[stepIdx - 1].targetTime;
         double stepPhysicalTime = stepConfig.targetTime;
-        double substepFraction = static_cast<double>(sub + 1) / currentNumSubsteps;
-        double currentPhysicalTime = prevPhysicalTime + substepFraction * (stepPhysicalTime - prevPhysicalTime);
+        double substepFraction =
+            static_cast<double>(sub + 1) / currentNumSubsteps;
+        double currentPhysicalTime =
+            prevPhysicalTime +
+            substepFraction * (stepPhysicalTime - prevPhysicalTime);
         outputCallback(globalSubstepCounter, currentPhysicalTime);
       }
     }
 
     // 宣告本 LoadStep 彻底结束，让 Boundary Conditions 记忆最终态
-    bcManager.commitEndStep();
+    BC::commitEndStep(ctx.getBCManager());
   }
 
   timer.logSummary("ADR_Integrator");

@@ -16,6 +16,7 @@
 #include "MaterialRegistry.h"
 #include "TimeIntegratorRegistry.h"
 #include "PhysicsFieldRegistry.h"
+#include "ContactRegistry.h"
 #include "ReaderRegistry.h"
 #include "StabilizerRegistry.h"
 #include <string>
@@ -61,6 +62,8 @@ void PDEngine::printRegistrySummary() const {
            joinTypes(PDCommon::IO::ReaderRegistry::getInstance().getRegisteredTypes()));
   LOG_INFO("[PDEngine]   StabilizerRegistry: " +
            joinTypes(PDCommon::Kernel::StabilizerRegistry::getInstance().getRegisteredTypes()));
+  LOG_INFO("[PDEngine]   ContactRegistry   : " +
+           joinTypes(PDCommon::Contact::ContactRegistry::getInstance().getRegisteredTypes()));
   LOG_INFO("[PDEngine]   MaterialRegistry  : " +
            joinTypes(PDCommon::Material::MaterialRegistry::getInstance().getRegisteredTypes()));
   LOG_INFO("[PDEngine]   KernelRegistry    : " +
@@ -85,6 +88,7 @@ void PDEngine::Initialize(const std::string &yamlPath) {
   Init::InitFields(pdContext_, config);
   Init::InitConditions(pdContext_, config);
   Init::InitNeighbors(pdContext_, config);
+  Init::InitContact(pdContext_, config);
   Init::InitFractureModels(pdContext_, config);
   Init::InitPreCracks(pdContext_, config);
   Init::InitSolverComponents(config, integrator_, kernels_);

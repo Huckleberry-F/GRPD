@@ -39,12 +39,13 @@ def generate_from_yaml(yaml_path):
         
     bc_entries = []
     
-    # 1. 兼容原有的全局 BoundaryConditions (默认 Step = 0, 全时间通用)
+    # 1. 兼容原有全局 BoundaryConditions，并支持崭新的扁平化按步定义 (默认 Step = 0, 全时间通用)
     if 'BoundaryConditions' in config:
         for bc in config['BoundaryConditions']:
-            bc_entries.append({'step': 0, 'bc': bc})
+            step_id = bc.get('Step', 0)  # 如果用户写了 Step，就认 Step。没写默认为 0
+            bc_entries.append({'step': step_id, 'bc': bc})
             
-    # 2. 读取按步骤划分的 LoadStep_Conditions
+    # 2. 兼容旧版深度嵌套的 LoadStep_Conditions 语法
     if 'LoadStep_Conditions' in config:
         for step_node in config['LoadStep_Conditions']:
             step_id = step_node.get('Step', 1)
@@ -298,6 +299,20 @@ def generate_from_yaml(yaml_path):
                 x_flat, y_flat, z_flat = X.ravel(), Y.ravel(), Z.ravel()
                 volume = dx * dx * dx
 
+        # 应用旋转支持 (针对原始矩形网格，绕自身原点旋转)
+        if 'Source' not in part:
+            rotation = part.get('Rotate', [0.0, 0.0, 0.0])
+            if rotation != [0.0, 0.0, 0.0]:
+                rx, ry, rz = np.radians(rotation)
+                Rx = np.array([[1, 0, 0], [0, np.cos(rx), -np.sin(rx)], [0, np.sin(rx), np.cos(rx)]])
+                Ry = np.array([[np.cos(ry), 0, np.sin(ry)], [0, 1, 0], [-np.sin(ry), 0, np.cos(ry)]])
+                Rz = np.array([[np.cos(rz), -np.sin(rz), 0], [np.sin(rz), np.cos(rz), 0], [0, 0, 1]])
+                R = Rz @ Ry @ Rx
+                pts = np.column_stack([x_flat, y_flat, z_flat])
+                pts_rot = pts @ R.T
+                x_flat, y_flat, z_flat = pts_rot[:,0], pts_rot[:,1], pts_rot[:,2]
+                print(f"[BUILD]  Applied primitive rotation: {rotation} degrees")
+
         # 应用平移偏移量 (非常关键，组合装配体必备)
         x_flat = x_flat + offset[0]
         y_flat = y_flat + offset[1]
@@ -334,6 +349,7 @@ def generate_from_yaml(yaml_path):
     all_y = np.array([p['Y'] for p in global_particles])
     all_z = np.array([p['Z'] for p in global_particles])
     all_ids = np.array([p['ID'] for p in global_particles])
+    all_part_ids = np.array([p['PartID'] for p in global_particles])
 
     # 2. 写入极其工整的 .grpd 文件
     output_dir = os.path.dirname(output_file)
@@ -372,6 +388,10 @@ def generate_from_yaml(yaml_path):
             bc = entry['bc']
             
             mask = in_box(all_x, all_y, all_z, bc['Box'])
+            
+            if 'PartID' in bc:
+                mask = mask & (all_part_ids == bc['PartID'])
+                
             if np.sum(mask) == 0:
                 continue
             

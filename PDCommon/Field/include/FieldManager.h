@@ -13,6 +13,10 @@
 #include "TypedField.h"
 #include <map>
 #include <memory>
+#include <set>
+#include <string>
+#include <utility>
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -68,9 +72,23 @@ public:
   /// @brief 对所有已注册的场统一按粒子数分配内存
   void resizeAll(size_t numParticles);
 
+  // -----------------------------------------------------------------------
+  // 全局 Swap 注册与执行机制 (DoD架构防踩踏设计)
+  // -----------------------------------------------------------------------
+
+  /// @brief 声明一对需要在回合末执行指针 O(1) swap 的场
+  /// 使用 Set 自动去重，免疫多材料重复注册
+  void registerSwapPair(const std::string &oldField, const std::string &trialField);
+
+  /// @brief 一次性遍历执行所有已注册的情侣场互换
+  void executeAllRegisteredSwaps();
+
 private:
   /// 物理场容器：场名 -> unique_ptr<Field>
   std::map<std::string, std::unique_ptr<Field>> fields_;
+
+  /// 待互换场的黑名单集合：用于回合末的清理
+  std::set<std::pair<std::string, std::string>> swapPairs_;
 };
 
 // ===========================================================================

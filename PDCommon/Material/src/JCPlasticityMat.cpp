@@ -48,6 +48,9 @@ void JCPlasticityMat::allocateStateVariables(
   auto &reg = PDCommon::Field::FieldRegistry::getInstance();
   fm.addField(reg.createField("DoubleField", "Damage_Old", 1));
   fm.addField(reg.createField("DoubleField", "Damage_Trial", 1));
+
+  // 路线1核心：向中央注册互相绑定的情侣关系，交接 Swap 执行权
+  fm.registerSwapPair("Damage_Old", "Damage_Trial");
 }
 
 void JCPlasticityMat::bindStateVariables(PDCommon::Field::FieldManager &fm) {
@@ -66,10 +69,8 @@ void JCPlasticityMat::commitState() {
   if (!fieldDamageOld_ || !fieldDamageTrial_)
     return;
 
-  // 极速 O(1) 交换损伤场！
-  fieldDamageOld_->swapDataWith(*fieldDamageTrial_);
-
-  // 立即刷新内存地址
+  // 物理内存已被中央 FieldManager O(1) Swap 互换，此处只需刷新原生指针缓存
+  // 彻底免疫多材料踩踏 Bug！
   damageOld_ = fieldDamageOld_->dataPtr();
   damageTrial_ = fieldDamageTrial_->dataPtr();
 }

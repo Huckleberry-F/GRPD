@@ -104,7 +104,7 @@ void ExportVTK(const PDCommon::Core::PDContext &ctx,
         continue;
       }
 
-      if (varName == "ID" || varName == "PartID" || varName == "MatID") {
+      if (varName == "ID" || varName == "PartID" || varName == "MatID" || varName == "IsSurface" || varName == "ActiveStatus") {
         outputer.addIntField(varName);
         continue;
       }

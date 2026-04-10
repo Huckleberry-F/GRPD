@@ -4,6 +4,7 @@
 
 #include "TimeIntegrator.h"
 #include "BCManager.h"
+#include "ContactManager.h"
 #include "FieldManager.h"
 #include "Logger.h"
 #include "MaterialManager.h"
@@ -13,92 +14,106 @@
 #include <cmath>
 #include <omp.h>
 
+
 namespace Src::Integration {
 
+using PDCommon::BC::BC;
+
 void TimeIntegrator::configure(const YAML::Node &solverNode) {
-    if (solverNode["TimeStep_dt"]) {
-      dt_ = solverNode["TimeStep_dt"].as<double>();
-      autoCalcDt_ = false; // 用户显式指定了 dt，关闭自动计算
-    }
-    if (solverNode["TotalTime"]) {
-      totalTime_ = solverNode["TotalTime"].as<double>();
-      defaultEndTime_ = totalTime_;
-    }
-    if (solverNode["KBC"]) {
-      kbc_ = solverNode["KBC"].as<int>();
-    }
-    if (solverNode["NumLoadSteps"])
-      defaultNumLoadSteps_ = solverNode["NumLoadSteps"].as<int>();
-    if (solverNode["NumSubsteps"])
-      defaultNumSubsteps_ = solverNode["NumSubsteps"].as<int>();
+  if (solverNode["TimeStep_dt"]) {
+    dt_ = solverNode["TimeStep_dt"].as<double>();
+    autoCalcDt_ = false; // 用户显式指定了 dt，关闭自动计算
+  }
+  if (solverNode["TotalTime"]) {
+    totalTime_ = solverNode["TotalTime"].as<double>();
+    defaultEndTime_ = totalTime_;
+  }
+  if (solverNode["KBC"]) {
+    kbc_ = solverNode["KBC"].as<int>();
+  }
+  if (solverNode["NumLoadSteps"])
+    defaultNumLoadSteps_ = solverNode["NumLoadSteps"].as<int>();
+  if (solverNode["NumSubsteps"])
+    defaultNumSubsteps_ = solverNode["NumSubsteps"].as<int>();
 
-    if (solverNode["OutputInterval"])
-      outputInterval_ = solverNode["OutputInterval"].as<int>();
-      
-    if (solverNode["OMP_Threads"]) {
-      int threads = solverNode["OMP_Threads"].as<int>();
-      omp_set_num_threads(threads);
-      LOG_INFO("[TimeIntegrator] Explicitly set OMP Threads to: " + std::to_string(threads));
-    }
+  if (solverNode["OutputInterval"])
+    outputInterval_ = solverNode["OutputInterval"].as<int>();
 
-    // 统一解析 LoadSteps 序列
-    loadStepConfigs_.clear();
-    if (solverNode["LoadSteps"] && solverNode["LoadSteps"].IsSequence()) {
-      for (size_t i = 0; i < solverNode["LoadSteps"].size(); ++i) {
-        auto stepNode = solverNode["LoadSteps"][i];
-        LoadStepConfig config;
-        config.stepId = static_cast<int>(i) + 1;
-        if (stepNode["Step"]) config.stepId = stepNode["Step"].as<int>();
-        
-        config.numSubsteps = stepNode["NumSubsteps"] ? stepNode["NumSubsteps"].as<int>() : defaultNumSubsteps_;
-        
-        if (stepNode["Time"]) {
-          config.targetTime = stepNode["Time"].as<double>();
-        } else if (stepNode["TargetTime"]) {
-          config.targetTime = stepNode["TargetTime"].as<double>();
-        } else {
-          config.targetTime = defaultEndTime_;
-        }
+  if (solverNode["OMP_Threads"]) {
+    int threads = solverNode["OMP_Threads"].as<int>();
+    omp_set_num_threads(threads);
+    LOG_INFO("[TimeIntegrator] Explicitly set OMP Threads to: " +
+             std::to_string(threads));
+  }
 
-        if (stepNode["TimeStep_dt"]) config.userDt = stepNode["TimeStep_dt"].as<double>();
-        if (stepNode["KBC"]) config.kbc = stepNode["KBC"].as<int>();
-        
-        loadStepConfigs_.push_back(config);
+  // 统一解析 LoadSteps 序列
+  loadStepConfigs_.clear();
+  if (solverNode["LoadSteps"] && solverNode["LoadSteps"].IsSequence()) {
+    for (size_t i = 0; i < solverNode["LoadSteps"].size(); ++i) {
+      auto stepNode = solverNode["LoadSteps"][i];
+      LoadStepConfig config;
+      config.stepId = static_cast<int>(i) + 1;
+      if (stepNode["Step"])
+        config.stepId = stepNode["Step"].as<int>();
+
+      config.numSubsteps = stepNode["NumSubsteps"]
+                               ? stepNode["NumSubsteps"].as<int>()
+                               : defaultNumSubsteps_;
+
+      if (stepNode["Time"]) {
+        config.targetTime = stepNode["Time"].as<double>();
+      } else if (stepNode["TargetTime"]) {
+        config.targetTime = stepNode["TargetTime"].as<double>();
+      } else {
+        config.targetTime = defaultEndTime_;
       }
-    } else {
-      // 没有任何显式定义序列时，退化为默认的一组均等划分或单一物理时段
-      int steps = std::max(1, defaultNumLoadSteps_);
-      for (int i = 0; i < steps; ++i) {
-        LoadStepConfig config;
-        config.stepId = i + 1;
-        config.numSubsteps = defaultNumSubsteps_;
-        // 显式总时间按步数均分（如果缺省按步分段计算）
-        config.targetTime = defaultEndTime_ * static_cast<double>(i + 1) / static_cast<double>(steps);
-        loadStepConfigs_.push_back(config);
-      }
+
+      if (stepNode["TimeStep_dt"])
+        config.userDt = stepNode["TimeStep_dt"].as<double>();
+      if (stepNode["KBC"])
+        config.kbc = stepNode["KBC"].as<int>();
+
+      loadStepConfigs_.push_back(config);
     }
+  } else {
+    // 没有任何显式定义序列时，退化为默认的一组均等划分或单一物理时段
+    int steps = std::max(1, defaultNumLoadSteps_);
+    for (int i = 0; i < steps; ++i) {
+      LoadStepConfig config;
+      config.stepId = i + 1;
+      config.numSubsteps = defaultNumSubsteps_;
+      // 显式总时间按步数均分（如果缺省按步分段计算）
+      config.targetTime = defaultEndTime_ * static_cast<double>(i + 1) /
+                          static_cast<double>(steps);
+      loadStepConfigs_.push_back(config);
+    }
+  }
 }
 
 void TimeIntegrator::evaluateForces(
     PDCommon::Core::PDContext &ctx,
     std::vector<std::unique_ptr<PDKernel>> &kernels,
-    const std::vector<std::string> &rateFieldsToClear,
-    int currentStep,
+    const std::vector<std::string> &rateFieldsToClear, int currentStep,
     double activeLF) {
 
   auto &fieldManager = ctx.getFieldManager();
-  auto &bcManager = ctx.getBCManager();
 
   // 1. 清零指定的率场
   for (const auto &name : rateFieldsToClear) {
     auto *field = fieldManager.getFieldAs<double>(name);
-    if (field) field->clearToZero();
+    if (field)
+      field->clearToZero();
   }
 
-  // 2. 施加 Neumann 源项（按当前 LoadStep 和 activeLF 过滤与放缩）
-  bcManager.applySources(activeLF, currentStep);
+  // 2. 施加 Neumann 源项
+  BC::applySources(ctx.getBCManager(), activeLF, currentStep);
 
-  // 3. 计算内力
+  // 3. 接触系统源项注入（由调用方直接遍历接触对，Manager 不参与调度）
+  for (auto &[name, contact] : ctx.getContactManager().getContactPairs()) {
+    contact->computeContactForce(ctx);
+  }
+
+  // 4. 计算内力
   for (auto &kernel : kernels) {
     kernel->computeForceState(ctx);
   }
@@ -109,8 +124,7 @@ void TimeIntegrator::evaluateForces(
 // dt = safetyFactor * dx / sqrt(E / (rho * massScale))
 // ---------------------------------------------------------------------------
 void TimeIntegrator::computeCFLTimestep(PDCommon::Core::PDContext &ctx,
-                                        double massScale,
-                                        double safetyFactor) {
+                                        double massScale, double safetyFactor) {
   auto &matManager = ctx.getMaterialManager();
   auto &fieldManager = ctx.getFieldManager();
 
@@ -118,7 +132,8 @@ void TimeIntegrator::computeCFLTimestep(PDCommon::Core::PDContext &ctx,
   auto *volumeField = fieldManager.getFieldAs<double>("Volume");
   if (!volumeField) {
     LOG_WARNING("[TimeIntegrator] Volume field not found, cannot auto-calc dt. "
-                "Using dt = " + std::to_string(dt_));
+                "Using dt = " +
+                std::to_string(dt_));
     return;
   }
 
@@ -128,8 +143,8 @@ void TimeIntegrator::computeCFLTimestep(PDCommon::Core::PDContext &ctx,
   // 遍历所有材料，取最大有效波速（最保守的 dt）
   double maxWaveSpeed = 0.0;
   for (const auto &[name, matPtr] : matManager.getMaterials()) {
-    auto *mechMat = dynamic_cast<PDCommon::Material::MechanicalMaterial *>(
-        matPtr.get());
+    auto *mechMat =
+        dynamic_cast<PDCommon::Material::MechanicalMaterial *>(matPtr.get());
     if (mechMat) {
       double E = mechMat->getYoungsModulus();
       double rho = mechMat->getDensity();
@@ -146,12 +161,13 @@ void TimeIntegrator::computeCFLTimestep(PDCommon::Core::PDContext &ctx,
   if (maxWaveSpeed > 1e-30) {
     dt_ = safetyFactor * dx / maxWaveSpeed;
     LOG_INFO("[" + getName() + "] Auto CFL dt: dx = " + std::to_string(dx) +
-             ", c = " + std::to_string(maxWaveSpeed) +
-             ", massScale = " + std::to_string(massScale) +
-             ", dt = " + std::to_string(dt_));
+             ", c = " + std::to_string(maxWaveSpeed) + ", massScale = " +
+             std::to_string(massScale) + ", dt = " + std::to_string(dt_));
   } else {
-    LOG_WARNING("[" + getName() + "] No valid MechanicalMaterial for CFL. "
-                "Using default dt = " + std::to_string(dt_));
+    LOG_WARNING("[" + getName() +
+                "] No valid MechanicalMaterial for CFL. "
+                "Using default dt = " +
+                std::to_string(dt_));
   }
 }
 
@@ -190,15 +206,14 @@ void TimeIntegrator::extractSecondOrderTargets(
             }
           }
           if (!alreadyAdded) {
-            out_soTargets.push_back({
-                tb.primaryField, ta.primaryField, ta.rateField,
-                uField->dataPtr(), vField->dataPtr(), aField->dataPtr(),
-                numParticles * tb.dimension,
-                tb.dimension
-            });
+            out_soTargets.push_back(
+                {tb.primaryField, ta.primaryField, ta.rateField,
+                 uField->dataPtr(), vField->dataPtr(), aField->dataPtr(),
+                 numParticles * tb.dimension, tb.dimension});
             out_accFieldNames.push_back(ta.rateField);
-            LOG_INFO("[" + getName() + "] Identified 2nd-order ODE coupling: " +
-                     tb.primaryField + " <- " + ta.primaryField + " <- " + ta.rateField);
+            LOG_INFO("[" + getName() +
+                     "] Identified 2nd-order ODE coupling: " + tb.primaryField +
+                     " <- " + ta.primaryField + " <- " + ta.rateField);
           }
         }
       }
@@ -225,8 +240,8 @@ void TimeIntegrator::extractFirstOrderTargets(
       auto *rateField = fieldManager.getFieldAs<double>(target.rateField);
 
       if (!primaryField || !rateField) {
-        LOG_WARNING("[" + getName() + "] Field '" + target.primaryField + "' or '" +
-                    target.rateField + "' not found, skipping.");
+        LOG_WARNING("[" + getName() + "] Field '" + target.primaryField +
+                    "' or '" + target.rateField + "' not found, skipping.");
         continue;
       }
 
@@ -239,14 +254,14 @@ void TimeIntegrator::extractFirstOrderTargets(
       }
 
       if (!alreadyAdded) {
-        out_foTargets.push_back({
-            target.primaryField, target.rateField,
-            primaryField->dataPtr(), rateField->dataPtr(),
-            numParticles * static_cast<size_t>(target.dimension),
-            target.dimension
-        });
+        out_foTargets.push_back(
+            {target.primaryField, target.rateField, primaryField->dataPtr(),
+             rateField->dataPtr(),
+             numParticles * static_cast<size_t>(target.dimension),
+             target.dimension});
         out_rateFieldNames.push_back(target.rateField);
-        LOG_INFO("[" + getName() + "] Identified 1st-order ODE integration target: " +
+        LOG_INFO("[" + getName() +
+                 "] Identified 1st-order ODE integration target: " +
                  target.primaryField + " <- " + target.rateField);
       }
     }

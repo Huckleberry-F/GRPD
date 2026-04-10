@@ -15,6 +15,7 @@
 #include "MaterialManager.h"
 #include "NeighborList.h"
 #include "ParticleManager.h"
+#include "ContactManager.h"
 #include <memory>
 #include <string>
 
@@ -87,6 +88,12 @@ public:
   const PDCommon::BC::BCManager &getBCManager() const { return bcManager_; }
 
   // -----------------------------------------------------------------------
+  // 接触系统管理器 (ContactManager)
+  // -----------------------------------------------------------------------
+  PDCommon::Contact::ContactManager &getContactManager() { return contactManager_; }
+  const PDCommon::Contact::ContactManager &getContactManager() const { return contactManager_; }
+
+  // -----------------------------------------------------------------------
   // 模型维度 (2D / 3D)
   // -----------------------------------------------------------------------
 
@@ -107,6 +114,7 @@ private:
       neighborList_; ///< 近邻列表（按需分配）
 
   PDCommon::BC::BCManager bcManager_; ///< 边界条件管理器
+  PDCommon::Contact::ContactManager contactManager_; ///< 接触系统管理器
 };
 
 } // namespace PDCommon::Core

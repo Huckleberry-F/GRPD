@@ -75,14 +75,19 @@ void J2PlasticityMat::allocateStateVariables(
 
   fm.addField(reg.createField("DoubleField", "EqPlasticStrain_Old", 1));
   fm.addField(reg.createField("DoubleField", "EqPlasticStrain_Trial", 1));
+  fm.registerSwapPair("EqPlasticStrain_Old", "EqPlasticStrain_Trial");
+
   fm.addField(reg.createField("DoubleField", "PlasticStrain_Old", 9));
   fm.addField(reg.createField("DoubleField", "PlasticStrain_Trial", 9));
+  fm.registerSwapPair("PlasticStrain_Old", "PlasticStrain_Trial");
+
   fm.addField(reg.createField("DoubleField", "VonMisesStress", 1));
 
   if (hardeningType_ == HardeningType::Kinematic ||
       hardeningType_ == HardeningType::Combined) {
     fm.addField(reg.createField("DoubleField", "BackStress_Old", 9));
     fm.addField(reg.createField("DoubleField", "BackStress_Trial", 9));
+    fm.registerSwapPair("BackStress_Old", "BackStress_Trial");
   }
 
   // 注意：真实分配是在所有类型申请完后统一进行的，因此在 allocate
@@ -124,18 +129,14 @@ void J2PlasticityMat::commitState() {
   if (!fieldEqPSOld_ || !fieldEqPSTrial_ || !fieldPSOld_ || !fieldPSTrial_)
     return;
 
-  // 极速 O(1) 交换！
-  fieldEqPSOld_->swapDataWith(*fieldEqPSTrial_);
-  fieldPSOld_->swapDataWith(*fieldPSTrial_);
-
-  // 内存首地址已变更，必须立即更新缓存的高速原生指针
+  // 物理内存的实质翻转已由 CentralDifference 回合末调用 fm.executeAllRegisteredSwaps() 统一在 O(1) 内完成
+  // 此处材料仅需执行指针的同步刷新，彻底解耦物理计算与内存排布
   eqPSOld_ = fieldEqPSOld_->dataPtr();
   eqPSTrial_ = fieldEqPSTrial_->dataPtr();
   pSOld_ = fieldPSOld_->dataPtr();
   pSTrial_ = fieldPSTrial_->dataPtr();
 
-  if (fieldBetaOld_ && fieldBetaTrial_) {
-    fieldBetaOld_->swapDataWith(*fieldBetaTrial_);
+  if (betaOld_ && betaTrial_ && fieldBetaOld_ && fieldBetaTrial_) {
     betaOld_ = fieldBetaOld_->dataPtr();
     betaTrial_ = fieldBetaTrial_->dataPtr();
   }

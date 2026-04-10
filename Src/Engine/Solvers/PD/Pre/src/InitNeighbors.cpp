@@ -4,6 +4,7 @@
 #include "FieldManager.h"
 #include "NeighborList.h"
 #include "FieldRegistry.h"
+#include "SurfaceDetector.h"
 
 namespace Src::Engine::Solvers::PD::Init {
 
@@ -65,6 +66,9 @@ void InitNeighbors(PDCommon::Core::PDContext &ctx,
        bondIntegrityField->clearToZero();
        LOG_INFO("[InitNeighbors] Global BondIntegrity scalar field properly initialized to 0.0");
    }
+
+  // 计算表面粒子（Volume Deficit Method）
+  PDCommon::Contact::SurfaceDetector::identifySurfaceParticles(ctx, 0.95);
 
   LOG_INFO("[InitNeighbors] Neighbor search phase complete.");
 }

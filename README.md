@@ -278,6 +278,7 @@ sequenceDiagram
 General-Peridynamics/
 ├── PDCommon/          # 核心底层通用架构与各类计算基底构件 (Core Base)
 │   ├── BC/            # → 边界约束容器：位移锁定(DISP)/外力载荷(BODY_FORCE)/速度场控制
+│   ├── Contact/       # → 接触惩罚体系：跨材料防穿透搜索树与自动接触刚度标定
 │   ├── Core/          # → 全局类型定义与内存配置抽象基类
 │   ├── Damage/        # → 损伤力学架构：解耦的断裂模型组件与预制裂纹形态注册表
 │   ├── Field/         # → 数据大动脉：连续内存场(SoA)生态与分配池
@@ -305,6 +306,13 @@ General-Peridynamics/
 ---
 
 ## 📌 版本更新日志 (Changelog)
+
+### v4.0 — 强非线性接触引擎与面向数据防腐架构 (Robust Contact Mechanics & DoD Refactoring)
+
+- **物理化罚函数接触弹簧 (Penalty-Based Contact Kinematics)**: 实现了跨材料的防穿透接触斥力系统 `PenaltyContact`。首次引入基于体积缺损算法判定的动态表面剥离体系 `SurfaceDetector`。系统可通过读取关联材料的体积模量 (Bulk Modulus)，全自动计算稳健的基准接触刚度。配合安全下探探测率 (`PinballRatio`)，完美隔绝了不同 `PartID` 子网格的高速幽灵穿模现象爆发。
+- **面向数据级 (DoD) 中央内存互换网管 (State Swap Manager)**: 针对多物理材料模型（如子弹+靶板同时应用断裂算法）导致的底层指针反复翻车灾难，重写了 `FieldManager` 的双指针互换层。剥夺了具体求解模块的状态切权，由全局引擎实行统一的 `executeAllRegisteredSwaps` O(1) 纳秒级指针换绑，从根本上实现了安全可靠、零拷贝的千军万马显式代数推进。
+- **全局域穿刺边界控制 (Part-ID Bounding Override)**: 对 Python 核心预处理算子 `generate_model.py` 实施黑科技魔改，使 `.yaml` 解析内核正式支持以 `PartID` 直接圈定全尺寸零件。完美解决了由于几何包围盒重叠、倾斜网格相交导致的约束误伤边界，将 Dirichlet 时间锁定边界发挥得犹如“手术刀般精准”。
+- **单步隐式冲量与自由断离支持**: 解决了长期以来的动量方程“永久神权锁定”悖论。确立了在短兵相接的前置 `Step 1` 内实施初速度（微秒级）强锁、继而在后续大局观剥离的隐式“初速赋予法”，还原了高能金属材料接触后的疯狂拉扯与塑性飞洒碎裂。
 
 ### v3.2 — 高性能内存布局演进与高速冲击动力学蓝图 (HPC Architecture & Explicit Dynamics Roadmap)
 
@@ -434,15 +442,14 @@ General-Peridynamics/
 - **Johnson-Cook 军工级弹塑性本构基地**: 抛弃单纯的 J2 塑性，全面引入融合`(硬化项) × (应变率敏感) × (热软化)`的高速动态本构 `JCPlasticityMat`。支持零成本 O(1) 的指针态基替换，完全支撑纳秒级显式时间差分的极限运算。
 - **韧性断裂与 JC 损伤基准 (Ductile Damage Evolution)**: 将损伤断裂门槛由纯粹基于静态几何拉伸的 `CriticalStretch` 跨越至融入【应力三轴度 ($p/q$)】的动态限制阈值。完美模拟金属的超塑性流动特性，杜绝纯受压情况下的非物理性单元“死亡雪崩”。
 
-### 🚀 Phase 4. 短程排斥(接触)算法与飞行初速 (Immediate Next Target)
+### 🚀 Phase 5. 破甲动力学与接触粘弹阻尼 (Contact Viscous Damping & Advanced Shockwaves)
 
-在完成了弹药与靶板的基础物理响应特性后，当前的最高级优先级是解决真实碰撞交互（防止幽灵穿模）：
+对于超高速侵彻的动量传递，当前完美的弹性接触排斥容易造成非符合物理规律的微米级瞬间跳弹 (Ricochet Phenomenon)。针对此难题，未来研究战线将挂载：
 
-- **无约束初速框架 (Initial Conditions API)**: 剥离 `VelocityBC` 强制恒速条件，开发全局原生 `t=0` 初速赋值 (`InitConditions.cpp`/`InitialVelocityType`)。支持给弹体赋予几百米/秒的瞬间飞行动能后令其依靠惯性自由推进。
-- **非穿模近场斥力系统 (Short-Range Repulsive Contact)**: 开发针对高度破裂体素防止物理穿模的接触算法。在传统的键基作用外附加基于极短程搜索的罚函数排斥机制（Penalty Force/Lennard-Jones Repulsion），彻底解决碎片相撞带来的时空奇点与模型无阻挡穿越效应。
+- **LS-DYNA 风格接触粘性阻尼 (Viscous Contact Damping)**: 按规划蓝图，即将实施通过预估碰撞质量缩放因子 ($m^*$) 与刚度计算临界阻尼，并将指定系数的法向阻尼力 $F_{damp} = -c_n v_n$ 合并入库，强力衰减瞬时高频冲击带来的无损反射！让子弹呈现真实“粘碾”形变。
 - **绝热剪切热力深层耦合 (Adiabatic Heating)**: 打通 `ThermalFields` 与 `MechanicalFields` 的 FieldManager 壁垒通道，使 90% 的冲击塑性机械能能在瞬间转化为内能（发热），激发真实的软化。
 
-### ⚡ Phase 5. 高性能计算架构 (High-Performance Computing Architecture)
+### ⚡ Phase 6. 高性能计算架构 (High-Performance Computing Architecture)
 
 - **AoSoA (分块包裹体系) 与 CUDA 生态跨越**: 计划在未来撕碎局部 C++ 面向对象枷锁，开启 `Warp=32` 大小的内存 `Chunk` 行列式（见文档《架构远景白皮书》），使底盘彻底拥抱物理内存合并访存 (Coalesced Memory Access) 以彻底发挥顶级 GPU 数据管线的 TB/s 脱缰算力。
 - **基于 METIS / Zoltan 的 MPI 分布式网格阵列**: 为引擎穿戴超级计算机切片协议，打破内存与主板封锁，在多节点集群上维持无感知的 Ghost Node (幽灵晕环) 云通信，支撑从百万级自由度向十亿级国之重器算例的大幅跨越。

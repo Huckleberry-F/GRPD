@@ -29,6 +29,7 @@ target_include_directories(Integration_Obj PRIVATE
     ${PROJECT_SOURCE_DIR}/PDCommon/Model/include
     ${PROJECT_SOURCE_DIR}/PDCommon/Kernel/include
     ${PROJECT_SOURCE_DIR}/PDCommon/Utils/include
+    ${PROJECT_SOURCE_DIR}/PDCommon/Contact/include
 )
 
 target_link_libraries(Integration_Obj PRIVATE PDCommon)
