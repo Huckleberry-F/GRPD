@@ -1,0 +1,154 @@
+#==============================================================================
+# GRPD 全局主配置文件 - 力学 NOSB 测试用例 (2D 纯平面位移)
+# 单位制：N-mm-tonne-s
+#   长度: mm
+#   质量: tonne (1e3 kg)
+#   时间: s
+#   力:   N (= tonne·mm/s²)
+#   应力: MPa (= N/mm²)
+# ==============================================================================
+
+# 1. 全局设置
+Assembly: {}
+
+Parts:
+  - PartID: 1
+    MatID: 2
+    Dimension: 2
+    Thickness: 0.1 # 设置为 2D 时的代表厚度
+    Source: "380_acp_bullet.stl" # 已经在当前 Bullet 目录下，直接引用即可
+    Rotate: [0.0, 90.0, 0.0] # 将 Z 轴平铺到 X 轴！
+    RepairMesh: false
+    dx: 0.1 # 保持网格尺度一致
+    Scale: 1.0
+
+  - PartID: 2
+    MatID: 1
+    Dimension: 2
+    Length: 4.0 # 宽度 4mm
+    Width: 30.0 # 高度 30mm
+    Thickness: 0.1
+    Rotate: [0.0, 0.0, 45.0] # 将 Z 轴平铺到 X 轴！
+    dx: 0.1
+    Offset: [41.0, -55.0, 0.0] # 放置在子弹前方
+# 3. 边界条件 (扁平化架构)
+BoundaryConditions:
+  # ------ 约束整块倾斜靶板 (全固定) ------
+  - Step: 0
+    BcID: 1
+    Name: "Target_Fix_All"
+    PartID: 2 # [黑科技] 这里直接指定 PartID=2，彻底无视空间干涉！
+    Box: [-999.0, 999.0, -999.0, 999.0, -999.0, 999.0] # 放心用无限大包围盒
+    Type: "DISP"
+    Value: [0.0, 0.0]
+
+  # ------ 子弹冲击初速度 ------
+  - Step: 1
+    BcID: 3
+    Name: "Bullet_Fly"
+    PartID: 1 # 同理，锁定子弹专属！
+    Box: [-999.0, 999.0, -999.0, 999.0, -999.0, 999.0]
+    Type: "VX"
+    Value: 300000.0
+
+# 4. 预置裂纹 (PreCracks) - 模拟空尖弹 (JHP) 弹头顶端的十字预制引导槽
+PreCracks:
+  - Type: "QuadCrack"
+    # 【修正】子弹的尖头实际上位于 X = 18.0 到 24.0 之间！
+    # 利用薄板在尖头水平切一刀，引导爆开！
+    V1: [26.0, -41.1, -10.0]
+    V2: [30.0, -41.1, -10.0]
+    V3: [30.0, -41.1, 10.0]
+    V4: [26.0, -41.1, 10.0]
+# 5. 材质物理属性 (金属延性材料：J2 弹塑性 + 等效塑性应变断键模型)
+Materials:
+  - MatID: 1
+    Name: "Target"
+    Type: "J2PlasticityMat"
+    Density: 7.85e-9 # tonne/mm³
+    YoungsModulus: 2.1e5 # MPa (N/mm²)
+    PoissonsRatio: 0.3 # 泊松比
+    YieldStress: 235.0 # MPa 钢板屈服极限
+    HardeningModulus: 1000.0 # MPa 塑性硬化模量
+    HardeningType: "Isotropic"
+    LargeDeformation: false
+    # 断裂模型
+    Fracture:
+      Type: "EqPSFracture"
+      Critical_EqPS: 0.25 # 核心实现：当双粒子的等效塑性应变达到 0.5 时，它们之间的键发生真正的物理断开
+
+  - MatID: 2
+    Name: "Bullet"
+    Type: "J2PlasticityMat"
+    Density: 11.3e-9 # tonne/mm³
+    YoungsModulus: 0.16e5 # MPa (N/mm²)
+    PoissonsRatio: 0.44 # 泊松比
+    YieldStress: 10.0 # MPa 强力子弹钢屈服极限
+    HardeningModulus: 10.0 # MPa 塑性硬化模量
+    HardeningType: "Isotropic"
+    LargeDeformation: false
+    # 断裂模型
+    Fracture:
+      Type: "EqPSFracture"
+      Critical_EqPS: 0.2 # 核心实现：当双粒子的等效塑性应变达到 0.5 时，它们之间的键发生真正的物理断开
+
+# 5. 求解器控制
+Solver:
+  Engine: "PD"
+  Type: "Mechanical" # [关键] 切换为力学引擎
+
+  # ==================================
+  # 宏观装配体接触对配置 (Contact Pairs)
+  # ==================================
+  ContactPairs:
+    - Name: "BulletToWall"
+      Type: "PenaltyContact"
+      MasterPartID: 2 # 靶板作为主面 (刚性墙)
+      SlavePartID: 1 # 子弹作为从面 (动态网格)
+      PenaltyFactor: 10.0 # 【全新接口】自动基准惩罚刚度系数
+      PinballRatio: 0.5
+
+  Kernel: "NOSB_M"
+  TimeIntegrator: "CentralDifference" # [关键] 使用中心差分法
+  LoadSteps:
+    - Step: 1
+      Time: 8.7e-9
+      TimeStep_dt: 8.7e-9
+      KBC: 1 # KBC=1，代表恒速加载
+    - Step: 2
+      Time: 8.7e-4
+      TimeStep_dt: 8.7e-9
+      KBC: 1 # 跃升后的恒速加载
+  OutputInterval: 100 # 每 100 步输出一帧
+  OMP_Threads: 16
+  Horizon: 0.3015 # 邻域半径 3.015*dx
+  KernelWeightType: "Gaussian"
+  ZeroEnergyG0: 0.1 # 零能模式修正系数
+  ZeroEnergyMethod: "Silling" # [关键] 开启 Silling 修正
+
+# 7. 输出设置
+Writer:
+  Type: "binary"
+  Variables:
+    - Name: "PartID"
+      Dimension: 1
+    - Name: "Volume"
+      Dimension: 1
+    - Name: "Displacement"
+      Dimension: 3
+    - Name: "Velocity"
+      Dimension: 3
+    - Name: "DeformationGradient"
+      Dimension: 9
+    - Name: "PK1Stress"
+      Dimension: 9
+    - Name: "EqPlasticStrain_Old"
+      Dimension: 1
+    - Name: "BondIntegrity"
+      Dimension: 1
+    - Name: "IsSurface"
+      Dimension: 1
+    - Name: "VonMisesStress"
+      Dimension: 1
+
+# Updated for v3.1 project sync
