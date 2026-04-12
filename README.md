@@ -307,6 +307,13 @@ General-Peridynamics/
 
 ## 📌 版本更新日志 (Changelog)
 
+### v4.1 — MPM 式多体动量投影接触与模板体系架构大一统 (MPM-Style Contact & Unified Architecture)
+
+- **NodeNodeContact 模板方法强基座**: 彻底重构接触内核模块。抽取空间哈希网格探测 (Spatial Hash Grid)、OpenMP 拓扑并行与防自交过滤的核心逻辑，上浮为 `NodeNodeContact` 统一基类中的模板生命周期法。衍生子类 (Penalty, ViscousPenalty) 仅需专注实现 `computePairForce` 惩罚闭包，单文件代码削减高达 65%，使扩展新型数学接触模型变得犹如搭积木般纯粹。
+- **MPM 式运动学质心动量接触法 (Kinematic Contact)**: 彻底颠覆了传统的逐对点计算与法向约束无限叠加机制，根治了由于 N 对接触累积所致的超临界阻尼过冲及爆炸式跳弹现象。创新性引入 MPM “虚拟主面映射”理论，按侵入深度收集碰撞对构筑“连续虚面法向与聚合切向速度”，从而将极端侵彻与碎片飞溅安全稳固在全球质量-动量守恒的投影法则中。
+- **原生多体 Coulomb 摩擦力场 (Coulomb Friction)**: 乘借准确的干涉场体积梯度法向 ($\sum d_{ij}\vec{n}_{ij}$)，在非背景网格的物理引擎中成功精准抽离了摩擦切向速度，顺势落实了带有严格滑移限幅的纯粹库仑摩擦阻尼 ($F_f = \mu F_n$)，大幅削减穿甲动能流失与靶心跳弹率。
+- **Silling 态基原生基础修正**: 定位到了原版标量级力密度态基模型量纲缺失之痛，引入基于粒子真实体积映射的二次缩放常委 ($V_i V_j$)，将短程等效刚度与 Penalty 型力学量纲严格拉平方圆。
+
 ### v4.0 — 强非线性接触引擎与面向数据防腐架构 (Robust Contact Mechanics & DoD Refactoring)
 
 - **物理化罚函数接触弹簧 (Penalty-Based Contact Kinematics)**: 实现了跨材料的防穿透接触斥力系统 `PenaltyContact`。首次引入基于体积缺损算法判定的动态表面剥离体系 `SurfaceDetector`。系统可通过读取关联材料的体积模量 (Bulk Modulus)，全自动计算稳健的基准接触刚度。配合安全下探探测率 (`PinballRatio`)，完美隔绝了不同 `PartID` 子网格的高速幽灵穿模现象爆发。

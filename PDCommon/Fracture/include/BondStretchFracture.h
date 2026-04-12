@@ -23,6 +23,7 @@ public:
 
 private:
   double criticalStretch_{0.0};
+  double criticalDamage_{0.99}; // 宏观死亡处决阈值
 };
 
 } // namespace PDCommon::Fracture

@@ -7,16 +7,26 @@ add_library(Contact_Obj OBJECT
     src/ContactManager.cpp
     src/ContactRegistry.cpp
     src/SurfaceDetector.cpp
+    src/NodeNodeContact.cpp
     src/PenaltyContact.cpp
+    src/NonlinearPenaltyContact.cpp
+    src/ViscousPenaltyContact.cpp
+    src/KinematicContact.cpp
+    src/SillingContact.cpp
 )
 
 # 2. Add header files to target
 target_sources(Contact_Obj PRIVATE
     include/IContactAlgorithm.h
+    include/NodeNodeContact.h
     include/ContactManager.h
     include/ContactRegistry.h
     include/SurfaceDetector.h
     include/PenaltyContact.h
+    include/NonlinearPenaltyContact.h
+    include/ViscousPenaltyContact.h
+    include/KinematicContact.h
+    include/SillingContact.h
 )
 
 # 3. Set header include paths for this module

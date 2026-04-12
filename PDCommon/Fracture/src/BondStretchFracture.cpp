@@ -28,6 +28,16 @@ void BondStretchFracture::configure(const YAML::Node &node) {
         "[BondStretchFracture] 'Critical_Stretch' not found in YAML. Using "
         "default 0.05.");
   }
+  
+  if (node["Critical_Damage"]) {
+    criticalDamage_ = node["Critical_Damage"].as<double>();
+  } else {
+    criticalDamage_ = 0.99;
+  }
+  
+  LOG_INFO("[BondStretchFracture] Configured Critical_Stretch = " +
+           std::to_string(criticalStretch_) + ", Critical_Damage = " + 
+           std::to_string(criticalDamage_));
 }
 
 void BondStretchFracture::preCompute(PDCommon::Core::PDContext &ctx,
@@ -106,6 +116,14 @@ void BondStretchFracture::computeFracture(PDCommon::Core::PDContext &ctx,
     }
     // 更新 bondIntegrity 指数，直接使用基类的内联模板方法
     bondIntegrityPtr[i] = calculateFractureRatio(i, activeBonds);
+    
+    // 【阈值处决】对于拉伸断裂，如果周边断键超过 criticalDamage_ (宏观隔离)，彻底失效化为破片
+    double damage = bondIntegrityPtr[i];
+    if (damage >= criticalDamage_) {
+      if (auto *activeStatusField = fieldManager.getFieldAs<int>("ActiveStatus")) {
+        activeStatusField->dataPtr()[i] = 0; // 名正言顺地死亡，彻底化作自由破片
+      }
+    }
   }
 }
 

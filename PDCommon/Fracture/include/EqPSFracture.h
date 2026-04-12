@@ -18,6 +18,7 @@ public:
 
 private:
   double criticalEqPS_{0.1};
+  double criticalDamage_{0.8}; // 【新增】宏观断裂处决阈值（默认 80% 键断裂即失活）
 };
 
 } // namespace PDCommon::Fracture

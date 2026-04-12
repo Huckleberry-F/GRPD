@@ -3,9 +3,9 @@
 // ============================================================================
 
 #include "NOSB_M.h"
-#include "FractureModel.h"
 #include "FieldManager.h"
 #include "FieldRegistry.h"
+#include "FractureModel.h"
 #include "KernelRegistry.h"
 #include "Logger.h"
 #include "MechanicalMaterial.h"
@@ -14,7 +14,6 @@
 #include "StabilizerRegistry.h"
 #include <cmath>
 #include <omp.h>
-
 
 // ---------------------------------------------------------------------------
 // 编译期静态注册：将 NOSB_M 注册到 KernelRegistry
@@ -90,14 +89,17 @@ void NOSB_M::ComputeMechanicalState(PDContext &ctx) {
         FPtr[idx9] = FPtr[idx9 + 4] = FPtr[idx9 + 8] = 1.0;
         FPtr[idx9 + 1] = FPtr[idx9 + 2] = FPtr[idx9 + 3] = 0.0;
         FPtr[idx9 + 5] = FPtr[idx9 + 6] = FPtr[idx9 + 7] = 0.0;
-        
+
         PK1Ptr[idx9] = PK1Ptr[idx9 + 1] = PK1Ptr[idx9 + 2] = 0.0;
         PK1Ptr[idx9 + 3] = PK1Ptr[idx9 + 4] = PK1Ptr[idx9 + 5] = 0.0;
         PK1Ptr[idx9 + 6] = PK1Ptr[idx9 + 7] = PK1Ptr[idx9 + 8] = 0.0;
-        
-        pkKinvCache_[idx9] = pkKinvCache_[idx9 + 1] = pkKinvCache_[idx9 + 2] = 0.0;
-        pkKinvCache_[idx9 + 3] = pkKinvCache_[idx9 + 4] = pkKinvCache_[idx9 + 5] = 0.0;
-        pkKinvCache_[idx9 + 6] = pkKinvCache_[idx9 + 7] = pkKinvCache_[idx9 + 8] = 0.0;
+
+        pkKinvCache_[idx9] = pkKinvCache_[idx9 + 1] = pkKinvCache_[idx9 + 2] =
+            0.0;
+        pkKinvCache_[idx9 + 3] = pkKinvCache_[idx9 + 4] =
+            pkKinvCache_[idx9 + 5] = 0.0;
+        pkKinvCache_[idx9 + 6] = pkKinvCache_[idx9 + 7] =
+            pkKinvCache_[idx9 + 8] = 0.0;
         continue;
       }
 
@@ -380,7 +382,7 @@ void NOSB_M::postCompute(PDCommon::Core::PDContext &ctx) {
       fractureEvaluated = true;
     }
   }
-  
+
   if (fractureEvaluated) {
     // 基于最新存活的键，实时刷新 K 矩阵并彻底摘除坏死点
     UpdateShapeTensors(ctx);

@@ -63,8 +63,7 @@ LinearElasticMat::ComputeEngineeringStress(const Eigen::Matrix3d &F) const {
 Eigen::Matrix3d
 LinearElasticMat::ComputePK1Stress(const Eigen::Matrix3d &F, int particleId) const {
   // 按照工程要求，小应变假设下直接回退到工程应力（柯西应力）
-  Eigen::Matrix3d strain = 0.5 * (F + F.transpose()) - Eigen::Matrix3d::Identity();
-  return ComputeEngineeringStress(strain);
+  return ComputeEngineeringStress(F);
 }
 
 void LinearElasticMat::allocateStateVariables(

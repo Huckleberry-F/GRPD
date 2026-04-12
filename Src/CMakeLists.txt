@@ -31,6 +31,7 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
     Kernel_Obj
     Integration_Obj
     Fracture_Obj
+    Contact_Obj
 )
 
 

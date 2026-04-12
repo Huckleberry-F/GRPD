@@ -1,7 +1,6 @@
 #include "PDEnginePre.h"
 #include "ContactManager.h"
 #include "ContactRegistry.h"
-#include "PenaltyContact.h"
 #include "FieldManager.h"
 #include "ParticleManager.h"
 #include "Logger.h"
@@ -13,12 +12,17 @@ void InitContact(PDCommon::Core::PDContext &ctx, const YAML::Node &config) {
     LOG_INFO("[InitContact] Entering Contact Initialization Phase...");
     LOG_INFO("[InitContact] ==================================================");
 
-    if (!config["Solver"]["ContactPairs"]) {
+    // 首先在根目录搜索，若没有则为了向下兼容去 Solver 里找
+    YAML::Node pairsNode;
+    if (config["ContactPairs"]) {
+        pairsNode = config["ContactPairs"];
+    } else if (config["Solver"] && config["Solver"]["ContactPairs"]) {
+        pairsNode = config["Solver"]["ContactPairs"];
+    } else {
         LOG_INFO("[InitContact] No explicit ContactPairs defined in YAML. Contact engine skipping.");
         return;
     }
 
-    auto pairsNode = config["Solver"]["ContactPairs"];
     if (!pairsNode.IsSequence()) {
         LOG_ERROR("[InitContact] ContactPairs must be a sequence/array in YAML.");
         return;
@@ -41,11 +45,17 @@ void InitContact(PDCommon::Core::PDContext &ctx, const YAML::Node &config) {
         }
 
         try {
-            std::unique_ptr<PDCommon::Contact::IContactAlgorithm> contactAlg;
-            if (type == "PenaltyContact") {
-                contactAlg = std::make_unique<PDCommon::Contact::PenaltyContact>(name);
-            } else {
-                LOG_ERROR("[InitContact] Unknown Contact Type: " + type);
+            // 通过 ContactRegistry 工厂动态创建（多态调度，无需硬编码类型分支）
+            auto& registry = PDCommon::Contact::ContactRegistry::getInstance();
+            auto contactAlg = registry.createContact(type, name);
+            if (!contactAlg) {
+                LOG_ERROR("[InitContact] Unknown Contact Type: '" + type +
+                          "'. Registered types: " + [&]() {
+                              std::string s;
+                              for (const auto& t : registry.getRegisteredTypes())
+                                  s += t + " ";
+                              return s;
+                          }());
                 continue;
             }
 

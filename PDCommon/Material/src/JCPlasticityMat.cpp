@@ -94,9 +94,9 @@ Eigen::Matrix3d JCPlasticityMat::ComputePK1Stress(const Eigen::Matrix3d &F,
   double sigma_m = stress.trace() / 3.0;
   double sigma_eq = vonMises_[particleId];
   // 强制拉伸损伤判定：仅在拉伸状态（静水压 > 0）下才允许损伤累积
-  if (sigma_m / sigma_eq <= -0.333333333) {
-    delta_eps_p = 0.0;
-  }
+  // if (sigma_m / sigma_eq <= -0.333333333) {
+  //   delta_eps_p = 0.0;
+  // }
 
   double eps_f = D1_;
   if (useTriaxiality_) {
