@@ -7,7 +7,9 @@ add_library(Contact_Obj OBJECT
     src/ContactManager.cpp
     src/ContactRegistry.cpp
     src/SurfaceDetector.cpp
+    src/ContactSpatialGrid.cpp
     src/NodeNodeContact.cpp
+    src/NodeSurfaceContact.cpp
     src/PenaltyContact.cpp
     src/NonlinearPenaltyContact.cpp
     src/ViscousPenaltyContact.cpp
@@ -18,7 +20,9 @@ add_library(Contact_Obj OBJECT
 # 2. Add header files to target
 target_sources(Contact_Obj PRIVATE
     include/IContactAlgorithm.h
+    include/ContactSpatialGrid.h
     include/NodeNodeContact.h
+    include/NodeSurfaceContact.h
     include/ContactManager.h
     include/ContactRegistry.h
     include/SurfaceDetector.h

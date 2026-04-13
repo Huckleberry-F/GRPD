@@ -16,8 +16,7 @@ public:
   /// @brief 将双精度浮点数格式化为科学计数法字符串
   /// @param val 数值
   /// @param precision 保留的小数位数，默认 4 位
-  /// @return 科学计数法格式字符串（如 "1.2345e-04"）
-  static inline std::string toScientific(double val, int precision = 4) {
+  static inline std::string toScientific(double val, int precision = 6) {
     std::ostringstream oss;
     oss << std::scientific << std::setprecision(precision) << val;
     return oss.str();

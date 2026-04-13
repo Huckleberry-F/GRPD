@@ -56,8 +56,8 @@ Materials:
     YoungsModulus: 1.91e5 # MPa (N/mm²)
     PoissonsRatio: 0.3 # 泊松比
     # 断裂损伤准则
-    Damage:
-      Type: "CriticalStretch"
+    Fracture:
+      Type: "BondStretchFracture"
       Critical_Stretch: 0.02 # 超过此伸长率的键将动态断裂
 
 # 5. 求解器控制
@@ -90,7 +90,7 @@ Writer:
       Dimension: 3
     - Name: "DeformationGradient"
       Dimension: 9
-    - Name: "Damage" # [关键] 输出损伤场以便 ParaView 渲染裂纹
+    - Name: "BondIntegrity"
       Dimension: 1
     - Name: "PK1Stress" # [关键] 输出损伤场以便 ParaView 渲染裂纹
       Dimension: 9

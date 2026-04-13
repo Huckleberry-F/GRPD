@@ -5,6 +5,7 @@
 #include "CentralDifference.h"
 #include "BCManager.h"
 #include "Logger.h"
+#include "StringUtils.h"
 #include "PDKernel.h"
 #include "TimeIntegratorRegistry.h"
 #include "Timer.h"
@@ -35,13 +36,32 @@ void CentralDifference::run(PDCommon::Core::PDContext &ctx,
     kernel->preCompute(ctx);
   }
 
+  double limitDt = computeCFLTimestep(ctx);
   if (autoCalcDt_) {
-    computeCFLTimestep(ctx);
+    dt_ = limitDt;
+    LOG_INFO("[CentralDifference] Auto CFL enabled. Setting dt = " + PDCommon::Utils::StringUtils::toScientific(dt_));
+  } else {
+    if (dt_ > limitDt) {
+      LOG_WARNING("[CentralDifference] Global TimeStep_dt (" + PDCommon::Utils::StringUtils::toScientific(dt_) + 
+                  ") EXCEEDS safe CFL limit (" + PDCommon::Utils::StringUtils::toScientific(limitDt) + 
+                  ")! Auto-clamping global dt to the safe limit.");
+      dt_ = limitDt;
+    }
+  }
+
+  // Verify inner load steps dt as well
+  for (auto &config : loadStepConfigs_) {
+    if (config.userDt > limitDt) {
+      LOG_WARNING("[CentralDifference] LoadStep " + std::to_string(config.stepId) + 
+                  " TimeStep_dt (" + PDCommon::Utils::StringUtils::toScientific(config.userDt) + 
+                  ") EXCEEDS safe CFL limit! Auto-clamping to safe limit.");
+      config.userDt = limitDt;
+    }
   }
 
   LOG_INFO("[CentralDifference] Starting Explicit Loop with " +
            std::to_string(loadStepConfigs_.size()) +
-           " LoadStep(s). Default dt = " + std::to_string(dt_));
+           " LoadStep(s). Default dt = " + PDCommon::Utils::StringUtils::toScientific(dt_));
 
   int initialStepId = loadStepConfigs_.empty() ? 0 : loadStepConfigs_[0].stepId;
   int initKbc =
@@ -67,17 +87,17 @@ void CentralDifference::run(PDCommon::Core::PDContext &ctx,
 
     LOG_INFO("=== Load Step " + std::to_string(config.stepId) + " / " +
              std::to_string(loadStepConfigs_.size()) +
-             " | TargetTime: " + std::to_string(targetTime) +
-             " | dt: " + std::to_string(currentDt) +
+             " | TargetTime: " + PDCommon::Utils::StringUtils::toScientific(targetTime) +
+             " | dt: " + PDCommon::Utils::StringUtils::toScientific(currentDt) +
              " | KBC: " + std::to_string(currentKbc) + " ===");
 
     while (currentTime < targetTime - 1e-12) {
       if (globalStepCounter % outputInterval == 0) {
         LOG_INFO(
             "--- Step " + std::to_string(globalStepCounter) +
-            " | Time: " + std::to_string(currentTime) +
-            "  |  Pure Compute: " + std::to_string(timer.pureComputeTime()) +
-            "s" + "  |  Total: " + std::to_string(timer.totalElapsed()) + "s" +
+            " | Time: " + PDCommon::Utils::StringUtils::toScientific(currentTime) +
+            "  |  Pure Compute: " + PDCommon::Utils::StringUtils::toScientific(timer.pureComputeTime()) +
+            "s" + "  |  Total: " + PDCommon::Utils::StringUtils::toScientific(timer.totalElapsed()) + "s" +
             "  |  Speed: " +
             std::to_string(static_cast<int>(timer.pureSpeed())) + " steps/s");
 

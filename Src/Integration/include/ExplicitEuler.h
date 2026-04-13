@@ -41,9 +41,9 @@ private:
   void updateKinematicsEuler(double dt);
 
 protected:
-  void computeCFLTimestep(PDCommon::Core::PDContext &ctx,
-                          double massScale = 1.0,
-                          double safetyFactor = 0.8) override;
+  double computeCFLTimestep(PDCommon::Core::PDContext &ctx,
+                            double massScale = 1.0,
+                            double safetyFactor = 0.8) override;
 };
 
 } // namespace Src::Integration

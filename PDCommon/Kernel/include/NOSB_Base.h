@@ -24,6 +24,7 @@ public:
 protected:
   std::string zeroEnergyMethodStr_{}; // 延迟初始化，由派生类在 configure 中设置
   double zeroEnergyG0_{1.0};
+  bool dynamicShapeTensor_{true};
 
   /// @brief 计算物质点部分体积截断修正因子
   double GetPartialVolumeFactor(double xi, double horizon, double radij) const {

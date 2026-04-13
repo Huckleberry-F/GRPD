@@ -2,6 +2,7 @@
 #include "ContactRegistry.h"
 #include "FieldManager.h"
 #include "Logger.h"
+#include "StringUtils.h"
 #include "MechanicalMaterial.h"
 #include "PDContext.h"
 #include "ParticleManager.h"
@@ -24,7 +25,7 @@ void KinematicContact::initialize(const YAML::Node &configNode) {
 
   LOG_INFO(
       "[KinematicContact] Configured MPM Style Contact: RestitutionCoeff=" +
-      std::to_string(restitutionCoeff_) + ", DtEst=" + std::to_string(dt_est_));
+      PDCommon::Utils::StringUtils::toScientific(restitutionCoeff_) + ", DtEst=" + std::to_string(dt_est_));
 }
 
 void KinematicContact::computeContactForce(PDCommon::Core::PDContext &ctx) {

@@ -1,0 +1,132 @@
+#==============================================================================
+# GRPD KW Impact Fracture - Kalthoff-Winkler 冲击断裂问题模拟
+#==============================================================================
+
+# 1. 建模系统 (全局状态参数)
+System:
+  Dimension: 2 # 2D 模型
+  SavePath: "output" # 数据保存路径
+
+# 2. 部件几何定义 (纯原生内置生成)
+Parts:
+  # --------------------
+  # Part 1: Kalthoff-Winkler Target Plate (带双裂纹的靶板)
+  # --------------------
+  - PartID: 1
+    MatID: 1
+    Dimension: 2
+    Length: 100.0 # 长度 100 mm (X)
+    Width: 200.0 # 宽度 200 mm (Y)
+    Thickness: 1.0
+    dx: 0.5 # 网格分辨率 (总约 80,000 粒子)
+    Offset: [0.0, 0.0, 0.0] # 使得左侧边界刚好对齐 X=0, 中心处于 Y=0
+
+  # --------------------
+  # Part 2: Rigid Impactor (高速冲击块)
+  # --------------------
+  # - PartID: 2
+  #   MatID: 2
+  #   Dimension: 2
+  #   Length: 50.0 # 长度 50 mm (X)
+  #   Width: 50.0 # 宽度 50 mm (Y)
+  #   Thickness: 0.5
+  #   dx: 0.5 # 保持网格尺度一致
+  #   Offset: [-49.75, 75.25, 0.0] # 中心在(-24.875, 0)，使得其右侧边缘横跨X=-0.1，完美贴近靶板左边缘 (X=0)
+
+# 3. 边界条件
+BoundaryConditions:
+  # 赋予冲击块恒定的水平运动速度
+  - Step: 0
+    BcID: 1
+    Name: "Impactor_Speed"
+    PartID: 1
+    Box: [-1.0, 1.0, 75.0, 125.0, -999.0, 999.0]
+    Type: "VX"
+    Value: 32000.0 # 32 m/s = 32000 mm/s，高速冲击
+
+# 4. 预置裂纹 (PreCracks)
+PreCracks:
+  # 上方缺口：处于 Y = 75.0, 长度为 50mm (X从0到50)
+  - CrackID: 1
+    Type: "QuadCrack"
+    V1: [-1.0, 75.0, -10.0]
+    V2: [-1.0, 75.0, 10.0]
+    V3: [50.0, 75.0, 10.0]
+    V4: [50.0, 75.0, -10.0]
+
+  # 下方缺口：处于 Y = 125.0, 长度为 50mm (X从0到50)
+  - CrackID: 2
+    Type: "QuadCrack"
+    V1: [-1.0, 125.0, -10.0]
+    V2: [-1.0, 125.0, 10.0]
+    V3: [50.0, 125.0, 10.0]
+    V4: [50.0, 125.0, -10.0]
+
+# 5. 材质物理属性
+Materials:
+  - MatID: 1
+    Name: "Plate_Steel_Brittle"
+    Type: "LinearElasticMat"
+    Density: 8.0e-9 # tonne/mm³
+    YoungsModulus: 1.91e5 # MPa (N/mm²)
+    PoissonsRatio: 0.3 # 泊松比
+    Fracture:
+      Type: "BondStretchFracture"
+      Critical_Stretch: 0.02 # 典型的动态脆性断裂临界伸长率
+
+  - MatID: 2
+    Name: "Impactor_Rigid"
+    Type: "LinearElasticMat"
+    Density: 18.0e-9 # tonne/mm³
+    YoungsModulus: 2.1e5 # MPa (N/mm²)
+    PoissonsRatio: 0.3 # 泊松比
+    # 不赋予 Fracture 属性，使得冲击体表现为绝对刚硬和不断裂的
+
+# 6. 联系参数 (Contact Pairs)
+ContactPairs:
+  - Name: "ImpactorToTarget"
+    Type: "SillingContact"
+    MasterPartID: 2
+    SlavePartID: 1
+
+# 7. 求解器控制
+Solver:
+  Engine: "PD"
+  Type: "Mechanical"
+  Kernel: "NOSB_M"
+  DynamicShapeTensor: false # [新增] 冻结形状张量更新，抑制偏心奇点，避免弥散爆裂
+  TimeIntegrator: "CentralDifference"
+  LoadSteps:
+    - Step: 1
+      Time: 8.7e-5 # 87 微秒，足以让应力波来回并诱发明显的裂纹分叉
+      TimeStep_dt: 8.7e-9 # 足够小的稳定时间步
+      KBC: 1
+  OutputInterval: 200 # 约 10 帧动画
+  OMP_Threads: 16
+  Horizon: 0.7515 # 3.015 * dx (由于dx=0.5，所以 horizon = 1.5075)
+  KernelWeightType: "Linear"
+  ZeroEnergyG0: 0.5 # 零能模式修正系数
+  ZeroEnergyMethod: "Zhang" # [关键] 开启 Zhang 修正
+
+# 8. 输出设置
+Writer:
+  Type: "binary"
+  Variables:
+    - Name: "PartID"
+      Dimension: 1
+    - Name: "Volume"
+      Dimension: 1
+    - Name: "Displacement"
+      Dimension: 3
+    - Name: "Velocity"
+      Dimension: 3
+    - Name: "DeformationGradient"
+      Dimension: 9
+    - Name: "PK1Stress"
+      Dimension: 9
+    - Name: "BondIntegrity"
+      Dimension: 1
+    - Name: "IsSurface"
+      Dimension: 1
+    - Name: "ActiveStatus"
+      Dimension: 1

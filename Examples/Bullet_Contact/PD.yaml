@@ -15,11 +15,11 @@ Parts:
   - PartID: 1
     MatID: 2
     Dimension: 2
-    Thickness: 0.1 # 设置为 2D 时的代表厚度
+    Thickness: 0.05 # 设置为 2D 时的代表厚度
     Source: "380_acp_bullet.stl" # 已经在当前 Bullet 目录下，直接引用即可
     Rotate: [0.0, 90.0, 0.0] # 恢复水平（不要尝试在此翻转Z，底层STL不吃Z轴旋转）
     RepairMesh: false
-    dx: 0.1 # 保持网格尺度一致
+    dx: 0.05 # 保持网格尺度一致
     Scale: 1.0
 
   - PartID: 2
@@ -27,9 +27,9 @@ Parts:
     Dimension: 2
     Length: 4.0 # 宽度 4mm
     Width: 60.0 # 高度 30mm
-    Thickness: 0.1
+    Thickness: 0.05
     Rotate: [0.0, 0.0, 30.0] # 靶板倾斜 30 度（相对水平飞行的子弹形成完美的 30 度斜向冲击！）
-    dx: 0.1
+    dx: 0.05
     Offset: [42.0, -70.0, 0.0] # 保持中心(-40.0)完美对准子弹轴线
 # 3. 边界条件 (扁平化架构)
 BoundaryConditions:
@@ -40,7 +40,7 @@ BoundaryConditions:
     PartID: 2 # 仅作用于钢板！
     # 靶板中心在 Y=-40，高度60。倾斜30度后上半边极值为 Y = -40 + 30*cos30 ≈ -14.02。
     # 我们夹住 Y > -16.0 的顶部边缘：
-    Box: [-999.0, 999.0, -17.0, 999.0, -999.0, 999.0] 
+    Box: [-999.0, 999.0, -17.0, 999.0, -999.0, 999.0]
     Type: "DISP"
     Value: [0.0, 0.0]
 
@@ -51,7 +51,7 @@ BoundaryConditions:
     PartID: 2 # 仅作用于钢板！
     # 靶板下半边极值为 Y = -40 - 30*cos30 ≈ -65.98。
     # 我们夹住 Y < -64.0 的底部边缘：
-    Box: [-999.0, 999.0, -999.0, -69.0, -999.0, 999.0] 
+    Box: [-999.0, 999.0, -999.0, -69.0, -999.0, 999.0]
     Type: "DISP"
     Value: [0.0, 0.0]
 
@@ -70,21 +70,21 @@ PreCracks: []
 Materials:
   - MatID: 1
     Name: "Steel_Plate" # 均质装甲钢（RHA）
-    Type: "JCPlasticityMat"
+    Type: "LinearElasticMat"
     Density: 7.85e-9
     YoungsModulus: 200000.0
     PoissonsRatio: 0.3
-    YieldStress: 235.0 # 极其生硬，几乎不发生屈服变形
-    HardeningModulus: 5000.0
-    HardeningType: "Isotropic"
-    LargeDeformation: false
-    # Johnson-Cook 损伤参数 (钨相对较脆)
-    JC_D1: 0.05    # 较高的基础断裂应变
-    JC_D2: 0.1
-    JC_D3: -1.5
+    # YieldStress: 235.0 # 极其生硬，几乎不发生屈服变形
+    # HardeningModulus: 5000.0
+    # HardeningType: "Isotropic"
+    # LargeDeformation: false
+    # # Johnson-Cook 损伤参数
+    # JC_D1: 0.05 # 较高的基础断裂应变
+    # JC_D2: 0.1
+    # JC_D3: -1.5
     Fracture:
-      Type: "DamageValueFracture"
-      Critical_Damage: 0.99 # 装甲钢韧性好，允许相当程度的弯曲凹陷后才撕裂
+      Type: "BondStretchFracture"
+      Critical_Stretch: 0.02 # 装甲钢韧性好，允许相当程度的弯曲凹陷后才撕裂
 
   - MatID: 2
     Name: "AP_BulletCore" # 钨合金穿甲弹芯
@@ -97,7 +97,7 @@ Materials:
     HardeningType: "Isotropic"
     LargeDeformation: false
     # Johnson-Cook 损伤参数 (钨相对较脆)
-    JC_D1: 0.1    # 较低的基础断裂应变
+    JC_D1: 0.1 # 较低的基础断裂应变
     JC_D2: 0.34
     JC_D3: -1.5
     # 穿甲弹通常不碎，只在极高扭曲下断裂
@@ -118,7 +118,7 @@ Materials:
 #   - Name: "BulletToWall"
 #     Type: "ViscousPenaltyContact"
 #     MasterPartID: 2
-#     SlavePartID: 1 
+#     SlavePartID: 1
 #     PenaltyFactor: 1.0
 #     DampingCoeff: 0.5
 ContactPairs:
@@ -126,9 +126,8 @@ ContactPairs:
     Type: "KinematicContact"
     MasterPartID: 2
     SlavePartID: 1
-    RestitutionCoeff: 1.0     # 0=完全塑性碰撞(无反弹), 1=完全弹性碰撞
-    FrictionCoeff: 0.3        # 库仑摩擦系数 (0代表光滑无摩擦)
-    DtEst: 8.7e-9             # 必须提供一个用于计算速度等效的 dt 估算值
+    RestitutionCoeff: 0.0 # 0=完全塑性碰撞(无反弹), 1=完全弹性碰撞
+    DtEst: 4.0e-9 # 必须提供一个用于计算速度等效的 dt 估算值
 # ContactPairs:
 #   - Name: "BulletToWall"
 #     Type: "NonlinearPenaltyContact"
@@ -145,19 +144,19 @@ Solver:
   TimeIntegrator: "CentralDifference" # [关键] 使用中心差分法
   LoadSteps:
     - Step: 1
-      Time: 8.7e-9
-      TimeStep_dt: 8.7e-9
+      Time: 4.0e-9
+      TimeStep_dt: 4.0e-9
       KBC: 1 # KBC=1，代表恒速加载
     - Step: 2
-      Time: 8.7e-5
-      TimeStep_dt: 8.7e-9
+      Time: 4.0e-4
+      TimeStep_dt: 4.0e-9
       KBC: 1 # 跃升后的恒速加载
   OutputInterval: 100 # 每 100 步输出一帧
   OMP_Threads: 16
-  Horizon: 0.3015 # 邻域半径 3.015*dx
+  Horizon: 0.15075 # 邻域半径 3.015*dx
   KernelWeightType: "Gaussian"
-  ZeroEnergyG0: 1.0 # 零能模式修正系数
-  ZeroEnergyMethod: "Zhang" # [关键] 开启 Silling 修正
+  ZeroEnergyG0: 0.1 # 零能模式修正系数
+  ZeroEnergyMethod: "Silling" # [关键] 开启 Silling 修正
 
 # 7. 输出设置
 Writer:

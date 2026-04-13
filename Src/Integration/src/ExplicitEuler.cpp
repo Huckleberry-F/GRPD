@@ -6,6 +6,7 @@
 #include "BCManager.h"
 #include "FieldManager.h"
 #include "Logger.h"
+#include "StringUtils.h"
 #include "MaterialManager.h"
 #include "PDKernel.h"
 #include "ThermalMaterial.h"
@@ -38,14 +39,32 @@ void ExplicitEuler::run(PDCommon::Core::PDContext &ctx,
     kernel->preCompute(ctx);
   }
 
+  double limitDt = computeCFLTimestep(ctx);
   if (autoCalcDt_) {
-    // 调用继承的虚拟方法，现在它被多态覆盖以处理热计算
-    computeCFLTimestep(ctx);
+    dt_ = limitDt;
+    LOG_INFO("[ExplicitEuler] Auto CFL enabled. Setting dt = " + PDCommon::Utils::StringUtils::toScientific(dt_));
+  } else {
+    if (dt_ > limitDt) {
+      LOG_WARNING("[ExplicitEuler] Global TimeStep_dt (" + PDCommon::Utils::StringUtils::toScientific(dt_) + 
+                  ") EXCEEDS safe CFL limit (" + PDCommon::Utils::StringUtils::toScientific(limitDt) + 
+                  ")! Auto-clamping global dt to the safe limit.");
+      dt_ = limitDt;
+    }
+  }
+
+  // Verify inner load steps dt as well
+  for (auto &config : loadStepConfigs_) {
+    if (config.userDt > limitDt) {
+      LOG_WARNING("[ExplicitEuler] LoadStep " + std::to_string(config.stepId) + 
+                  " TimeStep_dt (" + PDCommon::Utils::StringUtils::toScientific(config.userDt) + 
+                  ") EXCEEDS safe CFL limit! Auto-clamping to safe limit.");
+      config.userDt = limitDt;
+    }
   }
 
   LOG_INFO("[ExplicitEuler] Starting Explicit Loop with " +
            std::to_string(loadStepConfigs_.size()) +
-           " LoadStep(s). Default dt = " + std::to_string(dt_));
+           " LoadStep(s). Default dt = " + PDCommon::Utils::StringUtils::toScientific(dt_));
 
   int initialStepId = loadStepConfigs_.empty() ? 0 : loadStepConfigs_[0].stepId;
   int initKbc =
@@ -70,17 +89,17 @@ void ExplicitEuler::run(PDCommon::Core::PDContext &ctx,
 
     LOG_INFO("=== Load Step " + std::to_string(config.stepId) + " / " +
              std::to_string(loadStepConfigs_.size()) +
-             " | TargetTime: " + std::to_string(targetTime) +
-             " | dt: " + std::to_string(currentDt) +
+             " | TargetTime: " + PDCommon::Utils::StringUtils::toScientific(targetTime) +
+             " | dt: " + PDCommon::Utils::StringUtils::toScientific(currentDt) +
              " | KBC: " + std::to_string(currentKbc) + " ===");
 
     while (currentTime < targetTime - 1e-12) {
       if (globalStepCounter % outputInterval == 0) {
         LOG_INFO(
             "--- Step " + std::to_string(globalStepCounter) +
-            " | Time: " + std::to_string(currentTime) +
-            "  |  Pure Compute: " + std::to_string(timer.pureComputeTime()) +
-            "s" + "  |  Total: " + std::to_string(timer.totalElapsed()) + "s" +
+            " | Time: " + PDCommon::Utils::StringUtils::toScientific(currentTime) +
+            "  |  Pure Compute: " + PDCommon::Utils::StringUtils::toScientific(timer.pureComputeTime()) +
+            "s" + "  |  Total: " + PDCommon::Utils::StringUtils::toScientific(timer.totalElapsed()) + "s" +
             "  |  Speed: " +
             std::to_string(static_cast<int>(timer.pureSpeed())) + " steps/s");
 
@@ -153,22 +172,21 @@ void ExplicitEuler::updateKinematicsEuler(double dt) {
   }
 }
 
-void ExplicitEuler::computeCFLTimestep(PDCommon::Core::PDContext &ctx,
-                                       double massScale, double safetyFactor) {
+double ExplicitEuler::computeCFLTimestep(PDCommon::Core::PDContext &ctx,
+                                         double massScale, double safetyFactor) {
   auto &matManager = ctx.getMaterialManager();
   auto &fieldManager = ctx.getFieldManager();
 
   auto *volumeField = fieldManager.getFieldAs<double>("Volume");
   if (!volumeField) {
     LOG_WARNING("[ExplicitEuler] Volume field not found, cannot auto-calc dt. "
-                "Using dt = " +
-                std::to_string(dt_));
-    return;
+                "Returning current dt.");
+    return dt_;
   }
 
   const double *volumes = volumeField->dataPtr();
   if (volumes[0] <= 0.0)
-    return;
+    return dt_;
   double dx = std::cbrt(volumes[0]);
 
   // 取最苛刻的热扩散 dt
@@ -195,14 +213,14 @@ void ExplicitEuler::computeCFLTimestep(PDCommon::Core::PDContext &ctx,
   }
 
   if (foundThermal) {
-    dt_ = safetyFactor * minDt;
-    LOG_INFO("[" + getName() + "] Auto Thermal dt: dx = " + std::to_string(dx) +
-             ", dt_limit = " + std::to_string(minDt) +
-             ", final dt = " + std::to_string(dt_));
+    double limitDt = safetyFactor * minDt;
+    LOG_INFO("[" + getName() + "] Computed safe Thermal limit dt: " + PDCommon::Utils::StringUtils::toScientific(limitDt) +
+             " (dx = " + PDCommon::Utils::StringUtils::toScientific(dx) + ", minDt = " + PDCommon::Utils::StringUtils::toScientific(minDt) + ")");
+    return limitDt;
   } else {
     // 如果没有热场且运行了 ExplicitEuler（比如耗散性的力学阻尼问题），
     // 降级退回给基类的力学 CFL 波速计算。
-    TimeIntegrator::computeCFLTimestep(ctx, massScale, safetyFactor);
+    return TimeIntegrator::computeCFLTimestep(ctx, massScale, safetyFactor);
   }
 }
 

@@ -383,7 +383,7 @@ void NOSB_M::postCompute(PDCommon::Core::PDContext &ctx) {
     }
   }
 
-  if (fractureEvaluated) {
+  if (fractureEvaluated && dynamicShapeTensor_) {
     // 基于最新存活的键，实时刷新 K 矩阵并彻底摘除坏死点
     UpdateShapeTensors(ctx);
   }

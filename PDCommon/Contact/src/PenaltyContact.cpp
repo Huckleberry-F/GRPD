@@ -1,6 +1,7 @@
 #include "PenaltyContact.h"
 #include "ContactRegistry.h"
 #include "Logger.h"
+#include "StringUtils.h"
 #include "MechanicalMaterial.h"
 #include "ParticleManager.h"
 #include "PDContext.h"

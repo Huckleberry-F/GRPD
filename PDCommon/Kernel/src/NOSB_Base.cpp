@@ -48,6 +48,12 @@ void NOSB_Base::configure(const YAML::Node &solverNode) {
     LOG_INFO("[NOSB_Base] Applied ZeroEnergyMethod string: " +
              zeroEnergyMethodStr_);
   }
+  // 4. 是否动态刷新形状张量
+  if (solverNode["DynamicShapeTensor"]) {
+    dynamicShapeTensor_ = solverNode["DynamicShapeTensor"].as<bool>();
+    LOG_INFO("[NOSB_Base] Dynamic Shape Tensor update is set to: " +
+             std::to_string(dynamicShapeTensor_));
+  }
 }
 
 // ---------------------------------------------------------------------------

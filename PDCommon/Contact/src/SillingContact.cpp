@@ -1,6 +1,7 @@
 #include "SillingContact.h"
 #include "ContactRegistry.h"
 #include "Logger.h"
+#include "StringUtils.h"
 #include "MechanicalMaterial.h"
 #include "PDContext.h"
 #include "ParticleManager.h"
@@ -23,7 +24,7 @@ void SillingContact::initialize(const YAML::Node &configNode) {
     stiffnessFactor_ = configNode["StiffnessFactor"].as<double>();
 
   LOG_INFO("[SillingContact] Configured: StiffnessFactor=" +
-           std::to_string(stiffnessFactor_));
+           PDCommon::Utils::StringUtils::toScientific(stiffnessFactor_));
 }
 
 void SillingContact::onPreContact(PDCommon::Core::PDContext &ctx,
@@ -61,9 +62,9 @@ void SillingContact::onPreContact(PDCommon::Core::PDContext &ctx,
     double delta5 = horizon * horizon * horizon * horizon * horizon;
     shortRangeStiffness_ = stiffnessFactor_ * 18.0 * K / (M_PI * delta5);
 
-    LOG_INFO("[SillingContact] Auto: horizon=" + std::to_string(horizon) +
+    LOG_INFO("[SillingContact] Auto: horizon=" + PDCommon::Utils::StringUtils::toScientific(horizon) +
              ", dx=" + std::to_string(maxDx) +
-             ", K=" + std::to_string(K) +
+             ", K=" + PDCommon::Utils::StringUtils::toScientific(K) +
              ", c_s=" + std::to_string(shortRangeStiffness_));
   }
 }

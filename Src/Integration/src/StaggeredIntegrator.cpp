@@ -8,6 +8,7 @@
 #include "BCManager.h"
 #include "FieldManager.h"
 #include "Logger.h"
+#include "StringUtils.h"
 #include "PDKernel.h"
 #include "ParticleManager.h"
 #include "TimeIntegratorRegistry.h"
@@ -112,7 +113,7 @@ void StaggeredIntegrator::run(
   }
 
   LOG_INFO("[StaggeredIntegrator] Starting staggered time loop: dt = " +
-           std::to_string(dt) + ", totalSteps = " + std::to_string(totalSteps));
+           PDCommon::Utils::StringUtils::toScientific(dt) + ", totalSteps = " + std::to_string(totalSteps));
 
   // =================================================================
   // 主时间步循环
@@ -127,7 +128,7 @@ void StaggeredIntegrator::run(
       double elapsed = std::chrono::duration<double>(tNow - tStart).count();
       LOG_INFO("--- Staggered Step " + std::to_string(step) + " / " +
                std::to_string(totalSteps) +
-               "  |  Elapsed: " + std::to_string(elapsed) + "s");
+               "  |  Elapsed: " + PDCommon::Utils::StringUtils::toScientific(elapsed) + "s");
       if (outputCallback)
         outputCallback(step, step * dt);
     }
@@ -157,7 +158,7 @@ void StaggeredIntegrator::run(
   auto tEnd = std::chrono::high_resolution_clock::now();
   double totalElapsed = std::chrono::duration<double>(tEnd - tStart).count();
   LOG_INFO("[StaggeredIntegrator] Finished. Total: " +
-           std::to_string(totalElapsed) + "s");
+           PDCommon::Utils::StringUtils::toScientific(totalElapsed) + "s");
 }
 
 } // namespace Src::Integration

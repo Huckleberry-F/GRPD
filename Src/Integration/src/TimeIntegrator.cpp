@@ -7,6 +7,7 @@
 #include "ContactManager.h"
 #include "FieldManager.h"
 #include "Logger.h"
+#include "StringUtils.h"
 #include "MaterialManager.h"
 #include "MechanicalMaterial.h"
 #include "PDKernel.h"
@@ -123,8 +124,8 @@ void TimeIntegrator::evaluateForces(
 // computeCFLTimestep：基于 CFL 条件自动计算时间步长（通用方法）
 // dt = safetyFactor * dx / sqrt(E / (rho * massScale))
 // ---------------------------------------------------------------------------
-void TimeIntegrator::computeCFLTimestep(PDCommon::Core::PDContext &ctx,
-                                        double massScale, double safetyFactor) {
+double TimeIntegrator::computeCFLTimestep(PDCommon::Core::PDContext &ctx,
+                                          double massScale, double safetyFactor) {
   auto &matManager = ctx.getMaterialManager();
   auto &fieldManager = ctx.getFieldManager();
 
@@ -132,9 +133,8 @@ void TimeIntegrator::computeCFLTimestep(PDCommon::Core::PDContext &ctx,
   auto *volumeField = fieldManager.getFieldAs<double>("Volume");
   if (!volumeField) {
     LOG_WARNING("[TimeIntegrator] Volume field not found, cannot auto-calc dt. "
-                "Using dt = " +
-                std::to_string(dt_));
-    return;
+                "Returning current dt.");
+    return dt_;
   }
 
   const double *volumes = volumeField->dataPtr();
@@ -159,15 +159,14 @@ void TimeIntegrator::computeCFLTimestep(PDCommon::Core::PDContext &ctx,
   }
 
   if (maxWaveSpeed > 1e-30) {
-    dt_ = safetyFactor * dx / maxWaveSpeed;
-    LOG_INFO("[" + getName() + "] Auto CFL dt: dx = " + std::to_string(dx) +
-             ", c = " + std::to_string(maxWaveSpeed) + ", massScale = " +
-             std::to_string(massScale) + ", dt = " + std::to_string(dt_));
+    double limitDt = safetyFactor * dx / maxWaveSpeed;
+    LOG_INFO("[" + getName() + "] Computed safe CFL limit dt: " + PDCommon::Utils::StringUtils::toScientific(limitDt) +
+             " (dx = " + PDCommon::Utils::StringUtils::toScientific(dx) + ", c = " + PDCommon::Utils::StringUtils::toScientific(maxWaveSpeed) + ")");
+    return limitDt;
   } else {
     LOG_WARNING("[" + getName() +
-                "] No valid MechanicalMaterial for CFL. "
-                "Using default dt = " +
-                std::to_string(dt_));
+                "] No valid MechanicalMaterial for CFL. Returning current dt.");
+    return dt_;
   }
 }
 

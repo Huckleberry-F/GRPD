@@ -114,9 +114,9 @@ void ADR_Integrator::run(PDCommon::Core::PDContext &ctx,
 
   LOG_INFO("[ADR_Integrator] Starting Custom ADR: NumLoadSteps = " +
            std::to_string(loadStepConfigs_.size()) +
-           ", MassScale = " + std::to_string(massScaleFactor_) +
+           ", MassScale = " + PDCommon::Utils::StringUtils::toScientific(massScaleFactor_) +
            ", DampingMethod = " + dampingMethod_ +
-           ", dt = " + std::to_string(dt));
+           ", dt = " + PDCommon::Utils::StringUtils::toScientific(dt));
 
   PDCommon::Utils::Timer timer;
   timer.start();
@@ -249,8 +249,8 @@ void ADR_Integrator::run(PDCommon::Core::PDContext &ctx,
             LOG_INFO(
                 "    > Sub " + std::to_string(sub) + " Iter " +
                 std::to_string(iter) +
-                " | Time: " + std::to_string(currentPhysicalTime) +
-                " | LocalLF: " + std::to_string(currentLocalLF) +
+                " | Time: " + PDCommon::Utils::StringUtils::toScientific(currentPhysicalTime) +
+                " | LocalLF: " + PDCommon::Utils::StringUtils::toScientific(currentLocalLF) +
                 " | Res: " + PDCommon::Utils::StringUtils::toScientific(TOL3_) +
                 " | cn: " + PDCommon::Utils::StringUtils::toScientific(cn) +
                 " | Speed: " +
