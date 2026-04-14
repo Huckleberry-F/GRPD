@@ -29,6 +29,8 @@ protected:
 private:
   double shortRangeStiffness_ = -1.0; ///< 短程力刚度 (<0 时自动从 PD 微模量推导)
   double stiffnessFactor_ = 1.0;      ///< 刚度缩放系数（调参用）
+  int dim_ = 3;                       ///< 空间维度
+  double effectiveThickness_ = 1.0;   ///< 有效厚度 (2D平面投影时介入)
 };
 
 } // namespace PDCommon::Contact

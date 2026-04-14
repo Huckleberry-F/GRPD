@@ -62,6 +62,9 @@ void SillingContact::onPreContact(PDCommon::Core::PDContext &ctx,
     double delta5 = horizon * horizon * horizon * horizon * horizon;
     shortRangeStiffness_ = stiffnessFactor_ * 18.0 * K / (M_PI * delta5);
 
+    dim_ = ctx.getDimension();
+    effectiveThickness_ = (dim_ == 2) ? ctx.getThickness() : 1.0;
+
     LOG_INFO("[SillingContact] Auto: horizon=" + PDCommon::Utils::StringUtils::toScientific(horizon) +
              ", dx=" + std::to_string(maxDx) +
              ", K=" + PDCommon::Utils::StringUtils::toScientific(K) +
@@ -76,13 +79,10 @@ SillingContact::computePairForce(const ContactPairContext &pair) {
   // Silling 短程力密度: f_s = c_s * penetration  [N/m⁶]
   double f_density = shortRangeStiffness_ * pair.raw_penetration;
 
-  // 关键量纲转换：PD 力密度 → 实际力
-  // 在 PD 框架中: ρ ü_i = Σ_j f(ξ) V_j
-  //   → ü_i = f(ξ) V_j / ρ
-  // 在我们框架中: ü_i = F / mass_i = F / (ρ V_i)
-  //   → 要求 F = f_density * V_i * V_j  [N]
-  double vol_i = pair.dx_i * pair.dx_i * pair.dx_i;
-  double vol_j = pair.dx_j * pair.dx_j * pair.dx_j;
+  double vol_i = (dim_ == 2) ? (pair.dx_i * pair.dx_i * effectiveThickness_)
+                             : (pair.dx_i * pair.dx_i * pair.dx_i);
+  double vol_j = (dim_ == 2) ? (pair.dx_j * pair.dx_j * effectiveThickness_)
+                             : (pair.dx_j * pair.dx_j * pair.dx_j);
   double forceMagnitude = f_density * vol_i * vol_j;
 
   result.fx = forceMagnitude * pair.nx;

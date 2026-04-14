@@ -49,7 +49,9 @@ void NonlinearPenaltyContact::onPreContact(PDCommon::Core::PDContext &ctx,
         slaveBulk = mechMat->getBulkModulus();
     }
     double minK = std::min(masterBulk, slaveBulk);
-    penaltyStiffness_ = penaltyFactor_ * minK * maxDx;
+    const int dim = ctx.getDimension();
+    double effectiveThickness = (dim == 2) ? ctx.getThickness() : 1.0;
+    penaltyStiffness_ = penaltyFactor_ * minK * maxDx * effectiveThickness;
     LOG_INFO("[NonlinearPenaltyContact] Auto-Computed PenaltyStiffness: " +
              std::to_string(penaltyStiffness_));
   }

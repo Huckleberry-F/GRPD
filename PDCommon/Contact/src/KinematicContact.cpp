@@ -95,7 +95,7 @@ void KinematicContact::computeContactForce(PDCommon::Core::PDContext &ctx) {
     auto *mat_i = dynamic_cast<PDCommon::Material::MechanicalMaterial *>(
         particles[i].getMaterial());
     double rho_i = mat_i ? mat_i->getDensity() : 1.0;
-    double mass_i = rho_i * vols[i];
+    double mass_i = rho_i * vols[i] * massScaleFactor_;
 
     int cx = static_cast<int>(std::floor((xi - minBounds_.x()) / cellSize_));
     int cy = static_cast<int>(std::floor((yi - minBounds_.y()) / cellSize_));
@@ -174,7 +174,7 @@ void KinematicContact::computeContactForce(PDCommon::Core::PDContext &ctx) {
                         dynamic_cast<PDCommon::Material::MechanicalMaterial *>(
                             particles[j].getMaterial());
                     double rho_j = mat_j ? mat_j->getDensity() : 1.0;
-                    m_master_eff += rho_j * vols[j];
+                    m_master_eff += rho_j * vols[j] * massScaleFactor_ * weight;
 
                     interacting_js.push_back({j, weight});
                   }
@@ -240,7 +240,7 @@ void KinematicContact::computeContactForce(PDCommon::Core::PDContext &ctx) {
         double w = pair.second * inv_sum;
         auto *mat_j = dynamic_cast<PDCommon::Material::MechanicalMaterial *>(
             particles[j].getMaterial());
-        double mass_j = (mat_j ? mat_j->getDensity() : 1.0) * vols[j];
+        double mass_j = (mat_j ? mat_j->getDensity() : 1.0) * vols[j] * massScaleFactor_;
         if (mass_j > 1e-30) {
           double fj_x = -fx * w;
           double fj_y = -fy * w;
