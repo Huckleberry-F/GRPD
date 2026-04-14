@@ -64,6 +64,16 @@ void InitModel(PDCommon::Core::PDContext &ctx, const YAML::Node &config,
       ctx.setDimension(dim);
       LOG_INFO("[Context Manager] Model dimension set to: " +
                std::to_string(dim) + "D");
+
+      // 读取 2D 可选厚度参数（默认 1.0）
+      if (dim == 2) {
+        double thickness = config["Parts"][0]["Thickness"]
+                               ? config["Parts"][0]["Thickness"].as<double>()
+                               : 1.0;
+        ctx.setThickness(thickness);
+        LOG_INFO("[Context Manager] 2D thickness set to: " +
+                 std::to_string(thickness));
+      }
     }
   } catch (const YAML::Exception &e) {
     LOG_WARNING("[Context Manager] Failed to parse Dimension from YAML: " +

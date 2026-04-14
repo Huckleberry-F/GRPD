@@ -69,6 +69,9 @@ private:
   double rampWaveRatio_ = 2.0; ///< 爬坡期覆盖特征波长倍数（默认2倍模型长度）
   int rampItersOverride_ = 0;  ///< 手动指定爬坡步数（0=自动物理计算）
 
+  double minRefForce_ = 1.0e-6; ///< 最低参考力截断值 (MINREF)，用于相对力判定兜底
+  double initialResidualRef_ = 0.0; ///< 子步初始参考力范数快照 (R_ref)
+
   /// @brief 阻尼策略："Viscous"=Underwood粘性阻尼, "LocalKinetic"=局部动能阻尼
   std::string dampingMethod_ = "Viscous";
 
@@ -97,7 +100,7 @@ private:
   void saveOldDisplacement();
   double computeAdaptiveDamping(double dt);
   void updateKinematicsLeapfrog(double cn, double dt);
-  void computeConvergenceCriteria();
+  void computeConvergenceCriteria(int updateRefMode);
 };
 
 } // namespace Src::Integration

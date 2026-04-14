@@ -17,7 +17,6 @@ Parts:
     Dimension: 2
     Length: 100.0 # 长度 100 mm (X)
     Width: 200.0 # 宽度 200 mm (Y)
-    Thickness: 1.0
     dx: 0.5 # 网格分辨率 (总约 80,000 粒子)
     Offset: [0.0, 0.0, 0.0] # 使得左侧边界刚好对齐 X=0, 中心处于 Y=0
 
@@ -29,7 +28,6 @@ Parts:
   #   Dimension: 2
   #   Length: 50.0 # 长度 50 mm (X)
   #   Width: 50.0 # 宽度 50 mm (Y)
-  #   Thickness: 0.5
   #   dx: 0.5 # 保持网格尺度一致
   #   Offset: [-49.75, 75.25, 0.0] # 中心在(-24.875, 0)，使得其右侧边缘横跨X=-0.1，完美贴近靶板左边缘 (X=0)
 
@@ -103,10 +101,10 @@ Solver:
       KBC: 1
   OutputInterval: 200 # 约 10 帧动画
   OMP_Threads: 16
-  Horizon: 0.7515 # 3.015 * dx (由于dx=0.5，所以 horizon = 1.5075)
+  Horizon: 1.5075 # 3.015 * dx (由于dx=0.5，所以 horizon = 1.5075)
   KernelWeightType: "Linear"
-  ZeroEnergyG0: 0.5 # 零能模式修正系数
-  ZeroEnergyMethod: "Zhang" # [关键] 开启 Zhang 修正
+  ZeroEnergyG0: 0.1 # 零能模式修正系数
+  ZeroEnergyMethod: "Wan" # [关键] 开启 Zhang 修正
 
 # 8. 输出设置
 Writer:

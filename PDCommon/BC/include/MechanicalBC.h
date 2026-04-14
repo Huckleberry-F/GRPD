@@ -137,6 +137,12 @@ public:
   void apply(double loadFactor) override;
   void commitEndStep() override;
 
+  void setScalingFactors(double dx, double density, double massScale) override {
+    dx_ = dx;
+    density_ = density;
+    massScale_ = massScale;
+  }
+
   bool isConstraint() const override {
     return false;
   } // Neumann: 向加速度场累加
@@ -144,8 +150,11 @@ public:
 private:
   int particleId_;
   int axis_;         // 工作轴 (0=X, 1=Y, 2=Z)
-  double pressVal_;  // 压力值
+  double pressVal_;  // 面压值 (MPa)
   double prevVal_;   // 历史最终态值
+  double dx_ = 1.0;
+  double density_ = 1.0;
+  double massScale_ = 1.0;
 };
 
 } // namespace PDCommon::BC

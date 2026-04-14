@@ -3,13 +3,16 @@
 #include "FieldManager.h"
 #include "IOManager.h"
 #include "Logger.h"
+#include "MechanicalMaterial.h"
 #include "MeshData.h"
 #include "PDEnginePre.h"
+#include "ParticleManager.h"
 #include "ReaderRegistry.h"
 #include <filesystem>
 #include <map>
 #include <string>
 #include <vector>
+
 
 namespace Src::Engine::Solvers::PD::Init {
 
@@ -45,6 +48,19 @@ void InitConditions(PDCommon::Core::PDContext &ctx, const YAML::Node &config) {
 
   std::map<std::string, int> bcStats;
 
+  auto &pm = ctx.getParticleManager();
+  const auto &particles = pm.getAllParticles();
+
+  double massScale = 1.0;
+  if (config["Solver"] && config["Solver"]["MassScaleFactor"]) {
+    massScale = config["Solver"]["MassScaleFactor"].as<double>();
+  }
+
+  double dx = 1.0;
+  if (config["Parts"] && config["Parts"].IsSequence() && config["Parts"].size() > 0) {
+    if (config["Parts"][0]["dx"]) dx = config["Parts"][0]["dx"].as<double>();
+  }
+
   for (const auto &entry : loads) {
     std::string bcName = entry.type + "_BC" + std::to_string(entry.bcID) +
                          "_P" + std::to_string(entry.nodeID);
@@ -59,6 +75,15 @@ void InitConditions(PDCommon::Core::PDContext &ctx, const YAML::Node &config) {
 
     bc->initialize(fieldManager, entry.nodeID, entry.values);
     bc->setTableNames(entry.tableNames); // 绑定表格映射名称
+
+    double density = 1.0;
+    if (entry.nodeID >= 0 && entry.nodeID < particles.size()) {
+      auto *mat = dynamic_cast<PDCommon::Material::MechanicalMaterial*>(
+          particles[entry.nodeID].getMaterial());
+      if (mat) density = mat->getDensity();
+    }
+    // 将底层缩放因子注入给支持的面压换算高阶 BC
+    bc->setScalingFactors(dx, density, massScale);
 
     bcStats[entry.type]++;
     bcManager.addBC(std::move(bc), entry.step);

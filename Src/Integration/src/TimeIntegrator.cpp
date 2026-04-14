@@ -138,7 +138,11 @@ double TimeIntegrator::computeCFLTimestep(PDCommon::Core::PDContext &ctx,
   }
 
   const double *volumes = volumeField->dataPtr();
-  double dx = std::cbrt(volumes[0]);
+  // 2D: Volume = dx² * thickness → dx = sqrt(Volume/thickness)
+  // 3D: Volume = dx³ → dx = cbrt(Volume)
+  double dx = (ctx.getDimension() == 2)
+                  ? std::sqrt(volumes[0] / ctx.getThickness())
+                  : std::cbrt(volumes[0]);
 
   // 遍历所有材料，取最大有效波速（最保守的 dt）
   double maxWaveSpeed = 0.0;

@@ -177,7 +177,8 @@ def generate_from_yaml(yaml_path):
             
             if dim == 2:
                 z_coords = np.array([(bbox_min[2] + bbox_max[2]) / 2.0])
-                thickness = part.get('Thickness', bbox_max[2] - bbox_min[2])
+                # 2D: Volume = dx * dx * thickness（Thickness 可选，默认 1.0）
+                thickness = part.get('Thickness', 1.0)
                 volume = dx * dx * thickness
             else:
                 z_coords = np.arange(bbox_min[2] + dx/2, bbox_max[2], dx)
@@ -292,9 +293,11 @@ def generate_from_yaml(yaml_path):
                 X, Y = np.meshgrid(x_coords, y_coords, indexing='ij')
                 x_flat, y_flat = X.ravel(), Y.ravel()
                 z_flat = np.zeros_like(x_flat)
-                volume = dx * dx * part['Thickness']
+                # 2D: Volume = dx * dx * thickness（Thickness 可选，默认 1.0）
+                thickness = part.get('Thickness', 1.0)
+                volume = dx * dx * thickness
             else:
-                z_coords = np.arange(dx / 2, part['Thickness'], dx)
+                z_coords = np.arange(dx / 2, part.get('Thickness', part.get('Height', dx)), dx)
                 X, Y, Z = np.meshgrid(x_coords, y_coords, z_coords, indexing='ij')
                 x_flat, y_flat, z_flat = X.ravel(), Y.ravel(), Z.ravel()
                 volume = dx * dx * dx

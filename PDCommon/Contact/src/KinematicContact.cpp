@@ -50,6 +50,13 @@ void KinematicContact::computeContactForce(PDCommon::Core::PDContext &ctx) {
   const double *disp = dispField ? dispField->dataPtr() : nullptr;
   const double *vols = volField->dataPtr();
   double *acc = accField->dataPtr();
+
+  // 2D/3D dx
+  const int dim = ctx.getDimension();
+  const double thickness = ctx.getThickness();
+  auto volToDx = [dim, thickness](double v) -> double {
+    return (dim == 2) ? std::sqrt(v / thickness) : std::cbrt(v);
+  };
   const double *vel = velField->dataPtr();
   const int *partIDs = partField ? partField->dataPtr() : nullptr;
   const auto &neighborList = ctx.getNeighborList();
@@ -65,7 +72,7 @@ void KinematicContact::computeContactForce(PDCommon::Core::PDContext &ctx) {
   }
   if (maxVol <= 0.0)
     return;
-  double maxDx = std::cbrt(maxVol);
+  double maxDx = volToDx(maxVol);
 
   // 3. 构建空间网格
   if (next_.size() < numParticles) {
@@ -83,7 +90,7 @@ void KinematicContact::computeContactForce(PDCommon::Core::PDContext &ctx) {
     double xi = coords[i * 3] + (disp ? disp[i * 3] : 0.0);
     double yi = coords[i * 3 + 1] + (disp ? disp[i * 3 + 1] : 0.0);
     double zi = coords[i * 3 + 2] + (disp ? disp[i * 3 + 2] : 0.0);
-    double dx_i = std::cbrt(vols[i]);
+    double dx_i = volToDx(vols[i]);
 
     auto *mat_i = dynamic_cast<PDCommon::Material::MechanicalMaterial *>(
         particles[i].getMaterial());
@@ -145,7 +152,7 @@ void KinematicContact::computeContactForce(PDCommon::Core::PDContext &ctx) {
 
                 if (!isInitialNeighbor) {
                   double dist = std::sqrt(distSqr);
-                  double dx_j = std::cbrt(vols[j]);
+                  double dx_j = volToDx(vols[j]);
                   double safeDist = (dx_i + dx_j) / 2.0;
 
                   if (dist < safeDist) {

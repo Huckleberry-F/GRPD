@@ -171,16 +171,18 @@ void PressureBC::initialize(PDCommon::Field::FieldManager &fieldManager,
 void PressureBC::apply() {
   if (!acceleration_)
     return;
-  // 压力贡献累加到单轴加速度场
-  acceleration_->add(particleId_, pressVal_, axis_);
+  // 转换宏观面压 (MPa) 为隐式动力学底层的等效单点加速度
+  double equivalentAcc = pressVal_ / (dx_ * density_ * massScale_);
+  acceleration_->add(particleId_, equivalentAcc, axis_);
 }
 
 void PressureBC::apply(double loadFactor) {
   if (!acceleration_)
     return;
-  // 按比例施加 Neumann 源项：a = prevVal_ + (pressVal_ - prevVal_) * loadFactor
+  // 按比例施加 Neumann 源项压强：P = prevVal_ + (pressVal_ - prevVal_) * loadFactor
   double activeVal = prevVal_ + (pressVal_ - prevVal_) * loadFactor;
-  acceleration_->add(particleId_, activeVal, axis_);
+  double equivalentAcc = activeVal / (dx_ * density_ * massScale_);
+  acceleration_->add(particleId_, equivalentAcc, axis_);
 }
 
 void PressureBC::commitEndStep() {

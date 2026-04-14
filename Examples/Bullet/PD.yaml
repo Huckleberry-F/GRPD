@@ -15,7 +15,6 @@ Parts:
   - PartID: 1
     MatID: 1
     Dimension: 2
-    Thickness: 0.1 # 设置为 2D 时的代表厚度
     Source: "380_acp_bullet.stl" # 已经在当前 Bullet 目录下，直接引用即可
     Rotate: [0.0, 90.0, 0.0] # 将 Z 轴平铺到 X 轴！
     RepairMesh: false

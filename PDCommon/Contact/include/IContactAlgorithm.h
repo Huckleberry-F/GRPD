@@ -77,10 +77,14 @@ public:
   /// @brief 设置从面粒子 ID 列表
   void setSlaveParticleIds(const std::vector<int> &ids) { slaveIds_ = ids; }
 
+  /// @brief 设置质量缩放因子，用于显式计算时的正确加速度映射
+  virtual void setMassScaleFactor(double sf) { massScaleFactor_ = sf; }
+
 protected:
   std::string name_;               ///< 接触对实例名称
   std::vector<int> masterIds_;     ///< 主面（Target）粒子 ID 集合
   std::vector<int> slaveIds_;      ///< 从面（Contact）粒子 ID 集合
+  double massScaleFactor_ = 1.0;   ///< 质量放大系数
 };
 
 } // namespace PDCommon::Contact

@@ -77,6 +77,13 @@ void InitContact(PDCommon::Core::PDContext &ctx, const YAML::Node &config) {
             contactAlg->setMasterParticleIds(masterIds);
             contactAlg->setSlaveParticleIds(slaveIds);
 
+            // 提取人工质量缩放比以修复显式接触动力学崩溃
+            double massScale = 1.0;
+            if (config["Solver"] && config["Solver"]["MassScaleFactor"]) {
+                massScale = config["Solver"]["MassScaleFactor"].as<double>();
+            }
+            contactAlg->setMassScaleFactor(massScale);
+
             ctx.getContactManager().addContactPair(std::move(contactAlg));
             LOG_INFO("[InitContact] Defined ContactPair: " + name + " [Master Part " + 
                      std::to_string(masterPart) + " (" + std::to_string(masterIds.size()) + " nodes) <- Slave Part " + 

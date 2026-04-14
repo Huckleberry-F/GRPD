@@ -120,7 +120,13 @@ void NodeNodeContact::computeContactForce(PDCommon::Core::PDContext &ctx) {
   }
   if (maxVol <= 0.0)
     return;
-  double maxDx = std::cbrt(maxVol);
+  // 2D/3D 维度感知的 dx 推导
+  const int dim = ctx.getDimension();
+  const double thickness = ctx.getThickness();
+  auto volToDx = [dim, thickness](double v) -> double {
+    return (dim == 2) ? std::sqrt(v / thickness) : std::cbrt(v);
+  };
+  double maxDx = volToDx(maxVol);
 
   // --- 3. 子类预处理钩子（如自动估算罚函数刚度等） ---
   onPreContact(ctx, maxDx);
@@ -140,12 +146,13 @@ void NodeNodeContact::computeContactForce(PDCommon::Core::PDContext &ctx) {
     double xi = coords[i * 3] + (disp ? disp[i * 3] : 0.0);
     double yi = coords[i * 3 + 1] + (disp ? disp[i * 3 + 1] : 0.0);
     double zi = coords[i * 3 + 2] + (disp ? disp[i * 3 + 2] : 0.0);
-    double dx_i = std::cbrt(vols[i]);
+    double dx_i = volToDx(vols[i]);
 
     auto *mat = dynamic_cast<PDCommon::Material::MechanicalMaterial *>(
         particles[i].getMaterial());
     double rho = mat ? mat->getDensity() : 1.0;
-    double mass_i = rho * vols[i];
+    // 【物理修正】：同时计入质量放大系数，保持接触物理与主方程时间尺度绝对对齐
+    double mass_i = rho * vols[i] * massScaleFactor_;
 
     int cx = static_cast<int>(std::floor((xi - minBounds_.x()) / cellSize_));
     int cy = static_cast<int>(std::floor((yi - minBounds_.y()) / cellSize_));
@@ -203,7 +210,7 @@ void NodeNodeContact::computeContactForce(PDCommon::Core::PDContext &ctx) {
                 }
 
                 double dist = std::sqrt(distSqr);
-                double dx_j = std::cbrt(vols[j]);
+                double dx_j = volToDx(vols[j]);
                 double safeDist = (dx_i + dx_j) / 2.0;
 
                 if (dist < safeDist) {
@@ -215,7 +222,7 @@ void NodeNodeContact::computeContactForce(PDCommon::Core::PDContext &ctx) {
                       dynamic_cast<PDCommon::Material::MechanicalMaterial *>(
                           particles[j].getMaterial());
                   double rhoJ = matJ ? matJ->getDensity() : 1.0;
-                  double massJ = rhoJ * vols[j];
+                  double massJ = rhoJ * vols[j] * massScaleFactor_;
 
                   // 构造碰撞对上下文
                   ContactPairContext pair;

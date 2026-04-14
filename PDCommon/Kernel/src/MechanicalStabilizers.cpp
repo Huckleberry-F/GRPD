@@ -71,26 +71,28 @@ void MechanicalSillingStabilizer::applyPenalty(PDContext &ctx) {
 
   const int dim = ctx.getDimension();
   const double horizon = neighborList.getHorizon();
-  const double delta4 = horizon * horizon * horizon * horizon;
-  // Silling 的经验系数：18 / (pi * delta^4)
-  const double coeff_base = 18.0 / (3.141592653589793 * delta4);
+  const double thickness = ctx.getThickness();
+  // Bond-based PD 微模量 coeff_base = c / K
+  // 3D: c = 18K/(πδ⁴)  → coeff_base = 18/(πδ⁴)
+  // 2D: c = 12K/(πhδ³) → coeff_base = 12/(πhδ³)
+  double coeff_base = 0.0;
+  if (dim == 2) {
+    const double delta3 = horizon * horizon * horizon;
+    coeff_base = 12.0 / (3.141592653589793 * thickness * delta3);
+  } else {
+    const double delta4 = horizon * horizon * horizon * horizon;
+    coeff_base = 18.0 / (3.141592653589793 * delta4);
+  }
 
   const double *volumes = fieldManager.getFieldAs<double>("Volume")->dataPtr();
-  double dx = (numParticles > 0) ? std::cbrt(volumes[0]) : 0.0;
-
-  double v_macro = 0.0;
-  if (dim == 2) {
-    v_macro = 3.141592653589793 * horizon * horizon * dx;
-  } else {
-    v_macro = 4.0 / 3.0 * 3.141592653589793 * horizon * horizon * horizon;
-  }
 
   const double *coords = fieldManager.getFieldAs<double>("Coords")->dataPtr();
   const double *dispPtr =
       fieldManager.getFieldAs<double>("Displacement")->dataPtr();
   const double *F_Ptr =
       fieldManager.getFieldAs<double>("DeformationGradient")->dataPtr();
-  const double *vvPtr = fieldManager.getFieldAs<double>("VHorizon")->dataPtr();
+  const double *sumOmegaRawPtr =
+      fieldManager.getFieldAs<double>("SumOmegaRaw")->dataPtr();
   const double *omegaPtr = neighborList.getBondFieldPtr("InfluenceWeight");
   double *accPtr = fieldManager.getFieldAs<double>("Acceleration")->dataPtr();
 
@@ -109,7 +111,9 @@ void MechanicalSillingStabilizer::applyPenalty(PDContext &ctx) {
     double u_iz = dispPtr[i * 3 + 2];
 
     double G_i = g0_ * bulkArr_[i];
-    double coeff_i = coeff_base * G_i * vvPtr[i] / v_macro;
+    // [量纲修复] coeff_base * G_i = 微模量 c = 18K/(πδ⁴) [M/(L⁵T²)]
+    // vvPtr 是无量纲表面修正因子，不再除以 v_macro
+    double coeff_i = coeff_base * G_i / sumOmegaRawPtr[i];
     const double *Fi = &F_Ptr[i * 9];
 
     double force_x = 0.0, force_y = 0.0, force_z = 0.0;
@@ -144,7 +148,7 @@ void MechanicalSillingStabilizer::applyPenalty(PDContext &ctx) {
                            z_jz);
 
       double G_j = g0_ * bulkArr_[j];
-      double coeff_j = coeff_base * G_j * vvPtr[j] / v_macro;
+      double coeff_j = coeff_base * G_j / sumOmegaRawPtr[j];
 
       force_x += omega * vj / horizon * (coeff_i * z_ix - coeff_j * z_jx);
       force_y += omega * vj / horizon * (coeff_i * z_iy - coeff_j * z_jy);
@@ -185,13 +189,19 @@ void MechanicalWanStabilizer::preCompute(PDContext &ctx) {
   }
 
   // 计算并缓存 A_i 惩罚张量，这是 Wan 方法最耗时的矩阵。
+  const int dim = ctx.getDimension();
+
   auto *shapeInvF = ctx.getFieldManager().getFieldAs<double>("ShapeTensorInv");
   if (shapeInvF) {
     const double *shapeInvPtr = shapeInvF->dataPtr();
 #pragma omp parallel for schedule(static)
     for (int i = 0; i < static_cast<int>(numParticles); ++i) {
-      double trace_K_inv =
-          shapeInvPtr[i * 9] + shapeInvPtr[i * 9 + 4] + shapeInvPtr[i * 9 + 8];
+      // [量纲修复] 2D 下 K_inv(2,2)=1.0 是人为降维保护值
+      // 不参与物理 trace 求和，否则会贡献 97% 以上的虚假权重
+      double trace_K_inv = shapeInvPtr[i * 9] + shapeInvPtr[i * 9 + 4];
+      if (dim == 3) {
+        trace_K_inv += shapeInvPtr[i * 9 + 8];
+      }
       double lam = lambdaArr_[i];
       double mu = muArr_[i];
       double *Ai = &shapeAi_[i * 9];
@@ -217,6 +227,8 @@ void MechanicalWanStabilizer::applyPenalty(PDContext &ctx) {
       fieldManager.getFieldAs<double>("Displacement")->dataPtr();
   const double *F_Ptr =
       fieldManager.getFieldAs<double>("DeformationGradient")->dataPtr();
+  const double *sumOmegaRawPtr =
+      fieldManager.getFieldAs<double>("SumOmegaRaw")->dataPtr();
   const double *omegaPtr = neighborList.getBondFieldPtr("InfluenceWeight");
   double *accPtr = fieldManager.getFieldAs<double>("Acceleration")->dataPtr();
 
@@ -272,13 +284,19 @@ void MechanicalWanStabilizer::applyPenalty(PDContext &ctx) {
       // 提取预先计算的 A_j 且再乘体积权值！极度降维！
       const double *Aj = &shapeAi_[j * 9];
 
-      double Ti_x = g0_ * (Ai[0] * z_ix + Ai[1] * z_iy + Ai[2] * z_iz);
-      double Ti_y = g0_ * (Ai[3] * z_ix + Ai[4] * z_iy + Ai[5] * z_iz);
-      double Ti_z = g0_ * (Ai[6] * z_ix + Ai[7] * z_iy + Ai[8] * z_iz);
+      double Ti_x = g0_ * (Ai[0] * z_ix + Ai[1] * z_iy + Ai[2] * z_iz) /
+                    sumOmegaRawPtr[i];
+      double Ti_y = g0_ * (Ai[3] * z_ix + Ai[4] * z_iy + Ai[5] * z_iz) /
+                    sumOmegaRawPtr[i];
+      double Ti_z = g0_ * (Ai[6] * z_ix + Ai[7] * z_iy + Ai[8] * z_iz) /
+                    sumOmegaRawPtr[i];
 
-      double Tj_x = g0_ * (Aj[0] * z_jx + Aj[1] * z_jy + Aj[2] * z_jz);
-      double Tj_y = g0_ * (Aj[3] * z_jx + Aj[4] * z_jy + Aj[5] * z_jz);
-      double Tj_z = g0_ * (Aj[6] * z_jx + Aj[7] * z_jy + Aj[8] * z_jz);
+      double Tj_x = g0_ * (Aj[0] * z_jx + Aj[1] * z_jy + Aj[2] * z_jz) /
+                    sumOmegaRawPtr[j];
+      double Tj_y = g0_ * (Aj[3] * z_jx + Aj[4] * z_jy + Aj[5] * z_jz) /
+                    sumOmegaRawPtr[j];
+      double Tj_z = g0_ * (Aj[6] * z_jx + Aj[7] * z_jy + Aj[8] * z_jz) /
+                    sumOmegaRawPtr[j];
 
       force_x += omega * vj * (Ti_x - Tj_x);
       force_y += omega * vj * (Ti_y - Tj_y);

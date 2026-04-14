@@ -14,7 +14,6 @@ Parts:
     MatID: 1
     Dimension: 2
     Source: "cylinder.stl"
-    Thickness: 0.25 # 2D 虚拟厚度
     Offset: [0.0, 0.0, 0.0]
     dx: 0.25
 

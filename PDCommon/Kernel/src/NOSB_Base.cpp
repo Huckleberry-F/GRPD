@@ -72,20 +72,32 @@ void NOSB_Base::ComputeShapeTensors(PDContext &ctx) {
   auto &reg = FieldRegistry::getInstance();
   auto shapeField = reg.createField("DoubleField", "ShapeTensorInv", 9);
   auto vhField = reg.createField("DoubleField", "VHorizon", 1);
+  auto sfField = reg.createField("DoubleField", "SumFac", 1);
+  auto soField = reg.createField("DoubleField", "SumOmegaRaw", 1);
   fieldManager.addField(std::move(shapeField));
   fieldManager.addField(std::move(vhField));
+  fieldManager.addField(std::move(sfField));
+  fieldManager.addField(std::move(soField));
   auto *shapeInvField = fieldManager.getFieldAs<double>("ShapeTensorInv");
   auto *vHorizonField = fieldManager.getFieldAs<double>("VHorizon");
+  auto *sumFacField = fieldManager.getFieldAs<double>("SumFac");
+  auto *sumOmegaRawField = fieldManager.getFieldAs<double>("SumOmegaRaw");
 
   shapeInvField->resize(numParticles);
   vHorizonField->resize(numParticles);
+  sumFacField->resize(numParticles);
+  sumOmegaRawField->resize(numParticles);
 
   shapeInvField->clearToZero();
   vHorizonField->clearToZero();
+  sumFacField->clearToZero();
+  sumOmegaRawField->clearToZero();
 
   // 提取高性能 SoA 裸指针
   double *shapeInvPtr = shapeInvField->dataPtr();
   double *vvPtr = vHorizonField->dataPtr();
+  double *sumFacPtr = sumFacField->dataPtr();
+  double *sumOmegaRawPtr = sumOmegaRawField->dataPtr();
   auto *coordsField = fieldManager.getFieldAs<double>("Coords");
   auto *volumeField = fieldManager.getFieldAs<double>("Volume");
   if (!coordsField || !volumeField) {
@@ -104,8 +116,9 @@ void NOSB_Base::ComputeShapeTensors(PDContext &ctx) {
   double *omegaPtr = neighborList.getBondFieldPtr("InfluenceWeight");
   const double horizon = neighborList.getHorizon();
 
-  // 从上下文获取模型维度
+  // 从上下文获取模型维度和厚度
   const int dim = ctx.getDimension();
+  const double thickness = ctx.getThickness();
 
   LOG_INFO(
       "[NOSB_Base] Computing InfluenceWeight + Shape Tensor Inverse (K^-1)...");
@@ -138,7 +151,10 @@ void NOSB_Base::ComputeShapeTensors(PDContext &ctx) {
       for (int k = 0; k < numNeighbors; ++k) {
         double omega_raw =
             GetInfluenceWeight(bondLens[k], horizon, kernelType_);
-        double radij = std::cbrt(volumes[i]) * 0.5;
+        // 2D: Volume = dx² * thickness → dx = sqrt(Volume/thickness)
+        // 3D: Volume = dx³ → dx = cbrt(Volume)
+        double dx_i = (dim == 2) ? std::sqrt(volumes[i] / thickness) : std::cbrt(volumes[i]);
+        double radij = dx_i * 0.5;
         double fac = GetPartialVolumeFactor(bondLens[k], horizon, radij);
         double omega = omega_raw * fac;
         omegaPtr[offset + k] = omega;
@@ -162,7 +178,10 @@ void NOSB_Base::ComputeShapeTensors(PDContext &ctx) {
 
       // 计算 omega * fac 并存入 BondField
       double omega_raw = GetInfluenceWeight(bondLens[k], horizon, kernelType_);
-      double radij = std::cbrt(volumes[i]) * 0.5; // 粒子半径 = dx/2
+      // 2D: Volume = dx² * thickness → dx = sqrt(Volume/thickness)
+      // 3D: Volume = dx³ → dx = cbrt(Volume)
+      double dx_i = (dim == 2) ? std::sqrt(volumes[i] / thickness) : std::cbrt(volumes[i]);
+      double radij = dx_i * 0.5; // 粒子半径 = dx/2
       double fac = GetPartialVolumeFactor(bondLens[k], horizon, radij);
       double omega = omega_raw * fac;
       omegaPtr[offset + k] = omega;
@@ -181,21 +200,28 @@ void NOSB_Base::ComputeShapeTensors(PDContext &ctx) {
       K += omega * (deltaX * deltaX.transpose()) * vj;
     }
 
-    // v_horizon = Σfac / Σω_raw（邻域部分体积修正比）
+    // 分别存储 Σfac 和 Σω_raw，供零能修正器灵活使用
+    sumFacPtr[i] = sum_fac;
+    sumOmegaRawPtr[i] = sum_omega_raw;
+    // v_horizon = Σfac / Σω_raw（邻域部分体积修正比，保持兼容）
     vvPtr[i] = (sum_omega_raw > 1e-30) ? (sum_fac / sum_omega_raw) : 1.0;
 
-    // 2D 降维保护：强制 Z 轴满秩，使 K_inv(2,2) = 1.0，
-    // 从而严格消除 Z 方向数值噪音（deltaZ 严格为 0，乘 1.0 结果仍为 0）
-    if (dim == 2) {
-      K(2, 2) = 1.0;
-    }
+    // 计算真实的几何有效迹以作为正则化基准（排除被硬编码垫乱的维度）
+    double trace_K = (dim == 2) ? (K(0, 0) + K(1, 1)) : K.trace();
 
     // 通用正则化：基于迹(Trace)的动态小参量
     // 关键修复：将系数从 1e-6 提升至 2.5e-3。
     // 这能在保证连续体内部精度（误差<0.25%）的前提下，强制兜住预裂纹尖端和自由表面的奇异性。
     // 彻底解决 Zhang 氏零能修正中 (K_inv * dx)^2 导致的平方级引爆现象！
-    double trace_K = K.trace();
     K += (trace_K * 2.5e-3 + 1e-15) * Matrix3d::Identity();
+
+    // 2D 降维保护：在正则化完成后，强制 Z 轴满秩，使 K_inv(2,2) = 1.0
+    // 从而严格消除 Z 方向数值噪音（deltaZ 严格为 0，乘 1.0 结果仍为 0）
+    if (dim == 2) {
+      K(2, 0) = K(0, 2) = 0.0;
+      K(2, 1) = K(1, 2) = 0.0;
+      K(2, 2) = 1.0;
+    }
 
     Matrix3d K_inv = K.inverse();
     Map<Matrix<double, 3, 3, RowMajor>> K_inv_map(&shapeInvPtr[i * 9]);
@@ -287,11 +313,14 @@ void NOSB_Base::UpdateShapeTensors(PDContext &ctx) {
       K += omega * (deltaX * deltaX.transpose()) * vj;
     }
 
-    if (dim == 2)
-      K(2, 2) = 1.0;
-
-    double trace_K = K.trace();
+    double trace_K = (dim == 2) ? (K(0, 0) + K(1, 1)) : K.trace();
     K += (trace_K * 2.5e-3 + 1e-15) * Matrix3d::Identity();
+
+    if (dim == 2) {
+      K(2, 0) = K(0, 2) = 0.0;
+      K(2, 1) = K(1, 2) = 0.0;
+      K(2, 2) = 1.0;
+    }
 
     // 检查不可逆性
     if (std::abs(K.determinant()) < 1e-12) {

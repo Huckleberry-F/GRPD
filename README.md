@@ -307,6 +307,12 @@ General-Peridynamics/
 
 ## 📌 版本更新日志 (Changelog)
 
+### v4.2 — 二维架构大一统与人工质量守恒 (2D Planar Kinematics & Unified Mass Scaling)
+
+- **边界受力免疫降维 (Pressure-to-BodyForce Automata)**: 深度重构边界条件模块，为 `BC` 基类开辟自适应比例尺注入通道。现在 `PressureBC` (面压条件) 可在底层完美侦测解析粒子的等效几何尺度 (`dx`, 密度)、甚至是动量方程里由于显式大步长而开启的 `MassScaleFactor` 质量放大系数，并自动实施完美等价的牛顿第二定律体力投影。解除了使用者在前处理时对虚拟质量心智的绑定。
+- **接触惩罚刚度的等效降维 (2D Planar Thickness Extrusion)**: 首次为二维平面的接触赋予了空间物理感知能力。针对面际惩罚排斥 (`PenaltyContact`)，自动调取系统维度，仅在触发 `Plane Stress` 或 `Plane Strain` 时，接触面将会自动乘以模型声明的 `Thickness` 进行弹性刚度膨胀，完美补偿二维抽象后导致的垂直投影面积失真。
+- **动态松弛时间尺度的大一统 (ADR Global Time-Scale Resonance)**: 拔除了长期深埋于 `NodeNodeContact` 核心中的隐患——传统的接触力只除以微观粒子的物理质量，这在启用带大质量扩增的 `ADR_Integrator` (显式动态松弛) 时会引起微小接合面上不可控的相对加速度爆炸跳弹。现已将全局 `MassScaleFactor` 直接注射并绑定入每个节点碰撞循环，使接触反馈力场的时间演化步调完全臣服于主位移迭代，达成整引擎时间尺度的史诗大统。
+
 ### v4.1 — MPM 式多体动量投影接触与模板体系架构大一统 (MPM-Style Contact & Unified Architecture)
 
 - **NodeNodeContact 模板方法强基座**: 彻底重构接触内核模块。抽取空间哈希网格探测 (Spatial Hash Grid)、OpenMP 拓扑并行与防自交过滤的核心逻辑，上浮为 `NodeNodeContact` 统一基类中的模板生命周期法。衍生子类 (Penalty, ViscousPenalty) 仅需专注实现 `computePairForce` 惩罚闭包，单文件代码削减高达 65%，使扩展新型数学接触模型变得犹如搭积木般纯粹。

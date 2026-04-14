@@ -17,7 +17,6 @@ Parts:
   - PartID: 1
     MatID: 1
     Dimension: 2
-    Thickness: 0.5
     Source: "Low_Res_Box.stl"
     RepairMesh: false
     dx: 0.5          # 先用较大的 dx 快速测试

@@ -33,12 +33,13 @@ void BB_Base::ComputeSurfaceCorrections(PDCommon::Core::PDContext &ctx) {
 
   LOG_INFO("[BB_Base] Computing Volume Surface Correction Factors...");
 
-  // 1. 理论完整体积
+  // 理论完整邻域体积：2D 使用圆柱(厚度来自ctx)，3D 使用完整球体
   const double PI = 3.14159265358979323846;
-  double dx_ref = std::cbrt(volumes[0]);
+  const double thickness = ctx.getThickness();
   double V_complete;
   if (dim == 2) {
-    V_complete = PI * horizon * horizon * dx_ref; 
+    // 2D: 圆面积 * 厚度
+    V_complete = PI * horizon * horizon * thickness;
   } else {
     V_complete = (4.0 / 3.0) * PI * horizon * horizon * horizon;
   }

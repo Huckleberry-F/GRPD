@@ -3,7 +3,6 @@
 // ============================================================================
 
 #include "ADR_Integrator.h"
-#include "BCManager.h"
 #include "FieldManager.h"
 #include "Logger.h"
 #include "MaterialManager.h"
@@ -29,6 +28,8 @@ void ADR_Integrator::configure(const YAML::Node &solverNode) {
     dispTol_ = solverNode["DispTol"].as<double>();
   if (solverNode["ForceTol"])
     forceTol_ = solverNode["ForceTol"].as<double>();
+  if (solverNode["MinRefForce"])
+    minRefForce_ = solverNode["MinRefForce"].as<double>();
   if (solverNode["MassScaleFactor"])
     massScaleFactor_ = solverNode["MassScaleFactor"].as<double>();
   if (solverNode["RampIters"])
@@ -105,16 +106,28 @@ void ADR_Integrator::run(PDCommon::Core::PDContext &ctx,
     kernel->preCompute(ctx);
   }
 
+  double limitDt = computeCFLTimestep(ctx, massScaleFactor_);
   if (autoCalcDt_) {
-    computeCFLTimestep(ctx, massScaleFactor_);
+    dt_ = limitDt;
+    LOG_INFO("[ADR_Integrator] Auto CFL enabled. Setting dt = " +
+             PDCommon::Utils::StringUtils::toScientific(dt_));
+  } else {
+    if (dt_ > limitDt) {
+      LOG_WARNING("[ADR_Integrator] Global TimeStep_dt (" +
+                  PDCommon::Utils::StringUtils::toScientific(dt_) +
+                  ") EXCEEDS safe CFL limit (" +
+                  PDCommon::Utils::StringUtils::toScientific(limitDt) +
+                  ")! Auto-clamping global dt to the safe limit.");
+      dt_ = limitDt;
+    }
   }
 
   const double dt = dt_;
   initializeHistoryVariables();
 
   LOG_INFO("[ADR_Integrator] Starting Custom ADR: NumLoadSteps = " +
-           std::to_string(loadStepConfigs_.size()) +
-           ", MassScale = " + PDCommon::Utils::StringUtils::toScientific(massScaleFactor_) +
+           std::to_string(loadStepConfigs_.size()) + ", MassScale = " +
+           PDCommon::Utils::StringUtils::toScientific(massScaleFactor_) +
            ", DampingMethod = " + dampingMethod_ +
            ", dt = " + PDCommon::Utils::StringUtils::toScientific(dt));
 
@@ -162,8 +175,9 @@ void ADR_Integrator::run(PDCommon::Core::PDContext &ctx,
                         loadStepConfigs_.size();
 
         int currentKbc = (stepConfig.kbc >= 0) ? stepConfig.kbc : kbc_;
+        // 核心修复：如果是断裂引起的二次松弛 (fracIter > 0)，千万不能在这个循环内部重新爬坡，否则会导致物理载荷瞬间掉落！
         int rampIters =
-            (currentKbc == 1) ? 0 : computeRampIters(ctx); // KBC=1阶跃
+            (currentKbc == 1 || fracIter > 0) ? 0 : computeRampIters(ctx); // KBC=1 或 断裂重稳态，强制无爬坡直接保载
         LOG_INFO("    [Substep " + std::to_string(sub) +
                  "] Computed RampIters: " + std::to_string(rampIters));
 
@@ -217,13 +231,25 @@ void ADR_Integrator::run(PDCommon::Core::PDContext &ctx,
           BC::applyConstraints(ctx.getBCManager(), activeLF,
                                stepConfig.stepId); // 始终强制冻结位移边界
 
-          computeConvergenceCriteria(); // 收集收敛 TOL 数据
+          // 动态捕获当前子步的真实最大不平衡量作为 R_ref
+          int updateRefMode = 0;
+          if (iter == 0) {
+            updateRefMode = 1; // 子步/重开步的起点：重置基准
+          } else if (iter <= rampIters) {
+            updateRefMode = 2; // 爬坡期：追踪并逼出这波加载产生的最大残差作为基准
+          }
+
+          computeConvergenceCriteria(updateRefMode); // 收集收敛 TOL 数据
 
           timer.tock();
 
           // [收敛判定与日志输出]
           if (!inRampPhase && iter > rampIters + 20) {
-            if (TOL2_ < dispTol_ && TOL3_ < forceTol_) {
+            bool criteria_strict = (TOL2_ < dispTol_ && TOL3_ < forceTol_);
+            bool criteria_kinematics =
+                (TOL3_ < forceTol_ * 0.5 && TOL1_ < 1e-6);
+
+            if (criteria_strict || criteria_kinematics) {
               converged = true;
               LOG_INFO(
                   "    [Step " + std::to_string(step) + " / Sub " +
@@ -232,9 +258,8 @@ void ADR_Integrator::run(PDCommon::Core::PDContext &ctx,
                   PDCommon::Utils::StringUtils::toScientific(TOL1_) +
                   " | TOL2(dU): " +
                   PDCommon::Utils::StringUtils::toScientific(TOL2_) +
-                  " | TOL3(Res): " +
-                  PDCommon::Utils::StringUtils::toScientific(TOL3_) +
-                  " | cn: " + PDCommon::Utils::StringUtils::toScientific(cn));
+                  " | TOL3(ResRatio): " +
+                  PDCommon::Utils::StringUtils::toScientific(TOL3_));
             }
           }
 
@@ -248,12 +273,15 @@ void ADR_Integrator::run(PDCommon::Core::PDContext &ctx,
 
             LOG_INFO(
                 "    > Sub " + std::to_string(sub) + " Iter " +
-                std::to_string(iter) +
-                " | Time: " + PDCommon::Utils::StringUtils::toScientific(currentPhysicalTime) +
-                " | LocalLF: " + PDCommon::Utils::StringUtils::toScientific(currentLocalLF) +
-                " | Res: " + PDCommon::Utils::StringUtils::toScientific(TOL3_) +
-                " | cn: " + PDCommon::Utils::StringUtils::toScientific(cn) +
-                " | Speed: " +
+                std::to_string(iter) + " | Time: " +
+                PDCommon::Utils::StringUtils::toScientific(
+                    currentPhysicalTime) +
+                " | TOL1(V): " +
+                PDCommon::Utils::StringUtils::toScientific(TOL1_) +
+                " | TOL2(dU): " +
+                PDCommon::Utils::StringUtils::toScientific(TOL2_) +
+                " | TOL3(ResRatio): " +
+                PDCommon::Utils::StringUtils::toScientific(TOL3_) + " | Speed: " +
                 std::to_string(static_cast<int>(timer.pureSpeed())) +
                 " steps/s" + (inRampPhase ? " [Ramping]" : ""));
           }
@@ -270,7 +298,7 @@ void ADR_Integrator::run(PDCommon::Core::PDContext &ctx,
                       PDCommon::Utils::StringUtils::toScientific(TOL1_) +
                       " | TOL2(dU): " +
                       PDCommon::Utils::StringUtils::toScientific(TOL2_) +
-                      " | TOL3(Res): " +
+                      " | TOL3(ResRatio): " +
                       PDCommon::Utils::StringUtils::toScientific(TOL3_));
         }
 
@@ -508,7 +536,7 @@ void ADR_Integrator::updateKinematicsLeapfrog(double cn, double dt) {
   }
 }
 
-void ADR_Integrator::computeConvergenceCriteria() {
+void ADR_Integrator::computeConvergenceCriteria(int updateRefMode) {
   TOL1_ = 0.0;
   TOL2_ = 0.0;
   TOL3_ = 0.0;
@@ -526,10 +554,13 @@ void ADR_Integrator::computeConvergenceCriteria() {
       double du_iter = so.uPtr[i] - dispOld_[k][i];
       double du_substep = so.uPtr[i] - dispBase_[k][i];
 
+      // 修正：将缩放的伪加速度还原为与外力等效的不平衡力加速率
+      double raw_acc = so.aPtr[i] * massScaleFactor_;
+
       local_tol1 += velHalfOld_[k][i] * velHalfOld_[k][i];
       local_tol2 += du_iter * du_iter;
       local_denom_tol2 += du_substep * du_substep;
-      local_tol3 += so.aPtr[i] * so.aPtr[i];
+      local_tol3 += raw_acc * raw_acc;
     }
     TOL1_ += local_tol1;
     TOL2_ += local_tol2;
@@ -542,10 +573,20 @@ void ADR_Integrator::computeConvergenceCriteria() {
   denom_TOL2 = std::sqrt(denom_TOL2);
   TOL3_ = std::sqrt(TOL3_);
 
-  // 使用相对位移进行 TOL2 判定（防除零保护）
-  if (denom_TOL2 > 1e-12) {
-    TOL2_ = TOL2_ / denom_TOL2;
+  // 动态截取全过程真正的最大峰值作为参考残差
+  if (updateRefMode == 1) {
+    initialResidualRef_ = TOL3_;
+  } else if (updateRefMode == 2) {
+    initialResidualRef_ = std::max(initialResidualRef_, TOL3_);
   }
+
+  // 使用相对位移进行 TOL2 判定（防阶跃/静止状态微扰除零）
+  double effective_denom2 = std::max(denom_TOL2, 1.0e-5);
+  TOL2_ = TOL2_ / effective_denom2;
+
+  // 使用相对不平衡量进行 TOL3 判定（结合 MINREF）
+  double relative_denom3 = std::max(initialResidualRef_, minRefForce_);
+  TOL3_ = TOL3_ / relative_denom3;
 }
 
 } // namespace Src::Integration

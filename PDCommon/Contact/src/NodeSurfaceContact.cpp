@@ -33,10 +33,17 @@ void NodeSurfaceContact::computeContactForce(PDCommon::Core::PDContext &ctx) {
   const double *vel = velField ? velField->dataPtr() : nullptr;
   double *acc = accField->dataPtr();
 
+  // 2D/3D dx
+  const int dim = ctx.getDimension();
+  const double thickness = ctx.getThickness();
+  auto volToDx = [dim, thickness](double v) -> double {
+    return (dim == 2) ? std::sqrt(v / thickness) : std::cbrt(v);
+  };
+
   double maxDx = 0.0;
   for (int i : masterIds_) {
     if (activeStatus && activeStatus[i] == 0) continue;
-    double dx = std::cbrt(vols[i]);
+    double dx = volToDx(vols[i]);
     if (dx > maxDx) maxDx = dx;
   }
 
@@ -57,7 +64,7 @@ void NodeSurfaceContact::computeContactForce(PDCommon::Core::PDContext &ctx) {
       double xi = coords[i * 3] + (disp ? disp[i * 3] : 0.0);
       double yi = coords[i * 3 + 1] + (disp ? disp[i * 3 + 1] : 0.0);
       double zi = coords[i * 3 + 2] + (disp ? disp[i * 3 + 2] : 0.0);
-      double dx_i = std::cbrt(vols[i]);
+      double dx_i = volToDx(vols[i]);
       double searchRadius = (dx_i + maxDx) * 0.5 * 1.5;
 
       int cur_cx = static_cast<int>(std::floor((xi - grid_.minBounds_.x()) / grid_.cellSize_));
@@ -134,12 +141,12 @@ void NodeSurfaceContact::computeContactForce(PDCommon::Core::PDContext &ctx) {
 
         if (!isInitialNeighbor) {
           double dist = std::sqrt(distSqr);
-          double dx_j = std::cbrt(vols[j]);
+          double dx_j = volToDx(vols[j]);
           double safeDist = (dx_i + dx_j) / 2.0;
 
           if (dist < safeDist) {
             double penetration = safeDist - dist;
-            double weight = penetration; // ÇÖÈëÁ¿×÷ÎªÈ¨ÖØ
+            double weight = penetration; // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ÎªÈ¨ï¿½ï¿½
             sumPenetration += weight;
             if (penetration > maxPenetration) {
               maxPenetration = penetration;
@@ -214,7 +221,7 @@ void NodeSurfaceContact::computeContactForce(PDCommon::Core::PDContext &ctx) {
                              (yi - (coords[j * 3 + 1] + (disp ? disp[j * 3 + 1] : 0.0))) * (yi - (coords[j * 3 + 1] + (disp ? disp[j * 3 + 1] : 0.0))) +
                              (zi - (coords[j * 3 + 2] + (disp ? disp[j * 3 + 2] : 0.0))) * (zi - (coords[j * 3 + 2] + (disp ? disp[j * 3 + 2] : 0.0)));
             double dist = std::sqrt(distSqr);
-            double dx_j = std::cbrt(vols[j]);
+            double dx_j = volToDx(vols[j]);
             double safeDist = (dx_i + dx_j) / 2.0;
 
             if (dist < safeDist) {

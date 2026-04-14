@@ -1,83 +1,72 @@
 #==============================================================================
-# GRPD 全局主配置文件 - 力学 NOSB 测试用例 (2D 纯平面位移)
-# 单位制：N-mm-tonne-s
-#   长度: mm
-#   质量: tonne (1e3 kg)
-#   时间: s
-#   力:   N (= tonne·mm/s²)
-#   应力: MPa (= N/mm²)
-# ==============================================================================
+# 厚度对比实验 - h=1.0（默认）
+#==============================================================================
 
-# 1. 全局设置
 Assembly: {}
 
 Parts:
   - PartID: 1
-    MatID: 1 # 默认材质
-    Dimension: 2 # [关键] 声明为 2 维平面问题
-    Length: 200.0
-    Width: 100.0
-    Thickness: 1.0 # 2D情况下的虚拟厚度
-    Offset: [-100.0, 0.0, 0.0] # 偏移到 [-100, 100] × [0, 100] 构成真实的宽度200全模型
-    dx: 0.25 # 离散间距
+    MatID: 1
+    Dimension: 2
+    Length: 10.0
+    Width: 5.0
+    Thickness: 0.05 # h=1.0
+    dx: 0.05
 
-# 3. 边界条件
 BoundaryConditions:
-  - BcID: 1
-    Name: "Impact_Top"
-    # 顶部撞击区：在两条裂纹之间 (-25 < X < 25) 加载，彻底取消对称轴位移约束
-    # 保持厚度抓取 Y > 99.39，防止剥离
-    Box: [-25.01, 25.01, 99.39, 999.0, -999.0, 999.0]
-    Type: "VELOCITY"
-    Value: [1.0e20, -32000.0, 1.0e20] # 竖直向下施加 32 m/s
+  - Step: 1
+    BcID: 1
+    Name: "Fix_Left"
+    Box: [-0.01, 0.051, -0.01, 999.0, -999.0, 999.0]
+    Type: "UX"
+    Value: 0.0
+  - Step: 1
+    BcID: 2
+    Name: "Pull_Right_Force"
+    Box: [9.949, 10.01, -0.01, 999.0, -999.0, 999.0]
+    Type: "PX"
+    Value: 4.0
+  - Step: 1
+    BcID: 3
+    Name: "Fix_Left_Y"
+    Box: [-0.01, 0.051, -0.01, 999.0, -999.0, 999.0]
+    Type: "UY"
+    Value: 0.0
 
-# 4. 预置裂纹 (PreCracks) - Kalthoff-Winkler 双裂纹 (非对称全模型)
-# 两条垂直裂纹，从顶面向下延伸50mm，分别位于 X=-25 和 X=25
-PreCracks:
-  - Type: "QuadCrack"
-    # 左侧裂纹
-    V1: [-25.0, 50.0, -100.0]
-    V2: [-25.0, 100.1, -100.0]
-    V3: [-25.0, 100.1, 100.0]
-    V4: [-25.0, 50.0, 100.0]
-  - Type: "QuadCrack"
-    # 右侧裂纹
-    V1: [25.0, 50.0, -100.0]
-    V2: [25.0, 100.1, -100.0]
-    V3: [25.0, 100.1, 100.0]
-    V4: [25.0, 50.0, 100.0]
-
-# 5. 材质物理属性 (钢材的线弹性本构)
 Materials:
   - MatID: 1
     Name: "Steel_Elastic"
     Type: "LinearElasticMat"
-    Density: 8.0e-9 # tonne/mm³
-    YoungsModulus: 1.91e5 # MPa (N/mm²)
-    PoissonsRatio: 0.3 # 泊松比
-    # 断裂损伤准则
-    Fracture:
-      Type: "BondStretchFracture"
-      Critical_Stretch: 0.02 # 超过此伸长率的键将动态断裂
+    Density: 8.0e-9
+    YoungsModulus: 2.0e5
+    PoissonsRatio: 0.3
 
-# 5. 求解器控制
 Solver:
   Engine: "PD"
-  Type: "Mechanical" # [关键] 切换为力学引擎
+  Type: "Mechanical"
   Kernel: "NOSB_M"
-  TimeIntegrator: "CentralDifference" # [关键] 使用中心差分法
-  TotalTime: 8.7e-5 # 总时长 0.1 s
-  TimeStep_dt: 8.7e-9 # 中心差分的显式时间步(需很小以满足 CFL)
-  OutputInterval: 200 # 每 100 步输出一帧
-  OMP_Threads: 8
-  Horizon: 0.7515 # 邻域半径 3.015*dx
-  KernelWeightType: "Linear"
-  ZeroEnergyG0: 0.1 # 零能模式修正系数
-  ZeroEnergyMethod: "Zhang" # [关键] 开启 Silling 修正
+  TimeIntegrator: "ADR"
+  LoadSteps:
+    - Step: 1
+      Time: 1.0
+      KBC: 0 # 第一段：显式指定斜坡平滑(Ramp)加载
+      NumSubsteps: 1 # 第一段为了快速通过弹性阶段，使用极少的截断粗糙过
+  MassScaleFactor: 1.25e11
+  MaxPseudoSteps: 20000
+  RampWaveRatio: 1.0
+  DampingMethod: "HybridKinetic"
+  Fracture_Strategy: "Staggered"
+  DispTol: 1.0e-6
+  ForceTol: 5.0e-3
+  OutputInterval: 1000
+  OMP_Threads: 16
+  Horizon: 0.15075
+  KernelWeightType: "Gaussian"
+  ZeroEnergyG0: 1.0
+  ZeroEnergyMethod: "Silling"
 
-# 7. 输出设置
 Writer:
-  Name: "Disp_Result"
+  Name: "Result_h1"
   Type: "binary"
   Variables:
     - Name: "PartID"
@@ -86,13 +75,7 @@ Writer:
       Dimension: 1
     - Name: "Displacement"
       Dimension: 3
+    - Name: "PK1Stress"
+      Dimension: 9
     - Name: "Velocity"
       Dimension: 3
-    - Name: "DeformationGradient"
-      Dimension: 9
-    - Name: "BondIntegrity"
-      Dimension: 1
-    - Name: "PK1Stress" # [关键] 输出损伤场以便 ParaView 渲染裂纹
-      Dimension: 9
-
-# Updated for v3.1 project sync

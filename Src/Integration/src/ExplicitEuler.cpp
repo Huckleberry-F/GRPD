@@ -187,7 +187,9 @@ double ExplicitEuler::computeCFLTimestep(PDCommon::Core::PDContext &ctx,
   const double *volumes = volumeField->dataPtr();
   if (volumes[0] <= 0.0)
     return dt_;
-  double dx = std::cbrt(volumes[0]);
+  double dx = (ctx.getDimension() == 2)
+                  ? std::sqrt(volumes[0] / ctx.getThickness())
+                  : std::cbrt(volumes[0]);
 
   // 取最苛刻的热扩散 dt
   double minDt = 1e30;

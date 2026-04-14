@@ -57,6 +57,9 @@ public:
                           int particleId,
                           const std::vector<double> &values) = 0;
 
+  /// @brief 传入底层缩放相关的参数供高级边界条件（如压强转体力）使用
+  virtual void setScalingFactors(double dx, double density, double massScale) {}
+
   /// @brief 施加边界条件的核心虚函数
   /// @brief 施加边界条件的核心虚函数
   /// 每个具体的派生类将实现自己的施加逻辑

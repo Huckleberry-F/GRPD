@@ -103,9 +103,16 @@ public:
   /// @brief 设置模型维度 (2 或 3)
   void setDimension(int dim) { dimension_ = dim; }
 
+  /// @brief 获取 2D 模型厚度（3D 下无意义，默认 1.0）
+  double getThickness() const { return thickness_; }
+
+  /// @brief 设置 2D 模型厚度
+  void setThickness(double h) { thickness_ = h; }
+
 private:
   std::string name_;                                    ///< 模型名称
   int dimension_ = 3;                                   ///< 模型维度 (默认 3D)
+  double thickness_ = 1.0;                               ///< 2D 模型厚度 (默认 1.0)
   PDCommon::Model::ParticleManager particleManager_;    ///< 粒子管理器
   PDCommon::Material::MaterialManager materialManager_; ///< 材料管理器
   PDCommon::Field::FieldManager fieldManager_;          ///< 物理场管理器
