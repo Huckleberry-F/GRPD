@@ -235,8 +235,10 @@ void ADR_Integrator::run(PDCommon::Core::PDContext &ctx,
           int updateRefMode = 0;
           if (iter == 0) {
             updateRefMode = 1; // 子步/重开步的起点：重置基准
-          } else if (iter <= rampIters) {
-            updateRefMode = 2; // 爬坡期：追踪并逼出这波加载产生的最大残差作为基准
+          } else {
+            // [修复] 始终追踪全过程的最大残差作为基准
+            // 防止 kbc=1 时 rampIters=0 导致无法捕获波峰残差，致使基准过小
+            updateRefMode = 2; 
           }
 
           computeConvergenceCriteria(updateRefMode); // 收集收敛 TOL 数据
@@ -248,8 +250,11 @@ void ADR_Integrator::run(PDCommon::Core::PDContext &ctx,
             bool criteria_strict = (TOL2_ < dispTol_ && TOL3_ < forceTol_);
             bool criteria_kinematics =
                 (TOL3_ < forceTol_ * 0.5 && TOL1_ < 1e-6);
+            // [修复] 增加绝对静止防死锁判据：若体系动能极小 (1e-8) 且位移增量已满足容差，
+            // 说明属于恒定载荷/保持步，此时即便浮点底噪引发残差假性偏大，也直接强制物理收敛，拒绝无效空转计算
+            bool criteria_still = (TOL1_ < 1e-8 && TOL2_ < dispTol_);
 
-            if (criteria_strict || criteria_kinematics) {
+            if (criteria_strict || criteria_kinematics || criteria_still) {
               converged = true;
               LOG_INFO(
                   "    [Step " + std::to_string(step) + " / Sub " +

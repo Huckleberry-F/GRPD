@@ -54,16 +54,21 @@ void SillingContact::onPreContact(PDCommon::Core::PDContext &ctx,
     }
     double K = std::min(masterBulk, slaveBulk);
 
-    // Silling & Askari (2005) 微模量 (3D bond-based):
-    //   c = 18K / (π δ⁴)            [N/m⁶] (force density 单位)
-    // 短程力密度常数:
-    //   c_s = c / δ = 18K / (π δ⁵)  [N/m⁷]
-    // 使得 f_s = c_s * penetration   [N/m⁶] (与 PD 内力同量纲)
-    double delta5 = horizon * horizon * horizon * horizon * horizon;
-    shortRangeStiffness_ = stiffnessFactor_ * 18.0 * K / (M_PI * delta5);
-
     dim_ = ctx.getDimension();
     effectiveThickness_ = (dim_ == 2) ? ctx.getThickness() : 1.0;
+
+    if (dim_ == 2) {
+      // 2D 键基微模量 (平面应力/应变): c = 9K / (π t δ³)
+      // 短程力密度常数: c_s = c / δ = 9K / (π t δ⁴)
+      // 这能确保最终与体积平方 (A1*t)*(A2*t) 相乘时，整体接触力刚好与 t 成正比
+      double delta4 = horizon * horizon * horizon * horizon;
+      shortRangeStiffness_ = stiffnessFactor_ * 9.0 * K / (M_PI * effectiveThickness_ * delta4);
+    } else {
+      // 3D 键基微模量: c = 18K / (π δ⁴)
+      // 短程力密度常数: c_s = c / δ = 18K / (π δ⁵)
+      double delta5 = horizon * horizon * horizon * horizon * horizon;
+      shortRangeStiffness_ = stiffnessFactor_ * 18.0 * K / (M_PI * delta5);
+    }
 
     LOG_INFO("[SillingContact] Auto: horizon=" + PDCommon::Utils::StringUtils::toScientific(horizon) +
              ", dx=" + std::to_string(maxDx) +

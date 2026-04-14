@@ -310,8 +310,8 @@ General-Peridynamics/
 ### v4.2 — 二维架构大一统与人工质量守恒 (2D Planar Kinematics & Unified Mass Scaling)
 
 - **边界受力免疫降维 (Pressure-to-BodyForce Automata)**: 深度重构边界条件模块，为 `BC` 基类开辟自适应比例尺注入通道。现在 `PressureBC` (面压条件) 可在底层完美侦测解析粒子的等效几何尺度 (`dx`, 密度)、甚至是动量方程里由于显式大步长而开启的 `MassScaleFactor` 质量放大系数，并自动实施完美等价的牛顿第二定律体力投影。解除了使用者在前处理时对虚拟质量心智的绑定。
-- **接触惩罚刚度的等效降维 (2D Planar Thickness Extrusion)**: 首次为二维平面的接触赋予了空间物理感知能力。针对面际惩罚排斥 (`PenaltyContact`)，自动调取系统维度，仅在触发 `Plane Stress` 或 `Plane Strain` 时，接触面将会自动乘以模型声明的 `Thickness` 进行弹性刚度膨胀，完美补偿二维抽象后导致的垂直投影面积失真。
-- **动态松弛时间尺度的大一统 (ADR Global Time-Scale Resonance)**: 拔除了长期深埋于 `NodeNodeContact` 核心中的隐患——传统的接触力只除以微观粒子的物理质量，这在启用带大质量扩增的 `ADR_Integrator` (显式动态松弛) 时会引起微小接合面上不可控的相对加速度爆炸跳弹。现已将全局 `MassScaleFactor` 直接注射并绑定入每个节点碰撞循环，使接触反馈力场的时间演化步调完全臣服于主位移迭代，达成整引擎时间尺度的史诗大统。
+- **接触惩罚刚度与态基微模量的等效降维 (2D Planar Thickness Extrusion)**: 首次为二维平面的接触赋予了空间物理感知能力。针对面际惩罚排斥 (`PenaltyContact`)，自动调取系统维度，仅在触发 `Plane Stress`/`Strain` 时自动乘以厚度进行弹性刚度膨胀；深度修复了原生态基 `SillingContact` 排斥模型，为其特供注入了基于二维平面应力的近场动力学专属微模量修正解 $c_{2D} = 9K / (\pi t \delta^3)$，从底层算式上彻底铲除了伪三维常数积分时衍生的平方级几何失真假象，使接触反馈完美契合线性缩放规律。
+- **动态松弛时间尺度演进与收敛鲁棒性大一统 (ADR Global Evolution)**: 将全局 `MassScaleFactor` 直接注入每一个节点碰撞循环，使接触力场演化步调彻底与主位移迭代同频共振；强力修复了显式准静态的求解控制回路，纠正了阶跃载荷 `kbc=1` 期间波峰基准跟踪失效的数学谬误。并独创性挂载了基于宏观超静止容差的“保持载荷步放行门栅 (Hold-Step Stillness Bypass)”，当系统完全丧失动能且仅余运算底噪时强行终止空转迭代。将准静态算法的推进效率与物理收敛性推向巅峰。
 
 ### v4.1 — MPM 式多体动量投影接触与模板体系架构大一统 (MPM-Style Contact & Unified Architecture)
 
