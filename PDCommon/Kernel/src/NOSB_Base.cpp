@@ -268,11 +268,15 @@ void NOSB_Base::UpdateShapeTensors(PDContext &ctx) {
 
 #pragma omp parallel for schedule(static)
   for (int i = 0; i < static_cast<int>(numParticles); ++i) {
-    // 若该粒子已被宣告死亡，则跳过计算以节省时间并防止奇异性
-    if ((bondIntegrityPtr && bondIntegrityPtr[i] >= 0.99) ||
-        (activeStatusPtr && activeStatusPtr[i] == 0)) {
+    // 彻底死亡的粒子：清零 K_inv 并跳过
+    if (activeStatusPtr && activeStatusPtr[i] == 0) {
       Map<Matrix<double, 3, 3, RowMajor>> K_inv_map(&shapeInvPtr[i * 9]);
       K_inv_map = Matrix3d::Identity();
+      continue;
+    }
+    // 高损伤但未死亡：跳过重算（节省性能），保留上一步 K_inv
+    // 这样 (1-D)*σ_dev + σ_hyd 仍能用上一步的形状张量正确计算静水压
+    if (bondIntegrityPtr && bondIntegrityPtr[i] >= 0.99) {
       continue;
     }
 

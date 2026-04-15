@@ -70,6 +70,7 @@ void CentralDifference::run(PDCommon::Core::PDContext &ctx,
           : (loadStepConfigs_[0].kbc >= 0 ? loadStepConfigs_[0].kbc : kbc_);
   double initLF = (initKbc == 1) ? 1.0 : 0.0;
   BC::applyConstraints(ctx.getBCManager(), initLF, initialStepId);
+  ctx.setCurrentDt(dt_); // 初始化时同步 dt
   evaluateForces(ctx, kernels, accFieldNames_, initialStepId, initLF);
 
   PDCommon::Utils::Timer timer;
@@ -129,6 +130,7 @@ void CentralDifference::run(PDCommon::Core::PDContext &ctx,
       updateKinematicsStep1(currentDt);
       BC::applyConstraints(ctx.getBCManager(), activeLF, config.stepId);
 
+      ctx.setCurrentDt(currentDt); // 同步真实 dt 给接触模块
       evaluateForces(ctx, kernels, accFieldNames_, config.stepId, activeLF);
 
       updateKinematicsStep2(currentDt);
@@ -160,6 +162,13 @@ void CentralDifference::run(PDCommon::Core::PDContext &ctx,
   }
 
   // 最终强制输出一次作为结束
+  LOG_INFO(
+      "--- Step " + std::to_string(globalStepCounter) +
+      " | Time: " + PDCommon::Utils::StringUtils::toScientific(currentTime) +
+      "  |  Pure Compute: " + PDCommon::Utils::StringUtils::toScientific(timer.pureComputeTime()) +
+      "s" + "  |  Total: " + PDCommon::Utils::StringUtils::toScientific(timer.totalElapsed()) + "s" +
+      "  |  Speed: " +
+      std::to_string(static_cast<int>(timer.pureSpeed())) + " steps/s");
   if (outputCallback) {
     outputCallback(globalStepCounter, currentTime);
   }

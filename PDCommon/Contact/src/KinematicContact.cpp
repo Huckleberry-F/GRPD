@@ -2,13 +2,14 @@
 #include "ContactRegistry.h"
 #include "FieldManager.h"
 #include "Logger.h"
-#include "StringUtils.h"
 #include "MechanicalMaterial.h"
 #include "PDContext.h"
 #include "ParticleManager.h"
+#include "StringUtils.h"
 #include <cmath>
 #include <omp.h>
 #include <vector>
+
 
 namespace PDCommon::Contact {
 
@@ -19,19 +20,24 @@ void KinematicContact::initialize(const YAML::Node &configNode) {
   if (configNode["RestitutionCoeff"]) {
     restitutionCoeff_ = configNode["RestitutionCoeff"].as<double>();
   }
-  if (configNode["DtEst"]) {
-    dt_est_ = configNode["DtEst"].as<double>();
-  }
 
   LOG_INFO(
       "[KinematicContact] Configured MPM Style Contact: RestitutionCoeff=" +
-      PDCommon::Utils::StringUtils::toScientific(restitutionCoeff_) + ", DtEst=" + std::to_string(dt_est_));
+      PDCommon::Utils::StringUtils::toScientific(restitutionCoeff_));
 }
 
 void KinematicContact::computeContactForce(PDCommon::Core::PDContext &ctx) {
   auto &fm = ctx.getFieldManager();
   auto &pm = ctx.getParticleManager();
   size_t numParticles = pm.getTotalParticles();
+
+  // 从引擎上下文获取真实时间步长
+  double dt = ctx.getCurrentDt();
+  if (dt < 1e-30) {
+    LOG_WARNING("[KinematicContact] ctx.getCurrentDt() returned near-zero! "
+                "Using fallback dt=1e-9.");
+    dt = 1e-9;
+  }
 
   // 1. 获取必需的场
   auto *activeField = fm.getFieldAs<int>("ActiveStatus");
@@ -103,10 +109,9 @@ void KinematicContact::computeContactForce(PDCommon::Core::PDContext &ctx) {
 
     // -- 收集局部主面信息 --
     double sumPenetration = 0.0;
-    double maxPenetration = 0.0;
+    int numContacts = 0;
     double nx_total = 0.0, ny_total = 0.0, nz_total = 0.0;
     double vx_master = 0.0, vy_master = 0.0, vz_master = 0.0;
-    double m_master_eff = 0.0;
 
     // 用于记录互相作用的 j 以及权重，以反向分布力
     std::vector<std::pair<int, double>> interacting_js;
@@ -157,10 +162,12 @@ void KinematicContact::computeContactForce(PDCommon::Core::PDContext &ctx) {
 
                   if (dist < safeDist) {
                     double penetration = safeDist - dist;
+                    // 【修复2】穿透截断保护：限制最大穿透量不超过安全距离的50%
+                    // 防止粒子几乎重合时力爆炸和法线方向翻转
+                    penetration = std::min(penetration, safeDist * 0.5);
                     double weight = penetration; // 这里权重取侵入量
                     sumPenetration += weight;
-                    if (penetration > maxPenetration)
-                      maxPenetration = penetration;
+                    numContacts++;
 
                     nx_total += (rx / dist) * weight;
                     ny_total += (ry / dist) * weight;
@@ -169,12 +176,6 @@ void KinematicContact::computeContactForce(PDCommon::Core::PDContext &ctx) {
                     vx_master += vel[j * 3] * weight;
                     vy_master += vel[j * 3 + 1] * weight;
                     vz_master += vel[j * 3 + 2] * weight;
-
-                    auto *mat_j =
-                        dynamic_cast<PDCommon::Material::MechanicalMaterial *>(
-                            particles[j].getMaterial());
-                    double rho_j = mat_j ? mat_j->getDensity() : 1.0;
-                    m_master_eff += rho_j * vols[j] * massScaleFactor_ * weight;
 
                     interacting_js.push_back({j, weight});
                   }
@@ -202,12 +203,21 @@ void KinematicContact::computeContactForce(PDCommon::Core::PDContext &ctx) {
         nz_total /= n_len;
       }
 
-      // 计算和主面的等效质量
-      m_master_eff = std::max(m_master_eff, mass_i); // 粗略估算局部等效质量
-      double m_eff = (mass_i * m_master_eff) / (mass_i + m_master_eff);
+      // 取代表 master 质量（同材料粒子质量相同，取第一个即可）
+      int j_rep = interacting_js[0].first;
+      auto *mat_rep = dynamic_cast<PDCommon::Material::MechanicalMaterial *>(
+          particles[j_rep].getMaterial());
+      double mass_master = (mat_rep ? mat_rep->getDensity() : 1.0) *
+                           vols[j_rep] * massScaleFactor_;
+
+      // 等效质量：确保 slave 和 master 按质量比分担修正
+      // 钨(重)撞钢(轻)：钨受小修正，钢受大修正 — 物理正确
+      double m_eff = (mass_i * mass_master) / (mass_i + mass_master);
 
       // 1. 位置修正法向力
-      double f_pos_mag = m_eff * maxPenetration / (dt_est_ * dt_est_);
+      // 加权平均穿透量（与法线、速度的加权平均一致）
+      double avgPenetration = sumPenetration / numContacts;
+      double f_pos = m_eff * avgPenetration / (dt * dt);
 
       // 2. 速度阻尼力
       double dvx = vel[i * 3] - vx_master;
@@ -215,42 +225,37 @@ void KinematicContact::computeContactForce(PDCommon::Core::PDContext &ctx) {
       double dvz = vel[i * 3 + 2] - vz_master;
       double v_rel_n = dvx * nx_total + dvy * ny_total + dvz * nz_total;
 
-      double f_damp_mag = 0.0;
+      double f_damp = 0.0;
       if (v_rel_n < 0.0) { // 逼近
-        f_damp_mag = (1.0 + restitutionCoeff_) * m_eff * (-v_rel_n) / dt_est_;
-        // 限幅：防止意外速度过大产生爆炸力
-        f_damp_mag = std::min(f_damp_mag, 2.0 * f_pos_mag);
+        f_damp = (1.0 + restitutionCoeff_) * m_eff * (-v_rel_n) / dt;
+        f_damp = std::min(f_damp, 2.0 * f_pos); // 限幅保护
       }
 
-      double force_mag = f_pos_mag + f_damp_mag;
+      double force_mag = f_pos + f_damp;
       double fx = force_mag * nx_total;
       double fy = force_mag * ny_total;
       double fz = force_mag * nz_total;
 
       // 注入从面
-      if (mass_i > 1e-30) {
-        acc[i * 3] += fx / mass_i;
-        acc[i * 3 + 1] += fy / mass_i;
-        acc[i * 3 + 2] += fz / mass_i;
-      }
+      acc[i * 3] += fx / mass_i;
+      acc[i * 3 + 1] += fy / mass_i;
+      acc[i * 3 + 2] += fz / mass_i;
 
-      // 按权重反向注入主面
+      // 按权重反向注入主面（用力除以各 master 粒子质量）
       for (const auto &pair : interacting_js) {
         int j = pair.first;
         double w = pair.second * inv_sum;
         auto *mat_j = dynamic_cast<PDCommon::Material::MechanicalMaterial *>(
             particles[j].getMaterial());
-        double mass_j = (mat_j ? mat_j->getDensity() : 1.0) * vols[j] * massScaleFactor_;
+        double mass_j =
+            (mat_j ? mat_j->getDensity() : 1.0) * vols[j] * massScaleFactor_;
         if (mass_j > 1e-30) {
-          double fj_x = -fx * w;
-          double fj_y = -fy * w;
-          double fj_z = -fz * w;
 #pragma omp atomic
-          acc[j * 3] += fj_x / mass_j;
+          acc[j * 3] += -fx * w / mass_j;
 #pragma omp atomic
-          acc[j * 3 + 1] += fj_y / mass_j;
+          acc[j * 3 + 1] += -fy * w / mass_j;
 #pragma omp atomic
-          acc[j * 3 + 2] += fj_z / mass_j;
+          acc[j * 3 + 2] += -fz * w / mass_j;
         }
       }
     }

@@ -71,14 +71,14 @@ void DamageValueFracture::computeFracture(PDCommon::Core::PDContext &ctx,
         activeBonds++;
       }
     }
-    
+
     // 更新断键比例 (0到1，1代表完全孤立)
     bondIntegrityPtr[i] = calculateFractureRatio(i, activeBonds);
 
     // 【阈值处决】计算本粒子的物理断键损伤度
     // 当基于周边断键的宏观损伤大于临界值时，彻底将其注销，化为无碰撞的破片
     double damage = bondIntegrityPtr[i];
-    if (damage >= criticalDamage_) {
+    if (damage >= 0.99) {
       activeStatusPtr[i] = 0; // 名正言顺地死亡，彻底化作自由破片
     }
   }

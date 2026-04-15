@@ -210,6 +210,7 @@ void ADR_Integrator::run(PDCommon::Core::PDContext &ctx,
 
           // ✨ [核心工序流水线表达]
           BC::applyConstraints(ctx.getBCManager(), activeLF, stepConfig.stepId);
+          ctx.setCurrentDt(dt); // 同步真实 dt 给接触模块
           evaluateForces(ctx, kernels, accFieldNames_, stepConfig.stepId,
                          activeLF);
           BC::applyConstraints(ctx.getBCManager(), activeLF,
@@ -375,6 +376,13 @@ void ADR_Integrator::run(PDCommon::Core::PDContext &ctx,
     // 宣告本 LoadStep 彻底结束，让 Boundary Conditions 记忆最终态
     BC::commitEndStep(ctx.getBCManager());
   }
+
+  LOG_INFO(
+      "--- ADR Complete | Total Substeps: " + std::to_string(globalSubstepCounter) +
+      "  |  Pure Compute: " + PDCommon::Utils::StringUtils::toScientific(timer.pureComputeTime()) +
+      "s" + "  |  Total: " + PDCommon::Utils::StringUtils::toScientific(timer.totalElapsed()) + "s" +
+      "  |  Speed: " +
+      std::to_string(static_cast<int>(timer.pureSpeed())) + " steps/s");
 
   timer.logSummary("ADR_Integrator");
 }

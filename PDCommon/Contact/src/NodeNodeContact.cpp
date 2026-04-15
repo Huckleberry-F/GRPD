@@ -215,6 +215,12 @@ void NodeNodeContact::computeContactForce(PDCommon::Core::PDContext &ctx) {
 
                 if (dist < safeDist) {
                   double raw_penetration = safeDist - dist;
+                  // 【穿透截断保护】：限制最大穿透量不超过安全距离的50%
+                  // 当粒子几乎重合(dist→0)时，防止：
+                  //   1. 力无限增大导致数值爆炸
+                  //   2. 法线方向因 rx/dist 中 dist→0 而不稳定
+                  //   3. 粒子穿过对方后法线翻转，力变成加速穿透的"吸引力"
+                  raw_penetration = std::min(raw_penetration, safeDist * 0.5);
                   double nx = rx / dist, ny = ry / dist, nz = rz / dist;
 
                   // 计算 master 质量

@@ -34,7 +34,6 @@ protected:
 
 private:
   double restitutionCoeff_ = 0.0; ///< 恢复系数 (0=完全非弹性, 1=完全弹性)
-  double dt_est_ = 1e-9;          ///< 时间步长估算值
 };
 
 } // namespace PDCommon::Contact

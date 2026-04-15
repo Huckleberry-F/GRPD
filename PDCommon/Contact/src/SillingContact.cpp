@@ -36,7 +36,7 @@ void SillingContact::onPreContact(PDCommon::Core::PDContext &ctx,
     const auto &neighborList = ctx.getNeighborList();
     double horizon = neighborList.getHorizon();
 
-    // 获取体积模量（取主从面中较小的）
+    // 获取体积模量（取主从面中较大的，较硬一方主导接触排斥刚度）
     double masterBulk = 1.0e5, slaveBulk = 1.0e5;
     if (!masterIds_.empty()) {
       auto *matBase = particles[masterIds_[0]].getMaterial();
@@ -52,22 +52,21 @@ void SillingContact::onPreContact(PDCommon::Core::PDContext &ctx,
       if (mechMat)
         slaveBulk = mechMat->getBulkModulus();
     }
-    double K = std::min(masterBulk, slaveBulk);
+    double K = std::max(masterBulk, slaveBulk);
 
     dim_ = ctx.getDimension();
     effectiveThickness_ = (dim_ == 2) ? ctx.getThickness() : 1.0;
 
     if (dim_ == 2) {
       // 2D 键基微模量 (平面应力/应变): c = 9K / (π t δ³)
-      // 短程力密度常数: c_s = c / δ = 9K / (π t δ⁴)
-      // 这能确保最终与体积平方 (A1*t)*(A2*t) 相乘时，整体接触力刚好与 t 成正比
-      double delta4 = horizon * horizon * horizon * horizon;
-      shortRangeStiffness_ = stiffnessFactor_ * 9.0 * K / (M_PI * effectiveThickness_ * delta4);
+      // 接触力密度使用与 PD 键力一致的公式: f = c * s_contact
+      // 其中 s_contact = penetration / safeDist（无量纲穿透率）
+      double delta3 = horizon * horizon * horizon;
+      shortRangeStiffness_ = stiffnessFactor_ * 9.0 * K / (M_PI * effectiveThickness_ * delta3);
     } else {
       // 3D 键基微模量: c = 18K / (π δ⁴)
-      // 短程力密度常数: c_s = c / δ = 18K / (π δ⁵)
-      double delta5 = horizon * horizon * horizon * horizon * horizon;
-      shortRangeStiffness_ = stiffnessFactor_ * 18.0 * K / (M_PI * delta5);
+      double delta4 = horizon * horizon * horizon * horizon;
+      shortRangeStiffness_ = stiffnessFactor_ * 18.0 * K / (M_PI * delta4);
     }
 
     LOG_INFO("[SillingContact] Auto: horizon=" + PDCommon::Utils::StringUtils::toScientific(horizon) +
@@ -81,8 +80,9 @@ ContactPairResult
 SillingContact::computePairForce(const ContactPairContext &pair) {
   ContactPairResult result;
 
-  // Silling 短程力密度: f_s = c_s * penetration  [N/m⁶]
-  double f_density = shortRangeStiffness_ * pair.raw_penetration;
+  // Silling 短程力密度: f = c * s_contact，其中 s = penetration / safeDist（无量纲）
+  double s_contact = pair.raw_penetration / pair.safeDist;
+  double f_density = shortRangeStiffness_ * s_contact;
 
   double vol_i = (dim_ == 2) ? (pair.dx_i * pair.dx_i * effectiveThickness_)
                              : (pair.dx_i * pair.dx_i * pair.dx_i);

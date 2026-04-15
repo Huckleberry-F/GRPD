@@ -7,14 +7,13 @@
 #include "ContactManager.h"
 #include "FieldManager.h"
 #include "Logger.h"
-#include "StringUtils.h"
 #include "MaterialManager.h"
 #include "MechanicalMaterial.h"
 #include "PDKernel.h"
+#include "StringUtils.h"
 #include "TypedField.h"
 #include <cmath>
 #include <omp.h>
-
 
 namespace Src::Integration {
 
@@ -110,6 +109,9 @@ void TimeIntegrator::evaluateForces(
   BC::applySources(ctx.getBCManager(), activeLF, currentStep);
 
   // 3. 接触系统源项注入（由调用方直接遍历接触对，Manager 不参与调度）
+  // 注意：ctx.setCurrentDt() 应由各积分器在调用 evaluateForces 之前完成，
+  //       以确保接触模块拿到的是循环中实际使用的 dt（含 LoadStep
+  //       覆盖和着陆裁剪）
   for (auto &[name, contact] : ctx.getContactManager().getContactPairs()) {
     contact->computeContactForce(ctx);
   }
@@ -125,7 +127,8 @@ void TimeIntegrator::evaluateForces(
 // dt = safetyFactor * dx / sqrt(E / (rho * massScale))
 // ---------------------------------------------------------------------------
 double TimeIntegrator::computeCFLTimestep(PDCommon::Core::PDContext &ctx,
-                                          double massScale, double safetyFactor) {
+                                          double massScale,
+                                          double safetyFactor) {
   auto &matManager = ctx.getMaterialManager();
   auto &fieldManager = ctx.getFieldManager();
 
@@ -164,8 +167,10 @@ double TimeIntegrator::computeCFLTimestep(PDCommon::Core::PDContext &ctx,
 
   if (maxWaveSpeed > 1e-30) {
     double limitDt = safetyFactor * dx / maxWaveSpeed;
-    LOG_INFO("[" + getName() + "] Computed safe CFL limit dt: " + PDCommon::Utils::StringUtils::toScientific(limitDt) +
-             " (dx = " + PDCommon::Utils::StringUtils::toScientific(dx) + ", c = " + PDCommon::Utils::StringUtils::toScientific(maxWaveSpeed) + ")");
+    LOG_INFO("[" + getName() + "] Computed safe CFL limit dt: " +
+             PDCommon::Utils::StringUtils::toScientific(limitDt) + " (dx = " +
+             PDCommon::Utils::StringUtils::toScientific(dx) + ", c = " +
+             PDCommon::Utils::StringUtils::toScientific(maxWaveSpeed) + ")");
     return limitDt;
   } else {
     LOG_WARNING("[" + getName() +

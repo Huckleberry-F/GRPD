@@ -127,6 +127,7 @@ void ExplicitEuler::run(PDCommon::Core::PDContext &ctx,
       int currentKbc = (config.kbc >= 0) ? config.kbc : kbc_;
       double activeLF = (currentKbc == 1) ? 1.0 : stepLoadFactor;
 
+      ctx.setCurrentDt(currentDt); // 同步真实 dt 给接触模块
       evaluateForces(ctx, kernels, rateFieldNames_, config.stepId, activeLF);
 
       updateKinematicsEuler(currentDt);
@@ -156,6 +157,13 @@ void ExplicitEuler::run(PDCommon::Core::PDContext &ctx,
   }
 
   // 最终强制输出一次作为结束
+  LOG_INFO(
+      "--- Step " + std::to_string(globalStepCounter) +
+      " | Time: " + PDCommon::Utils::StringUtils::toScientific(currentTime) +
+      "  |  Pure Compute: " + PDCommon::Utils::StringUtils::toScientific(timer.pureComputeTime()) +
+      "s" + "  |  Total: " + PDCommon::Utils::StringUtils::toScientific(timer.totalElapsed()) + "s" +
+      "  |  Speed: " +
+      std::to_string(static_cast<int>(timer.pureSpeed())) + " steps/s");
   if (outputCallback) {
     outputCallback(globalStepCounter, currentTime);
   }

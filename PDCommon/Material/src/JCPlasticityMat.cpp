@@ -93,10 +93,8 @@ Eigen::Matrix3d JCPlasticityMat::ComputePK1Stress(const Eigen::Matrix3d &F,
   // 追踪静水压 (小变形时 PK1 对角线和依然接近 Cauchy 的迹)
   double sigma_m = stress.trace() / 3.0;
   double sigma_eq = vonMises_[particleId];
-  // 强制拉伸损伤判定：仅在拉伸状态（静水压 > 0）下才允许损伤累积
-  // if (sigma_m / sigma_eq <= -0.333333333) {
-  //   delta_eps_p = 0.0;
-  // }
+  // JC 三轴项 ε_f = D1 + D2*exp(D3*η) 在压缩区(η<0)自然给出高断裂应变
+  // 无需额外截断
 
   double eps_f = D1_;
   if (useTriaxiality_) {
@@ -115,7 +113,13 @@ Eigen::Matrix3d JCPlasticityMat::ComputePK1Stress(const Eigen::Matrix3d &F,
 
   damageTrial_[particleId] = newDamage;
 
-  return stress;
+  // 【渐进刚度退化】：只退化偏应力，保留静水压（体积抵抗力）
+  // σ_eff = (1-D) * σ_dev + σ_hyd
+  // 物理意义：碎片失去剪切承载力，但仍然抵抗压缩（传递接触力）
+  double hydro = stress.trace() / 3.0;
+  Eigen::Matrix3d hydroStress = hydro * Eigen::Matrix3d::Identity();
+  Eigen::Matrix3d devStress = stress - hydroStress;
+  return (1.0 - newDamage) * devStress + hydroStress;
 }
 
 } // namespace PDCommon::Material

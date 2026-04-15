@@ -70,21 +70,21 @@ PreCracks: []
 Materials:
   - MatID: 1
     Name: "Steel_Plate" # 均质装甲钢（RHA）
-    Type: "LinearElasticMat"
+    Type: "JCPlasticityMat"
     Density: 7.85e-9
     YoungsModulus: 200000.0
     PoissonsRatio: 0.3
-    # YieldStress: 235.0 # 极其生硬，几乎不发生屈服变形
-    # HardeningModulus: 5000.0
-    # HardeningType: "Isotropic"
+    YieldStress: 235.0 # 极其生硬，几乎不发生屈服变形
+    HardeningModulus: 1000.0
+    HardeningType: "Isotropic"
     LargeDeformation: false
     # Johnson-Cook 损伤参数
-    # JC_D1: 0.05 # 较高的基础断裂应变
-    # JC_D2: 0.1
-    # JC_D3: -1.5
+    JC_D1: 0.5 # 较高的基础断裂应变
+    JC_D2: 0.5
+    JC_D3: -1.5
     Fracture:
-       Type: "BondStretchFracture"
-       Critical_Stretch: 0.02
+      Type: "DamageValueFracture"
+      Critical_Damage: 0.99
 
   - MatID: 2
     Name: "AP_BulletCore" # 钨合金穿甲弹芯
@@ -97,7 +97,7 @@ Materials:
     HardeningType: "Isotropic"
     LargeDeformation: false
     # Johnson-Cook 损伤参数 (钨相对较脆)
-    JC_D1: 0.1 # 较低的基础断裂应变
+    JC_D1: 1.0 # 较低的基础断裂应变
     JC_D2: 0.34
     JC_D3: -1.5
     # 穿甲弹通常不碎，只在极高扭曲下断裂
@@ -108,12 +108,12 @@ Materials:
 # ==================================
 # 宏观装配体接触对配置 (Contact Pairs)
 # ==================================
-ContactPairs:
-  - Name: "BulletToWall"
-    Type: "SillingContact"            # Silling 短程排斥力（PD 原生接触）
-    MasterPartID: 2
-    SlavePartID: 1
-    StiffnessFactor: 1.0              # PD 微模量原始刚度
+# ContactPairs:
+#   - Name: "BulletToWall"
+#     Type: "SillingContact" # Silling 短程排斥力（PD 原生接触）
+#     MasterPartID: 2
+#     SlavePartID: 1
+#     StiffnessFactor: 1.0 # PD 微模量原始刚度
 # ContactPairs:
 #   - Name: "BulletToWall"
 #     Type: "ViscousPenaltyContact"
@@ -121,19 +121,18 @@ ContactPairs:
 #     SlavePartID: 1
 #     PenaltyFactor: 1.0
 #     DampingCoeff: 0.5
-# ContactPairs:
-#   - Name: "BulletToWall"
-#     Type: "KinematicContact"
-#     MasterPartID: 2
-#     SlavePartID: 1
-#     RestitutionCoeff: 0.0 # 0=完全塑性碰撞(无反弹), 1=完全弹性碰撞
-#     DtEst: 8.0e-9 # 必须提供一个用于计算速度等效的 dt 估算值
+ContactPairs:
+  - Name: "BulletToWall"
+    Type: "KinematicContact"
+    MasterPartID: 2
+    SlavePartID: 1
+    RestitutionCoeff: 0.0 # 0=完全塑性碰撞(无反弹), 1=完全弹性碰撞
 # ContactPairs:
 #   - Name: "BulletToWall"
 #     Type: "NonlinearPenaltyContact"
 #     MasterPartID: 2
 #     SlavePartID: 1
-#     PenaltyFactor: 0.1
+#     PenaltyFactor: 1.0
 #     NonlinearOnsetRatio: 0.5
 #     StiffeningCoeff: 10.0
 # 5. 求解器控制
@@ -145,17 +144,17 @@ Solver:
   TimeIntegrator: "CentralDifference" # [关键] 使用中心差分法
   LoadSteps:
     - Step: 1
-      Time: 8.7e-9
-      TimeStep_dt: 8.7e-9
+      Time: 2.0e-9
+      TimeStep_dt: 2.0e-9
       KBC: 1 # KBC=1，代表恒速加载
     - Step: 2
-      Time: 8.7e-5
-      TimeStep_dt: 8.7e-9
+      Time: 2.0e-5
+      TimeStep_dt: 2.0e-9
       KBC: 1 # 跃升后的恒速加载
-  OutputInterval: 100 # 每 100 步输出一帧
+  OutputInterval: 200 # 每 100 步输出一帧
   OMP_Threads: 16
   Horizon: 0.3015 # 邻域半径 3.015*dx
-  KernelWeightType: "Gaussian"
+  KernelWeightType: "Linear"
   ZeroEnergyG0: 1.0 # 零能模式修正系数
   ZeroEnergyMethod: "Zhang" # [关键] 开启 Silling 修正
 

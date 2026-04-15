@@ -109,10 +109,21 @@ public:
   /// @brief 设置 2D 模型厚度
   void setThickness(double h) { thickness_ = h; }
 
+  // -----------------------------------------------------------------------
+  // 当前时间步长（由 TimeIntegrator 每步更新，供接触等模块读取）
+  // -----------------------------------------------------------------------
+
+  /// @brief 获取当前时间步长
+  double getCurrentDt() const { return currentDt_; }
+
+  /// @brief 设置当前时间步长（由积分器在每步开头调用）
+  void setCurrentDt(double dt) { currentDt_ = dt; }
+
 private:
   std::string name_;                                    ///< 模型名称
   int dimension_ = 3;                                   ///< 模型维度 (默认 3D)
   double thickness_ = 1.0;                               ///< 2D 模型厚度 (默认 1.0)
+  double currentDt_ = 1e-9;                               ///< 当前时间步长（由积分器每步更新）
   PDCommon::Model::ParticleManager particleManager_;    ///< 粒子管理器
   PDCommon::Material::MaterialManager materialManager_; ///< 材料管理器
   PDCommon::Field::FieldManager fieldManager_;          ///< 物理场管理器

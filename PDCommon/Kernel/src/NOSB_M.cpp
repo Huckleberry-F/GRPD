@@ -84,22 +84,9 @@ void NOSB_M::ComputeMechanicalState(PDContext &ctx) {
     // -----------------------------------------------------------------------
 #pragma omp for schedule(guided)
     for (int i = 0; i < static_cast<int>(numParticles); ++i) {
+      // 死亡粒子：保留上一步的 F/PK1/pkKinvCache（已因 (1-D) 退化接近零）
+      // 其所有键已断，不参与力散度积分，无需清零
       if (activeStatusPtr && activeStatusPtr[i] == 0) {
-        int idx9 = i * 9;
-        FPtr[idx9] = FPtr[idx9 + 4] = FPtr[idx9 + 8] = 1.0;
-        FPtr[idx9 + 1] = FPtr[idx9 + 2] = FPtr[idx9 + 3] = 0.0;
-        FPtr[idx9 + 5] = FPtr[idx9 + 6] = FPtr[idx9 + 7] = 0.0;
-
-        PK1Ptr[idx9] = PK1Ptr[idx9 + 1] = PK1Ptr[idx9 + 2] = 0.0;
-        PK1Ptr[idx9 + 3] = PK1Ptr[idx9 + 4] = PK1Ptr[idx9 + 5] = 0.0;
-        PK1Ptr[idx9 + 6] = PK1Ptr[idx9 + 7] = PK1Ptr[idx9 + 8] = 0.0;
-
-        pkKinvCache_[idx9] = pkKinvCache_[idx9 + 1] = pkKinvCache_[idx9 + 2] =
-            0.0;
-        pkKinvCache_[idx9 + 3] = pkKinvCache_[idx9 + 4] =
-            pkKinvCache_[idx9 + 5] = 0.0;
-        pkKinvCache_[idx9 + 6] = pkKinvCache_[idx9 + 7] =
-            pkKinvCache_[idx9 + 8] = 0.0;
         continue;
       }
 

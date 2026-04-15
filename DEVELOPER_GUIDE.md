@@ -125,3 +125,88 @@ private:
 2. **指针性能**：在最核心的循环里（如 `computeForceState`），从 `FieldManager` 获取裸指针（`dataPtr()`），然后用数组下标遍历，结合 `#pragma omp parallel for`，避免在循环体内调用复杂虚函数。
 3. **零拷贝原则**：`PDContext` 及各管理器对象在传递时必须传引用 `&`，严禁按值传递导致的巨量内存拷贝。
 4. **H/CPP 严格分离**：复杂的逻辑必须写在 `.cpp` 文件里，坚决禁止在 `.h` 头文件里写大量实现代码（模板类除外），以降低编译耦合度。
+
+---
+
+## 6. 开发路线图 (v5.0 Roadmap)
+
+> 最后更新：2026-04-15
+
+### 当前版本状态 (v4.0)
+
+| 模块 | 已实现 | 已知问题 |
+|---|---|---|
+| **本构** | LinearElastic, J2Plasticity, JCPlasticity | 小应变加法分解，无客观应力率，大旋转下产生虚假应力 |
+| **损伤** | BondStretchFracture, DamageValueFracture + JC 损伤 | `(1-D)` 仅退化偏应力，保留静水压 |
+| **接触** | Penalty, ViscousPenalty, NonlinearPenalty, Silling, Kinematic | 法向接触基本可用；无摩擦；Kinematic 有锯齿 |
+| **积分器** | ExplicitEuler, CentralDifference, ADR | 功能完整 |
+| **热学** | NOSB_T + HeatConductionMat | 基本可用 |
+
+### 开发优先级
+
+#### ⭐⭐⭐ Phase 1：Jaumann 率动力学塑性积分（最高优先级）
+
+**问题**：当前 J2/JC 塑性使用小应变假设的加法分解 $\epsilon = \epsilon^e + \epsilon^p$，没有客观应力率。刚体旋转即产生虚假应力，穿甲/冲击等大变形问题的结果**本质上不正确**。
+
+**目标**：在 `J2PlasticityMat` 中实现 Jaumann 客观应力率选项
+
+$$\overset{\nabla}{\boldsymbol{\sigma}} = \dot{\boldsymbol{\sigma}} - \boldsymbol{W}\boldsymbol{\sigma} + \boldsymbol{\sigma}\boldsymbol{W}$$
+
+其中 $\boldsymbol{W} = \frac{1}{2}(\boldsymbol{L} - \boldsymbol{L}^T)$ 是旋率张量，$\boldsymbol{L} = \dot{\boldsymbol{F}}\boldsymbol{F}^{-1}$ 是速度梯度。
+
+**涉及文件**：
+- `PDCommon/Material/src/J2PlasticityMat.cpp` — 增加 Jaumann 率积分分支
+- `PDCommon/Kernel/src/NOSB_M.cpp` — 传递速度梯度 L 到材料层
+
+---
+
+#### ⭐⭐⭐ Phase 2：乘式分解准静态塑性本构
+
+**问题**：准静态大变形问题（金属成形、蠕变）需要有限应变塑性框架。
+
+**目标**：新建 `FiniteStrainPlasticityMat`，实现乘式分解
+
+$$\boldsymbol{F} = \boldsymbol{F}^e \boldsymbol{F}^p$$
+
+弹性预测在 $\boldsymbol{F}^e$ 上做，塑性修正通过指数映射更新 $\boldsymbol{F}^p$。
+
+**涉及文件**：
+- `PDCommon/Material/include/FiniteStrainPlasticityMat.h` — [NEW]
+- `PDCommon/Material/src/FiniteStrainPlasticityMat.cpp` — [NEW]
+
+---
+
+#### ⭐⭐ Phase 3：摩擦接触算法
+
+**前提**：需要 Phase 1 完成后，接触力传入的应力才是物理正确的。
+
+**目标**：在 `NodeNodeContact` 框架中实现 Coulomb 摩擦模型
+
+$$f_t = \min(\mu \cdot f_n, \; k_t \cdot \delta_t)$$
+
+**涉及文件**：
+- `PDCommon/Contact/include/NodeNodeContact.h` — 扩展摩擦力接口
+- `PDCommon/Contact/src/PenaltyContact.cpp` — 添加切向力计算
+
+---
+
+#### ⭐ Phase 4：Lemaitre 连续损伤力学本构
+
+**目标**：实现基于热力学的 Lemaitre 损伤模型，适用于低周疲劳和蠕变场景
+
+$$\dot{D} = \left(\frac{Y}{S}\right)^s \dot{p}$$
+
+**涉及文件**：
+- `PDCommon/Material/include/LemaitreDamageMat.h` — [NEW]
+- `PDCommon/Material/src/LemaitreDamageMat.cpp` — [NEW]
+
+---
+
+#### ⭐ Phase 5：热阻接触算法
+
+**目标**：在接触对之间实现热阻传热，用于热力耦合问题
+
+**涉及文件**：
+- `PDCommon/Contact/include/ThermalContact.h` — [NEW]
+- `PDCommon/Contact/src/ThermalContact.cpp` — [NEW]
+
