@@ -282,25 +282,49 @@ def generate_from_yaml(yaml_path):
             
         else:
             # ============================================================
-            # 原始矩形网格路径：Length x Width x Thickness + dx
+            # 原始内置网格路径：支持 Box / Circle / Sphere 几何图元
             # ============================================================
             dim = part['Dimension']
+            shape = part.get('Shape', 'Box')
             
-            x_coords = np.arange(dx / 2, part['Length'], dx)
-            y_coords = np.arange(dx / 2, part['Width'],  dx)
-            
-            if dim == 2:
-                X, Y = np.meshgrid(x_coords, y_coords, indexing='ij')
-                x_flat, y_flat = X.ravel(), Y.ravel()
-                z_flat = np.zeros_like(x_flat)
-                # 2D: Volume = dx * dx * thickness（Thickness 可选，默认 1.0）
-                thickness = part.get('Thickness', 1.0)
-                volume = dx * dx * thickness
-            else:
-                z_coords = np.arange(dx / 2, part.get('Thickness', part.get('Height', dx)), dx)
-                X, Y, Z = np.meshgrid(x_coords, y_coords, z_coords, indexing='ij')
-                x_flat, y_flat, z_flat = X.ravel(), Y.ravel(), Z.ravel()
-                volume = dx * dx * dx
+            if shape == 'Box':
+                x_coords = np.arange(dx / 2, part['Length'], dx)
+                y_coords = np.arange(dx / 2, part['Width'],  dx)
+                
+                if dim == 2:
+                    X, Y = np.meshgrid(x_coords, y_coords, indexing='ij')
+                    x_flat, y_flat = X.ravel(), Y.ravel()
+                    z_flat = np.zeros_like(x_flat)
+                    thickness = part.get('Thickness', 1.0)
+                    volume = dx * dx * thickness
+                else:
+                    z_coords = np.arange(dx / 2, part.get('Thickness', part.get('Height', dx)), dx)
+                    X, Y, Z = np.meshgrid(x_coords, y_coords, z_coords, indexing='ij')
+                    x_flat, y_flat, z_flat = X.ravel(), Y.ravel(), Z.ravel()
+                    volume = dx * dx * dx
+            elif shape == 'Sphere' or shape == 'Circle':
+                radius = part['Radius']
+                # 在 [-R, R] 构建包围盒
+                x_coords = np.arange(-radius + dx / 2, radius, dx)
+                y_coords = np.arange(-radius + dx / 2, radius, dx)
+                
+                if dim == 2:
+                    X, Y = np.meshgrid(x_coords, y_coords, indexing='ij')
+                    x_flat, y_flat = X.ravel(), Y.ravel()
+                    z_flat = np.zeros_like(x_flat)
+                    # 裁剪掉超出版径的点
+                    mask = (x_flat**2 + y_flat**2) <= radius**2
+                    x_flat, y_flat, z_flat = x_flat[mask], y_flat[mask], z_flat[mask]
+                    thickness = part.get('Thickness', 1.0)
+                    volume = dx * dx * thickness
+                else:
+                    z_coords = np.arange(-radius + dx / 2, radius, dx)
+                    X, Y, Z = np.meshgrid(x_coords, y_coords, z_coords, indexing='ij')
+                    x_flat, y_flat, z_flat = X.ravel(), Y.ravel(), Z.ravel()
+                    mask = (x_flat**2 + y_flat**2 + z_flat**2) <= radius**2
+                    x_flat, y_flat, z_flat = x_flat[mask], y_flat[mask], z_flat[mask]
+                    volume = dx * dx * dx
+
 
         # 应用旋转支持 (针对原始矩形网格，绕自身原点旋转)
         if 'Source' not in part:
@@ -390,7 +414,8 @@ def generate_from_yaml(yaml_path):
             step_id = entry['step']
             bc = entry['bc']
             
-            mask = in_box(all_x, all_y, all_z, bc['Box'])
+            box = bc.get('Box', [-1e6, 1e6, -1e6, 1e6, -1e6, 1e6])
+            mask = in_box(all_x, all_y, all_z, box)
             
             if 'PartID' in bc:
                 mask = mask & (all_part_ids == bc['PartID'])

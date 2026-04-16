@@ -34,6 +34,8 @@ protected:
 
 private:
   double restitutionCoeff_ = 0.0; ///< 恢复系数 (0=完全非弹性, 1=完全弹性)
+  double pinballRatio_ = 1.0;     ///< 接触包盖探测容差半径放大乘子
+  double frictionCoeff_ = 0.0;    ///< 库伦滑动摩擦系数
 };
 
 } // namespace PDCommon::Contact

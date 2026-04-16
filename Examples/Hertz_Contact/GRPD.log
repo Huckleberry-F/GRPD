@@ -1,0 +1,1206 @@
+
+[14:19:28] [INFO ] [EngineManager]
+    | ==================================================
+    | GRPD Solver Engine Initialized                 
+    | ==================================================
+
+[14:19:28] [INFO ] [EngineRegistry]
+    | Creating Engine instance: PD
+
+[14:19:28] [INFO ] [PDEngine]
+    | PD Engine instance created.
+    | ===============================================
+    | ========== Registered Types Summary ===========
+    | TimeIntegrator    : ADR, CentralDifference, Explicit, Staggered
+    | FieldRegistry     : DoubleField, IntField
+    | PhysicsFields     : Mechanical, Thermal
+    | BCRegistry        : AX, AY, AZ, CONV, FLUX, PX, PY, PZ, T, UX, UY, UZ, VX, VY, VZ
+    | ReaderRegistry    : .grpd, .inp
+    | StabilizerRegistry: Mechanical_Silling, Mechanical_Wan, Mechanical_Zhang, Thermal_Silling,
+    | Thermal_Wan, Thermal_Zhang
+    | ContactRegistry   : KinematicContact, NonlinearPenaltyContact, PenaltyContact, SillingContact,
+    | ViscousPenaltyContact
+    | MaterialRegistry  : FourierThermalMat, J2PlasticityMat, JCPlasticityMat, LinearElasticMat
+    | KernelRegistry    : NOSB_M, NOSB_T
+    | EngineRegistry    : PD
+    | ===============================================
+
+[14:19:28] [INFO ] [EngineManager]
+    | Initializing solver: PD
+
+[14:19:28] [INFO ] [PDEngine]
+    | Initializing PD simulation context...
+
+[14:19:28] [INFO ] [InitModel]
+    | ==================================================
+    | Model pre-processing...
+    | ==================================================
+    | grpd path: D:\Project_C++\GRPD\Examples\Hertz_Contact\Hertz_Contact.grpd
+    | model name: Hertz_Contact
+    | Calling Python pre-processor to generate .grpd mesh...
+    | Mesh generated successfully by Python.
+
+[14:19:29] [INFO ] [Context Manager]
+    | Formalized model name to: Hertz_Contact
+    | Model dimension set to: 2D
+    | 2D thickness set to: 1.000000
+
+[14:19:29] [INFO ] [ReaderRegistry]
+    | Creating reader for: .grpd (name: Hertz_Contact)
+
+[14:19:29] [INFO ] [InitModel]
+    | Reading mesh file: D:\Project_C++\GRPD\Examples\Hertz_Contact\Hertz_Contact.grpd (reader: .grpd)
+
+[14:19:29] [INFO ] [GrpdMeshReader]
+    | Reading file: D:\Project_C++\GRPD\Examples\Hertz_Contact\Hertz_Contact.grpd
+    | Entering *PARTICLE section (Line 1)
+    | Pre-allocated memory for 17264 particles (Zero-Reallocation)
+    | Entering *LOAD section (Line 17268)
+    | ============================================
+    | File reading complete!
+    | Total particles: 17264
+    | Total load entries: 2064
+    | ============================================
+
+[14:19:29] [INFO ] [ParticleManager]
+    | Pre-allocated memory for 17264 particles
+
+[14:19:29] [INFO ] [InitModel]
+    | Total particles loaded for model Hertz_Contact: 17264
+
+[14:19:29] [INFO ] [InitMaterial]
+    | ==================================================
+    | Entering Material Initialization Phase...
+    | ==================================================
+    | Instantiating material [1] of type: LinearElasticMat
+
+[14:19:29] [INFO ] [MaterialRegistry]
+    | Using factory to create material: Substrate_Elastic (type: LinearElasticMat)
+
+[14:19:29] [INFO ] [LinearElasticMat]
+    | Material 'Substrate_Elastic' is initialized. E = 70000.000000, nu = 0.330000, Density = 0.000000
+
+[14:19:29] [INFO ] [MaterialManager]
+    | Successfully added material instance: Substrate_Elastic
+
+[14:19:29] [INFO ] [InitMaterial]
+    | Successfully registered material ID 1 (Substrate_Elastic)
+    | Instantiating material [2] of type: LinearElasticMat
+
+[14:19:29] [INFO ] [MaterialRegistry]
+    | Using factory to create material: Indenter_Rigid (type: LinearElasticMat)
+
+[14:19:29] [INFO ] [LinearElasticMat]
+    | Material 'Indenter_Rigid' is initialized. E = 210000.000000, nu = 0.300000, Density = 0.000000
+
+[14:19:29] [INFO ] [MaterialManager]
+    | Successfully added material instance: Indenter_Rigid
+
+[14:19:29] [INFO ] [InitMaterial]
+    | Successfully registered material ID 2 (Indenter_Rigid)
+    | Assigning material pointers to particles...
+    | Successfully assigned materials to 17264 particles.
+
+[14:19:29] [INFO ] [InitFields]
+    | ==================================================
+    | Entering Field Registration Phase...
+    | ==================================================
+
+[14:19:29] [INFO ] [FieldManager]
+    | Added field 'Displacement'.
+    | Added field 'Velocity'.
+    | Added field 'Acceleration'.
+
+[14:19:29] [INFO ] [MechanicalFields]
+    | Core fields registered: Displacement, Velocity, Acceleration.
+
+[14:19:29] [INFO ] [InitFields]
+    | Auto-registered PhysicsFields module: Mechanical
+
+[14:19:29] [INFO ] [FieldManager]
+    | Added field 'ID'.
+    | Added field 'PartID'.
+    | Added field 'MatID'.
+    | Added field 'Coords'.
+    | Added field 'Volume'.
+    | Added field 'ActiveStatus'.
+
+[14:19:29] [INFO ] [InitFields]
+    | Global ActiveStatus field registered.
+
+[14:19:29] [INFO ] [FieldManager]
+    | Resized all 9 fields for 17264 particles.
+
+[14:19:29] [INFO ] [InitFields]
+    | ActiveStatus initialized to 1 for all particles.
+    | Binding high-speed material state pointers...
+
+[14:19:29] [INFO ] [MeshData]
+    | Populated particle geometry fields into FieldManager for 17264 particles.
+
+[14:19:29] [INFO ] [InitFields]
+    | All fields allocated for 17264 particles. Total fields: 9.
+
+[14:19:29] [INFO ] [InitConditions]
+    | ==================================================
+    | Entering Conditions Initialization Phase...
+    | ==================================================
+
+[14:19:29] [INFO ] [ReaderRegistry]
+    | Creating reader for: .grpd (name: LoadReader)
+
+[14:19:29] [INFO ] [GrpdMeshReader]
+    | Reading file: D:\Project_C++\GRPD\Examples\Hertz_Contact\Hertz_Contact.grpd
+    | Entering *PARTICLE section (Line 1)
+    | Pre-allocated memory for 17264 particles (Zero-Reallocation)
+    | Entering *LOAD section (Line 17268)
+    | ============================================
+    | File reading complete!
+    | Total particles: 17264
+    | Total load entries: 2064
+    | ============================================
+
+[14:19:29] [INFO ] [InitConditions]
+    | Load statistics:
+    | - UX : 400
+    | - UY : 1664
+    | Boundary conditions initialization complete.
+
+[14:19:29] [INFO ] [InitNeighbors]
+    | ==================================================
+    | Entering Neighbor Search Phase...
+    | ==================================================
+    | Horizon radius: 1.507500
+
+[14:19:29] [INFO ] [NeighborList]
+    | Starting full-flat CSR search for 17264 particles, horizon = 1.507500
+    | Cell grid: 67 x 40 x 1 = 2680 cells
+    | Flat cell list built in 1.000166 ms
+    | Pass 1 (count) done in 0.999928 ms
+    | Total bonds: 470984, Memory: 5 MB
+    | Pass 2 (fill) done in 2.000093 ms
+    | Max neighbors: 28
+    | Total time: 4.000187 ms
+
+[14:19:29] [INFO ] [FieldManager]
+    | Added field 'NeighborCount'.
+
+[14:19:29] [INFO ] [InitNeighbors]
+    | NeighborCount field populated for 17264 particles.
+
+[14:19:29] [INFO ] [FieldManager]
+    | Added field 'BondIntegrity'.
+
+[14:19:29] [INFO ] [InitNeighbors]
+    | Global BondIntegrity scalar field properly initialized to 0.0
+
+[14:19:29] [INFO ] [FieldManager]
+    | Added field 'IsSurface'.
+
+[14:19:29] [INFO ] [SurfaceDetector]
+    | Volume Deficit check complete. Identified 1400 surface particles out of 17264 (Threshold: 0.950000).
+
+[14:19:29] [INFO ] [InitNeighbors]
+    | Neighbor search phase complete.
+
+[14:19:29] [INFO ] [InitContact]
+    | ==================================================
+    | Entering Contact Initialization Phase...
+    | ==================================================
+
+[14:19:29] [INFO ] [PenaltyContact]
+    | Configured: Factor = 1.000000, Pinball = 0.500000
+
+[14:19:29] [INFO ] [InitContact]
+    | Defined ContactPair: Indenter_Press_Substrate [Master Part 2 (1264 nodes) <- Slave Part 1 (16000
+    | nodes)]
+    | Initializing Material-specific BondIntegrity Models...
+    | Material BondIntegrity Models initialized. Total Active Models: 0
+
+[14:19:29] [INFO ] [InitSolverComponents]
+    | ==================================================
+    | Entering Solver Components Assembly Phase...
+    | ==================================================
+    | Building Time Integrator: ADR
+
+[14:19:29] [INFO ] [TimeIntegrator]
+    | Explicitly set OMP Threads to: 16
+
+[14:19:29] [INFO ] [InitSolverComponents]
+    | Time Integrator configured.
+    | Building Space Kernel: NOSB_M
+
+[14:19:29] [INFO ] [NOSB_Base]
+    | Applied KernelWeightType: Linear
+    | Applied ZeroEnergyG0: 1.000000
+    | Applied ZeroEnergyMethod string: Zhang
+
+[14:19:29] [INFO ] [InitSolverComponents]
+    | Space Kernel 'NOSB_M' configured.
+    | Total kernels assembled: 1
+
+[14:19:29] [INFO ] [PDEngine]
+    | PD simulation context initialized successfully.
+
+[14:19:29] [INFO ] [EngineManager]
+    | All solvers initialized. Total: 1
+    | ==================================================
+    | Entering Main Solver Phase
+    | ==================================================
+    | Solving: PD
+
+[14:19:29] [INFO ] [PDEngine]
+    | Starting PD Engine Solve Phase...
+
+[14:19:29] [INFO ] [ADR]
+    | Identified 2nd-order ODE coupling: Displacement <- Velocity <- Acceleration
+
+[14:19:29] [INFO ] [FieldManager]
+    | Added field 'ShapeTensorInv'.
+    | Added field 'VHorizon'.
+    | Added field 'SumFac'.
+    | Added field 'SumOmegaRaw'.
+
+[14:19:29] [INFO ] [NOSB_Base]
+    | Computing InfluenceWeight + Shape Tensor Inverse (K^-1)...
+    | All NOSB base fields registered and Shape Tensor Inverse computed.
+
+[14:19:29] [INFO ] [FieldManager]
+    | Added field 'DeformationGradient'.
+    | Added field 'PK1Stress'.
+
+[14:19:29] [INFO ] [NOSB_M]
+    | Instantiated MechanicalStabilizer globally in Phase 0 using strategy: Zhang
+
+[14:19:29] [INFO ] [ADR]
+    | Material [Indenter_Rigid]: WaveSpeed c = 1.449138e+02, Safe CFL dt = 2.760262e-03
+    | Material [Substrate_Elastic]: WaveSpeed c = 5.091751e+01, Safe CFL dt = 7.855844e-03
+    | Computed safe CFL limit dt: 2.760262e-03 (dx = 5.000000e-01, c = 1.449138e+02)
+
+[14:19:29] [INFO ] [ADR_Integrator]
+    | Auto CFL enabled. Setting dt = 2.760262e-03
+    | Starting Custom ADR: NumLoadSteps = 1, MassScale = 1.000000e+10, DampingMethod = Dynamic, dt =
+    | 2.760262e-03
+    | === Load Step 1 / 1 | NumSubsteps: 20 | KBC: 0 ===
+    |     [Substep 1] Computed RampIters: 123
+
+[14:19:29] [INFO ] [PenaltyContact]
+    | Auto-Computed PenaltyStiffness: 34313.725490 (Factor: 1.000000)
+    |     [Step 1 / Sub 1] Converged. Iter: 145 | TOL1(V): 0.000000e+00 | TOL2(dU): 0.000000e+00 |
+    |     TOL3(ResRatio): 0.000000e+00
+    |     [Substep 2] Computed RampIters: 123
+    |     > Sub 2 Iter 1000 | Time: 1.000000e-01 | TOL1(V): 1.327039e-01 | TOL2(dU): 9.251678e-05 |
+    |     TOL3(ResRatio): 1.017494e-02 | Speed: 93 steps/s
+    |     > Sub 2 Iter 2000 | Time: 1.000000e-01 | TOL1(V): 4.895594e-03 | TOL2(dU): 3.396069e-06 |
+    |     TOL3(ResRatio): 2.547387e-04 | Speed: 92 steps/s
+    |     [Step 1 / Sub 2] Converged. Iter: 2297 | TOL1(V): 1.436269e-03 | TOL2(dU): 9.962749e-07 |
+    |     TOL3(ResRatio): 7.180178e-05
+    |     [Substep 3] Computed RampIters: 123
+    |     > Sub 3 Iter 1000 | Time: 1.500000e-01 | TOL1(V): 1.324555e-01 | TOL2(dU): 9.237485e-05 |
+    |     TOL3(ResRatio): 1.014874e-02 | Speed: 93 steps/s
+    |     > Sub 3 Iter 2000 | Time: 1.500000e-01 | TOL1(V): 4.890235e-03 | TOL2(dU): 3.393549e-06 |
+    |     TOL3(ResRatio): 2.542864e-04 | Speed: 89 steps/s
+    |     [Step 1 / Sub 3] Converged. Iter: 2297 | TOL1(V): 1.435239e-03 | TOL2(dU): 9.959124e-07 |
+    |     TOL3(ResRatio): 7.171612e-05
+    |     [Substep 4] Computed RampIters: 123
+    |     > Sub 4 Iter 1000 | Time: 2.000000e-01 | TOL1(V): 1.319585e-01 | TOL2(dU): 9.207906e-05 |
+    |     TOL3(ResRatio): 1.010222e-02 | Speed: 86 steps/s
+    |     > Sub 4 Iter 2000 | Time: 2.000000e-01 | TOL1(V): 4.877006e-03 | TOL2(dU): 3.386336e-06 |
+    |     TOL3(ResRatio): 2.534057e-04 | Speed: 86 steps/s
+    |     [Step 1 / Sub 4] Converged. Iter: 2296 | TOL1(V): 1.438406e-03 | TOL2(dU): 9.986908e-07 |
+    |     TOL3(ResRatio): 7.185861e-05
+    |     [Substep 5] Computed RampIters: 123
+    |     > Sub 5 Iter 1000 | Time: 2.500000e-01 | TOL1(V): 3.158041e-01 | TOL2(dU): 2.203484e-04 |
+    |     TOL3(ResRatio): 2.825819e-02 | Speed: 86 steps/s
+    |     > Sub 5 Iter 2000 | Time: 2.500000e-01 | TOL1(V): 7.153949e-01 | TOL2(dU): 2.176484e-04 |
+    |     TOL3(ResRatio): 3.656198e-02 | Speed: 86 steps/s
+    |     > Sub 5 Iter 3000 | Time: 2.500000e-01 | TOL1(V): 1.946922e-01 | TOL2(dU): 5.636905e-05 |
+    |     TOL3(ResRatio): 4.617852e-03 | Speed: 86 steps/s
+    |     > Sub 5 Iter 4000 | Time: 2.500000e-01 | TOL1(V): 1.698710e-02 | TOL2(dU): 4.883103e-06 |
+    |     TOL3(ResRatio): 1.489817e-03 | Speed: 85 steps/s
+    |     > Sub 5 Iter 5000 | Time: 2.500000e-01 | TOL1(V): 8.691393e-03 | TOL2(dU): 2.495255e-06 |
+    |     TOL3(ResRatio): 8.483445e-04 | Speed: 86 steps/s
+    |     > Sub 5 Iter 6000 | Time: 2.500000e-01 | TOL1(V): 4.965291e-03 | TOL2(dU): 1.424472e-06 |
+    |     TOL3(ResRatio): 4.871240e-04 | Speed: 87 steps/s
+    |     [Step 1 / Sub 5] Converged. Iter: 6632 | TOL1(V): 3.485698e-03 | TOL2(dU): 9.997083e-07 |
+    |     TOL3(ResRatio): 3.383322e-04
+    |     [Substep 6] Computed RampIters: 123
+    |     > Sub 6 Iter 1000 | Time: 3.000000e-01 | TOL1(V): 1.428793e-01 | TOL2(dU): 9.852479e-05 |
+    |     TOL3(ResRatio): 9.423004e-03 | Speed: 88 steps/s
+    |     > Sub 6 Iter 2000 | Time: 3.000000e-01 | TOL1(V): 5.606994e-03 | TOL2(dU): 3.845051e-06 |
+    |     TOL3(ResRatio): 2.555359e-04 | Speed: 87 steps/s
+    |     [Step 1 / Sub 6] Converged. Iter: 2419 | TOL1(V): 1.455713e-03 | TOL2(dU): 9.981781e-07 |
+    |     TOL3(ResRatio): 9.077432e-05
+    |     [Substep 7] Computed RampIters: 123
+    |     > Sub 7 Iter 1000 | Time: 3.500000e-01 | TOL1(V): 1.424285e-01 | TOL2(dU): 9.834718e-05 |
+    |     TOL3(ResRatio): 9.516479e-03 | Speed: 87 steps/s
+    |     > Sub 7 Iter 2000 | Time: 3.500000e-01 | TOL1(V): 5.261366e-03 | TOL2(dU): 3.612998e-06 |
+    |     TOL3(ResRatio): 2.384118e-04 | Speed: 88 steps/s
+    |     [Step 1 / Sub 7] Converged. Iter: 2318 | TOL1(V): 1.452031e-03 | TOL2(dU): 9.970379e-07 |
+    |     TOL3(ResRatio): 6.468578e-05
+    |     [Substep 8] Computed RampIters: 123
+    |     > Sub 8 Iter 1000 | Time: 4.000000e-01 | TOL1(V): 1.418909e-01 | TOL2(dU): 9.814582e-05 |
+    |     TOL3(ResRatio): 9.619933e-03 | Speed: 88 steps/s
+    |     > Sub 8 Iter 2000 | Time: 4.000000e-01 | TOL1(V): 5.211507e-03 | TOL2(dU): 3.585037e-06 |
+    |     TOL3(ResRatio): 2.395335e-04 | Speed: 88 steps/s
+    |     [Step 1 / Sub 8] Converged. Iter: 2311 | TOL1(V): 1.450434e-03 | TOL2(dU): 9.976896e-07 |
+    |     TOL3(ResRatio): 6.435977e-05
+    |     [Substep 9] Computed RampIters: 123
+    |     > Sub 9 Iter 1000 | Time: 4.500000e-01 | TOL1(V): 1.410975e-01 | TOL2(dU): 9.781689e-05 |
+    |     TOL3(ResRatio): 9.730089e-03 | Speed: 87 steps/s
+    |     > Sub 9 Iter 2000 | Time: 4.500000e-01 | TOL1(V): 5.165967e-03 | TOL2(dU): 3.561833e-06 |
+    |     TOL3(ResRatio): 2.417717e-04 | Speed: 87 steps/s
+    |     [Step 1 / Sub 9] Converged. Iter: 2309 | TOL1(V): 1.445364e-03 | TOL2(dU): 9.964755e-07 |
+    |     TOL3(ResRatio): 6.522450e-05
+    |     [Substep 10] Computed RampIters: 123
+    |     > Sub 10 Iter 1000 | Time: 5.000000e-01 | TOL1(V): 1.400112e-01 | TOL2(dU): 9.734841e-05 |
+    |     TOL3(ResRatio): 9.850594e-03 | Speed: 88 steps/s
+    |     > Sub 10 Iter 2000 | Time: 5.000000e-01 | TOL1(V): 5.108347e-03 | TOL2(dU): 3.532600e-06 |
+    |     TOL3(ResRatio): 2.443102e-04 | Speed: 88 steps/s
+    |     [Step 1 / Sub 10] Converged. Iter: 2307 | TOL1(V): 1.440269e-03 | TOL2(dU): 9.959227e-07 |
+    |     TOL3(ResRatio): 6.644176e-05
+    |     [Substep 11] Computed RampIters: 123
+    |     > Sub 11 Iter 1000 | Time: 5.500000e-01 | TOL1(V): 1.391057e-01 | TOL2(dU): 9.709200e-05 |
+    |     TOL3(ResRatio): 1.002986e-02 | Speed: 87 steps/s
+    |     > Sub 11 Iter 2000 | Time: 5.500000e-01 | TOL1(V): 4.492944e-03 | TOL2(dU): 3.119161e-06 |
+    |     TOL3(ResRatio): 2.990348e-04 | Speed: 88 steps/s
+    |     [Step 1 / Sub 11] Converged. Iter: 2164 | TOL1(V): 1.434791e-03 | TOL2(dU): 9.960469e-07 |
+    |     TOL3(ResRatio): 2.027464e-04
+    |     [Substep 12] Computed RampIters: 123
+    |     > Sub 12 Iter 1000 | Time: 6.000000e-01 | TOL1(V): 1.415035e-01 | TOL2(dU): 9.781657e-05 |
+    |     TOL3(ResRatio): 1.062476e-02 | Speed: 87 steps/s
+    |     > Sub 12 Iter 2000 | Time: 6.000000e-01 | TOL1(V): 4.802429e-03 | TOL2(dU): 3.301965e-06 |
+    |     TOL3(ResRatio): 3.016417e-04 | Speed: 87 steps/s
+    |     [Step 1 / Sub 12] Converged. Iter: 2181 | TOL1(V): 1.442434e-03 | TOL2(dU): 9.917192e-07 |
+    |     TOL3(ResRatio): 1.972458e-04
+    |     [Substep 13] Computed RampIters: 123
+    |     > Sub 13 Iter 1000 | Time: 6.500000e-01 | TOL1(V): 1.533258e-01 | TOL2(dU): 1.040886e-04 |
+    |     TOL3(ResRatio): 1.085908e-02 | Speed: 87 steps/s
+    |     > Sub 13 Iter 2000 | Time: 6.500000e-01 | TOL1(V): 5.325263e-03 | TOL2(dU): 3.593280e-06 |
+    |     TOL3(ResRatio): 2.962106e-04 | Speed: 87 steps/s
+    |     [Step 1 / Sub 13] Converged. Iter: 2201 | TOL1(V): 1.477405e-03 | TOL2(dU): 9.968372e-07 |
+    |     TOL3(ResRatio): 1.820090e-04
+    |     [Substep 14] Computed RampIters: 123
+    |     > Sub 14 Iter 1000 | Time: 7.000000e-01 | TOL1(V): 1.618359e-01 | TOL2(dU): 1.087878e-04 |
+    |     TOL3(ResRatio): 1.099924e-02 | Speed: 86 steps/s
+    |     > Sub 14 Iter 2000 | Time: 7.000000e-01 | TOL1(V): 5.766265e-03 | TOL2(dU): 3.850243e-06 |
+    |     TOL3(ResRatio): 2.788918e-04 | Speed: 86 steps/s
+    |     [Step 1 / Sub 14] Converged. Iter: 2246 | TOL1(V): 1.492015e-03 | TOL2(dU): 9.961658e-07 |
+    |     TOL3(ResRatio): 1.385385e-04
+    |     [Substep 15] Computed RampIters: 123
+    |     > Sub 15 Iter 1000 | Time: 7.500000e-01 | TOL1(V): 1.617952e-01 | TOL2(dU): 1.092133e-04 |
+    |     TOL3(ResRatio): 1.066739e-02 | Speed: 85 steps/s
+    |     > Sub 15 Iter 2000 | Time: 7.500000e-01 | TOL1(V): 5.699794e-03 | TOL2(dU): 3.821963e-06 |
+    |     TOL3(ResRatio): 2.802889e-04 | Speed: 83 steps/s
+    |     [Step 1 / Sub 15] Converged. Iter: 2222 | TOL1(V): 1.484207e-03 | TOL2(dU): 9.951524e-07 |
+    |     TOL3(ResRatio): 1.609940e-04
+    |     [Substep 16] Computed RampIters: 123
+    |     > Sub 16 Iter 1000 | Time: 8.000000e-01 | TOL1(V): 1.645437e-01 | TOL2(dU): 1.092916e-04 |
+    |     TOL3(ResRatio): 1.066979e-02 | Speed: 81 steps/s
+    |     > Sub 16 Iter 2000 | Time: 8.000000e-01 | TOL1(V): 5.893952e-03 | TOL2(dU): 3.888528e-06 |
+    |     TOL3(ResRatio): 2.727421e-04 | Speed: 80 steps/s
+    |     [Step 1 / Sub 16] Converged. Iter: 2243 | TOL1(V): 1.513901e-03 | TOL2(dU): 9.987136e-07 |
+    |     TOL3(ResRatio): 1.368267e-04
+    |     [Substep 17] Computed RampIters: 123
+    |     > Sub 17 Iter 1000 | Time: 8.500000e-01 | TOL1(V): 1.640598e-01 | TOL2(dU): 1.089088e-04 |
+    |     TOL3(ResRatio): 1.063665e-02 | Speed: 78 steps/s
+    |     > Sub 17 Iter 2000 | Time: 8.500000e-01 | TOL1(V): 5.858685e-03 | TOL2(dU): 3.863325e-06 |
+    |     TOL3(ResRatio): 2.762128e-04 | Speed: 77 steps/s
+    |     [Step 1 / Sub 17] Converged. Iter: 2233 | TOL1(V): 1.508901e-03 | TOL2(dU): 9.949210e-07 |
+    |     TOL3(ResRatio): 1.482644e-04
+    |     [Substep 18] Computed RampIters: 123
+    |     > Sub 18 Iter 1000 | Time: 9.000000e-01 | TOL1(V): 1.617958e-01 | TOL2(dU): 1.076667e-04 |
+    |     TOL3(ResRatio): 1.051510e-02 | Speed: 76 steps/s
+    |     > Sub 18 Iter 2000 | Time: 9.000000e-01 | TOL1(V): 5.810285e-03 | TOL2(dU): 3.841249e-06 |
+    |     TOL3(ResRatio): 2.700847e-04 | Speed: 77 steps/s
+    |     [Step 1 / Sub 18] Converged. Iter: 2240 | TOL1(V): 1.504419e-03 | TOL2(dU): 9.945128e-07 |
+    |     TOL3(ResRatio): 1.373683e-04
+    |     [Substep 19] Computed RampIters: 123
+    |     > Sub 19 Iter 1000 | Time: 9.500000e-01 | TOL1(V): 1.649855e-01 | TOL2(dU): 1.101027e-04 |
+    |     TOL3(ResRatio): 1.049909e-02 | Speed: 77 steps/s
+    |     > Sub 19 Iter 2000 | Time: 9.500000e-01 | TOL1(V): 5.935648e-03 | TOL2(dU): 3.934181e-06 |
+    |     TOL3(ResRatio): 2.601339e-04 | Speed: 77 steps/s
+    |     [Step 1 / Sub 19] Converged. Iter: 2273 | TOL1(V): 1.501102e-03 | TOL2(dU): 9.948494e-07 |
+    |     TOL3(ResRatio): 1.084600e-04
+    |     [Substep 20] Computed RampIters: 123
+    |     > Sub 20 Iter 1000 | Time: 1.000000e+00 | TOL1(V): 1.743809e-01 | TOL2(dU): 1.159410e-04 |
+    |     TOL3(ResRatio): 1.073409e-02 | Speed: 77 steps/s
+    |     > Sub 20 Iter 2000 | Time: 1.000000e+00 | TOL1(V): 6.419469e-03 | TOL2(dU): 4.237582e-06 |
+    |     TOL3(ResRatio): 2.685309e-04 | Speed: 78 steps/s
+    |     [Step 1 / Sub 20] Converged. Iter: 2293 | TOL1(V): 1.504837e-03 | TOL2(dU): 9.932656e-07 |
+    |     TOL3(ResRatio): 1.027198e-04
+    | --- ADR Complete | Total Substeps: 20  |  Pure Compute: 6.088762e+02s  |  Total: 6.176338e+02s  | 
+    | Speed: 78 steps/s
+
+[14:29:46] [INFO ] [ADR_Integrator]
+    | Finished. Total: 617.633802s  |  Pure Compute avg: 0.012784 s/step
+
+[14:29:46] [INFO ] [PDEngine]
+    | PD Engine Solve Phase Finished.
+
+[14:29:46] [INFO ] [EngineManager]
+    | Main Solver Phase finished.
+    | ==================================================
+    | Entering Post-processing Phase
+    | ==================================================
+    | Outputting: PD
+    | Post-processing Phase finished.
+
+[14:54:31] [INFO ] [EngineManager]
+    | ==================================================
+    | GRPD Solver Engine Initialized                 
+    | ==================================================
+
+[14:54:31] [INFO ] [EngineRegistry]
+    | Creating Engine instance: PD
+
+[14:54:31] [INFO ] [PDEngine]
+    | PD Engine instance created.
+    | ===============================================
+    | ========== Registered Types Summary ===========
+    | TimeIntegrator    : ADR, CentralDifference, Explicit, Staggered
+    | FieldRegistry     : DoubleField, IntField
+    | PhysicsFields     : Mechanical, Thermal
+    | BCRegistry        : AX, AY, AZ, CONV, FLUX, PX, PY, PZ, T, UX, UY, UZ, VX, VY, VZ
+    | ReaderRegistry    : .grpd, .inp
+    | StabilizerRegistry: Mechanical_Silling, Mechanical_Wan, Mechanical_Zhang, Thermal_Silling,
+    | Thermal_Wan, Thermal_Zhang
+    | ContactRegistry   : KinematicContact, NonlinearPenaltyContact, PenaltyContact, SillingContact,
+    | ViscousPenaltyContact
+    | MaterialRegistry  : FourierThermalMat, J2PlasticityMat, JCPlasticityMat, LinearElasticMat
+    | KernelRegistry    : NOSB_M, NOSB_T
+    | EngineRegistry    : PD
+    | ===============================================
+
+[14:54:31] [INFO ] [EngineManager]
+    | Initializing solver: PD
+
+[14:54:31] [INFO ] [PDEngine]
+    | Initializing PD simulation context...
+
+[14:54:31] [INFO ] [InitModel]
+    | ==================================================
+    | Model pre-processing...
+    | ==================================================
+    | grpd path: D:\Project_C++\GRPD\Examples\Hertz_Contact\Hertz_Contact.grpd
+    | model name: Hertz_Contact
+    | Found existing .grpd mesh file at: D:\Project_C++\GRPD\Examples\Hertz_Contact\Hertz_Contact.grpd.
+    | Skipping generation.
+
+[14:54:31] [INFO ] [Context Manager]
+    | Formalized model name to: Hertz_Contact
+    | Model dimension set to: 2D
+    | 2D thickness set to: 1.000000
+
+[14:54:31] [INFO ] [ReaderRegistry]
+    | Creating reader for: .grpd (name: Hertz_Contact)
+
+[14:54:31] [INFO ] [InitModel]
+    | Reading mesh file: D:\Project_C++\GRPD\Examples\Hertz_Contact\Hertz_Contact.grpd (reader: .grpd)
+
+[14:54:31] [INFO ] [GrpdMeshReader]
+    | Reading file: D:\Project_C++\GRPD\Examples\Hertz_Contact\Hertz_Contact.grpd
+    | Entering *PARTICLE section (Line 1)
+    | Pre-allocated memory for 17264 particles (Zero-Reallocation)
+    | Entering *LOAD section (Line 17268)
+    | ============================================
+    | File reading complete!
+    | Total particles: 17264
+    | Total load entries: 2064
+    | ============================================
+
+[14:54:31] [INFO ] [ParticleManager]
+    | Pre-allocated memory for 17264 particles
+
+[14:54:31] [INFO ] [InitModel]
+    | Total particles loaded for model Hertz_Contact: 17264
+
+[14:54:31] [INFO ] [InitMaterial]
+    | ==================================================
+    | Entering Material Initialization Phase...
+    | ==================================================
+    | Instantiating material [1] of type: LinearElasticMat
+
+[14:54:31] [INFO ] [MaterialRegistry]
+    | Using factory to create material: Substrate_Elastic (type: LinearElasticMat)
+
+[14:54:31] [INFO ] [LinearElasticMat]
+    | Material 'Substrate_Elastic' is initialized. E = 70000.000000, nu = 0.330000, Density = 0.000000
+
+[14:54:31] [INFO ] [MaterialManager]
+    | Successfully added material instance: Substrate_Elastic
+
+[14:54:31] [INFO ] [InitMaterial]
+    | Successfully registered material ID 1 (Substrate_Elastic)
+    | Instantiating material [2] of type: LinearElasticMat
+
+[14:54:31] [INFO ] [MaterialRegistry]
+    | Using factory to create material: Indenter_Rigid (type: LinearElasticMat)
+
+[14:54:31] [INFO ] [LinearElasticMat]
+    | Material 'Indenter_Rigid' is initialized. E = 210000.000000, nu = 0.300000, Density = 0.000000
+
+[14:54:31] [INFO ] [MaterialManager]
+    | Successfully added material instance: Indenter_Rigid
+
+[14:54:31] [INFO ] [InitMaterial]
+    | Successfully registered material ID 2 (Indenter_Rigid)
+    | Assigning material pointers to particles...
+    | Successfully assigned materials to 17264 particles.
+
+[14:54:31] [INFO ] [InitFields]
+    | ==================================================
+    | Entering Field Registration Phase...
+    | ==================================================
+
+[14:54:31] [INFO ] [FieldManager]
+    | Added field 'Displacement'.
+    | Added field 'Velocity'.
+    | Added field 'Acceleration'.
+
+[14:54:31] [INFO ] [MechanicalFields]
+    | Core fields registered: Displacement, Velocity, Acceleration.
+
+[14:54:31] [INFO ] [InitFields]
+    | Auto-registered PhysicsFields module: Mechanical
+
+[14:54:31] [INFO ] [FieldManager]
+    | Added field 'ID'.
+    | Added field 'PartID'.
+    | Added field 'MatID'.
+    | Added field 'Coords'.
+    | Added field 'Volume'.
+    | Added field 'ActiveStatus'.
+
+[14:54:31] [INFO ] [InitFields]
+    | Global ActiveStatus field registered.
+
+[14:54:31] [INFO ] [FieldManager]
+    | Resized all 9 fields for 17264 particles.
+
+[14:54:31] [INFO ] [InitFields]
+    | ActiveStatus initialized to 1 for all particles.
+    | Binding high-speed material state pointers...
+
+[14:54:31] [INFO ] [MeshData]
+    | Populated particle geometry fields into FieldManager for 17264 particles.
+
+[14:54:31] [INFO ] [InitFields]
+    | All fields allocated for 17264 particles. Total fields: 9.
+
+[14:54:31] [INFO ] [InitConditions]
+    | ==================================================
+    | Entering Conditions Initialization Phase...
+    | ==================================================
+
+[14:54:31] [INFO ] [ReaderRegistry]
+    | Creating reader for: .grpd (name: LoadReader)
+
+[14:54:31] [INFO ] [GrpdMeshReader]
+    | Reading file: D:\Project_C++\GRPD\Examples\Hertz_Contact\Hertz_Contact.grpd
+    | Entering *PARTICLE section (Line 1)
+    | Pre-allocated memory for 17264 particles (Zero-Reallocation)
+    | Entering *LOAD section (Line 17268)
+    | ============================================
+    | File reading complete!
+    | Total particles: 17264
+    | Total load entries: 2064
+    | ============================================
+
+[14:54:32] [INFO ] [InitConditions]
+    | Load statistics:
+    | - UX : 400
+    | - UY : 1664
+    | Boundary conditions initialization complete.
+
+[14:54:32] [INFO ] [InitNeighbors]
+    | ==================================================
+    | Entering Neighbor Search Phase...
+    | ==================================================
+    | Horizon radius: 1.507500
+
+[14:54:32] [INFO ] [NeighborList]
+    | Starting full-flat CSR search for 17264 particles, horizon = 1.507500
+    | Cell grid: 67 x 40 x 1 = 2680 cells
+    | Flat cell list built in 1.000166 ms
+    | Pass 1 (count) done in 0.999928 ms
+    | Total bonds: 470984, Memory: 5 MB
+    | Pass 2 (fill) done in 3.000021 ms
+    | Max neighbors: 28
+    | Total time: 5.000114 ms
+
+[14:54:32] [INFO ] [FieldManager]
+    | Added field 'NeighborCount'.
+
+[14:54:32] [INFO ] [InitNeighbors]
+    | NeighborCount field populated for 17264 particles.
+
+[14:54:32] [INFO ] [FieldManager]
+    | Added field 'BondIntegrity'.
+
+[14:54:32] [INFO ] [InitNeighbors]
+    | Global BondIntegrity scalar field properly initialized to 0.0
+
+[14:54:32] [INFO ] [FieldManager]
+    | Added field 'IsSurface'.
+
+[14:54:32] [INFO ] [SurfaceDetector]
+    | Volume Deficit check complete. Identified 1400 surface particles out of 17264 (Threshold: 0.950000).
+
+[14:54:32] [INFO ] [InitNeighbors]
+    | Neighbor search phase complete.
+
+[14:54:32] [INFO ] [InitContact]
+    | ==================================================
+    | Entering Contact Initialization Phase...
+    | ==================================================
+
+[14:54:32] [INFO ] [PenaltyContact]
+    | Configured: Factor = 1.000000, Pinball = 0.500000
+
+[14:54:32] [INFO ] [InitContact]
+    | Defined ContactPair: Indenter_Press_Substrate [Master Part 2 (1264 nodes) <- Slave Part 1 (16000
+    | nodes)]
+    | Initializing Material-specific BondIntegrity Models...
+    | Material BondIntegrity Models initialized. Total Active Models: 0
+
+[14:54:32] [INFO ] [InitSolverComponents]
+    | ==================================================
+    | Entering Solver Components Assembly Phase...
+    | ==================================================
+    | Building Time Integrator: ADR
+
+[14:54:32] [INFO ] [TimeIntegrator]
+    | Explicitly set OMP Threads to: 16
+
+[14:54:32] [INFO ] [InitSolverComponents]
+    | Time Integrator configured.
+    | Building Space Kernel: NOSB_M
+
+[14:54:32] [INFO ] [NOSB_Base]
+    | Applied KernelWeightType: Linear
+    | Applied ZeroEnergyG0: 1.000000
+    | Applied ZeroEnergyMethod string: Zhang
+
+[14:54:32] [INFO ] [InitSolverComponents]
+    | Space Kernel 'NOSB_M' configured.
+    | Total kernels assembled: 1
+
+[14:54:32] [INFO ] [PDEngine]
+    | PD simulation context initialized successfully.
+
+[14:54:32] [INFO ] [EngineManager]
+    | All solvers initialized. Total: 1
+    | ==================================================
+    | Entering Main Solver Phase
+    | ==================================================
+    | Solving: PD
+
+[14:54:32] [INFO ] [PDEngine]
+    | Starting PD Engine Solve Phase...
+
+[14:54:32] [INFO ] [ADR]
+    | Identified 2nd-order ODE coupling: Displacement <- Velocity <- Acceleration
+
+[14:54:32] [INFO ] [FieldManager]
+    | Added field 'ShapeTensorInv'.
+    | Added field 'VHorizon'.
+    | Added field 'SumFac'.
+    | Added field 'SumOmegaRaw'.
+
+[14:54:32] [INFO ] [NOSB_Base]
+    | Computing InfluenceWeight + Shape Tensor Inverse (K^-1)...
+    | All NOSB base fields registered and Shape Tensor Inverse computed.
+
+[14:54:32] [INFO ] [FieldManager]
+    | Added field 'DeformationGradient'.
+    | Added field 'PK1Stress'.
+
+[14:54:32] [INFO ] [NOSB_M]
+    | Instantiated MechanicalStabilizer globally in Phase 0 using strategy: Zhang
+
+[14:54:32] [INFO ] [ADR]
+    | Material [Indenter_Rigid]: WaveSpeed c = 1.449138e+02, Safe CFL dt = 2.760262e-03
+    | Material [Substrate_Elastic]: WaveSpeed c = 5.091751e+01, Safe CFL dt = 7.855844e-03
+    | Computed safe CFL limit dt: 2.760262e-03 (dx = 5.000000e-01, c = 1.449138e+02)
+
+[14:54:32] [INFO ] [ADR_Integrator]
+    | Auto CFL enabled. Setting dt = 2.760262e-03
+    | Starting Custom ADR: NumLoadSteps = 1, MassScale = 1.000000e+10, DampingMethod = Dynamic, dt =
+    | 2.760262e-03
+    | === Load Step 1 / 1 | NumSubsteps: 20 | KBC: 0 ===
+    |     [Substep 1] Computed RampIters: 123
+
+[14:54:32] [INFO ] [PenaltyContact]
+    | Auto-Computed PenaltyStiffness: 34313.725490 (Factor: 1.000000)
+    |     [Step 1 / Sub 1] Converged. Iter: 145 | TOL1(V): 0.000000e+00 | TOL2(dU): 0.000000e+00 |
+    |     TOL3(ResRatio): 0.000000e+00
+    |     [Substep 2] Computed RampIters: 123
+
+[14:59:15] [INFO ] [EngineManager]
+    | ==================================================
+    | GRPD Solver Engine Initialized                 
+    | ==================================================
+
+[14:59:15] [INFO ] [EngineRegistry]
+    | Creating Engine instance: PD
+
+[14:59:15] [INFO ] [PDEngine]
+    | PD Engine instance created.
+    | ===============================================
+    | ========== Registered Types Summary ===========
+    | TimeIntegrator    : ADR, CentralDifference, Explicit, Staggered
+    | FieldRegistry     : DoubleField, IntField
+    | PhysicsFields     : Mechanical, Thermal
+    | BCRegistry        : AX, AY, AZ, CONV, FLUX, PX, PY, PZ, T, UX, UY, UZ, VX, VY, VZ
+    | ReaderRegistry    : .grpd, .inp
+    | StabilizerRegistry: Mechanical_Silling, Mechanical_Wan, Mechanical_Zhang, Thermal_Silling,
+    | Thermal_Wan, Thermal_Zhang
+    | ContactRegistry   : KinematicContact, NonlinearPenaltyContact, PenaltyContact, SillingContact,
+    | ViscousPenaltyContact
+    | MaterialRegistry  : FourierThermalMat, J2PlasticityMat, JCPlasticityMat, LinearElasticMat
+    | KernelRegistry    : NOSB_M, NOSB_T
+    | EngineRegistry    : PD
+    | ===============================================
+
+[14:59:15] [INFO ] [EngineManager]
+    | Initializing solver: PD
+
+[14:59:15] [INFO ] [PDEngine]
+    | Initializing PD simulation context...
+
+[14:59:15] [INFO ] [InitModel]
+    | ==================================================
+    | Model pre-processing...
+    | ==================================================
+    | grpd path: D:\Project_C++\GRPD\Examples\Hertz_Contact\Hertz_Contact.grpd
+    | model name: Hertz_Contact
+    | Found existing .grpd mesh file at: D:\Project_C++\GRPD\Examples\Hertz_Contact\Hertz_Contact.grpd.
+    | Skipping generation.
+
+[14:59:15] [INFO ] [Context Manager]
+    | Formalized model name to: Hertz_Contact
+    | Model dimension set to: 2D
+    | 2D thickness set to: 1.000000
+
+[14:59:15] [INFO ] [ReaderRegistry]
+    | Creating reader for: .grpd (name: Hertz_Contact)
+
+[14:59:15] [INFO ] [InitModel]
+    | Reading mesh file: D:\Project_C++\GRPD\Examples\Hertz_Contact\Hertz_Contact.grpd (reader: .grpd)
+
+[14:59:15] [INFO ] [GrpdMeshReader]
+    | Reading file: D:\Project_C++\GRPD\Examples\Hertz_Contact\Hertz_Contact.grpd
+    | Entering *PARTICLE section (Line 1)
+    | Pre-allocated memory for 17264 particles (Zero-Reallocation)
+    | Entering *LOAD section (Line 17268)
+    | ============================================
+    | File reading complete!
+    | Total particles: 17264
+    | Total load entries: 2064
+    | ============================================
+
+[14:59:15] [INFO ] [ParticleManager]
+    | Pre-allocated memory for 17264 particles
+
+[14:59:15] [INFO ] [InitModel]
+    | Total particles loaded for model Hertz_Contact: 17264
+
+[14:59:15] [INFO ] [InitMaterial]
+    | ==================================================
+    | Entering Material Initialization Phase...
+    | ==================================================
+    | Instantiating material [1] of type: LinearElasticMat
+
+[14:59:15] [INFO ] [MaterialRegistry]
+    | Using factory to create material: Substrate_Elastic (type: LinearElasticMat)
+
+[14:59:15] [INFO ] [LinearElasticMat]
+    | Material 'Substrate_Elastic' is initialized. E = 70000.000000, nu = 0.330000, Density = 0.000000
+
+[14:59:15] [INFO ] [MaterialManager]
+    | Successfully added material instance: Substrate_Elastic
+
+[14:59:15] [INFO ] [InitMaterial]
+    | Successfully registered material ID 1 (Substrate_Elastic)
+    | Instantiating material [2] of type: LinearElasticMat
+
+[14:59:15] [INFO ] [MaterialRegistry]
+    | Using factory to create material: Indenter_Rigid (type: LinearElasticMat)
+
+[14:59:15] [INFO ] [LinearElasticMat]
+    | Material 'Indenter_Rigid' is initialized. E = 2100000.000000, nu = 0.300000, Density = 0.000000
+
+[14:59:15] [INFO ] [MaterialManager]
+    | Successfully added material instance: Indenter_Rigid
+
+[14:59:15] [INFO ] [InitMaterial]
+    | Successfully registered material ID 2 (Indenter_Rigid)
+    | Assigning material pointers to particles...
+    | Successfully assigned materials to 17264 particles.
+
+[14:59:15] [INFO ] [InitFields]
+    | ==================================================
+    | Entering Field Registration Phase...
+    | ==================================================
+
+[14:59:15] [INFO ] [FieldManager]
+    | Added field 'Displacement'.
+    | Added field 'Velocity'.
+    | Added field 'Acceleration'.
+
+[14:59:15] [INFO ] [MechanicalFields]
+    | Core fields registered: Displacement, Velocity, Acceleration.
+
+[14:59:15] [INFO ] [InitFields]
+    | Auto-registered PhysicsFields module: Mechanical
+
+[14:59:15] [INFO ] [FieldManager]
+    | Added field 'ID'.
+    | Added field 'PartID'.
+    | Added field 'MatID'.
+    | Added field 'Coords'.
+    | Added field 'Volume'.
+    | Added field 'ActiveStatus'.
+
+[14:59:15] [INFO ] [InitFields]
+    | Global ActiveStatus field registered.
+
+[14:59:15] [INFO ] [FieldManager]
+    | Resized all 9 fields for 17264 particles.
+
+[14:59:15] [INFO ] [InitFields]
+    | ActiveStatus initialized to 1 for all particles.
+    | Binding high-speed material state pointers...
+
+[14:59:15] [INFO ] [MeshData]
+    | Populated particle geometry fields into FieldManager for 17264 particles.
+
+[14:59:15] [INFO ] [InitFields]
+    | All fields allocated for 17264 particles. Total fields: 9.
+
+[14:59:15] [INFO ] [InitConditions]
+    | ==================================================
+    | Entering Conditions Initialization Phase...
+    | ==================================================
+
+[14:59:15] [INFO ] [ReaderRegistry]
+    | Creating reader for: .grpd (name: LoadReader)
+
+[14:59:15] [INFO ] [GrpdMeshReader]
+    | Reading file: D:\Project_C++\GRPD\Examples\Hertz_Contact\Hertz_Contact.grpd
+    | Entering *PARTICLE section (Line 1)
+    | Pre-allocated memory for 17264 particles (Zero-Reallocation)
+    | Entering *LOAD section (Line 17268)
+    | ============================================
+    | File reading complete!
+    | Total particles: 17264
+    | Total load entries: 2064
+    | ============================================
+
+[14:59:15] [INFO ] [InitConditions]
+    | Load statistics:
+    | - UX : 400
+    | - UY : 1664
+    | Boundary conditions initialization complete.
+
+[14:59:15] [INFO ] [InitNeighbors]
+    | ==================================================
+    | Entering Neighbor Search Phase...
+    | ==================================================
+    | Horizon radius: 1.507500
+
+[14:59:15] [INFO ] [NeighborList]
+    | Starting full-flat CSR search for 17264 particles, horizon = 1.507500
+    | Cell grid: 67 x 40 x 1 = 2680 cells
+    | Flat cell list built in 0.000000 ms
+    | Pass 1 (count) done in 2.000093 ms
+    | Total bonds: 470984, Memory: 5 MB
+    | Pass 2 (fill) done in 0.999928 ms
+    | Max neighbors: 28
+    | Total time: 3.000021 ms
+
+[14:59:15] [INFO ] [FieldManager]
+    | Added field 'NeighborCount'.
+
+[14:59:15] [INFO ] [InitNeighbors]
+    | NeighborCount field populated for 17264 particles.
+
+[14:59:15] [INFO ] [FieldManager]
+    | Added field 'BondIntegrity'.
+
+[14:59:15] [INFO ] [InitNeighbors]
+    | Global BondIntegrity scalar field properly initialized to 0.0
+
+[14:59:15] [INFO ] [FieldManager]
+    | Added field 'IsSurface'.
+
+[14:59:15] [INFO ] [SurfaceDetector]
+    | Volume Deficit check complete. Identified 1400 surface particles out of 17264 (Threshold: 0.950000).
+
+[14:59:15] [INFO ] [InitNeighbors]
+    | Neighbor search phase complete.
+
+[14:59:15] [INFO ] [InitContact]
+    | ==================================================
+    | Entering Contact Initialization Phase...
+    | ==================================================
+
+[14:59:15] [INFO ] [KinematicContact]
+    | Configured MPM Style Contact: RestitutionCoeff=0.000000e+00
+
+[14:59:15] [INFO ] [InitContact]
+    | Defined ContactPair: Indenter_Press_Substrate [Master Part 2 (1264 nodes) <- Slave Part 1 (16000
+    | nodes)]
+    | Initializing Material-specific BondIntegrity Models...
+    | Material BondIntegrity Models initialized. Total Active Models: 0
+
+[14:59:15] [INFO ] [InitSolverComponents]
+    | ==================================================
+    | Entering Solver Components Assembly Phase...
+    | ==================================================
+    | Building Time Integrator: ADR
+
+[14:59:15] [INFO ] [TimeIntegrator]
+    | Explicitly set OMP Threads to: 16
+
+[14:59:15] [INFO ] [InitSolverComponents]
+    | Time Integrator configured.
+    | Building Space Kernel: NOSB_M
+
+[14:59:15] [INFO ] [NOSB_Base]
+    | Applied KernelWeightType: Linear
+    | Applied ZeroEnergyG0: 1.000000
+    | Applied ZeroEnergyMethod string: Zhang
+
+[14:59:15] [INFO ] [InitSolverComponents]
+    | Space Kernel 'NOSB_M' configured.
+    | Total kernels assembled: 1
+
+[14:59:15] [INFO ] [PDEngine]
+    | PD simulation context initialized successfully.
+
+[14:59:15] [INFO ] [EngineManager]
+    | All solvers initialized. Total: 1
+    | ==================================================
+    | Entering Main Solver Phase
+    | ==================================================
+    | Solving: PD
+
+[14:59:15] [INFO ] [PDEngine]
+    | Starting PD Engine Solve Phase...
+
+[14:59:15] [INFO ] [ADR]
+    | Identified 2nd-order ODE coupling: Displacement <- Velocity <- Acceleration
+
+[14:59:15] [INFO ] [FieldManager]
+    | Added field 'ShapeTensorInv'.
+    | Added field 'VHorizon'.
+    | Added field 'SumFac'.
+    | Added field 'SumOmegaRaw'.
+
+[14:59:15] [INFO ] [NOSB_Base]
+    | Computing InfluenceWeight + Shape Tensor Inverse (K^-1)...
+    | All NOSB base fields registered and Shape Tensor Inverse computed.
+
+[14:59:15] [INFO ] [FieldManager]
+    | Added field 'DeformationGradient'.
+    | Added field 'PK1Stress'.
+
+[14:59:15] [INFO ] [NOSB_M]
+    | Instantiated MechanicalStabilizer globally in Phase 0 using strategy: Zhang
+
+[14:59:15] [INFO ] [ADR]
+    | Material [Indenter_Rigid]: WaveSpeed c = 1.449138e+02, Safe CFL dt = 2.760262e-03
+    | Material [Substrate_Elastic]: WaveSpeed c = 5.091751e+01, Safe CFL dt = 7.855844e-03
+    | Computed safe CFL limit dt: 2.760262e-03 (dx = 5.000000e-01, c = 1.449138e+02)
+
+[14:59:15] [INFO ] [ADR_Integrator]
+    | Auto CFL enabled. Setting dt = 2.760262e-03
+    | Starting Custom ADR: NumLoadSteps = 1, MassScale = 1.000000e+10, DampingMethod = Dynamic, dt =
+    | 2.760262e-03
+    | === Load Step 1 / 1 | NumSubsteps: 20 | KBC: 0 ===
+    |     [Substep 1] Computed RampIters: 123
+    |     [Step 1 / Sub 1] Converged. Iter: 145 | TOL1(V): 0.000000e+00 | TOL2(dU): 0.000000e+00 |
+    |     TOL3(ResRatio): 0.000000e+00
+    |     [Substep 2] Computed RampIters: 123
+    |     > Sub 2 Iter 1000 | Time: 1.000000e-01 | TOL1(V): 1.567615e-01 | TOL2(dU): 1.061904e-04 |
+    |     TOL3(ResRatio): 1.950718e-03 | Speed: 148 steps/s
+    |     > Sub 2 Iter 2000 | Time: 1.000000e-01 | TOL1(V): 5.926135e-03 | TOL2(dU): 3.990028e-06 |
+    |     TOL3(ResRatio): 4.930483e-05 | Speed: 130 steps/s
+    |     [Step 1 / Sub 2] Converged. Iter: 2335 | TOL1(V): 1.481596e-03 | TOL2(dU): 9.974628e-07 |
+    |     TOL3(ResRatio): 1.177167e-05
+    |     [Substep 3] Computed RampIters: 123
+    |     > Sub 3 Iter 1000 | Time: 1.500000e-01 | TOL1(V): 1.557765e-01 | TOL2(dU): 1.055726e-04 |
+    |     TOL3(ResRatio): 1.937830e-03 | Speed: 108 steps/s
+    |     > Sub 3 Iter 2000 | Time: 1.500000e-01 | TOL1(V): 5.892177e-03 | TOL2(dU): 3.969219e-06 |
+    |     TOL3(ResRatio): 4.901834e-05 | Speed: 102 steps/s
+    |     [Step 1 / Sub 3] Converged. Iter: 2334 | TOL1(V): 1.479895e-03 | TOL2(dU): 9.968347e-07 |
+    |     TOL3(ResRatio): 1.175885e-05
+    |     [Substep 4] Computed RampIters: 123
+    |     > Sub 4 Iter 1000 | Time: 2.000000e-01 | TOL1(V): 1.557110e-01 | TOL2(dU): 1.056039e-04 |
+    |     TOL3(ResRatio): 1.938230e-03 | Speed: 98 steps/s
+    |     > Sub 4 Iter 2000 | Time: 2.000000e-01 | TOL1(V): 5.896604e-03 | TOL2(dU): 3.975100e-06 |
+    |     TOL3(ResRatio): 4.908114e-05 | Speed: 98 steps/s
+    |     [Step 1 / Sub 4] Converged. Iter: 2334 | TOL1(V): 1.482744e-03 | TOL2(dU): 9.994833e-07 |
+    |     TOL3(ResRatio): 1.178674e-05
+    |     [Substep 5] Computed RampIters: 123
+    |     > Sub 5 Iter 1000 | Time: 2.500000e-01 | TOL1(V): 1.540061e-01 | TOL2(dU): 1.045423e-04 |
+    |     TOL3(ResRatio): 1.917013e-03 | Speed: 98 steps/s
+    |     > Sub 5 Iter 2000 | Time: 2.500000e-01 | TOL1(V): 5.836130e-03 | TOL2(dU): 3.938244e-06 |
+    |     TOL3(ResRatio): 4.859984e-05 | Speed: 96 steps/s
+    |     [Step 1 / Sub 5] Converged. Iter: 2332 | TOL1(V): 1.481225e-03 | TOL2(dU): 9.994542e-07 |
+    |     TOL3(ResRatio): 1.178294e-05
+    |     [Substep 6] Computed RampIters: 123
+    |     > Sub 6 Iter 1000 | Time: 3.000000e-01 | TOL1(V): 1.533952e-01 | TOL2(dU): 1.042682e-04 |
+    |     TOL3(ResRatio): 1.911576e-03 | Speed: 95 steps/s
+    |     > Sub 6 Iter 2000 | Time: 3.000000e-01 | TOL1(V): 5.820310e-03 | TOL2(dU): 3.933031e-06 |
+    |     TOL3(ResRatio): 4.853005e-05 | Speed: 96 steps/s
+    |     [Step 1 / Sub 6] Converged. Iter: 2332 | TOL1(V): 1.479676e-03 | TOL2(dU): 9.997988e-07 |
+    |     TOL3(ResRatio): 1.178472e-05
+    |     [Substep 7] Computed RampIters: 123
+    |     > Sub 7 Iter 1000 | Time: 3.500000e-01 | TOL1(V): 1.524851e-01 | TOL2(dU): 1.038506e-04 |
+    |     TOL3(ResRatio): 1.903372e-03 | Speed: 97 steps/s
+    |     > Sub 7 Iter 2000 | Time: 3.500000e-01 | TOL1(V): 1.111079e-02 | TOL2(dU): 7.522971e-06 |
+    |     TOL3(ResRatio): 1.119105e-04 | Speed: 97 steps/s
+    |     > Sub 7 Iter 3000 | Time: 3.500000e-01 | TOL1(V): 1.887858e+00 | TOL2(dU): 1.089103e-03 |
+    |     TOL3(ResRatio): 3.936478e-02 | Speed: 97 steps/s
+    |     > Sub 7 Iter 4000 | Time: 3.500000e-01 | TOL1(V): 2.486087e-01 | TOL2(dU): 1.236899e-04 |
+    |     TOL3(ResRatio): 2.685757e-02 | Speed: 97 steps/s
+    |     > Sub 7 Iter 5000 | Time: 3.500000e-01 | TOL1(V): 2.516364e-01 | TOL2(dU): 1.164587e-04 |
+    |     TOL3(ResRatio): 2.325588e-02 | Speed: 98 steps/s
+    |     > Sub 7 Iter 6000 | Time: 3.500000e-01 | TOL1(V): 2.177913e-01 | TOL2(dU): 9.487258e-05 |
+    |     TOL3(ResRatio): 1.881579e-02 | Speed: 98 steps/s
+    |     > Sub 7 Iter 7000 | Time: 3.500000e-01 | TOL1(V): 2.016243e-01 | TOL2(dU): 8.322440e-05 |
+    |     TOL3(ResRatio): 1.510138e-02 | Speed: 98 steps/s
+    |     > Sub 7 Iter 8000 | Time: 3.500000e-01 | TOL1(V): 1.924168e-01 | TOL2(dU): 7.577482e-05 |
+    |     TOL3(ResRatio): 1.224048e-02 | Speed: 99 steps/s
+    |     > Sub 7 Iter 9000 | Time: 3.500000e-01 | TOL1(V): 1.918857e-01 | TOL2(dU): 7.258793e-05 |
+    |     TOL3(ResRatio): 1.021366e-02 | Speed: 99 steps/s
+    |     > Sub 7 Iter 10000 | Time: 3.500000e-01 | TOL1(V): 2.020302e-01 | TOL2(dU): 7.385283e-05 |
+    |     TOL3(ResRatio): 8.901072e-03 | Speed: 99 steps/s
+    |     > Sub 7 Iter 11000 | Time: 3.500000e-01 | TOL1(V): 2.237138e-01 | TOL2(dU): 7.936778e-05 |
+    |     TOL3(ResRatio): 7.933346e-03 | Speed: 99 steps/s
+    |     > Sub 7 Iter 12000 | Time: 3.500000e-01 | TOL1(V): 2.525745e-01 | TOL2(dU): 8.712383e-05 |
+    |     TOL3(ResRatio): 7.153006e-03 | Speed: 99 steps/s
+    |     > Sub 7 Iter 13000 | Time: 3.500000e-01 | TOL1(V): 2.786587e-01 | TOL2(dU): 9.334747e-05 |
+    |     TOL3(ResRatio): 5.938143e-03 | Speed: 99 steps/s
+    |     > Sub 7 Iter 14000 | Time: 3.500000e-01 | TOL1(V): 2.974649e-01 | TOL2(dU): 9.639213e-05 |
+    |     TOL3(ResRatio): 4.496579e-03 | Speed: 100 steps/s
+    |     > Sub 7 Iter 15000 | Time: 3.500000e-01 | TOL1(V): 3.000546e-01 | TOL2(dU): 9.357549e-05 |
+    |     TOL3(ResRatio): 3.082887e-03 | Speed: 100 steps/s
+    |     > Sub 7 Iter 16000 | Time: 3.500000e-01 | TOL1(V): 2.587151e-01 | TOL2(dU): 7.748150e-05 |
+    |     TOL3(ResRatio): 1.498159e-03 | Speed: 100 steps/s
+    |     > Sub 7 Iter 17000 | Time: 3.500000e-01 | TOL1(V): 1.346560e-01 | TOL2(dU): 3.910991e-05 |
+    |     TOL3(ResRatio): 4.899994e-04 | Speed: 100 steps/s
+    |     > Sub 7 Iter 18000 | Time: 3.500000e-01 | TOL1(V): 2.504712e-02 | TOL2(dU): 7.186517e-06 |
+    |     TOL3(ResRatio): 1.705242e-04 | Speed: 100 steps/s
+    |     [Step 1 / Sub 7] Converged. Iter: 18179 | TOL1(V): 3.481361e-03 | TOL2(dU): 9.985304e-07 |
+    |     TOL3(ResRatio): 1.213698e-04
+    |     [Substep 8] Computed RampIters: 123
+    |     > Sub 8 Iter 1000 | Time: 4.000000e-01 | TOL1(V): 1.619274e-01 | TOL2(dU): 1.090134e-04 |
+    |     TOL3(ResRatio): 2.068904e-03 | Speed: 100 steps/s
+    |     > Sub 8 Iter 2000 | Time: 4.000000e-01 | TOL1(V): 9.181063e-03 | TOL2(dU): 6.141098e-06 |
+    |     TOL3(ResRatio): 8.336390e-05 | Speed: 100 steps/s
+    |     > Sub 8 Iter 3000 | Time: 4.000000e-01 | TOL1(V): 5.085579e-03 | TOL2(dU): 3.401158e-06 |
+    |     TOL3(ResRatio): 3.436680e-05 | Speed: 100 steps/s
+    |     [Step 1 / Sub 8] Converged. Iter: 3179 | TOL1(V): 1.489620e-03 | TOL2(dU): 9.962312e-07 |
+    |     TOL3(ResRatio): 3.435453e-05
+    |     [Substep 9] Computed RampIters: 123
+    |     > Sub 9 Iter 1000 | Time: 4.500000e-01 | TOL1(V): 1.623873e-01 | TOL2(dU): 1.094253e-04 |
+    |     TOL3(ResRatio): 2.081930e-03 | Speed: 100 steps/s
+    |     > Sub 9 Iter 2000 | Time: 4.500000e-01 | TOL1(V): 6.192363e-03 | TOL2(dU): 4.145879e-06 |
+    |     TOL3(ResRatio): 5.364185e-05 | Speed: 100 steps/s
+    |     [Step 1 / Sub 9] Converged. Iter: 2462 | TOL1(V): 1.493276e-03 | TOL2(dU): 9.996561e-07 |
+    |     TOL3(ResRatio): 1.344233e-05
+    |     [Substep 10] Computed RampIters: 123
+    |     > Sub 10 Iter 1000 | Time: 5.000000e-01 | TOL1(V): 1.617910e-01 | TOL2(dU): 1.091376e-04 |
+    |     TOL3(ResRatio): 2.080728e-03 | Speed: 100 steps/s
+    |     > Sub 10 Iter 2000 | Time: 5.000000e-01 | TOL1(V): 6.072334e-03 | TOL2(dU): 4.069861e-06 |
+    |     TOL3(ResRatio): 5.251156e-05 | Speed: 99 steps/s
+    |     [Step 1 / Sub 10] Converged. Iter: 2367 | TOL1(V): 1.487988e-03 | TOL2(dU): 9.971929e-07 |
+    |     TOL3(ResRatio): 1.297219e-05
+    |     [Substep 11] Computed RampIters: 123
+    |     > Sub 11 Iter 1000 | Time: 5.500000e-01 | TOL1(V): 1.617431e-01 | TOL2(dU): 1.092450e-04 |
+    |     TOL3(ResRatio): 2.088116e-03 | Speed: 99 steps/s
+    |     > Sub 11 Iter 2000 | Time: 5.500000e-01 | TOL1(V): 6.039486e-03 | TOL2(dU): 4.053007e-06 |
+    |     TOL3(ResRatio): 5.237992e-05 | Speed: 99 steps/s
+    |     [Step 1 / Sub 11] Converged. Iter: 2353 | TOL1(V): 1.485232e-03 | TOL2(dU): 9.966182e-07 |
+    |     TOL3(ResRatio): 1.274528e-05
+    |     [Substep 12] Computed RampIters: 123
+    |     > Sub 12 Iter 1000 | Time: 6.000000e-01 | TOL1(V): 1.617781e-01 | TOL2(dU): 1.094371e-04 |
+    |     TOL3(ResRatio): 2.097823e-03 | Speed: 99 steps/s
+    |     > Sub 12 Iter 2000 | Time: 6.000000e-01 | TOL1(V): 6.024193e-03 | TOL2(dU): 4.048942e-06 |
+    |     TOL3(ResRatio): 5.248287e-05 | Speed: 99 steps/s
+    |     [Step 1 / Sub 12] Converged. Iter: 2348 | TOL1(V): 1.486439e-03 | TOL2(dU): 9.989577e-07 |
+    |     TOL3(ResRatio): 1.271946e-05
+    |     [Substep 13] Computed RampIters: 123
+    |     > Sub 13 Iter 1000 | Time: 6.500000e-01 | TOL1(V): 1.707866e-01 | TOL2(dU): 1.157942e-04 |
+    |     TOL3(ResRatio): 2.241478e-03 | Speed: 99 steps/s
+    |     > Sub 13 Iter 2000 | Time: 6.500000e-01 | TOL1(V): 6.385718e-03 | TOL2(dU): 4.299754e-06 |
+    |     TOL3(ResRatio): 5.614261e-05 | Speed: 99 steps/s
+    |     [Step 1 / Sub 13] Converged. Iter: 2353 | TOL1(V): 1.480373e-03 | TOL2(dU): 9.966908e-07 |
+    |     TOL3(ResRatio): 1.407875e-05
+    |     [Substep 14] Computed RampIters: 123
+    |     > Sub 14 Iter 1000 | Time: 7.000000e-01 | TOL1(V): 1.758189e-01 | TOL2(dU): 1.149456e-04 |
+    |     TOL3(ResRatio): 2.343444e-03 | Speed: 99 steps/s
+    |     > Sub 14 Iter 2000 | Time: 7.000000e-01 | TOL1(V): 6.627546e-03 | TOL2(dU): 4.302489e-06 |
+    |     TOL3(ResRatio): 5.881139e-05 | Speed: 99 steps/s
+    |     [Step 1 / Sub 14] Converged. Iter: 2326 | TOL1(V): 1.539804e-03 | TOL2(dU): 9.995039e-07 |
+    |     TOL3(ResRatio): 1.856387e-05
+    |     [Substep 15] Computed RampIters: 123
+    |     > Sub 15 Iter 1000 | Time: 7.500000e-01 | TOL1(V): 1.833330e-01 | TOL2(dU): 1.186683e-04 |
+    |     TOL3(ResRatio): 2.204262e-03 | Speed: 99 steps/s
+    |     > Sub 15 Iter 2000 | Time: 7.500000e-01 | TOL1(V): 6.866322e-03 | TOL2(dU): 4.411001e-06 |
+    |     TOL3(ResRatio): 5.518110e-05 | Speed: 99 steps/s
+    |     [Step 1 / Sub 15] Converged. Iter: 2326 | TOL1(V): 1.553969e-03 | TOL2(dU): 9.981683e-07 |
+    |     TOL3(ResRatio): 1.795565e-05
+    |     [Substep 16] Computed RampIters: 123
+    |     > Sub 16 Iter 1000 | Time: 8.000000e-01 | TOL1(V): 1.879816e-01 | TOL2(dU): 1.221420e-04 |
+    |     TOL3(ResRatio): 2.279055e-03 | Speed: 99 steps/s
+    |     > Sub 16 Iter 2000 | Time: 8.000000e-01 | TOL1(V): 7.052499e-03 | TOL2(dU): 4.546575e-06 |
+    |     TOL3(ResRatio): 5.684643e-05 | Speed: 100 steps/s
+    |     [Step 1 / Sub 16] Converged. Iter: 2355 | TOL1(V): 1.545005e-03 | TOL2(dU): 9.958979e-07 |
+    |     TOL3(ResRatio): 1.491952e-05
+    |     [Substep 17] Computed RampIters: 123
+    |     > Sub 17 Iter 1000 | Time: 8.500000e-01 | TOL1(V): 1.888907e-01 | TOL2(dU): 1.215697e-04 |
+    |     TOL3(ResRatio): 2.314965e-03 | Speed: 100 steps/s
+    |     > Sub 17 Iter 2000 | Time: 8.500000e-01 | TOL1(V): 7.099711e-03 | TOL2(dU): 4.533770e-06 |
+    |     TOL3(ResRatio): 5.776706e-05 | Speed: 100 steps/s
+    |     [Step 1 / Sub 17] Converged. Iter: 2348 | TOL1(V): 1.558578e-03 | TOL2(dU): 9.951542e-07 |
+    |     TOL3(ResRatio): 1.622036e-05
+    |     [Substep 18] Computed RampIters: 123
+    |     > Sub 18 Iter 1000 | Time: 9.000000e-01 | TOL1(V): 2.246464e-01 | TOL2(dU): 1.449507e-04 |
+    |     TOL3(ResRatio): 1.783831e-03 | Speed: 100 steps/s
+    |     > Sub 18 Iter 2000 | Time: 9.000000e-01 | TOL1(V): 8.604847e-03 | TOL2(dU): 5.498406e-06 |
+    |     TOL3(ResRatio): 4.476586e-05 | Speed: 100 steps/s
+    |     [Step 1 / Sub 18] Converged. Iter: 2420 | TOL1(V): 1.563503e-03 | TOL2(dU): 9.988879e-07 |
+    |     TOL3(ResRatio): 8.398717e-06
+    |     [Substep 19] Computed RampIters: 123
+    |     > Sub 19 Iter 1000 | Time: 9.500000e-01 | TOL1(V): 2.626076e-01 | TOL2(dU): 1.710056e-04 |
+    |     TOL3(ResRatio): 2.863896e-03 | Speed: 100 steps/s
+    |     > Sub 19 Iter 2000 | Time: 9.500000e-01 | TOL1(V): 1.014872e-02 | TOL2(dU): 6.530641e-06 |
+    |     TOL3(ResRatio): 7.162194e-05 | Speed: 100 steps/s
+    |     [Step 1 / Sub 19] Converged. Iter: 2468 | TOL1(V): 1.549223e-03 | TOL2(dU): 9.967031e-07 |
+    |     TOL3(ResRatio): 1.091700e-05
+    |     [Substep 20] Computed RampIters: 123
+    |     > Sub 20 Iter 1000 | Time: 1.000000e+00 | TOL1(V): 1.896037e-01 | TOL2(dU): 1.227909e-04 |
+    |     TOL3(ResRatio): 2.012722e-03 | Speed: 100 steps/s
+    |     > Sub 20 Iter 2000 | Time: 1.000000e+00 | TOL1(V): 6.966961e-03 | TOL2(dU): 4.476617e-06 |
+    |     TOL3(ResRatio): 4.941287e-05 | Speed: 100 steps/s
+    |     [Step 1 / Sub 20] Converged. Iter: 2332 | TOL1(V): 1.548527e-03 | TOL2(dU): 9.948769e-07 |
+    |     TOL3(ResRatio): 1.523369e-05
+    | --- ADR Complete | Total Substeps: 20  |  Pure Compute: 6.147912e+02s  |  Total: 6.232131e+02s  | 
+    | Speed: 100 steps/s
+    | Finished. Total: 623.213126s  |  Pure Compute avg: 0.009976 s/step
+
+[15:09:38] [INFO ] [PDEngine]
+    | PD Engine Solve Phase Finished.
+
+[15:09:38] [INFO ] [EngineManager]
+    | Main Solver Phase finished.
+    | ==================================================
+    | Entering Post-processing Phase
+    | ==================================================
+    | Outputting: PD
+    | Post-processing Phase finished.

@@ -1,0 +1,140 @@
+#==============================================================================
+# GRPD ADR Quasi-Static Contact Benchmark - 赫兹圆底压入测试 (Hertz Contact)
+#==============================================================================
+
+# 1. 建模系统 (全局状态参数)
+System:
+  Dimension: 2 # 2D 纯平面应力/应变
+  SavePath: "output" # 数据保存路径
+
+# 2. 部件定义
+Parts:
+  # --------------------
+  # Part 1: Elastic Substrate (下层弹性基体板)
+  # --------------------
+  - PartID: 1
+    MatID: 1
+    Dimension: 2
+    Length: 100.0 # 宽度 X
+    Width: 40.0 # 深度 Y
+    dx: 0.5 # 网格分辨率 (由于接触需要平滑梯度，细化基体网格)
+    Offset: [-50.0, -40.0, 0.0] # X 在 [-50, 50]，Y 在 [-40, 0]，它的顶面精准停在 Y=0
+
+  # --------------------
+  # Part 2: Rigid Cylinder Indenter (上方的压入冲头/圆柱截面)
+  # 备注：若通过原生的 generate_model.py 这里只能生成矩形块，
+  # 我们在此将冲头写成一个 20x20 的长方块暂时代替。
+  # 如果需要完美的解析解对照，后续只需给这提供一套外接的 STL 圆片即可！
+  # --------------------
+  - PartID: 2
+    MatID: 2
+    Dimension: 2
+    Shape: "Circle"
+    Radius: 10.0
+    dx: 0.5
+    # 冲头原点在圆心。要让位于下沿的 y=-10.0 刚好微悬空在基体 (y=0) 上方，我们需要给个 +10.1 的偏移
+    Offset: [0.0, 10.1, 0.0]
+
+# 3. 边界条件
+BoundaryConditions:
+  # 1. 固定基体板的底部边界 (完全锁死)
+  - Step: 0
+    BcID: 1
+    Name: "Fix_Bottom_Substrate"
+    PartID: 1
+    Box: [-999.0, 999.0, -41.0, -39.0, -999.0, 999.0]
+    Type: "UX"
+    Value: 0.0
+  - Step: 0
+    BcID: 2
+    Name: "Fix_Bottom_Substrate"
+    PartID: 1
+    Box: [-999.0, 999.0, -41.0, -39.0, -999.0, 999.0]
+    Type: "UY"
+    Value: 0.0
+
+  # 2. 给冲头施加一个极慢的准静态压入位移控制 (向下压 2mm)
+  - Step: 1
+    BcID: 3
+    Name: "Indenter_Push_Down"
+    PartID: 2
+    Type: "DISP"
+    # 这里我们不用 VX 速度推了！改用静态目标位移，让 ADR 自动以极慢的稳态逼近最终停驻。
+    Value: [0.0, -2.0, 0.0]
+    ApplyDir: [false, true, false]
+
+# 4. 材质参数定义
+Materials:
+  - MatID: 1
+    Name: "Substrate_Elastic"
+    Type: "LinearElasticMat"
+    Density: 2.7e-9 # 正常铝材量级
+    YoungsModulus: 70000.0 # 70 GPa
+    PoissonsRatio: 0.33
+    # ※ 不设置 Fracture，因为这是接触基准算例，禁止基板撕裂
+
+  - MatID: 2
+    Name: "Indenter_Rigid"
+    Type: "LinearElasticMat"
+    # ※ 直接给 500 倍质量！ADR 中压头极其厚重稳定，有助于控制准静态接触抖动
+    Density: 1.0e-8
+    # ※ 赋予极大的弹性模量，模拟高硬度无变形的淬火冲头材质状态
+    YoungsModulus: 2.1e6
+    PoissonsRatio: 0.3
+
+# 5. [重点] 实体间的非贯穿接触网络
+ContactPairs:
+  - Name: "Indenter_Press_Substrate"
+    Type: "KinematicContact" # 我们采用最新编写的通用斥力体积罚函数
+    RestitutionCoeff: 0.0
+    MasterPartID: 2 # 强硬的冲头为主面
+    SlavePartID: 1 # 软软的基底为从面受力面
+    # PinballRatio: 0.5      # 可选：降低穿透容差判定系数
+
+# 6. [重点] 全局求解器与 ADR 驱动网
+Solver:
+  Engine: "PD"
+  Type: "Mechanical"
+  Kernel: "NOSB_M"
+  TimeIntegrator: "ADR" # 激活显式自适应动态弛豫（大杀器！）
+
+  # --- ADR 准静态非线性迭代核心参数 ---
+  MaxPseudoSteps: 20000 # 每个 Substep 最大容许的虚迭代步数（防死循环）
+  DispTol: 1.0e-6 # 基于位矢增量 L2 范数的收敛容差
+  ForceTol: 5.0e-3 # 基于残差力与系统外力比例的收敛容差
+  MinRefForce: 1.0e-2 # 作为 ForceTol 验证分母的基准参考力防零下界
+  MassScaleFactor: 1.0e10 # 虚拟密度墙放大倍数（>1.0 可进一步压实时间步长防崩）
+  RampIters: 0 # 爬坡代数（写 0 代表由波动理论全自动推算）
+  RampWaveRatio: 3.0 # 自动化 Ramp 系数（特征长度与波速比，越大越平稳）
+  DampingMethod: "Dynamic" # 动态衰减阻尼策略
+  Fracture_Strategy: "Strict" # 大变形断裂释放延迟策略（防止撕裂时应力突降崩溃）
+
+  LoadSteps:
+    - Step: 1
+      Time: 1.0 # 由于是准静态（只看几何稳态结果），Time=1.0 可以作为虚拟的拟时间
+      KBC: 0 # [灵魂所在] 0 = Ramp 坡道加载！禁止给系统阶跃（突变），保证受力极其平缓顺延
+      NumSubsteps: 20 # 将 2mm 的位移劈成 20 个台阶缓降，每个阶梯下降 0.1mm，每次等到动能消失再降一层！
+
+  OutputInterval: 1000 # 频繁记录看微变形动画
+  OMP_Threads: 16
+  Horizon: 1.5075
+  KernelWeightType: "Linear"
+  ZeroEnergyG0: 1.0
+  ZeroEnergyMethod: "Zhang"
+
+# 7. 导出追踪字段
+Writer:
+  Type: "binary"
+  Variables:
+    - Name: "PartID"
+      Dimension: 1
+    - Name: "Displacement"
+      Dimension: 3
+    - Name: "Velocity"
+      Dimension: 3
+    - Name: "Acceleration"
+      Dimension: 3
+    - Name: "PK1Stress"
+      Dimension: 9
+    - Name: "DeformationGradient"
+      Dimension: 9

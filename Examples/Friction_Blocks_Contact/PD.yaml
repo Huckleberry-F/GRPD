@@ -1,0 +1,120 @@
+#==============================================================================
+# GRPD ADR Quasi-Static Contact Benchmark - 摩擦方块纯推力对标跑通验证
+#==============================================================================
+
+# 1. 建模系统
+System:
+  Dimension: 2
+  SavePath: "output"
+
+Assembly: {}
+
+Parts:
+  - PartID: 1
+    MatID: 1
+    Dimension: 2
+    Shape: "Box"
+    Length: 20.0
+    Width: 5.0
+    dx: 0.25
+    Offset: [-10.0, -5.0, 0.0]
+
+  - PartID: 2
+    MatID: 2
+    Dimension: 2
+    Shape: "Box"
+    Length: 10.0
+    Width: 5.0
+    dx: 0.25
+    Offset: [-5.0, 0.0, 0.0]
+
+# 2. 材料赋予
+Materials:
+  - MatID: 1
+    Name: "Base_Steel"
+    Type: "LinearElasticMat"
+    Density: 7.8e-9
+    YoungsModulus: 2.1e5
+    PoissonsRatio: 0.3
+
+  - MatID: 2
+    Name: "Top_Pusher"
+    Type: "LinearElasticMat"
+    Density: 3.9e-9
+    YoungsModulus: 1.8e5
+    PoissonsRatio: 0.25
+
+PreCracks: []
+
+# 3. 边界施加
+BoundaryConditions:
+  - Step: 0
+    BcID: 1
+    Name: "Fix_Base_Bottom"
+    PartID: 1
+    Box: [-11.0, 11.0, -5.1, -4.8, -1.0, 1.0]
+    Type: "DISP"
+    Value: [0.0, 0.0, 0.0]
+
+  - Step: 1
+    BcID: 2
+    Name: "Push_Top_Y"
+    PartID: 2
+    Box: [-6.0, 6.0, 4.8, 5.1, -1.0, 1.0]
+    Type: "DISP"
+    Value: [0.0, -0.1, 0.0]
+    ApplyDir: [true, true, false]
+
+# 4. 接触对设置
+ContactPairs:
+  - Name: "Blocks_Normal_Contact"
+    Type: "KinematicContact"
+    MasterPartID: 2
+    SlavePartID: 1
+    RestitutionCoeff: 0.0
+    PinballRatio: 1.1
+    FrictionCoeff: 0.3
+
+# 5. 求解积分器选择
+Solver:
+  Engine: "PD"
+  Type: "Mechanical"
+  Kernel: "NOSB_M"
+  TimeIntegrator: "ADR"
+
+  DynamicShapeTensor: false
+  KernelWeightType: "Linear"
+  ZeroEnergyG0: 1.0
+  ZeroEnergyMethod: "Zhang"
+  Horizon: 0.75375
+  OMP_Threads: 16
+  OutputInterval: 1000
+
+  MaxPseudoSteps: 20000
+  MassScaleFactor: 1.0e10
+  DispTol: 1.0e-6
+  ForceTol: 5.0e-3
+  MinRefForce: 1.0e-2
+  RampIters: 0
+  RampWaveRatio: 3.0
+  DampingMethod: "HybridKinetic"
+  Fracture_Strategy: "Strict"
+
+  LoadSteps:
+    - Step: 1
+      Time: 1.0
+      KBC: 0
+      NumSubsteps: 10
+
+# 6. IO输出设置
+Writer:
+  Type: "binary"
+  Variables:
+    - Name: "PartID"
+      Dimension: 1
+    - Name: "Displacement"
+      Dimension: 3
+    - Name: "Velocity"
+      Dimension: 3
+    - Name: "PK1Stress"
+      Dimension: 9

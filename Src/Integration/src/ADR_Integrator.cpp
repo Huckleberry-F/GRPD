@@ -178,7 +178,7 @@ void ADR_Integrator::run(PDCommon::Core::PDContext &ctx,
         // 核心修复：如果是断裂引起的二次松弛 (fracIter > 0)，千万不能在这个循环内部重新爬坡，否则会导致物理载荷瞬间掉落！
         int rampIters =
             (currentKbc == 1 || fracIter > 0) ? 0 : computeRampIters(ctx); // KBC=1 或 断裂重稳态，强制无爬坡直接保载
-        LOG_INFO("    [Substep " + std::to_string(sub) +
+        LOG_INFO("    [Substep " + std::to_string(sub + 1) +
                  "] Computed RampIters: " + std::to_string(rampIters));
 
         bool converged = false;
@@ -258,9 +258,9 @@ void ADR_Integrator::run(PDCommon::Core::PDContext &ctx,
             if (criteria_strict || criteria_kinematics || criteria_still) {
               converged = true;
               LOG_INFO(
-                  "    [Step " + std::to_string(step) + " / Sub " +
-                  std::to_string(sub) + "] Converged. Iter: " +
-                  std::to_string(iter) + " | TOL1(V): " +
+                  "    [Step " + std::to_string(step + 1) + " / Sub " +
+                  std::to_string(sub + 1) + "] Converged. Iter: " +
+                  std::to_string(iter + 1) + " | TOL1(V): " +
                   PDCommon::Utils::StringUtils::toScientific(TOL1_) +
                   " | TOL2(dU): " +
                   PDCommon::Utils::StringUtils::toScientific(TOL2_) +
@@ -278,7 +278,7 @@ void ADR_Integrator::run(PDCommon::Core::PDContext &ctx,
                 currentLocalLF * (stepPhysicalTime - prevPhysicalTime);
 
             LOG_INFO(
-                "    > Sub " + std::to_string(sub) + " Iter " +
+                "    > Sub " + std::to_string(sub + 1) + " Iter " +
                 std::to_string(iter) + " | Time: " +
                 PDCommon::Utils::StringUtils::toScientific(
                     currentPhysicalTime) +
@@ -297,8 +297,8 @@ void ADR_Integrator::run(PDCommon::Core::PDContext &ctx,
         }
 
         if (!converged) {
-          LOG_WARNING("    [Step " + std::to_string(step) + " / Sub " +
-                      std::to_string(sub) +
+          LOG_WARNING("    [Step " + std::to_string(step + 1) + " / Sub " +
+                      std::to_string(sub + 1) +
                       "] Reached MaxPseudoSteps without convergence!" +
                       " | TOL1(V): " +
                       PDCommon::Utils::StringUtils::toScientific(TOL1_) +

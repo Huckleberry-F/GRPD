@@ -307,6 +307,13 @@ General-Peridynamics/
 
 ## 📌 版本更新日志 (Changelog)
 
+### v4.3 — 运动学库仑摩擦机制与项目级极限参数字典 (Coulomb Friction & Full-Stack YAML Mapping)
+
+- **动量限制型库仑摩擦机制 (Momentum-Bound Coulomb Friction)**: 颠覆了原版显式动力学中因引入单纯反向力而容易诱发的低速抖动缺陷。于 `KinematicContact` (运动学修正算法) 的核心底层完成了纯净切向速度抽离，使经典滑动摩擦 ($\mu F_n$) 原生挂载；特设了单步冲量锁死防线 $F_{max} = m^* v_t / dt$，完美根除滞滑转态 (Stick-Slip) 时的反向自激跳跃，在积分层面上完成了静、动摩擦的自动、绝对平滑的过渡识别统合。
+- **柔性防漏风接触容差探测 (Soft Boundary Halo Tolerance)**: 全系引入了突破网格硬边线封锁的 `PinballRatio` 检测倍率扩展。底层接触树（Cell-Linked List）能自动识别被放大化的粒子防撞区，凭借预先吸收极微小的安全斥力，彻底填补微元块体组装并发生滑移时的接触面阶梯效应。该机制经 ANSYS 对标实测，强力碾平了离散介质边缘锯齿诱发的寄生侧向剪滞力波。
+- **极客级全矩阵属性映射蓝本落地 (Exhaustive YAML Schema & GUI Foundation)**: 从零逆向拆解并盘点了 GRPD 所有的底层 C++ `Node::as<T>` 并发接口池，发布最高指级的架构词典《`GRPD_YAML_Dictionary.md`》。强行将超过 60 个被封装在暗渠的高阶属性——从小至 `RepairMesh` 的拓扑微操到大至 `NonlinearOnsetRatio` 的非线性防模罚锁——全盘提拉至白盒级别。正式确立了在未来挂载 Qt6 / PySide6 进行一键工程组装与渲染映射的终极底层协议大纲。
+
+
 ### v4.2 — 二维架构大一统与人工质量守恒 (2D Planar Kinematics & Unified Mass Scaling)
 
 - **边界受力免疫降维 (Pressure-to-BodyForce Automata)**: 深度重构边界条件模块，为 `BC` 基类开辟自适应比例尺注入通道。现在 `PressureBC` (面压条件) 可在底层完美侦测解析粒子的等效几何尺度 (`dx`, 密度)、甚至是动量方程里由于显式大步长而开启的 `MassScaleFactor` 质量放大系数，并自动实施完美等价的牛顿第二定律体力投影。解除了使用者在前处理时对虚拟质量心智的绑定。

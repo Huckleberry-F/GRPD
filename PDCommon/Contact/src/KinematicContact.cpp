@@ -20,10 +20,18 @@ void KinematicContact::initialize(const YAML::Node &configNode) {
   if (configNode["RestitutionCoeff"]) {
     restitutionCoeff_ = configNode["RestitutionCoeff"].as<double>();
   }
+  if (configNode["PinballRatio"]) {
+    pinballRatio_ = configNode["PinballRatio"].as<double>();
+  }
+  if (configNode["FrictionCoeff"]) {
+    frictionCoeff_ = configNode["FrictionCoeff"].as<double>();
+  }
 
   LOG_INFO(
       "[KinematicContact] Configured MPM Style Contact: RestitutionCoeff=" +
-      PDCommon::Utils::StringUtils::toScientific(restitutionCoeff_));
+      PDCommon::Utils::StringUtils::toScientific(restitutionCoeff_) +
+      ", PinballRatio=" + std::to_string(pinballRatio_) +
+      ", FrictionCoeff=" + std::to_string(frictionCoeff_));
 }
 
 void KinematicContact::computeContactForce(PDCommon::Core::PDContext &ctx) {
@@ -158,7 +166,7 @@ void KinematicContact::computeContactForce(PDCommon::Core::PDContext &ctx) {
                 if (!isInitialNeighbor) {
                   double dist = std::sqrt(distSqr);
                   double dx_j = volToDx(vols[j]);
-                  double safeDist = (dx_i + dx_j) / 2.0;
+                  double safeDist = ((dx_i + dx_j) / 2.0) * pinballRatio_;
 
                   if (dist < safeDist) {
                     double penetration = safeDist - dist;
@@ -235,6 +243,30 @@ void KinematicContact::computeContactForce(PDCommon::Core::PDContext &ctx) {
       double fx = force_mag * nx_total;
       double fy = force_mag * ny_total;
       double fz = force_mag * nz_total;
+
+      // 3. 库伦滑动摩擦机制 (Coulomb Friction)
+      if (frictionCoeff_ > 1e-6) {
+        // 算出切向的相对滑移速度矢量: v_t = dv - (dv * n) * n
+        double v_tx = dvx - v_rel_n * nx_total;
+        double v_ty = dvy - v_rel_n * ny_total;
+        double v_tz = dvz - v_rel_n * nz_total;
+        double v_t_mag = std::sqrt(v_tx * v_tx + v_ty * v_ty + v_tz * v_tz);
+
+        if (v_t_mag > 1e-10) {
+          // 最大基础摩擦力 F = mu * F_n
+          double f_fric_mag = frictionCoeff_ * force_mag;
+          
+          // [关键限幅保护] 摩擦力不能在一个积分步把相对切向速度减到反向导致震荡
+          // 彻底将其刹车所需的上限力 (冲量守恒理论)
+          double max_fric = m_eff * v_t_mag / dt;
+          f_fric_mag = std::min(f_fric_mag, max_fric);
+
+          // 摩擦力方向永远与瞬时切向速度相反
+          fx += -f_fric_mag * (v_tx / v_t_mag);
+          fy += -f_fric_mag * (v_ty / v_t_mag);
+          fz += -f_fric_mag * (v_tz / v_t_mag);
+        }
+      }
 
       // 注入从面
       acc[i * 3] += fx / mass_i;

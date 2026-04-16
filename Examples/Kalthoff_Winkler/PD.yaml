@@ -23,22 +23,23 @@ Parts:
   # --------------------
   # Part 2: Rigid Impactor (高速冲击块)
   # --------------------
-  # - PartID: 2
-  #   MatID: 2
-  #   Dimension: 2
-  #   Length: 50.0 # 长度 50 mm (X)
-  #   Width: 50.0 # 宽度 50 mm (Y)
-  #   dx: 0.5 # 保持网格尺度一致
-  #   Offset: [-49.75, 75.25, 0.0] # 中心在(-24.875, 0)，使得其右侧边缘横跨X=-0.1，完美贴近靶板左边缘 (X=0)
+  - PartID: 2
+    MatID: 2
+    Dimension: 2
+    Length: 50.0 # 长度 50 mm (X)
+    Width: 50.0 # 宽度 50 mm (Y)
+    dx: 0.5 # 保持网格尺度一致
+    Thickness: 1.0
+    Offset: [-50.0, 75.0, 0.0] # 中心在(-24.875, 0)，使得其右侧边缘横跨X=-0.1，完美贴近靶板左边缘 (X=0)
 
 # 3. 边界条件
 BoundaryConditions:
   # 赋予冲击块恒定的水平运动速度
-  - Step: 0
+  - Step: 1
     BcID: 1
     Name: "Impactor_Speed"
-    PartID: 1
-    Box: [-1.0, 1.0, 75.0, 125.0, -999.0, 999.0]
+    PartID: 2
+    Box: [-50.0, 0.0, 75.0, 125.0, -999.0, 999.0]
     Type: "VX"
     Value: 32000.0 # 32 m/s = 32000 mm/s，高速冲击
 
@@ -75,7 +76,7 @@ Materials:
   - MatID: 2
     Name: "Impactor_Rigid"
     Type: "LinearElasticMat"
-    Density: 18.0e-9 # tonne/mm³
+    Density: 18.0e-7 # tonne/mm³
     YoungsModulus: 2.1e5 # MPa (N/mm²)
     PoissonsRatio: 0.3 # 泊松比
     # 不赋予 Fracture 属性，使得冲击体表现为绝对刚硬和不断裂的
@@ -96,15 +97,19 @@ Solver:
   TimeIntegrator: "CentralDifference"
   LoadSteps:
     - Step: 1
+      Time: 8.7e-8 # 87 微秒，足以让应力波来回并诱发明显的裂纹分叉
+      TimeStep_dt: 8.7e-9 # 足够小的稳定时间步
+      KBC: 1
+    - Step: 2
       Time: 8.7e-5 # 87 微秒，足以让应力波来回并诱发明显的裂纹分叉
       TimeStep_dt: 8.7e-9 # 足够小的稳定时间步
       KBC: 1
-  OutputInterval: 200 # 约 10 帧动画
+  OutputInterval: 100 # 约 10 帧动画
   OMP_Threads: 16
   Horizon: 1.5075 # 3.015 * dx (由于dx=0.5，所以 horizon = 1.5075)
   KernelWeightType: "Linear"
-  ZeroEnergyG0: 0.1 # 零能模式修正系数
-  ZeroEnergyMethod: "Wan" # [关键] 开启 Zhang 修正
+  ZeroEnergyG0: 1.0 # 零能模式修正系数
+  ZeroEnergyMethod: "Zhang" # [关键] 开启 Zhang 修正
 
 # 8. 输出设置
 Writer:

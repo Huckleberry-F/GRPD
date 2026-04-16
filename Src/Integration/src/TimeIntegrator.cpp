@@ -147,7 +147,7 @@ double TimeIntegrator::computeCFLTimestep(PDCommon::Core::PDContext &ctx,
                   ? std::sqrt(volumes[0] / ctx.getThickness())
                   : std::cbrt(volumes[0]);
 
-  // 遍历所有材料，取最大有效波速（最保守的 dt）
+  // 遍历所有材料，打印并取最大有效波速（最保守的 dt）
   double maxWaveSpeed = 0.0;
   for (const auto &[name, matPtr] : matManager.getMaterials()) {
     auto *mechMat =
@@ -158,6 +158,13 @@ double TimeIntegrator::computeCFLTimestep(PDCommon::Core::PDContext &ctx,
       if (rho > 1e-30 && E > 0.0) {
         double rho_eff = rho * massScale;
         double c_eff = std::sqrt(E / rho_eff);
+        double limitDt_mat = safetyFactor * dx / c_eff;
+        
+        LOG_INFO("[" + getName() + "] Material [" + name + "]: WaveSpeed c = " +
+                 PDCommon::Utils::StringUtils::toScientific(c_eff) +
+                 ", Safe CFL dt = " +
+                 PDCommon::Utils::StringUtils::toScientific(limitDt_mat));
+
         if (c_eff > maxWaveSpeed) {
           maxWaveSpeed = c_eff;
         }
