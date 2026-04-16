@@ -1,6 +1,5 @@
 #include "NodeNodeContact.h"
 #include "FieldManager.h"
-#include "Logger.h"
 #include "MechanicalMaterial.h"
 #include "PDContext.h"
 #include "ParticleManager.h"
@@ -21,8 +20,8 @@ void NodeNodeContact::buildCellList(const double *coords, const double *disp,
   maxBounds_ = Eigen::Vector3d(-1e10, -1e10, -1e10);
 
   for (int i : masterIds_) {
-    if (activeStatus && activeStatus[i] == 0)
-      continue;
+    // if (activeStatus && activeStatus[i] == 0)
+    //   continue;
     double cur_x = coords[i * 3] + (disp ? disp[i * 3] : 0.0);
     double cur_y = coords[i * 3 + 1] + (disp ? disp[i * 3 + 1] : 0.0);
     double cur_z = coords[i * 3 + 2] + (disp ? disp[i * 3 + 2] : 0.0);
@@ -60,8 +59,8 @@ void NodeNodeContact::buildCellList(const double *coords, const double *disp,
   head_.assign(numCells, -1);
 
   for (int i : masterIds_) {
-    if (activeStatus && activeStatus[i] == 0)
-      continue;
+    // if (activeStatus && activeStatus[i] == 0)
+    //   continue;
     double cur_x = coords[i * 3] + (disp ? disp[i * 3] : 0.0);
     double cur_y = coords[i * 3 + 1] + (disp ? disp[i * 3 + 1] : 0.0);
     double cur_z = coords[i * 3 + 2] + (disp ? disp[i * 3 + 2] : 0.0);
@@ -140,8 +139,9 @@ void NodeNodeContact::computeContactForce(PDCommon::Core::PDContext &ctx) {
 #pragma omp parallel for schedule(dynamic)
   for (size_t idx = 0; idx < slaveIds_.size(); ++idx) {
     int i = slaveIds_[idx];
-    if (activeStatusPtr && activeStatusPtr[i] == 0)
-      continue;
+    // 释放靶板的离散粒子范围，产生沙包效应
+    // if (activeStatusPtr && activeStatusPtr[i] == 0)
+    //   continue;
 
     double xi = coords[i * 3] + (disp ? disp[i * 3] : 0.0);
     double yi = coords[i * 3 + 1] + (disp ? disp[i * 3 + 1] : 0.0);
@@ -178,11 +178,11 @@ void NodeNodeContact::computeContactForce(PDCommon::Core::PDContext &ctx) {
 
           while (j != -1) {
             if (i != j) {
-              // master 侧碎片过滤
-              if (activeStatusPtr && activeStatusPtr[j] == 0) {
-                j = next_[j];
-                continue;
-              }
+              // 释放 Master 侧碎片的限制
+              // if (activeStatusPtr && activeStatusPtr[j] == 0) {
+              //   j = next_[j];
+              //   continue;
+              // }
 
               double xj = coords[j * 3] + (disp ? disp[j * 3] : 0.0);
               double yj = coords[j * 3 + 1] + (disp ? disp[j * 3 + 1] : 0.0);

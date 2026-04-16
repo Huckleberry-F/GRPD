@@ -90,8 +90,8 @@ void KinematicContact::computeContactForce(PDCommon::Core::PDContext &ctx) {
 #pragma omp parallel for schedule(dynamic)
   for (size_t idx = 0; idx < slaveIds_.size(); ++idx) {
     int i = slaveIds_[idx];
-    if (activeStatusPtr && activeStatusPtr[i] == 0)
-      continue;
+    // if (activeStatusPtr && activeStatusPtr[i] == 0)
+    //   continue;
 
     double xi = coords[i * 3] + (disp ? disp[i * 3] : 0.0);
     double yi = coords[i * 3 + 1] + (disp ? disp[i * 3 + 1] : 0.0);
@@ -130,10 +130,10 @@ void KinematicContact::computeContactForce(PDCommon::Core::PDContext &ctx) {
 
           while (j != -1) {
             if (i != j) {
-              if (activeStatusPtr && activeStatusPtr[j] == 0) {
-                j = next_[j];
-                continue;
-              }
+              // if (activeStatusPtr && activeStatusPtr[j] == 0) {
+              //   j = next_[j];
+              //   continue;
+              // }
 
               double xj = coords[j * 3] + (disp ? disp[j * 3] : 0.0);
               double yj = coords[j * 3 + 1] + (disp ? disp[j * 3 + 1] : 0.0);

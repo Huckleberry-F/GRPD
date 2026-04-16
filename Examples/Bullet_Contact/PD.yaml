@@ -70,21 +70,21 @@ PreCracks: []
 Materials:
   - MatID: 1
     Name: "Steel_Plate" # 均质装甲钢（RHA）
-    Type: "JCPlasticityMat"
+    Type: "LinearElasticMat"
     Density: 7.85e-9
     YoungsModulus: 200000.0
     PoissonsRatio: 0.3
-    YieldStress: 235.0 # 极其生硬，几乎不发生屈服变形
-    HardeningModulus: 1000.0
-    HardeningType: "Isotropic"
-    LargeDeformation: false
+    # YieldStress: 235.0 # 极其生硬，几乎不发生屈服变形
+    # HardeningModulus: 1000.0
+    # HardeningType: "Isotropic"
+    # LargeDeformation: false
     # Johnson-Cook 损伤参数
-    JC_D1: 0.5 # 较高的基础断裂应变
-    JC_D2: 0.5
-    JC_D3: -1.5
+    # JC_D1: 0.5 # 较高的基础断裂应变
+    # JC_D2: 0.5
+    # JC_D3: -1.5
     Fracture:
-      Type: "DamageValueFracture"
-      Critical_Damage: 0.99
+      Type: "BondStretchFracture"
+      Critical_Stretch: 0.02
 
   - MatID: 2
     Name: "AP_BulletCore" # 钨合金穿甲弹芯

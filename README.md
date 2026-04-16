@@ -326,7 +326,7 @@ General-Peridynamics/
 - **面向数据级 (DoD) 中央内存互换网管 (State Swap Manager)**: 针对多物理材料模型（如子弹+靶板同时应用断裂算法）导致的底层指针反复翻车灾难，重写了 `FieldManager` 的双指针互换层。剥夺了具体求解模块的状态切权，由全局引擎实行统一的 `executeAllRegisteredSwaps` O(1) 纳秒级指针换绑，从根本上实现了安全可靠、零拷贝的千军万马显式代数推进。
 - **全局域穿刺边界控制 (Part-ID Bounding Override)**: 对 Python 核心预处理算子 `generate_model.py` 实施黑科技魔改，使 `.yaml` 解析内核正式支持以 `PartID` 直接圈定全尺寸零件。完美解决了由于几何包围盒重叠、倾斜网格相交导致的约束误伤边界，将 Dirichlet 时间锁定边界发挥得犹如“手术刀般精准”。
 - **单步隐式冲量与自由断离支持**: 解决了长期以来的动量方程“永久神权锁定”悖论。确立了在短兵相接的前置 `Step 1` 内实施初速度（微秒级）强锁、继而在后续大局观剥离的隐式“初速赋予法”，还原了高能金属材料接触后的疯狂拉扯与塑性飞洒碎裂。
-
+- **动态沙包破片接触与应力超截断 (Rubble-Pile Sandbagging & Stress Cut-off)**: 在高爆冲击与穿甲分析场景中，解除了废弃死点对接触检测的免疫机制。使完全断键脱离基体的金属碎片继续承当“沙包”吸收撞击动能并在前锋堆积；同时在 `NOSB_M` 态基内力积分时引入毫秒级超截断机制 (Stress Zeroing)，切断死点向外传递剧烈畸变伪应力的后效，极大地平息了弹道穿甲中的无物理意义冲击波，实现了真实可信的蘑菇头堆栈碰撞碎裂形态。
 ### v3.2 — 高性能内存布局演进与高速冲击动力学蓝图 (HPC Architecture & Explicit Dynamics Roadmap)
 
 - **J2 塑性无分支流水线优化与 AoS 缓存穿透 (Branchless Vectorization & Cache Locality)**: 成功对 `J2PlasticityMat` 的径向返回核心算法清除了破坏 SIMD 预测的条件判定分支 (`if-else`)，使代码实现纯数学平铺；经由底层带宽与张量访存特性的严格剖析，将力学核心内存定格在利于单粒子 $3 \times 3$ 张量矩阵 L1 缓存全命中的 `AoS` (Array of Structures) 结构。

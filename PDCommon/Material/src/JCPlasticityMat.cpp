@@ -113,9 +113,13 @@ Eigen::Matrix3d JCPlasticityMat::ComputePK1Stress(const Eigen::Matrix3d &F,
 
   damageTrial_[particleId] = newDamage;
 
-  // 【渐进刚度退化】：只退化偏应力，保留静水压（体积抵抗力）
+  // D = 1.0：完全破坏，应力归零
+  if (newDamage >= 1.0) {
+    return Eigen::Matrix3d::Zero();
+  }
+
+  // D < 1.0：只退化偏应力，保留静水压（体积抵抗力）
   // σ_eff = (1-D) * σ_dev + σ_hyd
-  // 物理意义：碎片失去剪切承载力，但仍然抵抗压缩（传递接触力）
   double hydro = stress.trace() / 3.0;
   Eigen::Matrix3d hydroStress = hydro * Eigen::Matrix3d::Identity();
   Eigen::Matrix3d devStress = stress - hydroStress;
