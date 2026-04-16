@@ -313,7 +313,6 @@ General-Peridynamics/
 - **柔性防漏风接触容差探测 (Soft Boundary Halo Tolerance)**: 全系引入了突破网格硬边线封锁的 `PinballRatio` 检测倍率扩展。底层接触树（Cell-Linked List）能自动识别被放大化的粒子防撞区，凭借预先吸收极微小的安全斥力，彻底填补微元块体组装并发生滑移时的接触面阶梯效应。该机制经 ANSYS 对标实测，强力碾平了离散介质边缘锯齿诱发的寄生侧向剪滞力波。
 - **极客级全矩阵属性映射蓝本落地 (Exhaustive YAML Schema & GUI Foundation)**: 从零逆向拆解并盘点了 GRPD 所有的底层 C++ `Node::as<T>` 并发接口池，发布最高指级的架构词典《`GRPD_YAML_Dictionary.md`》。强行将超过 60 个被封装在暗渠的高阶属性——从小至 `RepairMesh` 的拓扑微操到大至 `NonlinearOnsetRatio` 的非线性防模罚锁——全盘提拉至白盒级别。正式确立了在未来挂载 Qt6 / PySide6 进行一键工程组装与渲染映射的终极底层协议大纲。
 
-
 ### v4.2 — 二维架构大一统与人工质量守恒 (2D Planar Kinematics & Unified Mass Scaling)
 
 - **边界受力免疫降维 (Pressure-to-BodyForce Automata)**: 深度重构边界条件模块，为 `BC` 基类开辟自适应比例尺注入通道。现在 `PressureBC` (面压条件) 可在底层完美侦测解析粒子的等效几何尺度 (`dx`, 密度)、甚至是动量方程里由于显式大步长而开启的 `MassScaleFactor` 质量放大系数，并自动实施完美等价的牛顿第二定律体力投影。解除了使用者在前处理时对虚拟质量心智的绑定。
@@ -334,6 +333,7 @@ General-Peridynamics/
 - **全局域穿刺边界控制 (Part-ID Bounding Override)**: 对 Python 核心预处理算子 `generate_model.py` 实施黑科技魔改，使 `.yaml` 解析内核正式支持以 `PartID` 直接圈定全尺寸零件。完美解决了由于几何包围盒重叠、倾斜网格相交导致的约束误伤边界，将 Dirichlet 时间锁定边界发挥得犹如“手术刀般精准”。
 - **单步隐式冲量与自由断离支持**: 解决了长期以来的动量方程“永久神权锁定”悖论。确立了在短兵相接的前置 `Step 1` 内实施初速度（微秒级）强锁、继而在后续大局观剥离的隐式“初速赋予法”，还原了高能金属材料接触后的疯狂拉扯与塑性飞洒碎裂。
 - **动态沙包破片接触与应力超截断 (Rubble-Pile Sandbagging & Stress Cut-off)**: 在高爆冲击与穿甲分析场景中，解除了废弃死点对接触检测的免疫机制。使完全断键脱离基体的金属碎片继续承当“沙包”吸收撞击动能并在前锋堆积；同时在 `NOSB_M` 态基内力积分时引入毫秒级超截断机制 (Stress Zeroing)，切断死点向外传递剧烈畸变伪应力的后效，极大地平息了弹道穿甲中的无物理意义冲击波，实现了真实可信的蘑菇头堆栈碰撞碎裂形态。
+
 ### v3.2 — 高性能内存布局演进与高速冲击动力学蓝图 (HPC Architecture & Explicit Dynamics Roadmap)
 
 - **J2 塑性无分支流水线优化与 AoS 缓存穿透 (Branchless Vectorization & Cache Locality)**: 成功对 `J2PlasticityMat` 的径向返回核心算法清除了破坏 SIMD 预测的条件判定分支 (`if-else`)，使代码实现纯数学平铺；经由底层带宽与张量访存特性的严格剖析，将力学核心内存定格在利于单粒子 $3 \times 3$ 张量矩阵 L1 缓存全命中的 `AoS` (Array of Structures) 结构。
