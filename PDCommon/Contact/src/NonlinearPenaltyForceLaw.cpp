@@ -1,18 +1,15 @@
-#include "NonlinearPenaltyContact.h"
+#include "NonlinearPenaltyForceLaw.h"
 #include "ContactRegistry.h"
 #include "Logger.h"
 #include "MechanicalMaterial.h"
-#include "ParticleManager.h"
 #include "PDContext.h"
+#include "ParticleManager.h"
 #include <algorithm>
 #include <cmath>
 
 namespace PDCommon::Contact {
 
-NonlinearPenaltyContact::NonlinearPenaltyContact(const std::string &name)
-    : NodeNodeContact(name) {}
-
-void NonlinearPenaltyContact::initialize(const YAML::Node &configNode) {
+void NonlinearPenaltyForceLaw::initialize(const YAML::Node &configNode) {
   if (configNode["PenaltyFactor"])
     penaltyFactor_ = configNode["PenaltyFactor"].as<double>();
   if (configNode["PenaltyStiffness"])
@@ -22,14 +19,14 @@ void NonlinearPenaltyContact::initialize(const YAML::Node &configNode) {
   if (configNode["StiffeningCoeff"])
     stiffeningCoeff_ = configNode["StiffeningCoeff"].as<double>();
 
-  LOG_INFO("[NonlinearPenaltyContact] Configured: Factor=" +
+  LOG_INFO("[NonlinearPenaltyForceLaw] Configured: Factor=" +
            std::to_string(penaltyFactor_) +
            ", OnsetRatio=" + std::to_string(nonlinearOnsetRatio_) +
            ", StiffeningCoeff=" + std::to_string(stiffeningCoeff_));
 }
 
-void NonlinearPenaltyContact::onPreContact(PDCommon::Core::PDContext &ctx,
-                                            double maxDx) {
+void NonlinearPenaltyForceLaw::onPreContact(PDCommon::Core::PDContext &ctx,
+                                              double maxDx) {
   if (penaltyStiffness_ < 0.0) {
     auto &pm = ctx.getParticleManager();
     const auto &particles = pm.getAllParticles();
@@ -52,14 +49,13 @@ void NonlinearPenaltyContact::onPreContact(PDCommon::Core::PDContext &ctx,
     const int dim = ctx.getDimension();
     double effectiveThickness = (dim == 2) ? ctx.getThickness() : 1.0;
     penaltyStiffness_ = penaltyFactor_ * minK * maxDx * effectiveThickness;
-    LOG_INFO("[NonlinearPenaltyContact] Auto-Computed PenaltyStiffness: " +
+    LOG_INFO("[NonlinearPenaltyForceLaw] Auto-Computed PenaltyStiffness: " +
              std::to_string(penaltyStiffness_));
   }
 }
 
-ContactPairResult NonlinearPenaltyContact::computePairForce(
-    const ContactPairContext &pair) {
-  ContactPairResult result;
+ForceResult NonlinearPenaltyForceLaw::computeForce(const ContactContext &pair) {
+  ForceResult result;
 
   // 渐进非线性强化系数
   double penetration_ratio = pair.raw_penetration / pair.safeDist;
@@ -80,6 +76,5 @@ ContactPairResult NonlinearPenaltyContact::computePairForce(
 
 } // namespace PDCommon::Contact
 
-REGISTER_CONTACT_TYPE(NonlinearPenaltyContact, [](const std::string &name) {
-  return std::make_unique<PDCommon::Contact::NonlinearPenaltyContact>(name);
-})
+REGISTER_FORCELAW_TYPE("Nonlinear", NonlinearPenaltyForceLaw)
+

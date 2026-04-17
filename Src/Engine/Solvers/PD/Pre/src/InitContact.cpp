@@ -34,7 +34,8 @@ void InitContact(PDCommon::Core::PDContext &ctx, const YAML::Node &config) {
     for (size_t i = 0; i < pairsNode.size(); ++i) {
         auto node = pairsNode[i];
         std::string name = node["Name"] ? node["Name"].as<std::string>() : "ContactPair_" + std::to_string(i);
-        std::string type = node["Type"] ? node["Type"].as<std::string>() : "PenaltyContact";
+        std::string type = node["Type"] ? node["Type"].as<std::string>() : "NTN";
+        std::string forceLawType = node["ForceLaw"] ? node["ForceLaw"].as<std::string>() : "Penalty";
         
         int masterPart = node["MasterPartID"] ? node["MasterPartID"].as<int>() : -1;
         int slavePart = node["SlavePartID"] ? node["SlavePartID"].as<int>() : -1;
@@ -45,9 +46,9 @@ void InitContact(PDCommon::Core::PDContext &ctx, const YAML::Node &config) {
         }
 
         try {
-            // 通过 ContactRegistry 工厂动态创建（多态调度，无需硬编码类型分支）
+            // 通过 ContactRegistry 工厂动态创建（双轴正交组合）
             auto& registry = PDCommon::Contact::ContactRegistry::getInstance();
-            auto contactAlg = registry.createContact(type, name);
+            auto contactAlg = registry.createContact(type, name, forceLawType);
             if (!contactAlg) {
                 LOG_ERROR("[InitContact] Unknown Contact Type: '" + type +
                           "'. Registered types: " + [&]() {

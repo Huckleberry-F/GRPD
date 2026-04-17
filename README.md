@@ -307,6 +307,12 @@ General-Peridynamics/
 
 ## 📌 版本更新日志 (Changelog)
 
+### v4.4 — 接触底层扁平化与双轴正交解耦 (Contact Flattening & Dual-Axis Orthogonal Decoupling)
+
+- **架构降维与极致扁平化 (Flattened Architecture)**: 彻底移除了人为编造的 `StandardContactAlgorithm` 组装器与 `IContactDetector` 抽象封装层。将空间哈希网格探测循环 (Spatial Hash) 直接打入顶层算法 `NTNContact` 内部；促使 `NTN` 与基于质心投影的 `Kinematic` 成为平级的直系调度入口，显著缩短并净化了底层引擎 OMP 并发的物理调用栈深度。
+- **双轴正交极简注册中心 (Dual-Axis Factory Registration)**: 重塑了全局 `ContactRegistry` 出厂协议。使得力学公式（ForceLaw，如 Penalty/Silling）与几何算法（Type，如 NTN/NTS）被物理隔离。允许直接在 YAML 下发 `Type: "NTN"` 叠加 `ForceLaw: "Penalty"` 的搭积木配置，实现新力学算子的一键全局多搜索系适配。
+- **斩断技术债务底座清理 (Eradication of Legacy Wrappers)**: 大刀阔斧地彻底移除了包含 `PenaltyContact`, `ViscousPenaltyContact`，`NodeNodeContact` 在内的共 17 个由于早期架构混乱而滋生的废弃过渡封装文件头与源文件，实现了系统全代码库的极致“纯净态”。
+
 ### v4.3 — 运动学库仑摩擦机制与项目级极限参数字典 (Coulomb Friction & Full-Stack YAML Mapping)
 
 - **动量限制型库仑摩擦机制 (Momentum-Bound Coulomb Friction)**: 颠覆了原版显式动力学中因引入单纯反向力而容易诱发的低速抖动缺陷。于 `KinematicContact` (运动学修正算法) 的核心底层完成了纯净切向速度抽离，使经典滑动摩擦 ($\mu F_n$) 原生挂载；特设了单步冲量锁死防线 $F_{max} = m^* v_t / dt$，完美根除滞滑转态 (Stick-Slip) 时的反向自激跳跃，在积分层面上完成了静、动摩擦的自动、绝对平滑的过渡识别统合。

@@ -14,7 +14,70 @@
 namespace PDCommon::Contact {
 
 KinematicContact::KinematicContact(const std::string &name)
-    : NodeNodeContact(name) {}
+    : IContactAlgorithm(name) {}
+
+void KinematicContact::buildCellList(const double *coords, const double *disp,
+                                     double maxDx) {
+  cellSize_ = maxDx * 1.05;
+  minBounds_ = Eigen::Vector3d(1e10, 1e10, 1e10);
+  maxBounds_ = Eigen::Vector3d(-1e10, -1e10, -1e10);
+
+  for (int i : masterIds_) {
+    double cur_x = coords[i * 3] + (disp ? disp[i * 3] : 0.0);
+    double cur_y = coords[i * 3 + 1] + (disp ? disp[i * 3 + 1] : 0.0);
+    double cur_z = coords[i * 3 + 2] + (disp ? disp[i * 3 + 2] : 0.0);
+    minBounds_.x() = std::min(minBounds_.x(), cur_x);
+    minBounds_.y() = std::min(minBounds_.y(), cur_y);
+    minBounds_.z() = std::min(minBounds_.z(), cur_z);
+    maxBounds_.x() = std::max(maxBounds_.x(), cur_x);
+    maxBounds_.y() = std::max(maxBounds_.y(), cur_y);
+    maxBounds_.z() = std::max(maxBounds_.z(), cur_z);
+  }
+
+  Eigen::Vector3d range = maxBounds_ - minBounds_;
+  if (range.x() < cellSize_) {
+    minBounds_.x() -= cellSize_;
+    maxBounds_.x() += cellSize_;
+  }
+  if (range.y() < cellSize_) {
+    minBounds_.y() -= cellSize_;
+    maxBounds_.y() += cellSize_;
+  }
+  if (range.z() < cellSize_) {
+    minBounds_.z() -= cellSize_;
+    maxBounds_.z() += cellSize_;
+  }
+
+  gridDims_.x() = static_cast<int>(
+      std::ceil((maxBounds_.x() - minBounds_.x()) / cellSize_));
+  gridDims_.y() = static_cast<int>(
+      std::ceil((maxBounds_.y() - minBounds_.y()) / cellSize_));
+  gridDims_.z() = static_cast<int>(
+      std::ceil((maxBounds_.z() - minBounds_.z()) / cellSize_));
+
+  size_t numCells =
+      static_cast<size_t>(gridDims_.x()) * gridDims_.y() * gridDims_.z();
+  head_.assign(numCells, -1);
+
+  for (int i : masterIds_) {
+    double cur_x = coords[i * 3] + (disp ? disp[i * 3] : 0.0);
+    double cur_y = coords[i * 3 + 1] + (disp ? disp[i * 3 + 1] : 0.0);
+    double cur_z = coords[i * 3 + 2] + (disp ? disp[i * 3 + 2] : 0.0);
+    int cellHash = computeCellHash(cur_x, cur_y, cur_z);
+    next_[i] = head_[cellHash];
+    head_[cellHash] = static_cast<int>(i);
+  }
+}
+
+int KinematicContact::computeCellHash(double x, double y, double z) const {
+  int cx = static_cast<int>(std::floor((x - minBounds_.x()) / cellSize_));
+  int cy = static_cast<int>(std::floor((y - minBounds_.y()) / cellSize_));
+  int cz = static_cast<int>(std::floor((z - minBounds_.z()) / cellSize_));
+  cx = std::max(0, std::min(cx, gridDims_.x() - 1));
+  cy = std::max(0, std::min(cy, gridDims_.y() - 1));
+  cz = std::max(0, std::min(cz, gridDims_.z() - 1));
+  return cx + cy * gridDims_.x() + cz * gridDims_.x() * gridDims_.y();
+}
 
 void KinematicContact::initialize(const YAML::Node &configNode) {
   if (configNode["RestitutionCoeff"]) {
@@ -92,7 +155,7 @@ void KinematicContact::computeContactForce(PDCommon::Core::PDContext &ctx) {
   if (next_.size() < numParticles) {
     next_.resize(numParticles, -1);
   }
-  buildCellList(coords, disp, activeStatusPtr, maxDx);
+  buildCellList(coords, disp, maxDx);
 
   // 4. OMP 并行：对于每个 slave，计算他受到的"虚拟主面"的接触作用
 #pragma omp parallel for schedule(dynamic)
@@ -296,6 +359,6 @@ void KinematicContact::computeContactForce(PDCommon::Core::PDContext &ctx) {
 
 } // namespace PDCommon::Contact
 
-REGISTER_CONTACT_TYPE(KinematicContact, [](const std::string &name) {
+REGISTER_CONTACT_TYPE(Kinematic, [](const std::string &name, std::unique_ptr<PDCommon::Contact::IContactForceLaw> fl) {
   return std::make_unique<PDCommon::Contact::KinematicContact>(name);
 })

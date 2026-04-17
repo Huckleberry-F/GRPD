@@ -123,7 +123,7 @@ Materials:
 #     DampingCoeff: 0.5
 ContactPairs:
   - Name: "BulletToWall"
-    Type: "KinematicContact"
+    Type: "Kinematic"
     MasterPartID: 2
     SlavePartID: 1
     RestitutionCoeff: 0.0 # 0=完全塑性碰撞(无反弹), 1=完全弹性碰撞

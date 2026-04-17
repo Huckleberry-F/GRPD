@@ -1,35 +1,29 @@
-#include "PenaltyContact.h"
+#include "PenaltyForceLaw.h"
 #include "ContactRegistry.h"
 #include "Logger.h"
-#include "StringUtils.h"
 #include "MechanicalMaterial.h"
-#include "ParticleManager.h"
 #include "PDContext.h"
+#include "ParticleManager.h"
 #include <algorithm>
 #include <cmath>
 
 namespace PDCommon::Contact {
 
-PenaltyContact::PenaltyContact(const std::string &name)
-    : NodeNodeContact(name) {}
-
-void PenaltyContact::initialize(const YAML::Node &configNode) {
-  if (configNode["PenaltyFactor"]) {
+void PenaltyForceLaw::initialize(const YAML::Node &configNode) {
+  if (configNode["PenaltyFactor"])
     penaltyFactor_ = configNode["PenaltyFactor"].as<double>();
-  }
-  if (configNode["PenaltyStiffness"]) {
+  if (configNode["PenaltyStiffness"])
     penaltyStiffness_ = configNode["PenaltyStiffness"].as<double>();
-  }
-  if (configNode["PinballRatio"]) {
+  if (configNode["PinballRatio"])
     pinballRatio_ = configNode["PinballRatio"].as<double>();
-  }
-  LOG_INFO("[PenaltyContact] Configured: Factor = " +
+
+  LOG_INFO("[PenaltyForceLaw] Configured: Factor = " +
            std::to_string(penaltyFactor_) +
            ", Pinball = " + std::to_string(pinballRatio_));
 }
 
-void PenaltyContact::onPreContact(PDCommon::Core::PDContext &ctx,
-                                   double maxDx) {
+void PenaltyForceLaw::onPreContact(PDCommon::Core::PDContext &ctx,
+                                    double maxDx) {
   if (penaltyStiffness_ < 0.0) {
     auto &pm = ctx.getParticleManager();
     const auto &particles = pm.getAllParticles();
@@ -52,15 +46,15 @@ void PenaltyContact::onPreContact(PDCommon::Core::PDContext &ctx,
     const int dim = ctx.getDimension();
     double effectiveThickness = (dim == 2) ? ctx.getThickness() : 1.0;
     penaltyStiffness_ = penaltyFactor_ * minK * maxDx * effectiveThickness;
-    LOG_INFO("[PenaltyContact] Auto-Computed PenaltyStiffness: " +
+    LOG_INFO("[PenaltyForceLaw] Auto-Computed PenaltyStiffness: " +
              std::to_string(penaltyStiffness_) +
              " (Factor: " + std::to_string(penaltyFactor_) + ")");
   }
 }
 
-ContactPairResult
-PenaltyContact::computePairForce(const ContactPairContext &pair) {
-  ContactPairResult result;
+ForceResult
+PenaltyForceLaw::computeForce(const ContactContext &pair) {
+  ForceResult result;
 
   double effective_penetration =
       std::min(pair.raw_penetration, pinballRatio_ * pair.safeDist);
@@ -74,6 +68,6 @@ PenaltyContact::computePairForce(const ContactPairContext &pair) {
 
 } // namespace PDCommon::Contact
 
-REGISTER_CONTACT_TYPE(PenaltyContact, [](const std::string &name) {
-  return std::make_unique<PDCommon::Contact::PenaltyContact>(name);
-})
+// 注册：YAML ForceLaw: "Penalty"
+REGISTER_FORCELAW_TYPE("Penalty", PenaltyForceLaw)
+

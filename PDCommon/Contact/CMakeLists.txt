@@ -8,29 +8,36 @@ add_library(Contact_Obj OBJECT
     src/ContactRegistry.cpp
     src/SurfaceDetector.cpp
     src/ContactSpatialGrid.cpp
-    src/NodeNodeContact.cpp
-    src/NodeSurfaceContact.cpp
-    src/PenaltyContact.cpp
-    src/NonlinearPenaltyContact.cpp
-    src/ViscousPenaltyContact.cpp
+    
+    # --- 扁平化顶层接触算法 (Types) ---
     src/KinematicContact.cpp
-    src/SillingContact.cpp
+    src/NTNContact.cpp
+    
+    # --- 物理力学定律 (ForceLaws) ---
+    src/PenaltyForceLaw.cpp
+    src/ViscousForceLaw.cpp
+    src/NonlinearPenaltyForceLaw.cpp
+    src/SillingForceLaw.cpp
 )
 
 # 2. Add header files to target
 target_sources(Contact_Obj PRIVATE
     include/IContactAlgorithm.h
-    include/ContactSpatialGrid.h
-    include/NodeNodeContact.h
-    include/NodeSurfaceContact.h
     include/ContactManager.h
     include/ContactRegistry.h
     include/SurfaceDetector.h
-    include/PenaltyContact.h
-    include/NonlinearPenaltyContact.h
-    include/ViscousPenaltyContact.h
+    include/ContactSpatialGrid.h
+    
+    # --- 扁平化顶层接触算法 ---
     include/KinematicContact.h
-    include/SillingContact.h
+    include/NTNContact.h
+    
+    # --- 物理力学定律 ---
+    include/IContactForceLaw.h
+    include/PenaltyForceLaw.h
+    include/ViscousForceLaw.h
+    include/NonlinearPenaltyForceLaw.h
+    include/SillingForceLaw.h
 )
 
 # 3. Set header include paths for this module

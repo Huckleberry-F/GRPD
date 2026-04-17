@@ -130,15 +130,15 @@ private:
 
 ## 6. 开发路线图 (v5.0 Roadmap)
 
-> 最后更新：2026-04-15
+> 最后更新：2026-04-17
 
-### 当前版本状态 (v4.0)
+### 当前版本状态 (v4.1)
 
 | 模块 | 已实现 | 已知问题 |
 |---|---|---|
 | **本构** | LinearElastic, J2Plasticity, JCPlasticity | 小应变加法分解，无客观应力率，大旋转下产生虚假应力 |
 | **损伤** | BondStretchFracture, DamageValueFracture + JC 损伤 | `(1-D)` 仅退化偏应力，保留静水压 |
-| **接触** | Penalty, ViscousPenalty, NonlinearPenalty, Silling, Kinematic | 法向接触基本可用；无摩擦；Kinematic 有锯齿 |
+| **接触** | 动量摩擦, Kinematic/Penalty接触, Pinball 乘子 | 点对点(NTN)在深层穿模会法线反转爆炸 |
 | **积分器** | ExplicitEuler, CentralDifference, ADR | 功能完整 |
 | **热学** | NOSB_T + HeatConductionMat | 基本可用 |
 
@@ -176,17 +176,22 @@ $$\boldsymbol{F} = \boldsymbol{F}^e \boldsymbol{F}^p$$
 
 ---
 
-#### ⭐⭐ Phase 3：摩擦接触算法
+#### ⭐⭐⭐ Phase 3：接触架构解耦与防爆模升级 (Strategy Contact Refactoring)
 
-**前提**：需要 Phase 1 完成后，接触力传入的应力才是物理正确的。
+**问题**：传统的 Node-to-Node(NTN) 接触在深层穿刺时会发生球心跨越，导致斥力法线反向，变成加速刺透的“幽灵射透”(Ghosting)。同时，目前每个接触对互相拥有一套孤立的空间哈希网格，在面对海量全模型自接触（多块碎片互相碰撞）时会导致 $O(K \cdot N)$ 的哈希阵列多重冗余和内存浪费。
 
-**目标**：在 `NodeNodeContact` 框架中实现 Coulomb 摩擦模型
+**目标 1（策略解耦）**：将传统接触算法彻底打碎为：
+- **`IContactDetector` 几何探测器**: 专门负责从空间提取间距和宏观不翻转的表面法线（如 `NTNDetector` 和未来的 `NTSGradientDetector`）。
+- **`IContactForceLaw` 物理本构力**: 纯粹算力学公式（如 `PenaltyForceLaw`）。
 
-$$f_t = \min(\mu \cdot f_n, \; k_t \cdot \delta_t)$$
+**目标 2（极致性能：General Contact 全域自接触引擎）**：
+为了抹平多接触对齐上阵带来的 OMP 并发调度与搜寻开销，开发统一层面的 **全域自接触大网格 (General Contact Spatial Hash)**。
+仅在每步耗费一次 $O(N)$ 构建全场物质点唯一大网格，所有独立的力学片段管线全部通过共享这唯一的一张地形图来匹配自己的邻居，将空间建网开销强制从 $O(K \cdot N)$ 极速降维到真正的 $O(N)$！
 
 **涉及文件**：
-- `PDCommon/Contact/include/NodeNodeContact.h` — 扩展摩擦力接口
-- `PDCommon/Contact/src/PenaltyContact.cpp` — 添加切向力计算
+- `PDCommon/Contact/include/IContactDetector.h` — [NEW] 
+- `PDCommon/Contact/include/IContactForceLaw.h` — [NEW]
+- `PDCommon/Contact/src/GeneralContactGrid.cpp` — [NEW]
 
 ---
 

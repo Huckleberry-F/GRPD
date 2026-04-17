@@ -1,18 +1,15 @@
-#include "ViscousPenaltyContact.h"
+#include "ViscousForceLaw.h"
 #include "ContactRegistry.h"
 #include "Logger.h"
 #include "MechanicalMaterial.h"
-#include "ParticleManager.h"
 #include "PDContext.h"
+#include "ParticleManager.h"
 #include <algorithm>
 #include <cmath>
 
 namespace PDCommon::Contact {
 
-ViscousPenaltyContact::ViscousPenaltyContact(const std::string &name)
-    : NodeNodeContact(name) {}
-
-void ViscousPenaltyContact::initialize(const YAML::Node &configNode) {
+void ViscousForceLaw::initialize(const YAML::Node &configNode) {
   if (configNode["PenaltyFactor"])
     penaltyFactor_ = configNode["PenaltyFactor"].as<double>();
   if (configNode["PenaltyStiffness"])
@@ -20,13 +17,13 @@ void ViscousPenaltyContact::initialize(const YAML::Node &configNode) {
   if (configNode["DampingCoeff"])
     dampingCoeff_ = configNode["DampingCoeff"].as<double>();
 
-  LOG_INFO("[ViscousPenaltyContact] Configured: Factor=" +
+  LOG_INFO("[ViscousForceLaw] Configured: Factor=" +
            std::to_string(penaltyFactor_) +
            ", DampingCoeff=" + std::to_string(dampingCoeff_));
 }
 
-void ViscousPenaltyContact::onPreContact(PDCommon::Core::PDContext &ctx,
-                                          double maxDx) {
+void ViscousForceLaw::onPreContact(PDCommon::Core::PDContext &ctx,
+                                    double maxDx) {
   if (penaltyStiffness_ < 0.0) {
     auto &pm = ctx.getParticleManager();
     const auto &particles = pm.getAllParticles();
@@ -49,14 +46,13 @@ void ViscousPenaltyContact::onPreContact(PDCommon::Core::PDContext &ctx,
     const int dim = ctx.getDimension();
     double effectiveThickness = (dim == 2) ? ctx.getThickness() : 1.0;
     penaltyStiffness_ = penaltyFactor_ * minK * maxDx * effectiveThickness;
-    LOG_INFO("[ViscousPenaltyContact] Auto-Computed PenaltyStiffness: " +
+    LOG_INFO("[ViscousForceLaw] Auto-Computed PenaltyStiffness: " +
              std::to_string(penaltyStiffness_));
   }
 }
 
-ContactPairResult ViscousPenaltyContact::computePairForce(
-    const ContactPairContext &pair) {
-  ContactPairResult result;
+ForceResult ViscousForceLaw::computeForce(const ContactContext &pair) {
+  ForceResult result;
 
   // 弹簧力（位移相关）
   double f_spring = penaltyStiffness_ * pair.raw_penetration;
@@ -97,6 +93,5 @@ ContactPairResult ViscousPenaltyContact::computePairForce(
 
 } // namespace PDCommon::Contact
 
-REGISTER_CONTACT_TYPE(ViscousPenaltyContact, [](const std::string &name) {
-  return std::make_unique<PDCommon::Contact::ViscousPenaltyContact>(name);
-})
+REGISTER_FORCELAW_TYPE("Viscous", ViscousForceLaw)
+

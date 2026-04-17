@@ -84,7 +84,8 @@ Materials:
 # 6. 联系参数 (Contact Pairs)
 ContactPairs:
   - Name: "ImpactorToTarget"
-    Type: "SillingContact"
+    Type: "NTN"
+    ForceLaw: "Silling"
     MasterPartID: 2
     SlavePartID: 1
 

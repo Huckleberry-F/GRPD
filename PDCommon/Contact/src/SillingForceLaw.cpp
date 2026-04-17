@@ -1,10 +1,10 @@
-#include "SillingContact.h"
+#include "SillingForceLaw.h"
 #include "ContactRegistry.h"
 #include "Logger.h"
-#include "StringUtils.h"
 #include "MechanicalMaterial.h"
 #include "PDContext.h"
 #include "ParticleManager.h"
+#include "StringUtils.h"
 #include <algorithm>
 #include <cmath>
 
@@ -14,29 +14,24 @@
 
 namespace PDCommon::Contact {
 
-SillingContact::SillingContact(const std::string &name)
-    : NodeNodeContact(name) {}
-
-void SillingContact::initialize(const YAML::Node &configNode) {
+void SillingForceLaw::initialize(const YAML::Node &configNode) {
   if (configNode["ShortRangeStiffness"])
     shortRangeStiffness_ = configNode["ShortRangeStiffness"].as<double>();
   if (configNode["StiffnessFactor"])
     stiffnessFactor_ = configNode["StiffnessFactor"].as<double>();
 
-  LOG_INFO("[SillingContact] Configured: StiffnessFactor=" +
+  LOG_INFO("[SillingForceLaw] Configured: StiffnessFactor=" +
            PDCommon::Utils::StringUtils::toScientific(stiffnessFactor_));
 }
 
-void SillingContact::onPreContact(PDCommon::Core::PDContext &ctx,
-                                   double maxDx) {
+void SillingForceLaw::onPreContact(PDCommon::Core::PDContext &ctx,
+                                    double maxDx) {
   if (shortRangeStiffness_ < 0.0) {
-    // 从 PD 微模量自动推导短程力密度常数 c_s
     auto &pm = ctx.getParticleManager();
     const auto &particles = pm.getAllParticles();
     const auto &neighborList = ctx.getNeighborList();
     double horizon = neighborList.getHorizon();
 
-    // 获取体积模量（取主从面中较大的，较硬一方主导接触排斥刚度）
     double masterBulk = 1.0e5, slaveBulk = 1.0e5;
     if (!masterIds_.empty()) {
       auto *matBase = particles[masterIds_[0]].getMaterial();
@@ -58,29 +53,25 @@ void SillingContact::onPreContact(PDCommon::Core::PDContext &ctx,
     effectiveThickness_ = (dim_ == 2) ? ctx.getThickness() : 1.0;
 
     if (dim_ == 2) {
-      // 2D 键基微模量 (平面应力/应变): c = 9K / (π t δ³)
-      // 接触力密度使用与 PD 键力一致的公式: f = c * s_contact
-      // 其中 s_contact = penetration / safeDist（无量纲穿透率）
       double delta3 = horizon * horizon * horizon;
-      shortRangeStiffness_ = stiffnessFactor_ * 9.0 * K / (M_PI * effectiveThickness_ * delta3);
+      shortRangeStiffness_ =
+          stiffnessFactor_ * 9.0 * K / (M_PI * effectiveThickness_ * delta3);
     } else {
-      // 3D 键基微模量: c = 18K / (π δ⁴)
       double delta4 = horizon * horizon * horizon * horizon;
       shortRangeStiffness_ = stiffnessFactor_ * 18.0 * K / (M_PI * delta4);
     }
 
-    LOG_INFO("[SillingContact] Auto: horizon=" + PDCommon::Utils::StringUtils::toScientific(horizon) +
+    LOG_INFO("[SillingForceLaw] Auto: horizon=" +
+             PDCommon::Utils::StringUtils::toScientific(horizon) +
              ", dx=" + std::to_string(maxDx) +
              ", K=" + PDCommon::Utils::StringUtils::toScientific(K) +
              ", c_s=" + std::to_string(shortRangeStiffness_));
   }
 }
 
-ContactPairResult
-SillingContact::computePairForce(const ContactPairContext &pair) {
-  ContactPairResult result;
+ForceResult SillingForceLaw::computeForce(const ContactContext &pair) {
+  ForceResult result;
 
-  // Silling 短程力密度: f = c * s_contact，其中 s = penetration / safeDist（无量纲）
   double s_contact = pair.raw_penetration / pair.safeDist;
   double f_density = shortRangeStiffness_ * s_contact;
 
@@ -98,6 +89,5 @@ SillingContact::computePairForce(const ContactPairContext &pair) {
 
 } // namespace PDCommon::Contact
 
-REGISTER_CONTACT_TYPE(SillingContact, [](const std::string &name) {
-  return std::make_unique<PDCommon::Contact::SillingContact>(name);
-})
+REGISTER_FORCELAW_TYPE("Silling", SillingForceLaw)
+

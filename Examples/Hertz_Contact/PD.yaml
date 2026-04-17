@@ -85,7 +85,7 @@ Materials:
 # 5. [重点] 实体间的非贯穿接触网络
 ContactPairs:
   - Name: "Indenter_Press_Substrate"
-    Type: "KinematicContact" # 我们采用最新编写的通用斥力体积罚函数
+    Type: "Kinematic"
     RestitutionCoeff: 0.0
     MasterPartID: 2 # 强硬的冲头为主面
     SlavePartID: 1 # 软软的基底为从面受力面

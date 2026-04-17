@@ -1,5 +1,7 @@
-#include "NodeNodeContact.h"
+#include "NTNContact.h"
+#include "ContactRegistry.h"
 #include "FieldManager.h"
+#include "Logger.h"
 #include "MechanicalMaterial.h"
 #include "PDContext.h"
 #include "ParticleManager.h"
@@ -9,19 +11,26 @@
 
 namespace PDCommon::Contact {
 
+NTNContact::NTNContact(const std::string &name, std::unique_ptr<IContactForceLaw> forceLaw)
+    : IContactAlgorithm(name), forceLaw_(std::move(forceLaw)) {}
+
+void NTNContact::initialize(const YAML::Node &configNode) {
+  if (forceLaw_) {
+    forceLaw_->initialize(configNode);
+  }
+}
+
 // =========================================================================
-// 空间哈希网格：buildCellList / computeCellHash
+// 空间哈希网格探测内置逻辑
 // =========================================================================
 
-void NodeNodeContact::buildCellList(const double *coords, const double *disp,
-                                    const int *activeStatus, double maxDx) {
+void NTNContact::buildCellList(const double *coords, const double *disp,
+                               double maxDx) {
   cellSize_ = maxDx * 1.05;
   minBounds_ = Eigen::Vector3d(1e10, 1e10, 1e10);
   maxBounds_ = Eigen::Vector3d(-1e10, -1e10, -1e10);
 
   for (int i : masterIds_) {
-    // if (activeStatus && activeStatus[i] == 0)
-    //   continue;
     double cur_x = coords[i * 3] + (disp ? disp[i * 3] : 0.0);
     double cur_y = coords[i * 3 + 1] + (disp ? disp[i * 3 + 1] : 0.0);
     double cur_z = coords[i * 3 + 2] + (disp ? disp[i * 3 + 2] : 0.0);
@@ -59,8 +68,6 @@ void NodeNodeContact::buildCellList(const double *coords, const double *disp,
   head_.assign(numCells, -1);
 
   for (int i : masterIds_) {
-    // if (activeStatus && activeStatus[i] == 0)
-    //   continue;
     double cur_x = coords[i * 3] + (disp ? disp[i * 3] : 0.0);
     double cur_y = coords[i * 3 + 1] + (disp ? disp[i * 3 + 1] : 0.0);
     double cur_z = coords[i * 3 + 2] + (disp ? disp[i * 3 + 2] : 0.0);
@@ -70,7 +77,7 @@ void NodeNodeContact::buildCellList(const double *coords, const double *disp,
   }
 }
 
-int NodeNodeContact::computeCellHash(double x, double y, double z) const {
+int NTNContact::computeCellHash(double x, double y, double z) const {
   int cx = static_cast<int>(std::floor((x - minBounds_.x()) / cellSize_));
   int cy = static_cast<int>(std::floor((y - minBounds_.y()) / cellSize_));
   int cz = static_cast<int>(std::floor((z - minBounds_.z()) / cellSize_));
@@ -81,21 +88,29 @@ int NodeNodeContact::computeCellHash(double x, double y, double z) const {
 }
 
 // =========================================================================
-// 模板方法骨架：computeContactForce
+// 核心接触力计算（合二为一）
 // =========================================================================
 
-void NodeNodeContact::computeContactForce(PDCommon::Core::PDContext &ctx) {
+void NTNContact::computeContactForce(PDCommon::Core::PDContext &ctx) {
+  if (!forceLaw_) {
+    LOG_ERROR("[NTNContact] ForceLaw is null!");
+    return;
+  }
+
+  // 同步粒子 ID 给 ForceLaw（如果其需要预判刚度）
+  forceLaw_->setParticleIds(masterIds_, slaveIds_);
+
   auto &fm = ctx.getFieldManager();
   auto &pm = ctx.getParticleManager();
   size_t numParticles = pm.getTotalParticles();
 
-  // --- 1. 提取公共场数据 ---
+  // 1. 提取公共场数据
   auto *activeField = fm.getFieldAs<int>("ActiveStatus");
   auto *coordsField = fm.getFieldAs<double>("Coords");
   auto *dispField = fm.getFieldAs<double>("Displacement");
   auto *volField = fm.getFieldAs<double>("Volume");
-  auto *accField = fm.getFieldAs<double>("Acceleration");
   auto *velField = fm.getFieldAs<double>("Velocity");
+  auto *accField = fm.getFieldAs<double>("Acceleration");
   auto *partField = fm.getFieldAs<int>("PartID");
 
   if (!coordsField || !volField || !accField)
@@ -105,13 +120,13 @@ void NodeNodeContact::computeContactForce(PDCommon::Core::PDContext &ctx) {
   const double *coords = coordsField->dataPtr();
   const double *disp = dispField ? dispField->dataPtr() : nullptr;
   const double *vols = volField->dataPtr();
-  double *acc = accField->dataPtr();
   const double *vel = velField ? velField->dataPtr() : nullptr;
+  double *acc = accField->dataPtr();
   const int *partIDs = partField ? partField->dataPtr() : nullptr;
   const auto &neighborList = ctx.getNeighborList();
   const auto &particles = pm.getAllParticles();
 
-  // --- 2. 计算 maxDx ---
+  // 2. 计算 maxDx
   double maxVol = 0.0;
   for (int i : masterIds_) {
     if (vols[i] > maxVol)
@@ -119,29 +134,26 @@ void NodeNodeContact::computeContactForce(PDCommon::Core::PDContext &ctx) {
   }
   if (maxVol <= 0.0)
     return;
-  // 2D/3D 维度感知的 dx 推导
+
   const int dim = ctx.getDimension();
   const double thickness = ctx.getThickness();
   auto volToDx = [dim, thickness](double v) -> double {
     return (dim == 2) ? std::sqrt(v / thickness) : std::cbrt(v);
   };
   double maxDx = volToDx(maxVol);
+  lastMaxDx_ = maxDx;
 
-  // --- 3. 子类预处理钩子（如自动估算罚函数刚度等） ---
-  onPreContact(ctx, maxDx);
+  forceLaw_->onPreContact(ctx, maxDx);
 
-  // --- 4. 分配链表 + 构建空间网格 ---
+  // 3. 分配链表 + 构建空间网格
   if (next_.size() < numParticles)
     next_.resize(numParticles, -1);
-  buildCellList(coords, disp, activeStatusPtr, maxDx);
+  buildCellList(coords, disp, maxDx);
 
-  // --- 5. OMP 并行遍历 slave 粒子 ---
+  // 4. OMP 并行遍历 slave 粒子，一次性完成搜索与加力施加
 #pragma omp parallel for schedule(dynamic)
   for (size_t idx = 0; idx < slaveIds_.size(); ++idx) {
     int i = slaveIds_[idx];
-    // 释放靶板的离散粒子范围，产生沙包效应
-    // if (activeStatusPtr && activeStatusPtr[i] == 0)
-    //   continue;
 
     double xi = coords[i * 3] + (disp ? disp[i * 3] : 0.0);
     double yi = coords[i * 3 + 1] + (disp ? disp[i * 3 + 1] : 0.0);
@@ -151,39 +163,26 @@ void NodeNodeContact::computeContactForce(PDCommon::Core::PDContext &ctx) {
     auto *mat = dynamic_cast<PDCommon::Material::MechanicalMaterial *>(
         particles[i].getMaterial());
     double rho = mat ? mat->getDensity() : 1.0;
-    // 【物理修正】：同时计入质量放大系数，保持接触物理与主方程时间尺度绝对对齐
     double mass_i = rho * vols[i] * massScaleFactor_;
 
     int cx = static_cast<int>(std::floor((xi - minBounds_.x()) / cellSize_));
     int cy = static_cast<int>(std::floor((yi - minBounds_.y()) / cellSize_));
     int cz = static_cast<int>(std::floor((zi - minBounds_.z()) / cellSize_));
 
-    double fx = 0.0, fy = 0.0, fz = 0.0;
-
-    // --- 27 邻格遍历 ---
+    // 27 邻格遍历查找可能的 master 粒子 j
     for (int offset_x = -1; offset_x <= 1; ++offset_x) {
       for (int offset_y = -1; offset_y <= 1; ++offset_y) {
         for (int offset_z = -1; offset_z <= 1; ++offset_z) {
           int ncx = cx + offset_x, ncy = cy + offset_y, ncz = cz + offset_z;
-          if (ncx < 0 || ncx >= gridDims_.x())
-            continue;
-          if (ncy < 0 || ncy >= gridDims_.y())
-            continue;
-          if (ncz < 0 || ncz >= gridDims_.z())
+          if (ncx < 0 || ncx >= gridDims_.x() || ncy < 0 ||
+              ncy >= gridDims_.y() || ncz < 0 || ncz >= gridDims_.z())
             continue;
 
-          int hash =
-              ncx + ncy * gridDims_.x() + ncz * gridDims_.x() * gridDims_.y();
+          int hash = ncx + ncy * gridDims_.x() + ncz * gridDims_.x() * gridDims_.y();
           int j = head_[hash];
 
           while (j != -1) {
             if (i != j) {
-              // 释放 Master 侧碎片的限制
-              // if (activeStatusPtr && activeStatusPtr[j] == 0) {
-              //   j = next_[j];
-              //   continue;
-              // }
-
               double xj = coords[j * 3] + (disp ? disp[j * 3] : 0.0);
               double yj = coords[j * 3 + 1] + (disp ? disp[j * 3 + 1] : 0.0);
               double zj = coords[j * 3 + 2] + (disp ? disp[j * 3 + 2] : 0.0);
@@ -192,7 +191,7 @@ void NodeNodeContact::computeContactForce(PDCommon::Core::PDContext &ctx) {
               double distSqr = rx * rx + ry * ry + rz * rz;
 
               if (distSqr > 1e-14) {
-                // 初始邻居过滤（同一 Part 的 PD 邻域键不参与接触）
+                // 初始邻居过滤
                 bool isInitialNeighbor = false;
                 if (partIDs && partIDs[i] == partIDs[j]) {
                   const int *nbIds = neighborList.getNeighborIds(i);
@@ -204,65 +203,58 @@ void NodeNodeContact::computeContactForce(PDCommon::Core::PDContext &ctx) {
                     }
                   }
                 }
-                if (isInitialNeighbor) {
-                  j = next_[j];
-                  continue;
-                }
 
-                double dist = std::sqrt(distSqr);
-                double dx_j = volToDx(vols[j]);
-                double safeDist = (dx_i + dx_j) / 2.0;
+                if (!isInitialNeighbor) {
+                  double dist = std::sqrt(distSqr);
+                  double dx_j = volToDx(vols[j]);
+                  double safeDist = (dx_i + dx_j) / 2.0;
 
-                if (dist < safeDist) {
-                  double raw_penetration = safeDist - dist;
-                  // 【穿透截断保护】：限制最大穿透量不超过安全距离的50%
-                  // 当粒子几乎重合(dist→0)时，防止：
-                  //   1. 力无限增大导致数值爆炸
-                  //   2. 法线方向因 rx/dist 中 dist→0 而不稳定
-                  //   3. 粒子穿过对方后法线翻转，力变成加速穿透的"吸引力"
-                  raw_penetration = std::min(raw_penetration, safeDist * 0.5);
-                  double nx = rx / dist, ny = ry / dist, nz = rz / dist;
+                  if (dist < safeDist) {
+                    double raw_penetration = safeDist - dist;
+                    raw_penetration = std::min(raw_penetration, safeDist * 0.5);
+                    double nx = rx / dist, ny = ry / dist, nz = rz / dist;
 
-                  // 计算 master 质量
-                  auto *matJ =
-                      dynamic_cast<PDCommon::Material::MechanicalMaterial *>(
-                          particles[j].getMaterial());
-                  double rhoJ = matJ ? matJ->getDensity() : 1.0;
-                  double massJ = rhoJ * vols[j] * massScaleFactor_;
+                    auto *matJ = dynamic_cast<PDCommon::Material::MechanicalMaterial *>(
+                        particles[j].getMaterial());
+                    double rhoJ = matJ ? matJ->getDensity() : 1.0;
+                    double massJ = rhoJ * vols[j] * massScaleFactor_;
 
-                  // 构造碰撞对上下文
-                  ContactPairContext pair;
-                  pair.i = i;
-                  pair.j = j;
-                  pair.dist = dist;
-                  pair.safeDist = safeDist;
-                  pair.raw_penetration = raw_penetration;
-                  pair.nx = nx;
-                  pair.ny = ny;
-                  pair.nz = nz;
-                  pair.mass_i = mass_i;
-                  pair.mass_j = massJ;
-                  pair.dx_i = dx_i;
-                  pair.dx_j = dx_j;
-                  pair.vel = vel;
+                    // 构造碰撞对上下文交给 ForceLaw
+                    ContactContext pair;
+                    pair.i = i;
+                    pair.j = j;
+                    pair.dist = dist;
+                    pair.safeDist = safeDist;
+                    pair.raw_penetration = raw_penetration;
+                    pair.nx = nx;
+                    pair.ny = ny;
+                    pair.nz = nz;
+                    pair.mass_i = mass_i;
+                    pair.mass_j = massJ;
+                    pair.dx_i = dx_i;
+                    pair.dx_j = dx_j;
+                    pair.vel = vel;
 
-                  // 调用子类虚函数计算碰撞力
-                  ContactPairResult result = computePairForce(pair);
+                    // 获取接触力 (从 ForceLaw)
+                    ForceResult forceRes = forceLaw_->computeForce(pair);
 
-                  if (result.valid) {
-                    // 累加 slave 侧力
-                    fx += result.fx;
-                    fy += result.fy;
-                    fz += result.fz;
-
-                    // 反作用力注入 master（牛顿第三定律）
-                    if (massJ > 1e-30) {
+                    if (forceRes.valid) {
+                      // 注入加速度 (牛顿第三定律)
 #pragma omp atomic
-                      acc[j * 3] -= result.fx / massJ;
+                      acc[i * 3] += forceRes.fx / mass_i;
 #pragma omp atomic
-                      acc[j * 3 + 1] -= result.fy / massJ;
+                      acc[i * 3 + 1] += forceRes.fy / mass_i;
 #pragma omp atomic
-                      acc[j * 3 + 2] -= result.fz / massJ;
+                      acc[i * 3 + 2] += forceRes.fz / mass_i;
+
+                      if (massJ > 1e-30) {
+#pragma omp atomic
+                        acc[j * 3] -= forceRes.fx / massJ;
+#pragma omp atomic
+                        acc[j * 3 + 1] -= forceRes.fy / massJ;
+#pragma omp atomic
+                        acc[j * 3 + 2] -= forceRes.fz / massJ;
+                      }
                     }
                   }
                 }
@@ -273,14 +265,12 @@ void NodeNodeContact::computeContactForce(PDCommon::Core::PDContext &ctx) {
         }
       }
     }
-
-    // 注入 slave 加速度
-    if (mass_i > 1e-30) {
-      acc[i * 3] += fx / mass_i;
-      acc[i * 3 + 1] += fy / mass_i;
-      acc[i * 3 + 2] += fz / mass_i;
-    }
   }
 }
 
 } // namespace PDCommon::Contact
+
+// 注册：YAML Type: "NTN"
+REGISTER_CONTACT_TYPE(NTN, [](const std::string &name, std::unique_ptr<PDCommon::Contact::IContactForceLaw> fl) {
+  return std::make_unique<PDCommon::Contact::NTNContact>(name, std::move(fl));
+})
