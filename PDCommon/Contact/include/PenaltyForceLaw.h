@@ -20,8 +20,8 @@ public:
   ForceResult computeForce(const ContactContext &pair) override;
 
   // ---- 供 StandardContactAlgorithm 在组装阶段注入 MasterIds/SlaveIds 用 ----
-  void setParticleIds(const std::vector<int> &masterIds,
-                      const std::vector<int> &slaveIds) {
+  void setContactParticleIds(const std::vector<int> &masterIds,
+                             const std::vector<int> &slaveIds) {
     masterIds_ = masterIds;
     slaveIds_ = slaveIds;
   }

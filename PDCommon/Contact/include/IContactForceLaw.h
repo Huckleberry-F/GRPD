@@ -18,7 +18,9 @@
 #include <string>
 #include <yaml-cpp/yaml.h>
 
-namespace PDCommon::Core { class PDContext; }
+namespace PDCommon::Core {
+class PDContext;
+}
 
 namespace PDCommon::Contact {
 
@@ -26,20 +28,20 @@ namespace PDCommon::Contact {
 /// @details 由 Detector 填充，传递给 ForceLaw。ForceLaw 不需要知道
 ///          这些数据是通过 NTN 距离法还是 NTS 梯度法得来的。
 struct ContactContext {
-  int i, j;                   ///< slave 和 master 粒子索引
-  double dist;                ///< 当前距离
-  double safeDist;            ///< 安全距离 (dx_i + dx_j) / 2
-  double raw_penetration;     ///< safeDist - dist（侵入量，已经过截断保护）
-  double nx, ny, nz;          ///< 法向单位矢量（j→i 方向）
-  double mass_i, mass_j;      ///< slave 和 master 有效质量（含质量缩放）
-  double dx_i, dx_j;          ///< 等效边长
-  const double *vel;          ///< 速度场指针（可为 nullptr）
+  int i, j;               ///< slave 和 master 粒子索引
+  double dist;            ///< 当前距离
+  double safeDist;        ///< 安全距离 (dx_i + dx_j) / 2
+  double raw_penetration; ///< safeDist - dist（侵入量，已经过截断保护）
+  double nx, ny, nz;      ///< 法向单位矢量（j→i 方向）
+  double mass_i, mass_j;  ///< slave 和 master 有效质量（含质量缩放）
+  double dx_i, dx_j;      ///< 等效边长
+  const double *vel;      ///< 速度场指针（可为 nullptr）
 };
 
 /// @brief 力学计算结果
 struct ForceResult {
   double fx = 0.0, fy = 0.0, fz = 0.0; ///< 施加在 slave i 上的力
-  bool valid = true;                     ///< 如果为 false，跳过本对
+  bool valid = true;                   ///< 如果为 false，跳过本对
 };
 
 /// @brief 接触力学本构定律纯虚基类
@@ -60,8 +62,8 @@ public:
 
   /// @brief 设置主从面粒子 ID（供 onPreContact 中自动估算刚度使用）
   /// @details 默认空实现，需要材料信息的子类自行覆写
-  virtual void setParticleIds(const std::vector<int> &masterIds,
-                              const std::vector<int> &slaveIds) {}
+  virtual void setContactParticleIds(const std::vector<int> &masterIds,
+                                     const std::vector<int> &slaveIds) {}
 
   /// @brief 核心接口：根据碰撞对上下文计算接触力
   /// @param pair 碰撞对几何与运动学上下文（由 Detector 提供）

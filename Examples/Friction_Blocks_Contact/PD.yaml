@@ -58,23 +58,30 @@ BoundaryConditions:
 
   - Step: 1
     BcID: 2
-    Name: "Push_Top_Y"
+    Name: "Drag_Right_X"
     PartID: 2
     Box: [-6.0, 6.0, 4.8, 5.1, -1.0, 1.0]
     Type: "DISP"
-    Value: [0.0, -0.1, 0.0]
-    ApplyDir: [true, true, false]
+    Value: [0.2, 0.0, 0.0]
+    ApplyDir: [true, false, false]
+
+  - Step: 1
+    BcID: 3
+    Name: "Push_Down_Pressure"
+    PartID: 2
+    Box: [-6.0, 6.0, 4.8, 5.1, -1.0, 1.0]
+    Type: "PY"
+    Value: -1000.0
 
 # 4. 接触对设置
 ContactPairs:
   - Name: "Blocks_Normal_Contact"
-    Type: "PenaltyContact"
+    Type: "Kinematic"
     MasterPartID: 2
     SlavePartID: 1
-    PenaltyFactor: 1.0
-    PinballRatio: 0.5
-    FrictionCoeff: 0.3
-
+    RestitutionCoeff: 0.0
+    PinballRatio: 1.0
+    FrictionCoeff: 0.0
 # 5. 求解积分器选择
 Solver:
   Engine: "PD"
@@ -90,8 +97,8 @@ Solver:
   OMP_Threads: 16
   OutputInterval: 1000
 
-  MaxPseudoSteps: 50000
-  MassScaleFactor: 1.0e6
+  MaxPseudoSteps: 10000
+  MassScaleFactor: 1.0e8
   DispTol: 1.0e-6
   ForceTol: 5.0e-3
   MinRefForce: 1.0e-2

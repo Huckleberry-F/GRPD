@@ -11,7 +11,8 @@
 
 namespace PDCommon::Contact {
 
-NTNContact::NTNContact(const std::string &name, std::unique_ptr<IContactForceLaw> forceLaw)
+NTNContact::NTNContact(const std::string &name,
+                       std::unique_ptr<IContactForceLaw> forceLaw)
     : IContactAlgorithm(name), forceLaw_(std::move(forceLaw)) {}
 
 void NTNContact::initialize(const YAML::Node &configNode) {
@@ -98,7 +99,7 @@ void NTNContact::computeContactForce(PDCommon::Core::PDContext &ctx) {
   }
 
   // 同步粒子 ID 给 ForceLaw（如果其需要预判刚度）
-  forceLaw_->setParticleIds(masterIds_, slaveIds_);
+  forceLaw_->setContactParticleIds(masterIds_, slaveIds_);
 
   auto &fm = ctx.getFieldManager();
   auto &pm = ctx.getParticleManager();
@@ -178,7 +179,8 @@ void NTNContact::computeContactForce(PDCommon::Core::PDContext &ctx) {
               ncy >= gridDims_.y() || ncz < 0 || ncz >= gridDims_.z())
             continue;
 
-          int hash = ncx + ncy * gridDims_.x() + ncz * gridDims_.x() * gridDims_.y();
+          int hash =
+              ncx + ncy * gridDims_.x() + ncz * gridDims_.x() * gridDims_.y();
           int j = head_[hash];
 
           while (j != -1) {
@@ -214,8 +216,9 @@ void NTNContact::computeContactForce(PDCommon::Core::PDContext &ctx) {
                     raw_penetration = std::min(raw_penetration, safeDist * 0.5);
                     double nx = rx / dist, ny = ry / dist, nz = rz / dist;
 
-                    auto *matJ = dynamic_cast<PDCommon::Material::MechanicalMaterial *>(
-                        particles[j].getMaterial());
+                    auto *matJ =
+                        dynamic_cast<PDCommon::Material::MechanicalMaterial *>(
+                            particles[j].getMaterial());
                     double rhoJ = matJ ? matJ->getDensity() : 1.0;
                     double massJ = rhoJ * vols[j] * massScaleFactor_;
 
@@ -271,6 +274,9 @@ void NTNContact::computeContactForce(PDCommon::Core::PDContext &ctx) {
 } // namespace PDCommon::Contact
 
 // 注册：YAML Type: "NTN"
-REGISTER_CONTACT_TYPE(NTN, [](const std::string &name, std::unique_ptr<PDCommon::Contact::IContactForceLaw> fl) {
-  return std::make_unique<PDCommon::Contact::NTNContact>(name, std::move(fl));
-})
+REGISTER_CONTACT_TYPE(
+    NTN, [](const std::string &name,
+            std::unique_ptr<PDCommon::Contact::IContactForceLaw> fl) {
+      return std::make_unique<PDCommon::Contact::NTNContact>(name,
+                                                             std::move(fl));
+    })

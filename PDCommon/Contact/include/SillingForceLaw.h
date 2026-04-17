@@ -20,8 +20,8 @@ public:
   void onPreContact(PDCommon::Core::PDContext &ctx, double maxDx) override;
   ForceResult computeForce(const ContactContext &pair) override;
 
-  void setParticleIds(const std::vector<int> &masterIds,
-                      const std::vector<int> &slaveIds) {
+  void setContactParticleIds(const std::vector<int> &masterIds,
+                             const std::vector<int> &slaveIds) {
     masterIds_ = masterIds;
     slaveIds_ = slaveIds;
   }

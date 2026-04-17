@@ -10,7 +10,6 @@
 #include <omp.h>
 #include <vector>
 
-
 namespace PDCommon::Contact {
 
 KinematicContact::KinematicContact(const std::string &name)
@@ -318,7 +317,7 @@ void KinematicContact::computeContactForce(PDCommon::Core::PDContext &ctx) {
         if (v_t_mag > 1e-10) {
           // 最大基础摩擦力 F = mu * F_n
           double f_fric_mag = frictionCoeff_ * force_mag;
-          
+
           // [关键限幅保护] 摩擦力不能在一个积分步把相对切向速度减到反向导致震荡
           // 彻底将其刹车所需的上限力 (冲量守恒理论)
           double max_fric = m_eff * v_t_mag / dt;
@@ -359,6 +358,8 @@ void KinematicContact::computeContactForce(PDCommon::Core::PDContext &ctx) {
 
 } // namespace PDCommon::Contact
 
-REGISTER_CONTACT_TYPE(Kinematic, [](const std::string &name, std::unique_ptr<PDCommon::Contact::IContactForceLaw> fl) {
-  return std::make_unique<PDCommon::Contact::KinematicContact>(name);
-})
+REGISTER_CONTACT_TYPE(
+    Kinematic, [](const std::string &name,
+                  std::unique_ptr<PDCommon::Contact::IContactForceLaw> fl) {
+      return std::make_unique<PDCommon::Contact::KinematicContact>(name);
+    })
