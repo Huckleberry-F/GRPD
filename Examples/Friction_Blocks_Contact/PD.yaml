@@ -40,7 +40,7 @@ Materials:
   - MatID: 2
     Name: "Top_Pusher"
     Type: "LinearElasticMat"
-    Density: 3.9e-9
+    Density: 7.8e-9
     YoungsModulus: 1.8e5
     PoissonsRatio: 0.25
 
@@ -76,12 +76,24 @@ BoundaryConditions:
 # 4. 接触对设置
 ContactPairs:
   - Name: "Blocks_Normal_Contact"
-    Type: "Kinematic"
+    Type: "General"
+    Evaluator: "NTC"
+    ForceLaw: "KinematicNormal"
+
+    # 【摩擦法则配置区】你可以随时在此切换刚刚新增的摩擦引擎！
+    # FrictionLaw: "ExplicitImpulse" # 选项: ExplicitImpulse / TanhRegularized / ElasticStickSlip
+    # FrictionCoeff: 0.0 # 启动摩擦！
+
+    # 仅 TanhRegularized 专属参数
+    # VRef: 1.0e-3 # 参考正则化速度，越小拐角越尖锐
+
+    # 仅 ElasticStickSlip 专属参数 (如果你要切换到该法则，取消下方注释)
+    # ShearStiffness: 1.0e6 # 静摩擦的微观弹簧刚度系数
+
     MasterPartID: 2
     SlavePartID: 1
-    RestitutionCoeff: 0.0
     PinballRatio: 1.0
-    FrictionCoeff: 0.0
+    RestitutionCoeff: 0.0
 # 5. 求解积分器选择
 Solver:
   Engine: "PD"
@@ -122,6 +134,10 @@ Writer:
     - Name: "Displacement"
       Dimension: 3
     - Name: "Velocity"
+      Dimension: 3
+    - Name: "Acceleration"
+      Dimension: 3
+    - Name: "ContactNormal"
       Dimension: 3
     - Name: "PK1Stress"
       Dimension: 9

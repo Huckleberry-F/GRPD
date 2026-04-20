@@ -22,6 +22,8 @@ namespace PDCommon::Core {
 class PDContext;
 }
 
+#include <vector>
+
 namespace PDCommon::Contact {
 
 /// @brief 探测器输出的碰撞对通用上下文（几何 + 运动学信息）
@@ -35,7 +37,15 @@ struct ContactContext {
   double nx, ny, nz;      ///< 法向单位矢量（j→i 方向）
   double mass_i, mass_j;  ///< slave 和 master 有效质量（含质量缩放）
   double dx_i, dx_j;      ///< 等效边长
-  const double *vel;      ///< 速度场指针（可为 nullptr）
+  
+  /// @brief 计算好的相对速度分量 (dv = v_i - v_j_equiv)
+  /// @details 彻底隔离 Axis B (Evaluator) 与 Axis C/D. 后者直接拿来算，不需要管单点还是面元云加权。
+  double dvx, dvy, dvz;   
+
+  
+  /// @brief NTC / NTS 云集搜索的多主面反向分配权重列表
+  /// @details 若为空，则全额反作用于 j；若有值，则将反作用力按比例分发。
+  std::vector<std::pair<int, double>> master_weights;
 };
 
 /// @brief 力学计算结果

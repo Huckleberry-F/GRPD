@@ -23,6 +23,36 @@ public:
 
   int computeCellHash(double x, double y, double z) const;
 
+  /// @brief Iterates over potential neighbors in the 27 grid cells around (x, y, z).
+  /// @param callback A callable or lambda function taking an `int neighborId` and returning `bool` (true to continue, false to early exit).
+  template <typename Func>
+  void forEachNeighbor(double x, double y, double z, Func callback) const {
+    if (head_.empty()) return;
+    int cx = static_cast<int>(std::floor((x - minBounds_.x()) / cellSize_));
+    int cy = static_cast<int>(std::floor((y - minBounds_.y()) / cellSize_));
+    int cz = static_cast<int>(std::floor((z - minBounds_.z()) / cellSize_));
+
+    for (int offset_x = -1; offset_x <= 1; ++offset_x) {
+      for (int offset_y = -1; offset_y <= 1; ++offset_y) {
+        for (int offset_z = -1; offset_z <= 1; ++offset_z) {
+          int ncx = cx + offset_x, ncy = cy + offset_y, ncz = cz + offset_z;
+          if (ncx < 0 || ncx >= gridDims_.x() || 
+              ncy < 0 || ncy >= gridDims_.y() || 
+              ncz < 0 || ncz >= gridDims_.z())
+            continue;
+
+          int hash = ncx + ncy * gridDims_.x() + ncz * gridDims_.x() * gridDims_.y();
+          int j = head_[hash];
+
+          while (j != -1) {
+            callback(j);
+            j = next_[j];
+          }
+        }
+      }
+    }
+  }
+
 public:
   double cellSize_ = 0.0;
   Eigen::Vector3d minBounds_;

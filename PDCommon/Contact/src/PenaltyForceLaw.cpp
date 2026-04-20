@@ -69,5 +69,5 @@ PenaltyForceLaw::computeForce(const ContactContext &pair) {
 } // namespace PDCommon::Contact
 
 // 注册：YAML ForceLaw: "Penalty"
-REGISTER_FORCELAW_TYPE("Penalty", PenaltyForceLaw)
+REGISTER_FORCELAW_TYPE(Penalty, PenaltyForceLaw)
 

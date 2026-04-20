@@ -76,5 +76,5 @@ ForceResult NonlinearPenaltyForceLaw::computeForce(const ContactContext &pair) {
 
 } // namespace PDCommon::Contact
 
-REGISTER_FORCELAW_TYPE("Nonlinear", NonlinearPenaltyForceLaw)
+REGISTER_FORCELAW_TYPE(Nonlinear, NonlinearPenaltyForceLaw)
 

@@ -89,5 +89,5 @@ ForceResult SillingForceLaw::computeForce(const ContactContext &pair) {
 
 } // namespace PDCommon::Contact
 
-REGISTER_FORCELAW_TYPE("Silling", SillingForceLaw)
+REGISTER_FORCELAW_TYPE(Silling, SillingForceLaw)
 

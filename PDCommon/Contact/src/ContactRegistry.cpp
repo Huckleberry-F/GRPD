@@ -22,6 +22,20 @@ void ContactRegistry::registerContactType(const std::string &type,
   }
 }
 
+void ContactRegistry::registerEvaluatorType(const std::string &type,
+                                            EvaluatorCreatorFunc creator) {
+  if (evaluatorMap_.find(type) == evaluatorMap_.end()) {
+    evaluatorMap_[type] = creator;
+  }
+}
+
+void ContactRegistry::registerFrictionLawType(const std::string &type,
+                                              FrictionLawCreatorFunc creator) {
+  if (frictionLawMap_.find(type) == frictionLawMap_.end()) {
+    frictionLawMap_[type] = creator;
+  }
+}
+
 std::unique_ptr<IContactAlgorithm>
 ContactRegistry::createContact(const std::string &type, const std::string &name,
                                const std::string &forceLawType) {
@@ -32,19 +46,41 @@ ContactRegistry::createContact(const std::string &type, const std::string &name,
     return nullptr;
   }
 
-  // 可选提取 ForceLaw（仅在传入了 forceLawType 并且在字典里有注册时才生成）
   std::unique_ptr<IContactForceLaw> forceLaw = nullptr;
   auto flIt = forceLawMap_.find(forceLawType);
   if (flIt != forceLawMap_.end()) {
     forceLaw = flIt->second();
-  } else if (type == "NTN" || type == "NTS") { 
-    // NTN、NTS 等明确需要 ForceLaw 的组件如果没有查到，给出警告但不阻拦算法组装（组件内部可接盘报错）
-    LOG_WARNING("[ContactRegistry] ForceLaw '" + forceLawType +
-                "' not found or not mapped. Proceeding with null force law...");
   }
 
-  // 交给顶层接触算法自行决定是否需要并且如何使用这个 forceLaw
   return contactIt->second(name, std::move(forceLaw));
+}
+
+std::unique_ptr<IContactForceLaw>
+ContactRegistry::createForceLaw(const std::string &type) {
+  auto it = forceLawMap_.find(type);
+  if (it == forceLawMap_.end())
+    return nullptr;
+  return it->second();
+}
+
+std::unique_ptr<IContactEvaluator>
+ContactRegistry::createEvaluator(const std::string &type) {
+  auto it = evaluatorMap_.find(type);
+  if (it == evaluatorMap_.end()) {
+    LOG_ERROR("[ContactRegistry] Unknown Evaluator Type: '" + type + "'.");
+    return nullptr;
+  }
+  return it->second();
+}
+
+std::unique_ptr<IFrictionLaw>
+ContactRegistry::createFrictionLaw(const std::string &type) {
+  auto it = frictionLawMap_.find(type);
+  if (it == frictionLawMap_.end()) {
+    LOG_ERROR("[ContactRegistry] Unknown FrictionLaw Type: '" + type + "'.");
+    return nullptr;
+  }
+  return it->second();
 }
 
 std::vector<std::string> ContactRegistry::getRegisteredTypes() const {
@@ -53,6 +89,10 @@ std::vector<std::string> ContactRegistry::getRegisteredTypes() const {
     types.push_back("[Type] " + p.first);
   for (const auto &p : forceLawMap_)
     types.push_back("[ForceLaw] " + p.first);
+  for (const auto &p : evaluatorMap_)
+    types.push_back("[Evaluator] " + p.first);
+  for (const auto &p : frictionLawMap_)
+    types.push_back("[FrictionLaw] " + p.first);
   return types;
 }
 

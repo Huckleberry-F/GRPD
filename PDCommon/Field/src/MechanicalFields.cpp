@@ -16,11 +16,13 @@ void MechanicalFields::registerFields(FieldManager &fm) {
   auto displacement = reg.createField("DoubleField", "Displacement", 3);
   auto velocity = reg.createField("DoubleField", "Velocity", 3);
   auto acceleration = reg.createField("DoubleField", "Acceleration", 3);
+  auto contactNormal = reg.createField("DoubleField", "ContactNormal", 3);
   fm.addField(std::move(displacement));
   fm.addField(std::move(velocity));
   fm.addField(std::move(acceleration));
+  fm.addField(std::move(contactNormal));
   LOG_INFO("[MechanicalFields] Core fields registered: "
-           "Displacement, Velocity, Acceleration.");
+           "Displacement, Velocity, Acceleration, ContactNormal.");
 }
 
 // 静态注册到 PhysicsFieldRegistry

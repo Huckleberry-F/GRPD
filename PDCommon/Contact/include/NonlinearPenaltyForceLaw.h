@@ -22,7 +22,7 @@ public:
   ForceResult computeForce(const ContactContext &pair) override;
 
   void setContactParticleIds(const std::vector<int> &masterIds,
-                             const std::vector<int> &slaveIds) {
+                             const std::vector<int> &slaveIds) override {
     masterIds_ = masterIds;
     slaveIds_ = slaveIds;
   }

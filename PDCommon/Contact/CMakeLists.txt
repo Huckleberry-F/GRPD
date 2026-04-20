@@ -10,14 +10,20 @@ add_library(Contact_Obj OBJECT
     src/ContactSpatialGrid.cpp
     
     # --- 扁平化顶层接触算法 (Types) ---
-    src/KinematicContact.cpp
-    src/NTNContact.cpp
+    src/GeneralContact.cpp
+    src/NTNEvaluator.cpp
+    src/NTCEvaluator.cpp
+    src/NTSEvaluator.cpp
     
-    # --- 物理力学定律 (ForceLaws) ---
+    # --- 物理力学定律 (ForceLaws & FrictionLaws) ---
     src/PenaltyForceLaw.cpp
     src/ViscousForceLaw.cpp
     src/NonlinearPenaltyForceLaw.cpp
     src/SillingForceLaw.cpp
+    src/KinematicForceLaw.cpp
+    src/ExplicitImpulseFrictionLaw.cpp
+    src/TanhFrictionLaw.cpp
+    src/ElasticStickSlipLaw.cpp
 )
 
 # 2. Add header files to target
@@ -29,8 +35,10 @@ target_sources(Contact_Obj PRIVATE
     include/ContactSpatialGrid.h
     
     # --- 扁平化顶层接触算法 ---
-    include/KinematicContact.h
-    include/NTNContact.h
+    include/GeneralContact.h
+    include/IContactEvaluator.h
+    include/NTNEvaluator.h
+    include/NTCEvaluator.h
     
     # --- 物理力学定律 ---
     include/IContactForceLaw.h
@@ -38,6 +46,11 @@ target_sources(Contact_Obj PRIVATE
     include/ViscousForceLaw.h
     include/NonlinearPenaltyForceLaw.h
     include/SillingForceLaw.h
+    include/KinematicForceLaw.h
+    include/IFrictionLaw.h
+    include/ExplicitImpulseFrictionLaw.h
+    include/TanhFrictionLaw.h
+    include/ElasticStickSlipLaw.h
 )
 
 # 3. Set header include paths for this module

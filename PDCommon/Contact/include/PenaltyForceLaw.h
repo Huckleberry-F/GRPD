@@ -21,7 +21,7 @@ public:
 
   // ---- 供 StandardContactAlgorithm 在组装阶段注入 MasterIds/SlaveIds 用 ----
   void setContactParticleIds(const std::vector<int> &masterIds,
-                             const std::vector<int> &slaveIds) {
+                             const std::vector<int> &slaveIds) override {
     masterIds_ = masterIds;
     slaveIds_ = slaveIds;
   }

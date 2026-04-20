@@ -58,26 +58,19 @@ ForceResult ViscousForceLaw::computeForce(const ContactContext &pair) {
   double f_spring = penaltyStiffness_ * pair.raw_penetration;
 
   // 粘性阻尼力（速度相关）
+  // 多态隔离：直接使用 Axis B 预计算好的相对速度 (dv = v_i - v_j_equiv)
+  double dvx = pair.dvx;
+  double dvy = pair.dvy;
+  double dvz = pair.dvz;
+  double v_rel_n = dvx * pair.nx + dvy * pair.ny + dvz * pair.nz;
+
+  double m_eff = (pair.mass_i * pair.mass_j) / (pair.mass_i + pair.mass_j + 1e-30);
+  double c_crit = 2.0 * std::sqrt(penaltyStiffness_ * m_eff);
+  
+  // 阻尼力仅在粒子逼近时施加，防止阻碍分离
   double f_damp = 0.0;
-  if (pair.vel) {
-    double vxi = pair.vel[pair.i * 3];
-    double vyi = pair.vel[pair.i * 3 + 1];
-    double vzi = pair.vel[pair.i * 3 + 2];
-    double vxj = pair.vel[pair.j * 3];
-    double vyj = pair.vel[pair.j * 3 + 1];
-    double vzj = pair.vel[pair.j * 3 + 2];
-
-    double dvx = vxi - vxj, dvy = vyi - vyj, dvz = vzi - vzj;
-    double v_rel_n = dvx * pair.nx + dvy * pair.ny + dvz * pair.nz;
-
-    double m_eff =
-        (pair.mass_i * pair.mass_j) / (pair.mass_i + pair.mass_j + 1e-30);
-    double c_crit = 2.0 * std::sqrt(penaltyStiffness_ * m_eff);
-    f_damp = dampingCoeff_ * c_crit * (-v_rel_n);
-
-    // 阻尼力仅在粒子逼近时施加，防止阻碍分离
-    if (v_rel_n > 0.0)
-      f_damp = 0.0;
+  if (v_rel_n < 0.0) {
+      f_damp = dampingCoeff_ * c_crit * (-v_rel_n);
   }
 
   double forceMagnitude = f_spring + f_damp;
@@ -93,5 +86,5 @@ ForceResult ViscousForceLaw::computeForce(const ContactContext &pair) {
 
 } // namespace PDCommon::Contact
 
-REGISTER_FORCELAW_TYPE("Viscous", ViscousForceLaw)
+REGISTER_FORCELAW_TYPE(Viscous, ViscousForceLaw)
 
