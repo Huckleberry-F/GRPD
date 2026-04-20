@@ -15,6 +15,9 @@ void NTSEvaluator::initialize(const YAML::Node &configNode) {
   if (configNode["PinballRatio"]) {
     pinballRatio_ = configNode["PinballRatio"].as<double>();
   }
+  if (configNode["SmoothRatio"]) {
+    smoothRatio_ = configNode["SmoothRatio"].as<double>();
+  }
 }
 
 void NTSEvaluator::onPreEvaluate(PDCommon::Core::PDContext &ctx, double maxDx) {

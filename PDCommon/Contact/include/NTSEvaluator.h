@@ -19,8 +19,9 @@ public:
 
   void onPreEvaluate(PDCommon::Core::PDContext &ctx, double maxDx) override;
 
-  std::vector<ContactContext> evaluate(
-      int slaveId, const ContactSpatialGrid &grid, PDCommon::Core::PDContext &ctx) override;
+  std::vector<ContactContext> evaluate(int slaveId,
+                                       const ContactSpatialGrid &grid,
+                                       PDCommon::Core::PDContext &ctx) override;
 
   void setMassScaleFactor(double sf) override { massScaleFactor_ = sf; }
 
@@ -33,7 +34,7 @@ private:
   const int *isSurface_ = nullptr;
 
   double pinballRatio_ = 1.0;
-  double smoothRatio_ = 3.0; // 核函数提取面法相的额外扩大系数，确保点足够多
+  double smoothRatio_ = 1.5; // 核函数提取面法相的额外扩大系数，确保点足够多
   double massScaleFactor_ = 1.0;
 };
 

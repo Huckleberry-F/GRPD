@@ -40,7 +40,7 @@ Materials:
   - MatID: 2
     Name: "Top_Pusher"
     Type: "LinearElasticMat"
-    Density: 7.8e-9
+    Density: 3.9e-9
     YoungsModulus: 1.8e5
     PoissonsRatio: 0.25
 
@@ -77,8 +77,8 @@ BoundaryConditions:
 ContactPairs:
   - Name: "Blocks_Normal_Contact"
     Type: "General"
-    Evaluator: "NTC"
-    ForceLaw: "KinematicNormal"
+    Evaluator: "NTS"
+    ForceLaw: "Penalty"
 
     # 【摩擦法则配置区】你可以随时在此切换刚刚新增的摩擦引擎！
     # FrictionLaw: "ExplicitImpulse" # 选项: ExplicitImpulse / TanhRegularized / ElasticStickSlip
@@ -93,6 +93,7 @@ ContactPairs:
     MasterPartID: 2
     SlavePartID: 1
     PinballRatio: 1.0
+    SmoothRatio: 0.5
     RestitutionCoeff: 0.0
 # 5. 求解积分器选择
 Solver:
