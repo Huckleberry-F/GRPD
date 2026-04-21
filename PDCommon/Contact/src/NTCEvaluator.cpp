@@ -95,7 +95,8 @@ NTCEvaluator::evaluate(int i, const ContactSpatialGrid &grid,
 
         if (dist < safeDist) {
           double penetration = safeDist - dist;
-          // [关键修复2] 截断保护
+          // [修复]
+          // 移除NTCEvaluator中的法向截断，让底层可以提供大侵入量下的足够反力。
           penetration = std::min(penetration, safeDist * 0.5);
 
           double weight = penetration; // 使用侵入量作加权权重
@@ -132,12 +133,14 @@ NTCEvaluator::evaluate(int i, const ContactSpatialGrid &grid,
                          vols_[j_rep] * massScaleFactor_;
     double avgPenetration = sumPenetration / numContacts;
 
+    double dx_j_rep = volToDx(vols_[j_rep]);
+    double safeDist_rep = ((dx_i + dx_j_rep) / 2.0) * pinballRatio_;
+
     ContactContext pair;
     pair.i = i;
-    pair.j = j_rep;                 // 代表材料属性的主面粒子
-    pair.dist = 0.0;                // 虚拟面，不需要具体距离
-    pair.safeDist = avgPenetration; // 为了迎合 ForceLaw 中可能用到的
-                                    // safeDist（仅起记录作用）
+    pair.j = j_rep;                   // 代表材料属性的主面粒子
+    pair.dist = safeDist_rep - avgPenetration; // 等效距离
+    pair.safeDist = safeDist_rep;      // 真实的接触检测阈值
     pair.raw_penetration = avgPenetration;
     pair.nx = nx_total;
     pair.ny = ny_total;

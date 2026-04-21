@@ -26,7 +26,7 @@ Parts:
     Length: 10.0
     Width: 5.0
     dx: 0.25
-    Offset: [-5.0, 0.0, 0.0]
+    Offset: [-5.0, 0.25, 0.0]
 
 # 2. 材料赋予
 Materials:
@@ -40,7 +40,7 @@ Materials:
   - MatID: 2
     Name: "Top_Pusher"
     Type: "LinearElasticMat"
-    Density: 3.9e-9
+    Density: 7.8e-9
     YoungsModulus: 1.8e5
     PoissonsRatio: 0.25
 
@@ -55,14 +55,14 @@ BoundaryConditions:
     Box: [-11.0, 11.0, -5.1, -4.8, -1.0, 1.0]
     Type: "DISP"
     Value: [0.0, 0.0, 0.0]
-
-  - Step: 1
+  # 锁住滑块 X 方向，消除NTS光滑面上的刚体漂移
+  - Step: 0
     BcID: 2
-    Name: "Drag_Right_X"
+    Name: "Fix_Slider_X"
     PartID: 2
     Box: [-6.0, 6.0, 4.8, 5.1, -1.0, 1.0]
     Type: "DISP"
-    Value: [0.2, 0.0, 0.0]
+    Value: [0.0, 0.0, 0.0]
     ApplyDir: [true, false, false]
 
   - Step: 1
@@ -71,18 +71,19 @@ BoundaryConditions:
     PartID: 2
     Box: [-6.0, 6.0, 4.8, 5.1, -1.0, 1.0]
     Type: "PY"
-    Value: -1000.0
+    Value: -10000.0
 
 # 4. 接触对设置
 ContactPairs:
   - Name: "Blocks_Normal_Contact"
     Type: "General"
     Evaluator: "NTS"
-    ForceLaw: "Penalty"
-
+    ForceLaw: "KinematicNormal"
+    # PenaltyFactor: 1.0
+    # DampingCoeff: 0.3
     # 【摩擦法则配置区】你可以随时在此切换刚刚新增的摩擦引擎！
-    # FrictionLaw: "ExplicitImpulse" # 选项: ExplicitImpulse / TanhRegularized / ElasticStickSlip
-    # FrictionCoeff: 0.0 # 启动摩擦！
+    FrictionLaw: "TanhRegularized" # 选项: ExplicitImpulse / TanhRegularized / ElasticStickSlip
+    FrictionCoeff: 0.0 # 启动摩擦！
 
     # 仅 TanhRegularized 专属参数
     # VRef: 1.0e-3 # 参考正则化速度，越小拐角越尖锐
@@ -90,10 +91,10 @@ ContactPairs:
     # 仅 ElasticStickSlip 专属参数 (如果你要切换到该法则，取消下方注释)
     # ShearStiffness: 1.0e6 # 静摩擦的微观弹簧刚度系数
 
-    MasterPartID: 2
-    SlavePartID: 1
-    PinballRatio: 1.0
-    SmoothRatio: 0.5
+    MasterPartID: 1
+    SlavePartID: 2
+    PinballRatio: 1.5
+    SmoothRatio: 1.0
     RestitutionCoeff: 0.0
 # 5. 求解积分器选择
 Solver:
@@ -110,13 +111,13 @@ Solver:
   OMP_Threads: 16
   OutputInterval: 1000
 
-  MaxPseudoSteps: 10000
+  MaxPseudoSteps: 20000
   MassScaleFactor: 1.0e8
   DispTol: 1.0e-6
   ForceTol: 5.0e-3
   MinRefForce: 1.0e-2
   RampIters: 0
-  RampWaveRatio: 3.0
+  RampWaveRatio: 5.0
   DampingMethod: "HybridKinetic"
   Fracture_Strategy: "Strict"
 
@@ -142,3 +143,7 @@ Writer:
       Dimension: 3
     - Name: "PK1Stress"
       Dimension: 9
+    - Name: "ContactGap"
+      Dimension: 1
+    - Name: "VirtualSurfacePos"
+      Dimension: 3

@@ -56,8 +56,8 @@ ForceResult
 PenaltyForceLaw::computeForce(const ContactContext &pair) {
   ForceResult result;
 
-  double effective_penetration =
-      std::min(pair.raw_penetration, pinballRatio_ * pair.safeDist);
+  // 移除硬截断，因为在极大面载荷下如果截断，可能导致最大反力小于外部推力，系统永远无法跌入静力平衡态（导致ADR不收敛）
+  double effective_penetration = pair.raw_penetration;
   double forceMagnitude = penaltyStiffness_ * effective_penetration;
 
   result.fx = forceMagnitude * pair.nx;

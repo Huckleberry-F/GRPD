@@ -119,6 +119,12 @@ public:
   /// @brief 设置当前时间步长（由积分器在每步开头调用）
   void setCurrentDt(double dt) { currentDt_ = dt; }
 
+  // -----------------------------------------------------------------------
+  // 增量步冻结标志 (用于接触法向与权重在准静态子步内的几何锚定)
+  // -----------------------------------------------------------------------
+  bool isIncrementStart() const { return isIncrementStart_; }
+  void setIncrementStart(bool v) { isIncrementStart_ = v; }
+
 private:
   std::string name_;                                    ///< 模型名称
   int dimension_ = 3;                                   ///< 模型维度 (默认 3D)
@@ -133,6 +139,7 @@ private:
 
   PDCommon::BC::BCManager bcManager_; ///< 边界条件管理器
   PDCommon::Contact::ContactManager contactManager_; ///< 接触系统管理器
+  bool isIncrementStart_ = false; ///< 是否处于当前增量步（或物理物理时间步）的首个迭代
 };
 
 } // namespace PDCommon::Core

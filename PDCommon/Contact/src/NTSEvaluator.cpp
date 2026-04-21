@@ -43,22 +43,129 @@ void NTSEvaluator::onPreEvaluate(PDCommon::Core::PDContext &ctx, double maxDx) {
       normalFieldBase->resize(ctx.getParticleManager().getTotalParticles());
     fm.addField(std::move(normalFieldBase));
   }
+  if (!fm.hasField("VirtualSurfacePos")) {
+    auto &reg = PDCommon::Field::FieldRegistry::getInstance();
+    auto vsField = reg.createField("DoubleField", "VirtualSurfacePos", 3);
+    if (coordsField)
+      vsField->resize(ctx.getParticleManager().getTotalParticles());
+    fm.addField(std::move(vsField));
+  }
+  if (!fm.hasField("ContactGap")) {
+    auto &reg = PDCommon::Field::FieldRegistry::getInstance();
+    auto gapField = reg.createField("DoubleField", "ContactGap", 1);
+    if (coordsField)
+      gapField->resize(ctx.getParticleManager().getTotalParticles());
+    fm.addField(std::move(gapField));
+  }
 
   auto *normalField = fm.getFieldAs<double>("ContactNormal");
   if (normalField && coordsField) {
-    double *normalPtr = normalField->dataPtr();
-    // 在计算每步前，先把上一针留下的法向痕迹清空
-    size_t numParticles = ctx.getParticleManager().getTotalParticles();
-    std::fill(normalPtr, normalPtr + numParticles * 3, 0.0);
+    if (normalField->size() == 0)
+      normalField->resize(ctx.getParticleManager().getTotalParticles());
+    // 只有在新的增量步（拓扑未冻结时）才清空法向量向量。
+    // 如果是子步中间的人工松弛迭代，我们应该保留其值以供输出！
+    if (ctx.isIncrementStart()) {
+      double *normalPtr = normalField->dataPtr();
+      size_t numParticles = ctx.getParticleManager().getTotalParticles();
+      std::fill(normalPtr, normalPtr + numParticles * 3, 0.0);
+    }
+  }
+
+  auto *vsField = fm.getFieldAs<double>("VirtualSurfacePos");
+  if (vsField && coordsField && vsField->size() == 0) {
+    vsField->resize(ctx.getParticleManager().getTotalParticles());
+  }
+
+  auto *gapField = fm.getFieldAs<double>("ContactGap");
+  if (gapField && coordsField && gapField->size() == 0) {
+    gapField->resize(ctx.getParticleManager().getTotalParticles());
   }
 }
 
 std::vector<ContactContext>
 NTSEvaluator::evaluate(int i, const ContactSpatialGrid &grid,
                        PDCommon::Core::PDContext &ctx) {
+                       
+  // =========================================================================
+  // 【核心机制：子步内权重冻结 (Frozen Topology)】
+  // 如果当前处于同一物理或伪时间子步的非起点迭代，且该粒子具备已冻结的拓扑缓存，
+  // 则跳过所有的邻域搜索、法向重新拟合、权重更新，直接以常数雅可比计算位移偏差。
+  // 这将非保守的 NTS 接触力场严格压制为全等二次保守力场，保障 ADR 收敛极值。
+  // =========================================================================
+  if (!ctx.isIncrementStart() && frozenCache_.count(i) > 0) {
+    std::vector<ContactContext> cachedContexts = frozenCache_[i];
+    std::vector<ContactContext> activeContexts;
+
+    if (cachedContexts.empty()) return activeContexts;
+
+    double xi = coords_[i * 3] + (disp_ ? disp_[i * 3] : 0.0);
+    double yi = coords_[i * 3 + 1] + (disp_ ? disp_[i * 3 + 1] : 0.0);
+    double zi = coords_[i * 3 + 2] + (disp_ ? disp_[i * 3 + 2] : 0.0);
+
+    for (auto &cached : cachedContexts) {
+      double P_surf = 0.0;
+      double surf_w = 0.0;
+      double vx_master = 0, vy_master = 0, vz_master = 0;
+
+      // 利用冻结的权重和主节点，结合最新位移计算虚拟平滑主面
+      for (const auto &wp : cached.master_weights) {
+        int j = wp.first;
+        double w = wp.second;
+        double xj = coords_[j * 3] + (disp_ ? disp_[j * 3] : 0.0);
+        double yj = coords_[j * 3 + 1] + (disp_ ? disp_[j * 3 + 1] : 0.0);
+        double zj = coords_[j * 3 + 2] + (disp_ ? disp_[j * 3 + 2] : 0.0);
+
+        P_surf += (xj * cached.nx + yj * cached.ny + zj * cached.nz) * w;
+        surf_w += w;
+
+        if (vel_) {
+          vx_master += vel_[j * 3] * w;
+          vy_master += vel_[j * 3 + 1] * w;
+          vz_master += vel_[j * 3 + 2] * w;
+        }
+      }
+
+      if (surf_w > 1e-14) {
+        P_surf /= surf_w;
+        vx_master /= surf_w;
+        vy_master /= surf_w;
+        vz_master /= surf_w;
+      }
+
+      double P_i = xi * cached.nx + yi * cached.ny + zi * cached.nz;
+      double gap = P_i - P_surf;
+
+      auto *vsField = ctx.getFieldManager().getFieldAs<double>("VirtualSurfacePos");
+      if (vsField) {
+        double *vsPtr = vsField->dataPtr();
+        vsPtr[i * 3] = xi - gap * cached.nx;
+        vsPtr[i * 3 + 1] = yi - gap * cached.ny;
+        vsPtr[i * 3 + 2] = zi - gap * cached.nz;
+      }
+      auto *gapField = ctx.getFieldManager().getFieldAs<double>("ContactGap");
+      if (gapField) gapField->dataPtr()[i] = gap;
+
+      if (gap >= cached.safeDist) continue; // 冻结状态下依然发生脱离，跳过
+
+      cached.dist = gap;
+      cached.raw_penetration = std::min(cached.safeDist - gap, cached.safeDist * 0.5);
+
+      if (vel_) {
+        cached.dvx = vel_[i * 3] - vx_master;
+        cached.dvy = vel_[i * 3 + 1] - vy_master;
+        cached.dvz = vel_[i * 3 + 2] - vz_master;
+      }
+
+      activeContexts.push_back(cached);
+    }
+    return activeContexts;
+  }
+
   std::vector<ContactContext> contexts;
-  if (!coords_ || !vols_)
+  if (!coords_ || !vols_) {
+    frozenCache_[i] = contexts;
     return contexts;
+  }
 
   // 面面接触大过滤：如果你自己都不是表面皮粒子，那就老实躲在里头，不需要你参与接触
   if (isSurface_ && isSurface_[i] == 0)
@@ -121,9 +228,16 @@ NTSEvaluator::evaluate(int i, const ContactSpatialGrid &grid,
       continue;
 
     double vol_j = vols_[j];
-    // 经典 NTS 核函数：距离越近的权重越大，定义该处的局部垂线 (1/r^2 衰减)
-    double w = vol_j / distsq;
     double dist = std::sqrt(distsq);
+    double local_R = smoothRadius + volToDx(vol_j) * pinballRatio_;
+    double r_norm = dist / local_R;
+    if (r_norm >= 1.0)
+      continue;
+
+    // 采用抛物线平滑核函数 (1 - r/R)^2 取代具有 r->0 奇异性的 1/r^2
+    // 经典距离反比，避免在网格正对齐时产生无穷大权重吸附
+    double kernel = (1.0 - r_norm) * (1.0 - r_norm);
+    double w = vol_j * kernel;
 
     nx_total += (rx / dist) * w;
     ny_total += (ry / dist) * w;
@@ -165,7 +279,11 @@ NTSEvaluator::evaluate(int i, const ContactSpatialGrid &grid,
     // 距离面越近的节点，对面高的决策权越重
     double distsq =
         (xi - xj) * (xi - xj) + (yi - yj) * (yi - yj) + (zi - zj) * (zi - zj);
-    double w = vols_[j] / std::max(distsq, 1e-12);
+    double dist = std::sqrt(distsq);
+    double local_R = smoothRadius + volToDx(vols_[j]) * pinballRatio_;
+    double r_norm = dist / std::max(local_R, 1e-12);
+    double kernel = (r_norm < 1.0) ? (1.0 - r_norm) * (1.0 - r_norm) : 0.0;
+    double w = vols_[j] * kernel;
 
     P_surf += P_j * w;
     surf_w += w;
@@ -178,10 +296,16 @@ NTSEvaluator::evaluate(int i, const ContactSpatialGrid &grid,
   // NTS 抽象主面的等效体积安全限
   double avg_dx_j = 0;
   for (int j : masterNodes) {
-    double distsq = (xi - coords_[j * 3]) * (xi - coords_[j * 3]) +
-                    (yi - coords_[j * 3 + 1]) * (yi - coords_[j * 3 + 1]) +
-                    (zi - coords_[j * 3 + 2]) * (zi - coords_[j * 3 + 2]);
-    double w = vols_[j] / std::max(distsq, 1e-12);
+    double cxj = coords_[j * 3] + (disp_ ? disp_[j * 3] : 0.0);
+    double cyj = coords_[j * 3 + 1] + (disp_ ? disp_[j * 3 + 1] : 0.0);
+    double czj = coords_[j * 3 + 2] + (disp_ ? disp_[j * 3 + 2] : 0.0);
+    double distsq = (xi - cxj) * (xi - cxj) + (yi - cyj) * (yi - cyj) +
+                    (zi - czj) * (zi - czj);
+    double dist = std::sqrt(distsq);
+    double local_R = smoothRadius + volToDx(vols_[j]) * pinballRatio_;
+    double r_norm = dist / std::max(local_R, 1e-12);
+    double kernel = (r_norm < 1.0) ? (1.0 - r_norm) * (1.0 - r_norm) : 0.0;
+    double w = vols_[j] * kernel;
     avg_dx_j += volToDx(vols_[j]) * w;
   }
   avg_dx_j /= surf_w;
@@ -189,12 +313,27 @@ NTSEvaluator::evaluate(int i, const ContactSpatialGrid &grid,
   double safeDist = (dx_i + avg_dx_j) * 0.5 * pinballRatio_;
   double gap = P_i - P_surf;
 
+  // 记录刚刚计算出的 Virtual Surface 3D 落点坐标和 Gap 量，以供排查虚拟面波动
+  auto *vsField = ctx.getFieldManager().getFieldAs<double>("VirtualSurfacePos");
+  if (vsField) {
+    double *vsPtr = vsField->dataPtr();
+    vsPtr[i * 3] = xi - gap * nx;
+    vsPtr[i * 3 + 1] = yi - gap * ny;
+    vsPtr[i * 3 + 2] = zi - gap * nz;
+  }
+  auto *gapField = ctx.getFieldManager().getFieldAs<double>("ContactGap");
+  if (gapField) {
+    gapField->dataPtr()[i] = gap;
+  }
+
   if (gap >= safeDist)
     return contexts; // 如果从面飘在虚拟平滑云的上方安全距离外，毫无穿透
 
   double penetration = safeDist - gap; // 穿刺了多少
-  penetration =
-      std::min(penetration, safeDist * 0.5); // 防止大步长穿心引发无穷大惩罚力
+  // 限幅保护：防止 Slave 过深侵入 Master 导致密度梯度法向摇摆（NTS
+  // 极限环震荡的根因） Kinematic 法则另行处理，此处针对 Penalty
+  // 类法则做稳定性保护
+  penetration = std::min(penetration, safeDist * 0.5);
 
   // 4. Calculate smoothed master velocity array
   // (提取主面网格的随质点运动平滑速度)
@@ -202,10 +341,16 @@ NTSEvaluator::evaluate(int i, const ContactSpatialGrid &grid,
   if (vel_) {
     double vx_master = 0, vy_master = 0, vz_master = 0;
     for (int j : masterNodes) {
-      double distsq = (xi - coords_[j * 3]) * (xi - coords_[j * 3]) +
-                      (yi - coords_[j * 3 + 1]) * (yi - coords_[j * 3 + 1]) +
-                      (zi - coords_[j * 3 + 2]) * (zi - coords_[j * 3 + 2]);
-      double w = vols_[j] / std::max(distsq, 1e-12);
+      double cxj = coords_[j * 3] + (disp_ ? disp_[j * 3] : 0.0);
+      double cyj = coords_[j * 3 + 1] + (disp_ ? disp_[j * 3 + 1] : 0.0);
+      double czj = coords_[j * 3 + 2] + (disp_ ? disp_[j * 3 + 2] : 0.0);
+      double distsq = (xi - cxj) * (xi - cxj) + (yi - cyj) * (yi - cyj) +
+                      (zi - czj) * (zi - czj);
+      double dist = std::sqrt(distsq);
+      double local_R = smoothRadius + volToDx(vols_[j]) * pinballRatio_;
+      double r_norm = dist / std::max(local_R, 1e-12);
+      double kernel = (r_norm < 1.0) ? (1.0 - r_norm) * (1.0 - r_norm) : 0.0;
+      double w = vols_[j] * kernel;
       vx_master += vel_[j * 3] * w;
       vy_master += vel_[j * 3 + 1] * w;
       vz_master += vel_[j * 3 + 2] * w;
@@ -231,9 +376,11 @@ NTSEvaluator::evaluate(int i, const ContactSpatialGrid &grid,
   int j_rep = masterNodes[0];
   auto *mat_master = dynamic_cast<PDCommon::Material::MechanicalMaterial *>(
       particles[j_rep].getMaterial());
-  // Abstract mass representation
+  // Abstract mass representation (考虑2D/3D体积的正确计算)
+  double master_vol = (dim == 2) ? (avg_dx_j * avg_dx_j * thickness)
+                                 : (avg_dx_j * avg_dx_j * avg_dx_j);
   double mass_master = (mat_master ? mat_master->getDensity() : 1.0) *
-                       (avg_dx_j * avg_dx_j * avg_dx_j) * massScaleFactor_;
+                       master_vol * massScaleFactor_;
 
   ContactContext cx;
   cx.i = i;
@@ -254,14 +401,21 @@ NTSEvaluator::evaluate(int i, const ContactSpatialGrid &grid,
 
   // 分配受力反弹权重（依据逆距离插值平滑分配惩罚力）
   for (int j : masterNodes) {
-    double distsq = (xi - coords_[j * 3]) * (xi - coords_[j * 3]) +
-                    (yi - coords_[j * 3 + 1]) * (yi - coords_[j * 3 + 1]) +
-                    (zi - coords_[j * 3 + 2]) * (zi - coords_[j * 3 + 2]);
-    double w = vols_[j] / std::max(distsq, 1e-12);
+    double cxj = coords_[j * 3] + (disp_ ? disp_[j * 3] : 0.0);
+    double cyj = coords_[j * 3 + 1] + (disp_ ? disp_[j * 3 + 1] : 0.0);
+    double czj = coords_[j * 3 + 2] + (disp_ ? disp_[j * 3 + 2] : 0.0);
+    double distsq = (xi - cxj) * (xi - cxj) + (yi - cyj) * (yi - cyj) +
+                    (zi - czj) * (zi - czj);
+    double dist = std::sqrt(distsq);
+    double local_R = smoothRadius + volToDx(vols_[j]) * pinballRatio_;
+    double r_norm = dist / std::max(local_R, 1e-12);
+    double kernel = (r_norm < 1.0) ? (1.0 - r_norm) * (1.0 - r_norm) : 0.0;
+    double w = vols_[j] * kernel;
     cx.master_weights.push_back({j, w / surf_w});
   }
 
   contexts.push_back(cx);
+  frozenCache_[i] = contexts;
   return contexts;
 }
 

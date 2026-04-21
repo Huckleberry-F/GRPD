@@ -68,7 +68,8 @@ void InitNeighbors(PDCommon::Core::PDContext &ctx,
    }
 
   // 计算表面粒子（Volume Deficit Method）
-  PDCommon::Contact::SurfaceDetector::identifySurfaceParticles(ctx, 0.95);
+  // 阈值设为 0.75：对于近场域 m=3 的标准模型，第一层粒子的完整度约为 60%，第二层约为 80%。使用0.75能完美剥离真正的最外单层蒙皮。
+  PDCommon::Contact::SurfaceDetector::identifySurfaceParticles(ctx, 0.75);
 
   LOG_INFO("[InitNeighbors] Neighbor search phase complete.");
 }

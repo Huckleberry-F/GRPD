@@ -4,6 +4,8 @@
 #include <vector>
 #include <yaml-cpp/yaml.h>
 
+#include <unordered_map>
+
 namespace PDCommon::Contact {
 
 class NTSEvaluator : public IContactEvaluator {
@@ -36,6 +38,8 @@ private:
   double pinballRatio_ = 1.0;
   double smoothRatio_ = 1.5; // 核函数提取面法相的额外扩大系数，确保点足够多
   double massScaleFactor_ = 1.0;
+
+  std::unordered_map<int, std::vector<ContactContext>> frozenCache_;
 };
 
 } // namespace PDCommon::Contact

@@ -208,6 +208,10 @@ void ADR_Integrator::run(PDCommon::Core::PDContext &ctx,
 
           timer.tick();
 
+          // 核心控制：告知所有后续流程当前是否是子步(非迭代)的起跑线
+          // 若为是，接触模块需要冻结几何拓扑法向等信息，维持本子步内的完全保守力场
+          ctx.setIncrementStart(iter == 0);
+
           // ✨ [核心工序流水线表达]
           BC::applyConstraints(ctx.getBCManager(), activeLF, stepConfig.stepId);
           ctx.setCurrentDt(dt); // 同步真实 dt 给接触模块
