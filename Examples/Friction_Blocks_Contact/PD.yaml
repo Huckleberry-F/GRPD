@@ -1,5 +1,5 @@
 #==============================================================================
-# GRPD ADR Quasi-Static Contact Benchmark - 摩擦方块纯推力对标跑通验证
+# GRPD ADR Quasi-Static Contact Benchmark - 摩擦方块纯推力对标跑通验�?
 #==============================================================================
 
 # 1. 建模系统
@@ -55,7 +55,7 @@ BoundaryConditions:
     Box: [-11.0, 11.0, -5.1, -4.8, -1.0, 1.0]
     Type: "DISP"
     Value: [0.0, 0.0, 0.0]
-  # 锁住滑块 X 方向，消除NTS光滑面上的刚体漂移
+  # 锁住滑块 X 方向，消除NTS光滑面上的刚体漂�?
   - Step: 0
     BcID: 2
     Name: "Fix_Slider_X"
@@ -73,7 +73,7 @@ BoundaryConditions:
     Type: "PY"
     Value: -10000.0
 
-# 4. 接触对设置
+# 4. 接触对设?
 ContactPairs:
   - Name: "Blocks_Normal_Contact"
     Type: "General"
@@ -83,12 +83,12 @@ ContactPairs:
     # DampingCoeff: 0.3
     # 【摩擦法则配置区】你可以随时在此切换刚刚新增的摩擦引擎！
     FrictionLaw: "TanhRegularized" # 选项: ExplicitImpulse / TanhRegularized / ElasticStickSlip
-    FrictionCoeff: 0.0 # 启动摩擦！
+    FrictionCoeff: 0.0 # 启动摩擦?
 
-    # 仅 TanhRegularized 专属参数
+    # TanhRegularized 专属参数
     # VRef: 1.0e-3 # 参考正则化速度，越小拐角越尖锐
 
-    # 仅 ElasticStickSlip 专属参数 (如果你要切换到该法则，取消下方注释)
+    # ElasticStickSlip 专属参数 (如果你要切换到该法则，取消下方注�?
     # ShearStiffness: 1.0e6 # 静摩擦的微观弹簧刚度系数
 
     MasterPartID: 1

@@ -3,13 +3,14 @@
 // ============================================================================
 
 #include "SurfaceDetector.h"
-#include "PDContext.h"
 #include "FieldManager.h"
 #include "FieldRegistry.h"
 #include "Logger.h"
 #include "NeighborList.h"
+#include "PDContext.h"
 #include <omp.h>
 #include <vector>
+
 
 namespace PDCommon::Contact {
 
@@ -32,8 +33,9 @@ void SurfaceDetector::identifySurfaceParticles(PDCommon::Core::PDContext &ctx,
 
   // 1. 若 IsSurface 场不存在则注册，否则清零准备覆盖
   if (!fm.hasField("IsSurface")) {
-    auto isSurfFieldNew = PDCommon::Field::FieldRegistry::getInstance()
-                              .createField("IntField", "IsSurface", 1);
+    auto isSurfFieldNew =
+        PDCommon::Field::FieldRegistry::getInstance().createField(
+            "IntField", "IsSurface", 1);
     isSurfFieldNew->resize(numParticles);
     fm.addField(std::move(isSurfFieldNew));
   }
@@ -83,16 +85,15 @@ void SurfaceDetector::identifySurfaceParticles(PDCommon::Core::PDContext &ctx,
     }
   }
 
-  LOG_INFO(
-      "[SurfaceDetector] Volume Deficit check complete. Identified " +
-      std::to_string(numSurfacePoints) + " surface particles out of " +
-      std::to_string(numParticles) + " (Threshold: " +
-      std::to_string(threshold) + ").");
+  LOG_INFO("[SurfaceDetector] Volume Deficit check complete. Identified " +
+           std::to_string(numSurfacePoints) + " surface particles out of " +
+           std::to_string(numParticles) +
+           " (Threshold: " + std::to_string(threshold) + ").");
 }
 
 void SurfaceDetector::updateFracturedSurfaces(PDCommon::Core::PDContext &ctx) {
-  // TODO(Phase 3): Dynamic checking of freshly exposed surfaces due to fracture.
-  // 预留接口：当进入损伤模拟后，可以依据附近键断裂和 ActiveStatus
+  // TODO(Phase 3): Dynamic checking of freshly exposed surfaces due to
+  // fracture. 预留接口：当进入损伤模拟后，可以依据附近键断裂和 ActiveStatus
   // 重新计算并增加 IsSurface。
 }
 

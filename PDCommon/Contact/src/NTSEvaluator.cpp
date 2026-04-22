@@ -59,16 +59,8 @@ void NTSEvaluator::onPreEvaluate(PDCommon::Core::PDContext &ctx, double maxDx) {
   }
 
   auto *normalField = fm.getFieldAs<double>("ContactNormal");
-  if (normalField && coordsField) {
-    if (normalField->size() == 0)
-      normalField->resize(ctx.getParticleManager().getTotalParticles());
-    // 只有在新的增量步（拓扑未冻结时）才清空法向量向量。
-    // 如果是子步中间的人工松弛迭代，我们应该保留其值以供输出！
-    if (ctx.isIncrementStart()) {
-      double *normalPtr = normalField->dataPtr();
-      size_t numParticles = ctx.getParticleManager().getTotalParticles();
-      std::fill(normalPtr, normalPtr + numParticles * 3, 0.0);
-    }
+  if (normalField && coordsField && normalField->size() == 0) {
+    normalField->resize(ctx.getParticleManager().getTotalParticles());
   }
 
   auto *vsField = fm.getFieldAs<double>("VirtualSurfacePos");
@@ -79,6 +71,26 @@ void NTSEvaluator::onPreEvaluate(PDCommon::Core::PDContext &ctx, double maxDx) {
   auto *gapField = fm.getFieldAs<double>("ContactGap");
   if (gapField && coordsField && gapField->size() == 0) {
     gapField->resize(ctx.getParticleManager().getTotalParticles());
+  }
+
+  // 只有在新的增量步（拓扑未冻结时）才清空这些场变量，防止遗留的僵尸脏数据误导结果。
+  // 如果是子步中间的人工松弛迭代，应当保留其值以供最终输出或下一级算子调用。
+  if (ctx.isIncrementStart()) {
+    size_t numParticles = ctx.getParticleManager().getTotalParticles();
+    if (normalField) {
+      double *normalPtr = normalField->dataPtr();
+      std::fill(normalPtr, normalPtr + numParticles * 3, 0.0);
+    }
+    if (gapField) {
+      double *gapPtr = gapField->dataPtr();
+      std::fill(gapPtr, gapPtr + numParticles, 0.0);
+    }
+    if (vsField) {
+      double *vsPtr = vsField->dataPtr();
+      // 这里如果初始没有被用到，可以用原始坐标xi或者直接0.0
+      std::fill(vsPtr, vsPtr + numParticles * 3, 0.0);
+    }
+    frozenCache_.clear();
   }
 }
 
