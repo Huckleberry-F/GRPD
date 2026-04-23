@@ -1,0 +1,188 @@
+#==============================================================================
+# GRPD 全局主配置文件 - 力学 NOSB 测试用例 (2D 纯平面位移)
+# 单位制：N-mm-tonne-s
+#   长度: mm
+#   质量: tonne (1e3 kg)
+#   时间: s
+#   力:   N (= tonne·mm/s²)
+#   应力: MPa (= N/mm²)
+# ==============================================================================
+
+# 1. 全局设置
+Assembly: {}
+
+Parts:
+  - PartID: 1
+    MatID: 2
+    Dimension: 2
+    Source: "380_acp_bullet.stl" # 已经在当前 Bullet 目录下，直接引用即可
+    Rotate: [0.0, 90.0, 0.0] # 恢复水平（不要尝试在此翻转Z，底层STL不吃Z轴旋转）
+    RepairMesh: false
+    Thickness: 1.0
+    dx: 0.1 # 保持网格尺度一致
+    Scale: 1.0
+
+  - PartID: 2
+    MatID: 1
+    Dimension: 2
+    Length: 4.0 # 宽度 4mm
+    Width: 60.0 # 高度 30mm
+    Rotate: [0.0, 0.0, 30.0] # 靶板倾斜 30 度（相对水平飞行的子弹形成完美的 30 度斜向冲击！）
+    Thickness: 1.0
+    dx: 0.1
+    Offset: [42.0, -70.0, 0.0] # 保持中心(-40.0)完美对准子弹轴线
+# 3. 边界条件 (扁平化架构)
+BoundaryConditions:
+  # ------ 钢板上端截断固定约束 ------
+  - Step: 0
+    BcID: 1
+    Name: "Target_Fix_Top"
+    PartID: 2 # 仅作用于钢板！
+    # 靶板中心在 Y=-40，高度60。倾斜30度后上半边极值为 Y = -40 + 30*cos30 ≈ -14.02。
+    # 我们夹住 Y > -16.0 的顶部边缘：
+    Box: [-999.0, 999.0, -17.0, 999.0, -999.0, 999.0]
+    Type: "DISP"
+    Value: [0.0, 0.0]
+
+  # ------ 钢板下端截断固定约束 ------
+  - Step: 0
+    BcID: 2
+    Name: "Target_Fix_Bottom"
+    PartID: 2 # 仅作用于钢板！
+    # 靶板下半边极值为 Y = -40 - 30*cos30 ≈ -65.98。
+    # 我们夹住 Y < -64.0 的底部边缘：
+    Box: [-999.0, 999.0, -999.0, -69.0, -999.0, 999.0]
+    Type: "DISP"
+    Value: [0.0, 0.0]
+
+  # ------ 子弹冲击初速 (穿甲步枪弹速) ------
+  - Step: 1
+    BcID: 3
+    Name: "Bullet_Fly"
+    PartID: 1
+    Box: [-999.0, 999.0, -999.0, 999.0, -999.0, 999.0]
+    Type: "VX"
+    Value: 800000.0 # 提速：800 m/s，典型步枪穿甲弹速度
+
+# 4. 预置裂纹 (PreCracks) - 穿甲弹通常是实心尖头，无需预提缝隙以致弱
+PreCracks: []
+# 5. 材质物理属性 (金属延性材料：J2 弹塑性 + 等效塑性应变断键模型)
+Materials:
+  - MatID: 1
+    Name: "Steel_Plate" # 均质装甲钢（RHA）
+    Type: "LinearElasticMat"
+    Density: 7.85e-9
+    YoungsModulus: 200000.0
+    PoissonsRatio: 0.3
+    # YieldStress: 235.0 # 极其生硬，几乎不发生屈服变形
+    # HardeningModulus: 1000.0
+    # HardeningType: "Isotropic"
+    # LargeDeformation: false
+    # Johnson-Cook 损伤参数
+    # JC_D1: 0.5 # 较高的基础断裂应变
+    # JC_D2: 0.5
+    # JC_D3: -1.5
+    Fracture:
+      Type: "BondStretchFracture"
+      Critical_Stretch: 0.02
+
+  - MatID: 2
+    Name: "AP_BulletCore" # 钨合金穿甲弹芯
+    Type: "JCPlasticityMat"
+    Density: 15.6e-9 # 钨芯动能极大
+    YoungsModulus: 350000.0
+    PoissonsRatio: 0.22
+    YieldStress: 3000.0 # 极其生硬，几乎不发生屈服变形
+    HardeningModulus: 5000.0
+    HardeningType: "Isotropic"
+    LargeDeformation: false
+    # Johnson-Cook 损伤参数 (钨相对较脆)
+    JC_D1: 1.0 # 较低的基础断裂应变
+    JC_D2: 0.34
+    JC_D3: -1.5
+    # 穿甲弹通常不碎，只在极高扭曲下断裂
+    Fracture:
+      Type: "DamageValueFracture"
+      Critical_Damage: 0.99
+
+# ==================================
+# 宏观装配体接触对配置 (Contact Pairs)
+# ==================================
+# ContactPairs:
+#   - Name: "BulletToWall"
+#     Type: "SillingContact" # Silling 短程排斥力（PD 原生接触）
+#     MasterPartID: 2
+#     SlavePartID: 1
+#     StiffnessFactor: 1.0 # PD 微模量原始刚度
+# ContactPairs:
+#   - Name: "BulletToWall"
+#     Type: "ViscousPenaltyContact"
+#     MasterPartID: 2
+#     SlavePartID: 1
+#     PenaltyFactor: 1.0
+#     DampingCoeff: 0.5
+ContactPairs:
+  - Name: "BulletToWall"
+    Type: "Kinematic"
+    MasterPartID: 2
+    SlavePartID: 1
+    RestitutionCoeff: 0.0 # 0=完全塑性碰撞(无反弹), 1=完全弹性碰撞
+# ContactPairs:
+#   - Name: "BulletToWall"
+#     Type: "NonlinearPenaltyContact"
+#     MasterPartID: 2
+#     SlavePartID: 1
+#     PenaltyFactor: 1.0
+#     NonlinearOnsetRatio: 0.5
+#     StiffeningCoeff: 10.0
+# 5. 求解器控制
+Solver:
+  Engine: "PD"
+  Type: "Mechanical" # [关键] 切换为力学引擎
+  Kernel: "NOSB_M"
+  DynamicShapeTensor: false # [新增] 冻结形状张量更新，抑制偏心奇点，避免弥散爆裂
+  TimeIntegrator: "CentralDifference" # [关键] 使用中心差分法
+  LoadSteps:
+    - Step: 1
+      Time: 2.0e-9
+      TimeStep_dt: 2.0e-9
+      KBC: 1 # KBC=1，代表恒速加载
+    - Step: 2
+      Time: 2.0e-5
+      TimeStep_dt: 2.0e-9
+      KBC: 1 # 跃升后的恒速加载
+  OutputInterval: 200 # 每 100 步输出一帧
+  OMP_Threads: 16
+  Horizon: 0.3015 # 邻域半径 3.015*dx
+  KernelWeightType: "Linear"
+  ZeroEnergyG0: 1.0 # 零能模式修正系数
+  ZeroEnergyMethod: "Zhang" # [关键] 开启 Silling 修正
+
+# 7. 输出设置
+Writer:
+  Type: "binary"
+  Variables:
+    - Name: "PartID"
+      Dimension: 1
+    - Name: "Volume"
+      Dimension: 1
+    - Name: "Displacement"
+      Dimension: 3
+    - Name: "Velocity"
+      Dimension: 3
+    - Name: "DeformationGradient"
+      Dimension: 9
+    - Name: "PK1Stress"
+      Dimension: 9
+    - Name: "EqPlasticStrain_Old"
+      Dimension: 1
+    - Name: "BondIntegrity"
+      Dimension: 1
+    - Name: "IsSurface"
+      Dimension: 1
+    - Name: "VonMisesStress"
+      Dimension: 1
+    - Name: "ActiveStatus"
+      Dimension: 1
+
+# Updated for v3.1 project sync

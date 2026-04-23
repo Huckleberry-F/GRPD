@@ -15,6 +15,10 @@ namespace PDCommon::Field {
 class FieldManager;
 }
 
+namespace PDCommon::Fracture {
+class FractureModel;
+}
+
 namespace PDCommon::Material {
 
 class Material {
@@ -23,7 +27,7 @@ public:
   /// @param name 材料实例的唯一名称
   explicit Material(const std::string &name = "");
 
-  virtual ~Material() = default;
+  virtual ~Material();
 
   // 禁用拷贝构造和赋值操作
   Material(const Material &) = delete;
@@ -49,6 +53,10 @@ public:
   /// @param fm 物理场管理器引用
   virtual void allocateStateVariables(PDCommon::Field::FieldManager &fm);
 
+  /// @brief 将场数据指针对接到材料内部的常驻裸指针池中（用于规避极高频求解过程中的虚函数查询与表查找）
+  /// 在所有材料向 fm 注册完毕且 fm 执行 Resize 后调用
+  virtual void bindStateVariables(PDCommon::Field::FieldManager &fm) {}
+
   /// @brief 获取该材料需要的状态变量(SDV)数量
   /// 引擎将根据所有材料的最大需求分配统一的 SDV 场
   /// @return 状态变量数量
@@ -58,9 +66,18 @@ public:
   /// 注意：后续应结合Particle对象的属性（如状态变量state_vars等）传入进行计算
   virtual void evaluate() = 0;
 
+  /// @brief 提交状态变量（ADR 载荷步收敛后调用）
+  /// @details 将试探性状态变量（State_Trial）刻录为已收敛的真实状态（State_Old）。
+  ///          默认空实现。路径依赖材料（如 J2 塑性、损伤演化）必须重写此方法。
+  virtual void commitState() {}
+
+  /// @brief 获取挂载在此材料下的损伤评估模型
+  PDCommon::Fracture::FractureModel* getFractureModel() const;
+
 protected:
   std::string name_; // 材料实例名称
   int matId_;        // 关联的整型标号
+  std::unique_ptr<PDCommon::Fracture::FractureModel> fractureModel_; // 专属损伤判定模型
 };
 
 } // namespace PDCommon::Material

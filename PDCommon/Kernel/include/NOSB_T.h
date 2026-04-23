@@ -27,7 +27,10 @@
 // ============================================================================
 
 #include "NOSB_Base.h"
+#include "Stabilizer.h"
+#include "ThermalMaterial.h"
 #include <Eigen/Dense>
+#include <memory>
 
 namespace PDCommon::Kernel {
 
@@ -51,6 +54,18 @@ public:
   std::vector<IntegrationTarget> getIntegrationTargets() const override;
 
 private:
+  std::unique_ptr<Stabilizer> stabilizer_;
+
+  // =======================================================================
+  // HPC 优化缓存：避免每次调用堆分配，避免内层循环重复运算
+  // =======================================================================
+  std::vector<PDCommon::Material::ThermalMaterial *> matArrCache_;
+  std::vector<double> rhoArrCache_;
+  std::vector<double> cpArrCache_;
+  std::vector<double> kArrCache_;
+  // 预计算的矢量 KQ = K^-1 * q，容量 numParticles * 3
+  std::vector<double> kqCache_;
+
   // -----------------------------------------------------------------------
   // 内部实现方法
   // -----------------------------------------------------------------------

@@ -51,6 +51,11 @@ public:
     return &neighborIds_[offsets_[i]];
   }
 
+  /// @brief 获取粒子 i 的邻居 ID 连续数组非 const 指针 (供发生断裂更新时使用)
+  int *getNeighborIdsMutable(int i) {
+    return &neighborIds_[offsets_[i]];
+  }
+
   /// @brief 获取粒子 i 的键长连续数组指针
   const double *getBondLengths(int i) const {
     return &bondLengths_[offsets_[i]];

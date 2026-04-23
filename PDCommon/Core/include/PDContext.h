@@ -15,6 +15,7 @@
 #include "MaterialManager.h"
 #include "NeighborList.h"
 #include "ParticleManager.h"
+#include "ContactManager.h"
 #include <memory>
 #include <string>
 
@@ -87,6 +88,12 @@ public:
   const PDCommon::BC::BCManager &getBCManager() const { return bcManager_; }
 
   // -----------------------------------------------------------------------
+  // 接触系统管理器 (ContactManager)
+  // -----------------------------------------------------------------------
+  PDCommon::Contact::ContactManager &getContactManager() { return contactManager_; }
+  const PDCommon::Contact::ContactManager &getContactManager() const { return contactManager_; }
+
+  // -----------------------------------------------------------------------
   // 模型维度 (2D / 3D)
   // -----------------------------------------------------------------------
 
@@ -96,9 +103,33 @@ public:
   /// @brief 设置模型维度 (2 或 3)
   void setDimension(int dim) { dimension_ = dim; }
 
+  /// @brief 获取 2D 模型厚度（3D 下无意义，默认 1.0）
+  double getThickness() const { return thickness_; }
+
+  /// @brief 设置 2D 模型厚度
+  void setThickness(double h) { thickness_ = h; }
+
+  // -----------------------------------------------------------------------
+  // 当前时间步长（由 TimeIntegrator 每步更新，供接触等模块读取）
+  // -----------------------------------------------------------------------
+
+  /// @brief 获取当前时间步长
+  double getCurrentDt() const { return currentDt_; }
+
+  /// @brief 设置当前时间步长（由积分器在每步开头调用）
+  void setCurrentDt(double dt) { currentDt_ = dt; }
+
+  // -----------------------------------------------------------------------
+  // 增量步冻结标志 (用于接触法向与权重在准静态子步内的几何锚定)
+  // -----------------------------------------------------------------------
+  bool isIncrementStart() const { return isIncrementStart_; }
+  void setIncrementStart(bool v) { isIncrementStart_ = v; }
+
 private:
   std::string name_;                                    ///< 模型名称
   int dimension_ = 3;                                   ///< 模型维度 (默认 3D)
+  double thickness_ = 1.0;                               ///< 2D 模型厚度 (默认 1.0)
+  double currentDt_ = 1e-9;                               ///< 当前时间步长（由积分器每步更新）
   PDCommon::Model::ParticleManager particleManager_;    ///< 粒子管理器
   PDCommon::Material::MaterialManager materialManager_; ///< 材料管理器
   PDCommon::Field::FieldManager fieldManager_;          ///< 物理场管理器
@@ -107,6 +138,8 @@ private:
       neighborList_; ///< 近邻列表（按需分配）
 
   PDCommon::BC::BCManager bcManager_; ///< 边界条件管理器
+  PDCommon::Contact::ContactManager contactManager_; ///< 接触系统管理器
+  bool isIncrementStart_ = false; ///< 是否处于当前增量步（或物理物理时间步）的首个迭代
 };
 
 } // namespace PDCommon::Core

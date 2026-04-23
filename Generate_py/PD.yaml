@@ -1,85 +1,94 @@
 #==============================================================================
-# GRPD 全局主配置文件 - 热传导 NOSB 测试用例
-# 单位制：N-mm-tonne-s-K
+# GRPD 全局主配置文件 - 力学 NOSB 测试用例 (2D 纯平面位移)
+# 单位制：N-mm-tonne-s
 #   长度: mm
 #   质量: tonne (1e3 kg)
 #   时间: s
 #   力:   N (= tonne·mm/s²)
-#   能量: N·mm (= mJ)
-#   温度: K
+#   应力: MPa (= N/mm²)
 # ==============================================================================
 
 # 1. 全局设置
 Assembly: {}
 
-  # 2. 多模型几何定义
 Parts:
   - PartID: 1
-    MatID: 1
-    Dimension: 3
-    Thickness: 1.0
+    MatID: 1         # 默认材质
+    Dimension: 2     # [关键] 声明为 2 维平面问题
+    Thickness: 1.0   # 2D情况下的虚拟厚度
     Source: "Low_Res_Box.stl"
     RepairMesh: false
-    dx: 1.0          # 先用较大的 dx 快速测试
-    Scale: 1.0     # Stanford Bunny 原始尺寸很小，需要放大
+    dx: 1.0          # 离散间距
+    Scale: 1.0
 
-    # 3. 边界条件
-    # 左端面固定 500K，右端面绝热
+# 3. 边界条件
 BoundaryConditions:
   - BcID: 1
-    Name: "Left_Fixed_Temp_500K"
-    Box: [-999.0, 999.0, -999.0, 999.0, -999.0, 1.0]  # z < 2.0mm → 左端第一层
-    Type: "T"
-    Value: 100.0
+    Name: "Left_Fixed"
+    # 锁定左端面 X 和 Y (位移 0)，Z 轴无约束 (1e20)
+    Box: [-999.0, 1.5, -999.0, 999.0, -999.0, 999.0]
+    Type: "DISP"
+    Value: [0.0, 0.0, 1.0e20]
 
   - BcID: 2
-    Name: "Right_Flux"
-    Box: [-999.0, 999.0, -999.0, 999.0, 105.0, 999.0]  # 上端面热流
-    Type: "FLUX"
-    Value: 100.0
+    Name: "Right_Pull"
+    # 右侧施加 X 方向恒等速度拉伸 (Velocity BC)，模拟位移加载
+    Box: [98.5, 999.0, -999.0, 999.0, -999.0, 999.0]  # 若 Box 尺寸不对可自行调整 X 坐标
+    Type: "VELOCITY"
+    Value: [5.0, 0.0, 1.0e20]  # Vx = 5.0 mm/s, Vy = 0, Vz free
 
-# 4. 材质物理属性 (钢，N-mm-tonne-s 单位)
-#    SI → N-mm-tonne 换算:
-#    密度:   7850 kg/m³  = 7.85e-9 tonne/mm³
-#    导热:   45 W/(m·K)  = 45 tonne·mm/(s³·K)  (数值不变)
-#    比热:   460 J/(kg·K)= 4.6e8 mm²/(s²·K)
+# 4. 预置裂纹 (PreCracks) 模块示例
+# 独立于 Solver，可在 0 步截断键以形成初始裂缝
+PreCracks:
+  - Type: "QuadCrack"
+    # 这里在几何中心 (X=50), Y从 0 到 50 的范围内切穿板子 (Z 拉伸)
+    V1: [49.9,   0.0, -100.0]
+    V2: [50.1,   0.0, -100.0]
+    V3: [50.1,  50.0,  100.0]
+    V4: [49.9,  50.0,  100.0]
+
+# 5. 材质物理属性 (钢材的线弹性本构)
 Materials:
   - MatID: 1
-    Name: "Steel_NmmTonne"
-    Type: "FourierThermalMat"
+    Name: "Steel_Elastic"
+    Type: "LinearElasticMat"
     Density: 7.85e-9         # tonne/mm³
-    Conductivity: 45.0       # tonne·mm/(s³·K)
-    HeatCapacity: 4.6e8      # mm²/(s²·K)
+    YoungsModulus: 2.1e5     # MPa (N/mm²)
+    PoissonsRatio: 0.3       # 泊松比
+    # 动态损伤准则示例
+    Damage:
+      Type: "CriticalStretch"
+      Critical_Stretch: 10.05   # 超过此伸长率的键将动态断裂
 
 # 5. 求解器控制
-# dt_crit ≈ ρ·cp·dx² / (6k) = 7.85e-9 * 4.6e8 * 25 / 270 ≈ 0.334 s
-# dt = 0.01 远小于 dt_crit，稳定
 Solver:
   Engine: "PD"
-  Type: "Thermal"
-  TotalTime: 10.0            # 10 秒
-  TimeStep_dt: 0.01          # dt = 0.01 s
-  OutputInterval: 100        # 每 100 步输出一次（共 10 个输出帧）
+  Type: "Mechanical"         # [关键] 切换为力学引擎
+  TimeIntegrator: "CentralDifference" # [关键] 使用中心差分法
+  TotalTime: 0.1             # 总时长 0.1 s
+  TimeStep_dt: 1.0e-5        # 中心差分的显式时间步(需很小以满足 CFL)
+  OutputInterval: 100        # 每 100 步输出一帧
   OMP_Threads: 8
-  Horizon: 3.015              # 3.015 * dx = 3.015 * 1.0 = 3.015 mm
-  KernelWeightType: "Linear" # 可选: Constant, InverseDistance, Linear, Quadratic, Cubic, Quartic, Gaussian
-  ZeroEnergyG0: 1.0          # 零能模式修正系数
-  ZeroEnergyMethod: "Silling"   # 可选: Silling, Wan, Zhang
+  Horizon: 3.015             # 邻域半径 3.015*dx
+  KernelWeightType: "Linear"
+  ZeroEnergyG0: 10.0         # 零能模式修正系数
+  ZeroEnergyMethod: "Silling"# [关键] 开启 Silling 修正
 
-# 6. 输出设置
+# 7. 输出设置
 Writer:
-  Name: "Result"
+  Name: "Disp_Result"
   Type: "binary"
   Variables:
     - Name: "PartID"
       Dimension: 1
     - Name: "Volume"
       Dimension: 1
-    - Name: "Temperature"
+    - Name: "Displacement"
+      Dimension: 3
+    - Name: "Velocity"
+      Dimension: 3
+    - Name: "DeformationGradient"
+      Dimension: 9
+    - Name: "Damage"         # [关键] 输出损伤场以便 ParaView 渲染裂纹
       Dimension: 1
-    - Name: "ID"
-      Dimension: 1
-    - Name: "HeatFlux"
-      Dimension: 1
-    - Name: "NeighborCount"
-      Dimension: 1
+

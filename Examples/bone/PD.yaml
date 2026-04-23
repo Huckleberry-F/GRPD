@@ -1,18 +1,17 @@
 #==============================================================================
-# GRPD 全局主配置文件 - 热传导 NOSB 测试用例
-# 单位制：N-mm-tonne-s-K
+# GRPD 全局主配置文件 - 骨骼 (Bone) 冲击脆性断裂模拟
+# 单位制：N-mm-tonne-s
 #   长度: mm
 #   质量: tonne (1e3 kg)
 #   时间: s
 #   力:   N (= tonne·mm/s²)
-#   能量: N·mm (= mJ)
-#   温度: K
+#   应力: MPa (= N/mm²)
 # ==============================================================================
 
 # 1. 全局设置
 Assembly: {}
 
-  # 2. 多模型几何定义
+# 2. 多模型几何定义
 Parts:
   - PartID: 1
     MatID: 1
@@ -20,66 +19,92 @@ Parts:
     Thickness: 1.0
     Source: "Right_humerus_bone_one-piece.stl"
     RepairMesh: false
-    dx: 1.0          # 先用较大的 dx 快速测试
-    Scale: 1.0     # Stanford Bunny 原始尺寸很小，需要放大
+    dx: 1.0 # 网格分辨率 (dx=1.0 可以有较好的断裂细节表现)
+    Scale: 1.0
 
-    # 3. 边界条件
-    # 左端面固定 500K，右端面绝热
+# 3. 边界条件
+# 三点弯曲试验约束与载荷：两端固定支撑，中部施加横向加载
 BoundaryConditions:
   - BcID: 1
-    Name: "Left_Fixed_Temp_500K"
-    Box: [-999.0, 999.0, -999.0, 999.0, -999.0, 1031.0]  # z < 2.0mm → 左端第一层
-    Type: "T"
-    Value: 100.0
-
+    Name: "Support_Bottom"
+    # 骨头底部(Z < 1060范围)完全固定，模拟三点支撑的一端
+    Box: [-999.0, 999.0, -999.0, 999.0, -999.0, 1060.0]
+    Type: "VELOCITY"
+    Value: [0.0, 0.0, 0.0]
   - BcID: 2
-    Name: "Right_Flux"
-    Box: [-999.0, 999.0, -999.0, 999.0, 1335.0, 999.0]  # 上端面热流
-    Type: "FLUX"
-    Value: 100.0
+    Name: "Support_Top"
+    # 骨头顶部(Z > 1300范围)完全固定，模拟三点支撑的另一端
+    Box: [-999.0, 999.0, -999.0, 999.0, 1300.0, 9999.0]
+    Type: "VELOCITY"
+    Value: [0.0, 0.0, 0.0]
+  - BcID: 3
+    Name: "Load_Middle"
+    # 中间受载区，裂纹在1180右侧(+X侧)，因此我们在左侧(-X侧，X < -200)施加向右(+X)的加载速度
+    # 这会使中段向右弯曲，右侧受拉，从而使预置裂纹张开断裂
+    Box: [-999.0, -200.0, -999.0, 999.0, 1170.0, 1190.0]
+    Type: "VELOCITY"
+    Value: [5000.0, 0.0, 0.0] # 三点弯曲中心加载速度
 
-# 4. 材质物理属性 (钢，N-mm-tonne-s 单位)
-#    SI → N-mm-tonne 换算:
-#    密度:   7850 kg/m³  = 7.85e-9 tonne/mm³
-#    导热:   45 W/(m·K)  = 45 tonne·mm/(s³·K)  (数值不变)
-#    比热:   460 J/(kg·K)= 4.6e8 mm²/(s²·K)
+# 4. 预置裂纹 (PreCracks)
+PreCracks:
+  - Type: "QuadCrack"
+    # 三点弯曲受力下，左侧受推向右弯曲，右侧受拉应力主导。
+    # 我们在 Z=1180 (骨头中部) 的受拉侧置入一个预制裂纹。
+    # 裂纹水平横切，从 X=-190 延伸到骨头右侧表面（+X方向）。
+    V1: [-190.0, -200.0, 1180.0]
+    V2: [100.0, -200.0, 1180.0]
+    V3: [100.0, 200.0, 1180.0]
+    V4: [-190.0, 200.0, 1180.0]
+
+# 5. 材质物理属性
+# 参数参考皮质骨 (Cortical bone) 近似值
 Materials:
   - MatID: 1
-    Name: "Steel_NmmTonne"
-    Type: "FourierThermalMat"
-    Density: 7.85e-9         # tonne/mm³
-    Conductivity: 45.0       # tonne·mm/(s³·K)
-    HeatCapacity: 4.6e8      # mm²/(s²·K)
+    Name: "Bone_Cortical"
+    Type: "LinearElasticMat"
+    Density: 2.0e-9 # tonne/mm³ (约 2 g/cm³)
+    YoungsModulus: 1.5e4 # MPa (15 GPa)
+    PoissonsRatio: 0.3 # 泊松比
+    # 断裂损伤准则 (近期 v2.3 已重构，放置于 Material 内)
+    Damage:
+      Type: "CriticalStretch"
+      Critical_Stretch: 0.01 # 2% 的临界伸长率，表现脆性断裂特征
 
-# 5. 求解器控制
-# dt_crit ≈ ρ·cp·dx² / (6k) = 7.85e-9 * 4.6e8 * 25 / 270 ≈ 0.334 s
-# dt = 0.01 远小于 dt_crit，稳定
+# 6. 求解器控制
 Solver:
   Engine: "PD"
-  Type: "Thermal"
-  TotalTime: 10.0            # 10 秒
-  TimeStep_dt: 0.01          # dt = 0.01 s
-  OutputInterval: 100        # 每 100 步输出一次（共 10 个输出帧）
-  OMP_Threads: 8
-  Horizon: 3.015              # 3.015 * dx = 3.015 * 1.0 = 3.015 mm
-  KernelWeightType: "Linear" # 可选: Constant, InverseDistance, Linear, Quadratic, Cubic, Quartic, Gaussian
-  ZeroEnergyG0: 1.0          # 零能模式修正系数
-  ZeroEnergyMethod: "Silling"   # 可选: Silling, Wan, Zhang
+  Type: "Mechanical" # 切换为力学求解器
+  Kernel: "NOSB_M" # 采用非普通态基力学核
+  TimeIntegrator: "CentralDifference" # 显式动力学中心差分
+  TotalTime: 2.0e-3 # 总模拟时间 2 ms (足以让应力波走完骨头并发生断裂)
+  TimeStep_dt: 1.0e-7 # 显式积分小时间步 (满足 CFL)
+  OutputInterval: 100 # 每 100 步输出一帧 (共 200 帧)
+  OMP_Threads: 8 # 多线程加速
+  Horizon: 3.015 # 邻近域半径 = 3.015 * dx
+  KernelWeightType: "Constant"
+  ZeroEnergyG0: 1.0 # NOSB 零能模式修正
+  ZeroEnergyMethod: "Silling"
 
-# 6. 输出设置
+# 7. 输出设置
 Writer:
-  Name: "Result"
+  Name: "Bone_Fracture_Result"
   Type: "binary"
   Variables:
     - Name: "PartID"
       Dimension: 1
     - Name: "Volume"
       Dimension: 1
-    - Name: "Temperature"
+    - Name: "Displacement"
+      Dimension: 3
+    - Name: "Velocity"
+      Dimension: 3
+    - Name: "DeformationGradient"
+      Dimension: 9
+    - Name: "Damage" # [关键] 必须输出 Damage 以便观测断裂与裂纹扩散
       Dimension: 1
-    - Name: "ID"
-      Dimension: 1
-    - Name: "HeatFlux"
-      Dimension: 1
-    - Name: "NeighborCount"
-      Dimension: 1
+    - Name: "PK1Stress"
+      Dimension: 9
+    - Name: "Acceleration"
+      Dimension: 3
+
+# Updated for v3.1 project sync

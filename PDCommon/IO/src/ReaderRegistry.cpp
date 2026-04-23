@@ -17,7 +17,6 @@ ReaderRegistry &ReaderRegistry::getInstance() {
 void ReaderRegistry::registerReaderType(const std::string &extension,
                                         ReaderCreatorFunc creator) {
   registry_[extension] = std::move(creator);
-  LOG_INFO("[ReaderRegistry] Registered reader for: " + extension);
 }
 
 // ---------------------------------------------------------------------------

@@ -36,6 +36,9 @@ Eigen::Vector3d FourierThermalMat::ComputeHeatFlux(
 // 初始化材料参数
 // ---------------------------------------------------------------------------
 void FourierThermalMat::initialize(const YAML::Node& matNode) {
+  // 必须调用基类 initialize 以解析 Damage 等通用挂载组件
+  Material::initialize(matNode);
+
   if (matNode["Conductivity"]) {
     conductivity_ = matNode["Conductivity"].as<double>();
   } else {

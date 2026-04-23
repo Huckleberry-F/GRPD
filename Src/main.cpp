@@ -24,11 +24,11 @@ int main(int argc, char *argv[]) {
   // 3. 引擎调度：将 IOManager 提供的 YAML 路径传入引擎管理器
   // =================================================================
   Src::Engine::EngineManager GRSIM;
-  GRSIM.Initialize(io.getYamlPath().string());
+  GRSIM.Setup(io.getYamlPath().string());
 
-  GRSIM.Solve();
+  GRSIM.RunAll();
 
-  GRSIM.Output();
+  GRSIM.ExportAll();
 
   system("pause");
 

@@ -1,16 +1,13 @@
 // ============================================================================
 // EngineManager.cpp - 仿真引擎顶层调度器实现
+// 职责：解析 YAML 选择引擎 → 创建引擎 → 委派生命周期调用
+// 不包含任何具体物理模块（PD/FEM）的头文件或逻辑
 // ============================================================================
 
 #include "EngineManager.h"
 
-#include "BCRegistry.h"
 #include "EngineRegistry.h"
-#include "FieldRegistry.h"
-#include "KernelRegistry.h"
 #include "Logger.h"
-#include "MaterialRegistry.h"
-#include "PhysicsFieldRegistry.h"
 #include <yaml-cpp/yaml.h>
 
 namespace Src::Engine {
@@ -19,85 +16,16 @@ namespace Src::Engine {
 // 构造函数
 // ---------------------------------------------------------------------------
 EngineManager::EngineManager() {
-  LOG_INFO("==================================================");
-  LOG_INFO("   GRPD Solver Engine Initialized                 ");
-  LOG_INFO("==================================================");
+  LOG_INFO("[EngineManager] ==================================================");
+  LOG_INFO("[EngineManager]    GRPD Solver Engine Initialized                 ");
+  LOG_INFO("[EngineManager] ==================================================");
 }
 
 // ---------------------------------------------------------------------------
-// Initialize: 解析 YAML → 创建求解器 → 逐一初始化
+// Setup: 解析 YAML → 创建求解器 → 逐一初始化
 // ---------------------------------------------------------------------------
-void EngineManager::Initialize(const std::string &yamlPath) {
-  // 1. 打印编译期静态注册汇总（此时 Logger 文件已初始化）
-  LOG_INFO("========== Registered Types Summary ===========");
-
-  auto fieldTypes =
-      PDCommon::Field::FieldRegistry::getInstance().getRegisteredTypes();
-  std::string fieldStr;
-  for (const auto &t : fieldTypes) {
-    fieldStr += t + ", ";
-  }
-  if (!fieldStr.empty()) {
-    fieldStr.erase(fieldStr.size() - 2);
-  }
-  LOG_INFO("  FieldRegistry     : " + fieldStr);
-
-  auto physicsTypes =
-      PDCommon::Field::PhysicsFieldRegistry::getInstance().getRegisteredTypes();
-  std::string physicsStr;
-  for (const auto &t : physicsTypes) {
-    physicsStr += t + ", ";
-  }
-  if (!physicsStr.empty()) {
-    physicsStr.erase(physicsStr.size() - 2);
-  }
-  LOG_INFO("  PhysicsFields     : " + physicsStr);
-
-  auto bcTypes = PDCommon::BC::BCRegistry::getInstance().getRegisteredTypes();
-  std::string bcStr;
-  for (const auto &t : bcTypes) {
-    bcStr += t + ", ";
-  }
-  if (!bcStr.empty()) {
-    bcStr.erase(bcStr.size() - 2);
-  }
-  LOG_INFO("  BCRegistry        : " + bcStr);
-
-  auto matTypes =
-      PDCommon::Material::MaterialRegistry::getInstance().getRegisteredTypes();
-  std::string matStr;
-  for (const auto &t : matTypes) {
-    matStr += t + ", ";
-  }
-  if (!matStr.empty()) {
-    matStr.erase(matStr.size() - 2);
-  }
-  LOG_INFO("  MaterialRegistry  : " + matStr);
-
-  auto kernelTypes =
-      PDCommon::Kernel::KernelRegistry::getInstance().getRegisteredTypes();
-  std::string kernelStr;
-  for (const auto &t : kernelTypes) {
-    kernelStr += t + ", ";
-  }
-  if (!kernelStr.empty()) {
-    kernelStr.erase(kernelStr.size() - 2);
-  }
-  LOG_INFO("  KernelRegistry    : " + kernelStr);
-
-  auto solverTypes = EngineRegistry::getInstance().getRegisteredTypes();
-  std::string solverStr;
-  for (const auto &t : solverTypes) {
-    solverStr += t + ", ";
-  }
-  if (!solverStr.empty()) {
-    solverStr.erase(solverStr.size() - 2);
-  }
-  LOG_INFO("  EngineRegistry    : " + solverStr);
-
-  LOG_INFO("===============================================");
-
-  // 2. 解析 YAML 获取需要激活的求解器类型
+void EngineManager::Setup(const std::string &yamlPath) {
+  // 1. 解析 YAML 获取需要激活的求解器类型
   YAML::Node config;
   try {
     config = YAML::LoadFile(yamlPath);
@@ -113,7 +41,7 @@ void EngineManager::Initialize(const std::string &yamlPath) {
     engineType = config["Solver"]["Engine"].as<std::string>();
   }
 
-  // 3. 根据 Solver.Engine 通过 Registry 创建引擎实例
+  // 2. 根据 Solver.Engine 通过 Registry 创建引擎实例
   auto &registry = EngineRegistry::getInstance();
 
   if (registry.hasType(engineType)) {
@@ -121,6 +49,11 @@ void EngineManager::Initialize(const std::string &yamlPath) {
   } else {
     LOG_WARNING("[EngineManager] Engine type '" + engineType +
                 "' not found in registry. No solver will be activated.");
+  }
+
+  // 3. 打印各引擎注册表信息（由子类多态实现）
+  for (auto &engine : engines_) {
+    engine->printRegistrySummary();
   }
 
   // 4. 逐一初始化所有求解器
@@ -134,10 +67,12 @@ void EngineManager::Initialize(const std::string &yamlPath) {
 }
 
 // ---------------------------------------------------------------------------
-// Solve: 遍历所有求解器执行求解
+// RunAll: 遍历所有求解器执行求解
 // ---------------------------------------------------------------------------
-void EngineManager::Solve() {
+void EngineManager::RunAll() {
+  LOG_INFO("[EngineManager] ==================================================");
   LOG_INFO("[EngineManager] Entering Main Solver Phase");
+  LOG_INFO("[EngineManager] ==================================================");
   for (auto &engine : engines_) {
     LOG_INFO("[EngineManager] Solving: " + engine->getName());
     engine->Solve();
@@ -146,10 +81,12 @@ void EngineManager::Solve() {
 }
 
 // ---------------------------------------------------------------------------
-// Output: 遍历所有求解器执行输出
+// ExportAll: 遍历所有求解器执行输出
 // ---------------------------------------------------------------------------
-void EngineManager::Output() {
+void EngineManager::ExportAll() {
+  LOG_INFO("[EngineManager] ==================================================");
   LOG_INFO("[EngineManager] Entering Post-processing Phase");
+  LOG_INFO("[EngineManager] ==================================================");
   for (auto &engine : engines_) {
     LOG_INFO("[EngineManager] Outputting: " + engine->getName());
     engine->Output();

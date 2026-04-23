@@ -1,7 +1,13 @@
-build/
+﻿build/
 bin/
 lib/
 .cache/
 .qtcreator/
 .vscode/
 Output/
+*.avi
+*.vtu
+Result_*
+*.grpd
+*.pvd
+*.vtk

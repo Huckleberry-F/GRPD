@@ -15,6 +15,14 @@
 #include <string>
 #include <vector>
 
+// 前置声明（避免头文件循环依赖）
+namespace PDCommon::Field {
+class FieldManager;
+}
+namespace PDCommon::Model {
+class ParticleManager;
+}
+
 namespace PDCommon::IO {
 
 /// @brief 单元类型枚举（未来 FEM 扩展使用）
@@ -31,9 +39,11 @@ enum class ElementType {
 /// @brief 载荷/边界条件条目
 struct LoadEntry {
   int nodeID;       ///< 作用节点 ID
+  int step;         ///< 隶属的载荷步（0为全局共有）
   int bcID;         ///< 边界条件组 ID
   std::string type; ///< 边界条件类型 ("T", "FLUX" 等)
-  double value;     ///< 边界条件值
+  std::vector<double> values; ///< 多维边界条件值数组
+  std::vector<std::string> tableNames; ///< 绑定的 Table 名称（如为空则为 "None"）
 };
 
 /// @brief 通用网格中间数据结构
@@ -87,6 +97,18 @@ struct MeshData {
     elemTypes.clear();
     loads.clear();
   }
+  // =======================================================================
+  // 格式无关工具（从原 GrpdReader 迁入）
+  // =======================================================================
+
+  /// @brief 注册粒子基础几何场到 FieldManager (ID, PartID, MatID, Coords, Volume)
+  static void
+  ensureParticleFields(PDCommon::Field::FieldManager &fm);
+
+  /// @brief 将 ParticleManager 中的粒子几何数据回填到 FieldManager
+  static bool
+  populateParticleFields(const PDCommon::Model::ParticleManager &pm,
+                         PDCommon::Field::FieldManager &fm);
 };
 
 } // namespace PDCommon::IO

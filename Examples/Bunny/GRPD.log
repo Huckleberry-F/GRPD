@@ -1,0 +1,2617 @@
+[INFO] ==================================================
+[INFO]    GRPD Solver Engine Initialized                 
+[INFO] ==================================================
+[INFO] [EngineRegistry] Creating Engine instance: PD
+[INFO] [PDEngine] PD Engine instance created.
+[INFO] ========== Registered Types Summary ===========
+[INFO]   TimeIntegrator    : CentralDifference, Explicit, Staggered
+[INFO]   FieldRegistry     : DoubleField, IntField
+[INFO]   PhysicsFields     : Mechanical, Thermal
+[INFO]   BCRegistry        : BODY_FORCE, CONV, DISP, FLUX, PRESSURE, T, VELOCITY
+[INFO]   MaterialRegistry  : FourierThermalMat, LinearElasticMat
+[INFO]   KernelRegistry    : NOSB_M, NOSB_T
+[INFO]   EngineRegistry    : PD
+[INFO] ===============================================
+[INFO] [EngineManager] Initializing solver: PD
+[INFO] [PDEngine] Initializing PD simulation context...
+[INFO] Model pre-processing...
+[INFO] [InitModel] grpd path: D:\Project_C++\GRPD\Examples\Bunny\Bunny.grpd
+[INFO] [InitModel] model name: Bunny
+[INFO] Calling Python pre-processor to generate .grpd mesh...
+[ERROR] Python pre-processor failed! Please check if python is installed and paths are correct.
+[ERROR] Exit code: 1
+[INFO] ==================================================
+[INFO]    GRPD Solver Engine Initialized                 
+[INFO] ==================================================
+[INFO] [EngineRegistry] Creating Engine instance: PD
+[INFO] [PDEngine] PD Engine instance created.
+[INFO] ========== Registered Types Summary ===========
+[INFO]   TimeIntegrator    : CentralDifference, Explicit, Staggered
+[INFO]   FieldRegistry     : DoubleField, IntField
+[INFO]   PhysicsFields     : Mechanical, Thermal
+[INFO]   BCRegistry        : BODY_FORCE, CONV, DISP, FLUX, PRESSURE, T, VELOCITY
+[INFO]   MaterialRegistry  : FourierThermalMat, LinearElasticMat
+[INFO]   KernelRegistry    : NOSB_M, NOSB_T
+[INFO]   EngineRegistry    : PD
+[INFO] ===============================================
+[INFO] [EngineManager] Initializing solver: PD
+[INFO] [PDEngine] Initializing PD simulation context...
+[INFO] Model pre-processing...
+[INFO] [InitModel] grpd path: D:\Project_C++\GRPD\Examples\Bunny\Bunny.grpd
+[INFO] [InitModel] model name: Bunny
+[INFO] Calling Python pre-processor to generate .grpd mesh...
+[INFO] Mesh generated successfully by Python.
+[INFO] [Context Manager] Formalized model name to: Bunny
+[INFO] [Context Manager] Model dimension set to: 3D
+[INFO] [ReaderRegistry] Creating reader for: .grpd (name: Bunny)
+[INFO] [InitModel] Reading mesh file: D:\Project_C++\GRPD\Examples\Bunny\Bunny.grpd (reader: .grpd)
+[INFO] [GrpdMeshReader] Reading file: D:\Project_C++\GRPD\Examples\Bunny\Bunny.grpd
+[INFO] [GrpdMeshReader] Entering *PARTICLE section (Line 1)
+[INFO] [GrpdMeshReader] Entering *LOAD section (Line 1019457)
+[INFO] [GrpdMeshReader] ============================================
+[INFO] [GrpdMeshReader]    File reading complete!
+[INFO] [GrpdMeshReader]    Total particles: 1019454
+[INFO] [GrpdMeshReader]    Total load entries: 629477
+[INFO] [GrpdMeshReader] ============================================
+[INFO] [InitModel] Total particles loaded for model Bunny: 1019454
+[INFO]   Particle[0] Part=1 Pos=(-30.398468, -5.683746, 0.250000) Vol=0.125000
+[INFO]   Particle[1] Part=1 Pos=(-30.398468, -5.183746, 0.250000) Vol=0.125000
+[INFO]   Particle[2] Part=1 Pos=(-30.398468, -4.683746, 0.250000) Vol=0.125000
+[INFO]   Particle[3] Part=1 Pos=(-30.398468, -4.183746, 0.250000) Vol=0.125000
+[INFO]   Particle[4] Part=1 Pos=(-30.398468, -3.683746, 0.250000) Vol=0.125000
+[INFO] Entering Material Initialization Phase...
+[INFO] Instantiating material [1] of type: LinearElasticMat
+[INFO] [MaterialRegistry] Using factory to create material: Steel_Elastic (type: LinearElasticMat)
+[INFO] [Material] Attached DamageModel 'CriticalStretch' to material: Steel_Elastic
+[INFO] [LinearElasticMat] Material 'Steel_Elastic' is initialized. E = 191000.000000, nu = 0.300000, Density = 0.000000
+[INFO] [MaterialManager] Successfully added material instance: Steel_Elastic
+[INFO] Successfully registered material ID 1 (Steel_Elastic)
+[INFO] Assigning material pointers to particles...
+[INFO] Successfully assigned materials to 1019454 particles.
+[INFO] Entering Field Registration Phase...
+[INFO] [FieldManager] Added field 'Displacement'.
+[INFO] [FieldManager] Added field 'Velocity'.
+[INFO] [FieldManager] Added field 'Acceleration'.
+[INFO] [MechanicalFields] Core fields registered: Displacement, Velocity, Acceleration.
+[INFO] [InitFields] Auto-registered PhysicsFields module: Mechanical
+[INFO] [FieldManager] Added field 'ID'.
+[INFO] [FieldManager] Added field 'PartID'.
+[INFO] [FieldManager] Added field 'MatID'.
+[INFO] [FieldManager] Added field 'Coords'.
+[INFO] [FieldManager] Added field 'Volume'.
+[INFO] [FieldManager] Resized all 8 fields for 1019454 particles.
+[INFO] [MeshData] Populated particle geometry fields into FieldManager for 1019454 particles.
+[INFO] [InitFields] All fields allocated for 1019454 particles. Total fields: 8.
+[INFO] Entering Conditions Initialization Phase...
+[INFO] [ReaderRegistry] Creating reader for: .grpd (name: LoadReader)
+[INFO] [GrpdMeshReader] Reading file: D:\Project_C++\GRPD\Examples\Bunny\Bunny.grpd
+[INFO] [GrpdMeshReader] Entering *PARTICLE section (Line 1)
+[INFO] [GrpdMeshReader] Entering *LOAD section (Line 1019457)
+[INFO] [GrpdMeshReader] ============================================
+[INFO] [GrpdMeshReader]    File reading complete!
+[INFO] [GrpdMeshReader]    Total particles: 1019454
+[INFO] [GrpdMeshReader]    Total load entries: 629477
+[INFO] [GrpdMeshReader] ============================================
+[INFO] [InitConditions] Load statistics:
+[INFO]   - VELOCITY : 629477
+[INFO] [InitConditions] Boundary conditions initialization complete.
+[INFO] [InitNeighbors] Entering Neighbor Search Phase...
+[INFO] [InitNeighbors] Horizon radius: 0.603000
+[INFO] [NeighborList] Starting full-flat CSR search for 1019454 particles, horizon = 0.603000
+[INFO] [NeighborList] Cell grid: 143 x 111 x 138 = 2190474 cells
+[INFO] [NeighborList] Flat cell list built in 32.999992 ms
+[INFO] [NeighborList] Pass 1 (count) done in 25.000095 ms
+[INFO] [NeighborList] Total bonds: 6015904, Memory: 68 MB
+[INFO] [NeighborList] Pass 2 (fill) done in 52.999973 ms
+[INFO] [NeighborList] Max neighbors: 6
+[INFO] [NeighborList] Total time: 111.000061 ms
+[INFO] [FieldManager] Added field 'NeighborCount'.
+[INFO] [InitNeighbors] NeighborCount field populated for 1019454 particles.
+[INFO] [FieldManager] Added field 'Damage'.
+[INFO] [InitNeighbors] Global Damage scalar field properly initialized to 0.0
+[INFO] [InitNeighbors] Neighbor search phase complete.
+[INFO] Initializing Material-specific Damage Models...
+[INFO] [CriticalStretch] Initialized. Critical Stretch = 0.020000
+[INFO] Material Damage Models initialized. Total Active Models: 1
+[INFO] [InitPreCracks] Detected PreCracks configuration. Initializing geometric cuts...
+[INFO] [QuadCrack] Successfully configured QuadCrack with normal: (0.000000, -1.000000, 0.000000)
+[INFO] [QuadCrack] Evaluating bond breakage for crack...
+[INFO] [QuadCrack] Cut 0 bonds traversing the preset crack.
+[INFO] [InitPreCracks] Applied PreCrack of type: QuadCrack
+[INFO] [QuadCrack] Successfully configured QuadCrack with normal: (1.000000, 0.000000, 0.000000)
+[INFO] [QuadCrack] Evaluating bond breakage for crack...
+[INFO] [QuadCrack] Cut 0 bonds traversing the preset crack.
+[INFO] [InitPreCracks] Applied PreCrack of type: QuadCrack
+[INFO] Entering Solver Components Assembly Phase...
+[INFO] Building Time Integrator: CentralDifference
+[INFO] Time Integrator configured.
+[INFO] Building Space Kernel: NOSB_M
+[INFO] [NOSB_Base] Applied KernelWeightType: Linear
+[INFO] [NOSB_Base] Applied ZeroEnergyG0: 0.100000
+[INFO] [NOSB_Base] Applied ZeroEnergyMethod string: Zhang
+[INFO] Space Kernel 'NOSB_M' configured.
+[INFO] Total kernels assembled: 1
+[INFO] [PDEngine] PD simulation context initialized successfully.
+[INFO] [EngineManager] All solvers initialized. Total: 1
+[INFO] [EngineManager] Entering Main Solver Phase
+[INFO] [EngineManager] Solving: PD
+[INFO] [PDEngine] Starting PD Engine Solve Phase...
+[INFO] [CentralDifference] Identified generic 2nd-order ODE couple: Displacement (u) <- Velocity (v) <- Acceleration (a)
+[INFO] [CentralDifference] Time loop: dt = 0.000000, totalSteps = 1000
+[INFO] [FieldManager] Added field 'ShapeTensorInv'.
+[INFO] [FieldManager] Added field 'VHorizon'.
+[INFO] [NOSB_Base] Computing InfluenceWeight + Shape Tensor Inverse (K^-1)...
+[INFO] [NOSB_Base] All NOSB base fields registered and Shape Tensor Inverse computed.
+[INFO] [FieldManager] Added field 'DeformationGradient'.
+[INFO] [FieldManager] Added field 'PK1Stress'.
+[INFO] [NOSB_M] Instantiated MechanicalStabilizer globally in Phase 0 using strategy: Zhang
+[INFO] --- Step 0 / 1000  |  Pure Compute: 0.000000s  |  Total: 0.000000s  |  Pure Speed: 0.000000 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=0 t=0.000000
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260330_170321\Disp_Result_step00000_t0.0000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 50 / 1000  |  Pure Compute: 4.808831s  |  Total: 5.009283s  |  Pure Speed: 10.397537 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=50 t=0.000000
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260330_170321\Disp_Result_step00050_t0.0000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 100 / 1000  |  Pure Compute: 9.675778s  |  Total: 10.272728s  |  Pure Speed: 10.335086 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=100 t=0.000001
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260330_170321\Disp_Result_step00100_t0.0000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 150 / 1000  |  Pure Compute: 15.282983s  |  Total: 16.270879s  |  Pure Speed: 9.814838 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=150 t=0.000001
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260330_170321\Disp_Result_step00150_t0.0000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] ==================================================
+[INFO]    GRPD Solver Engine Initialized                 
+[INFO] ==================================================
+[INFO] [EngineRegistry] Creating Engine instance: PD
+[INFO] [PDEngine] PD Engine instance created.
+[INFO] ========== Registered Types Summary ===========
+[INFO]   TimeIntegrator    : CentralDifference, Explicit, Staggered
+[INFO]   FieldRegistry     : DoubleField, IntField
+[INFO]   PhysicsFields     : Mechanical, Thermal
+[INFO]   BCRegistry        : BODY_FORCE, CONV, DISP, FLUX, PRESSURE, T, VELOCITY
+[INFO]   MaterialRegistry  : FourierThermalMat, LinearElasticMat
+[INFO]   KernelRegistry    : NOSB_M, NOSB_T
+[INFO]   EngineRegistry    : PD
+[INFO] ===============================================
+[INFO] [EngineManager] Initializing solver: PD
+[INFO] [PDEngine] Initializing PD simulation context...
+[INFO] Model pre-processing...
+[INFO] [InitModel] grpd path: D:\Project_C++\GRPD\Examples\Bunny\Bunny.grpd
+[INFO] [InitModel] model name: Bunny
+[INFO] Calling Python pre-processor to generate .grpd mesh...
+[INFO] Mesh generated successfully by Python.
+[INFO] [Context Manager] Formalized model name to: Bunny
+[INFO] [Context Manager] Model dimension set to: 3D
+[INFO] [ReaderRegistry] Creating reader for: .grpd (name: Bunny)
+[INFO] [InitModel] Reading mesh file: D:\Project_C++\GRPD\Examples\Bunny\Bunny.grpd (reader: .grpd)
+[INFO] [GrpdMeshReader] Reading file: D:\Project_C++\GRPD\Examples\Bunny\Bunny.grpd
+[INFO] [GrpdMeshReader] Entering *PARTICLE section (Line 1)
+[INFO] [GrpdMeshReader] Entering *LOAD section (Line 2092450)
+[INFO] [GrpdMeshReader] ============================================
+[INFO] [GrpdMeshReader]    File reading complete!
+[INFO] [GrpdMeshReader]    Total particles: 2092447
+[INFO] [GrpdMeshReader]    Total load entries: 440089
+[INFO] [GrpdMeshReader] ============================================
+[INFO] [InitModel] Total particles loaded for model Bunny: 2092447
+[INFO]   Particle[0] Part=1 Pos=(38.809998, 40.700001, 4.000000) Vol=0.008000
+[INFO]   Particle[1] Part=1 Pos=(38.809998, 40.900001, 4.000000) Vol=0.008000
+[INFO]   Particle[2] Part=1 Pos=(38.809998, 41.100001, 4.000000) Vol=0.008000
+[INFO]   Particle[3] Part=1 Pos=(38.809998, 41.300001, 4.000000) Vol=0.008000
+[INFO]   Particle[4] Part=1 Pos=(38.809998, 41.500001, 4.000000) Vol=0.008000
+[INFO] Entering Material Initialization Phase...
+[INFO] Instantiating material [1] of type: LinearElasticMat
+[INFO] [MaterialRegistry] Using factory to create material: Steel_Elastic (type: LinearElasticMat)
+[INFO] [Material] Attached DamageModel 'CriticalStretch' to material: Steel_Elastic
+[INFO] [LinearElasticMat] Material 'Steel_Elastic' is initialized. E = 191000.000000, nu = 0.300000, Density = 0.000000
+[INFO] [MaterialManager] Successfully added material instance: Steel_Elastic
+[INFO] Successfully registered material ID 1 (Steel_Elastic)
+[INFO] Assigning material pointers to particles...
+[INFO] Successfully assigned materials to 2092447 particles.
+[INFO] Entering Field Registration Phase...
+[INFO] [FieldManager] Added field 'Displacement'.
+[INFO] [FieldManager] Added field 'Velocity'.
+[INFO] [FieldManager] Added field 'Acceleration'.
+[INFO] [MechanicalFields] Core fields registered: Displacement, Velocity, Acceleration.
+[INFO] [InitFields] Auto-registered PhysicsFields module: Mechanical
+[INFO] [FieldManager] Added field 'ID'.
+[INFO] [FieldManager] Added field 'PartID'.
+[INFO] [FieldManager] Added field 'MatID'.
+[INFO] [FieldManager] Added field 'Coords'.
+[INFO] [FieldManager] Added field 'Volume'.
+[INFO] [FieldManager] Resized all 8 fields for 2092447 particles.
+[INFO] [MeshData] Populated particle geometry fields into FieldManager for 2092447 particles.
+[INFO] [InitFields] All fields allocated for 2092447 particles. Total fields: 8.
+[INFO] Entering Conditions Initialization Phase...
+[INFO] [ReaderRegistry] Creating reader for: .grpd (name: LoadReader)
+[INFO] [GrpdMeshReader] Reading file: D:\Project_C++\GRPD\Examples\Bunny\Bunny.grpd
+[INFO] [GrpdMeshReader] Entering *PARTICLE section (Line 1)
+[INFO] [GrpdMeshReader] Entering *LOAD section (Line 2092450)
+[INFO] [GrpdMeshReader] ============================================
+[INFO] [GrpdMeshReader]    File reading complete!
+[INFO] [GrpdMeshReader]    Total particles: 2092447
+[INFO] [GrpdMeshReader]    Total load entries: 440089
+[INFO] [GrpdMeshReader] ============================================
+[INFO] [InitConditions] Load statistics:
+[INFO]   - VELOCITY : 440089
+[INFO] [InitConditions] Boundary conditions initialization complete.
+[INFO] [InitNeighbors] Entering Neighbor Search Phase...
+[INFO] [InitNeighbors] Horizon radius: 0.603000
+[INFO] [NeighborList] Starting full-flat CSR search for 2092447 particles, horizon = 0.603000
+[INFO] [NeighborList] Cell grid: 82 x 179 x 48 = 704544 cells
+[INFO] [NeighborList] Flat cell list built in 51.999807 ms
+[INFO] [NeighborList] Pass 1 (count) done in 391.000032 ms
+[INFO] [NeighborList] Total bonds: 227370828, Memory: 2602 MB
+[INFO] [NeighborList] Pass 2 (fill) done in 1644.999981 ms
+[INFO] [NeighborList] Max neighbors: 122
+[INFO] [NeighborList] Total time: 2087.999821 ms
+[INFO] [FieldManager] Added field 'NeighborCount'.
+[INFO] [InitNeighbors] NeighborCount field populated for 2092447 particles.
+[INFO] [FieldManager] Added field 'Damage'.
+[INFO] [InitNeighbors] Global Damage scalar field properly initialized to 0.0
+[INFO] [InitNeighbors] Neighbor search phase complete.
+[INFO] Initializing Material-specific Damage Models...
+[INFO] [CriticalStretch] Initialized. Critical Stretch = 0.020000
+[INFO] Material Damage Models initialized. Total Active Models: 1
+[INFO] [InitPreCracks] Detected PreCracks configuration. Initializing geometric cuts...
+[INFO] [QuadCrack] Successfully configured QuadCrack with normal: (0.000000, -1.000000, 0.000000)
+[INFO] [QuadCrack] Evaluating bond breakage for crack...
+[INFO] [QuadCrack] Cut 0 bonds traversing the preset crack.
+[INFO] [InitPreCracks] Applied PreCrack of type: QuadCrack
+[INFO] [QuadCrack] Successfully configured QuadCrack with normal: (1.000000, 0.000000, 0.000000)
+[INFO] [QuadCrack] Evaluating bond breakage for crack...
+[INFO] [QuadCrack] Cut 0 bonds traversing the preset crack.
+[INFO] [InitPreCracks] Applied PreCrack of type: QuadCrack
+[INFO] Entering Solver Components Assembly Phase...
+[INFO] Building Time Integrator: CentralDifference
+[INFO] Time Integrator configured.
+[INFO] Building Space Kernel: NOSB_M
+[INFO] [NOSB_Base] Applied KernelWeightType: Linear
+[INFO] [NOSB_Base] Applied ZeroEnergyG0: 0.100000
+[INFO] [NOSB_Base] Applied ZeroEnergyMethod string: Zhang
+[INFO] Space Kernel 'NOSB_M' configured.
+[INFO] Total kernels assembled: 1
+[INFO] [PDEngine] PD simulation context initialized successfully.
+[INFO] [EngineManager] All solvers initialized. Total: 1
+[INFO] [EngineManager] Entering Main Solver Phase
+[INFO] [EngineManager] Solving: PD
+[INFO] [PDEngine] Starting PD Engine Solve Phase...
+[INFO] [CentralDifference] Identified generic 2nd-order ODE couple: Displacement (u) <- Velocity (v) <- Acceleration (a)
+[INFO] [CentralDifference] Time loop: dt = 0.000000, totalSteps = 1000
+[INFO] [FieldManager] Added field 'ShapeTensorInv'.
+[INFO] [FieldManager] Added field 'VHorizon'.
+[INFO] [NOSB_Base] Computing InfluenceWeight + Shape Tensor Inverse (K^-1)...
+[INFO] [NOSB_Base] All NOSB base fields registered and Shape Tensor Inverse computed.
+[INFO] [FieldManager] Added field 'DeformationGradient'.
+[INFO] [FieldManager] Added field 'PK1Stress'.
+[INFO] [NOSB_M] Instantiated MechanicalStabilizer globally in Phase 0 using strategy: Zhang
+[INFO] --- Step 0 / 1000  |  Pure Compute: 0.000000s  |  Total: 0.000000s  |  Pure Speed: 0.000000 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=0 t=0.000000
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260330_171514\Disp_Result_step00000_t0.0000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 50 / 1000  |  Pure Compute: 85.511867s  |  Total: 86.284388s  |  Pure Speed: 0.584714 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=50 t=0.000000
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260330_171514\Disp_Result_step00050_t0.0000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] ==================================================
+[INFO]    GRPD Solver Engine Initialized                 
+[INFO] ==================================================
+[INFO] [EngineRegistry] Creating Engine instance: PD
+[INFO] [PDEngine] PD Engine instance created.
+[INFO] ========== Registered Types Summary ===========
+[INFO]   TimeIntegrator    : CentralDifference, Explicit, Staggered
+[INFO]   FieldRegistry     : DoubleField, IntField
+[INFO]   PhysicsFields     : Mechanical, Thermal
+[INFO]   BCRegistry        : BODY_FORCE, CONV, DISP, FLUX, PRESSURE, T, VELOCITY
+[INFO]   MaterialRegistry  : FourierThermalMat, LinearElasticMat
+[INFO]   KernelRegistry    : NOSB_M, NOSB_T
+[INFO]   EngineRegistry    : PD
+[INFO] ===============================================
+[INFO] [EngineManager] Initializing solver: PD
+[INFO] [PDEngine] Initializing PD simulation context...
+[INFO] Model pre-processing...
+[INFO] [InitModel] grpd path: D:\Project_C++\GRPD\Examples\Bunny\Bunny.grpd
+[INFO] [InitModel] model name: Bunny
+[INFO] Calling Python pre-processor to generate .grpd mesh...
+[INFO] Mesh generated successfully by Python.
+[INFO] [Context Manager] Formalized model name to: Bunny
+[INFO] [Context Manager] Model dimension set to: 3D
+[INFO] [ReaderRegistry] Creating reader for: .grpd (name: Bunny)
+[INFO] [InitModel] Reading mesh file: D:\Project_C++\GRPD\Examples\Bunny\Bunny.grpd (reader: .grpd)
+[INFO] [GrpdMeshReader] Reading file: D:\Project_C++\GRPD\Examples\Bunny\Bunny.grpd
+[INFO] [GrpdMeshReader] Entering *PARTICLE section (Line 1)
+[INFO] [GrpdMeshReader] Entering *LOAD section (Line 127517)
+[INFO] [GrpdMeshReader] ============================================
+[INFO] [GrpdMeshReader]    File reading complete!
+[INFO] [GrpdMeshReader]    Total particles: 127514
+[INFO] [GrpdMeshReader]    Total load entries: 18371
+[INFO] [GrpdMeshReader] ============================================
+[INFO] [InitModel] Total particles loaded for model Bunny: 127514
+[INFO]   Particle[0] Part=1 Pos=(-30.648468, -4.933746, 0.500000) Vol=1.000000
+[INFO]   Particle[1] Part=1 Pos=(-30.648468, -3.933746, 0.500000) Vol=1.000000
+[INFO]   Particle[2] Part=1 Pos=(-30.648468, -2.933746, 0.500000) Vol=1.000000
+[INFO]   Particle[3] Part=1 Pos=(-30.648468, -1.933746, 0.500000) Vol=1.000000
+[INFO]   Particle[4] Part=1 Pos=(-29.648468, -5.933746, 0.500000) Vol=1.000000
+[INFO] Entering Material Initialization Phase...
+[INFO] Instantiating material [1] of type: LinearElasticMat
+[INFO] [MaterialRegistry] Using factory to create material: Ceramic_Glass (type: LinearElasticMat)
+[INFO] [Material] Attached DamageModel 'CriticalStretch' to material: Ceramic_Glass
+[INFO] [LinearElasticMat] Material 'Ceramic_Glass' is initialized. E = 70000.000000, nu = 0.220000, Density = 0.000000
+[INFO] [MaterialManager] Successfully added material instance: Ceramic_Glass
+[INFO] Successfully registered material ID 1 (Ceramic_Glass)
+[INFO] Assigning material pointers to particles...
+[INFO] Successfully assigned materials to 127514 particles.
+[INFO] Entering Field Registration Phase...
+[INFO] [FieldManager] Added field 'Displacement'.
+[INFO] [FieldManager] Added field 'Velocity'.
+[INFO] [FieldManager] Added field 'Acceleration'.
+[INFO] [MechanicalFields] Core fields registered: Displacement, Velocity, Acceleration.
+[INFO] [InitFields] Auto-registered PhysicsFields module: Mechanical
+[INFO] [FieldManager] Added field 'ID'.
+[INFO] [FieldManager] Added field 'PartID'.
+[INFO] [FieldManager] Added field 'MatID'.
+[INFO] [FieldManager] Added field 'Coords'.
+[INFO] [FieldManager] Added field 'Volume'.
+[INFO] [FieldManager] Resized all 8 fields for 127514 particles.
+[INFO] [MeshData] Populated particle geometry fields into FieldManager for 127514 particles.
+[INFO] [InitFields] All fields allocated for 127514 particles. Total fields: 8.
+[INFO] Entering Conditions Initialization Phase...
+[INFO] [ReaderRegistry] Creating reader for: .grpd (name: LoadReader)
+[INFO] [GrpdMeshReader] Reading file: D:\Project_C++\GRPD\Examples\Bunny\Bunny.grpd
+[INFO] [GrpdMeshReader] Entering *PARTICLE section (Line 1)
+[INFO] [GrpdMeshReader] Entering *LOAD section (Line 127517)
+[INFO] [GrpdMeshReader] ============================================
+[INFO] [GrpdMeshReader]    File reading complete!
+[INFO] [GrpdMeshReader]    Total particles: 127514
+[INFO] [GrpdMeshReader]    Total load entries: 18371
+[INFO] [GrpdMeshReader] ============================================
+[INFO] [InitConditions] Load statistics:
+[INFO]   - VELOCITY : 18371
+[INFO] [InitConditions] Boundary conditions initialization complete.
+[INFO] [InitNeighbors] Entering Neighbor Search Phase...
+[INFO] [InitNeighbors] Horizon radius: 3.015000
+[INFO] [NeighborList] Starting full-flat CSR search for 127514 particles, horizon = 3.015000
+[INFO] [NeighborList] Cell grid: 29 x 22 x 28 = 17864 cells
+[INFO] [NeighborList] Flat cell list built in 3.000021 ms
+[INFO] [NeighborList] Pass 1 (count) done in 27.999878 ms
+[INFO] [NeighborList] Total bonds: 14324802, Memory: 163 MB
+[INFO] [NeighborList] Pass 2 (fill) done in 106.000185 ms
+[INFO] [NeighborList] Max neighbors: 122
+[INFO] [NeighborList] Total time: 137.000084 ms
+[INFO] [FieldManager] Added field 'NeighborCount'.
+[INFO] [InitNeighbors] NeighborCount field populated for 127514 particles.
+[INFO] [FieldManager] Added field 'Damage'.
+[INFO] [InitNeighbors] Global Damage scalar field properly initialized to 0.0
+[INFO] [InitNeighbors] Neighbor search phase complete.
+[INFO] Initializing Material-specific Damage Models...
+[INFO] [CriticalStretch] Initialized. Critical Stretch = 0.005000
+[INFO] Material Damage Models initialized. Total Active Models: 1
+[INFO] [InitPreCracks] Detected PreCracks configuration. Initializing geometric cuts...
+[INFO] Entering Solver Components Assembly Phase...
+[INFO] Building Time Integrator: CentralDifference
+[INFO] Time Integrator configured.
+[INFO] Building Space Kernel: NOSB_M
+[INFO] [NOSB_Base] Applied KernelWeightType: Constant
+[INFO] [NOSB_Base] Applied ZeroEnergyG0: 1.000000
+[INFO] [NOSB_Base] Applied ZeroEnergyMethod string: Silling
+[INFO] Space Kernel 'NOSB_M' configured.
+[INFO] Total kernels assembled: 1
+[INFO] [PDEngine] PD simulation context initialized successfully.
+[INFO] [EngineManager] All solvers initialized. Total: 1
+[INFO] [EngineManager] Entering Main Solver Phase
+[INFO] [EngineManager] Solving: PD
+[INFO] [PDEngine] Starting PD Engine Solve Phase...
+[INFO] [CentralDifference] Identified generic 2nd-order ODE couple: Displacement (u) <- Velocity (v) <- Acceleration (a)
+[INFO] [CentralDifference] Time loop: dt = 0.000000, totalSteps = 100000
+[INFO] [FieldManager] Added field 'ShapeTensorInv'.
+[INFO] [FieldManager] Added field 'VHorizon'.
+[INFO] [NOSB_Base] Computing InfluenceWeight + Shape Tensor Inverse (K^-1)...
+[INFO] [NOSB_Base] All NOSB base fields registered and Shape Tensor Inverse computed.
+[INFO] [FieldManager] Added field 'DeformationGradient'.
+[INFO] [FieldManager] Added field 'PK1Stress'.
+[INFO] [NOSB_M] Instantiated MechanicalStabilizer globally in Phase 0 using strategy: Silling
+[INFO] --- Step 0 / 100000  |  Pure Compute: 0.000000s  |  Total: 0.000000s  |  Pure Speed: 0.000000 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=0 t=0.000000
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_104451\Bunny_Fracture_Result_step00000_t0.0000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 500 / 100000  |  Pure Compute: 37.927976s  |  Total: 37.954658s  |  Pure Speed: 13.182881 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=500 t=0.000050
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_104451\Bunny_Fracture_Result_step00500_t0.0000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 1000 / 100000  |  Pure Compute: 80.960939s  |  Total: 81.026222s  |  Pure Speed: 12.351635 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=1000 t=0.000100
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_104451\Bunny_Fracture_Result_step01000_t0.0001.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 1500 / 100000  |  Pure Compute: 122.818558s  |  Total: 122.913882s  |  Pure Speed: 12.213138 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=1500 t=0.000150
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_104451\Bunny_Fracture_Result_step01500_t0.0001.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 2000 / 100000  |  Pure Compute: 167.031932s  |  Total: 167.164846s  |  Pure Speed: 11.973758 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=2000 t=0.000200
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_104451\Bunny_Fracture_Result_step02000_t0.0002.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 2500 / 100000  |  Pure Compute: 211.134086s  |  Total: 211.302899s  |  Pure Speed: 11.840817 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=2500 t=0.000250
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_104451\Bunny_Fracture_Result_step02500_t0.0003.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 3000 / 100000  |  Pure Compute: 252.151618s  |  Total: 252.362224s  |  Pure Speed: 11.897604 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=3000 t=0.000300
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_104451\Bunny_Fracture_Result_step03000_t0.0003.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 3500 / 100000  |  Pure Compute: 295.233102s  |  Total: 295.493953s  |  Pure Speed: 11.855039 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=3500 t=0.000350
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_104451\Bunny_Fracture_Result_step03500_t0.0003.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 4000 / 100000  |  Pure Compute: 341.292561s  |  Total: 341.630989s  |  Pure Speed: 11.720150 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=4000 t=0.000400
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_104451\Bunny_Fracture_Result_step04000_t0.0004.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 4500 / 100000  |  Pure Compute: 375.003007s  |  Total: 375.369856s  |  Pure Speed: 11.999904 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=4500 t=0.000450
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_104451\Bunny_Fracture_Result_step04500_t0.0004.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 5000 / 100000  |  Pure Compute: 406.202592s  |  Total: 406.598502s  |  Pure Speed: 12.309129 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=5000 t=0.000500
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_104451\Bunny_Fracture_Result_step05000_t0.0005.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 5500 / 100000  |  Pure Compute: 442.046309s  |  Total: 442.474840s  |  Pure Speed: 12.442135 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=5500 t=0.000550
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_104451\Bunny_Fracture_Result_step05500_t0.0005.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 6000 / 100000  |  Pure Compute: 479.291258s  |  Total: 479.743803s  |  Pure Speed: 12.518484 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=6000 t=0.000600
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_104451\Bunny_Fracture_Result_step06000_t0.0006.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 6500 / 100000  |  Pure Compute: 515.783244s  |  Total: 516.271160s  |  Pure Speed: 12.602193 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=6500 t=0.000650
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_104451\Bunny_Fracture_Result_step06500_t0.0006.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 7000 / 100000  |  Pure Compute: 553.564662s  |  Total: 554.077780s  |  Pure Speed: 12.645316 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=7000 t=0.000700
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_104451\Bunny_Fracture_Result_step07000_t0.0007.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 7500 / 100000  |  Pure Compute: 592.025160s  |  Total: 592.570764s  |  Pure Speed: 12.668381 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=7500 t=0.000750
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_104451\Bunny_Fracture_Result_step07500_t0.0008.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 8000 / 100000  |  Pure Compute: 625.121743s  |  Total: 625.689418s  |  Pure Speed: 12.797507 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=8000 t=0.000800
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_104451\Bunny_Fracture_Result_step08000_t0.0008.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 8500 / 100000  |  Pure Compute: 660.861230s  |  Total: 661.456066s  |  Pure Speed: 12.862004 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=8500 t=0.000850
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_104451\Bunny_Fracture_Result_step08500_t0.0008.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 9000 / 100000  |  Pure Compute: 699.427533s  |  Total: 700.047808s  |  Pure Speed: 12.867666 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=9000 t=0.000900
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_104451\Bunny_Fracture_Result_step09000_t0.0009.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 9500 / 100000  |  Pure Compute: 728.504622s  |  Total: 729.156839s  |  Pure Speed: 13.040411 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=9500 t=0.000950
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_104451\Bunny_Fracture_Result_step09500_t0.0009.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 10000 / 100000  |  Pure Compute: 762.985525s  |  Total: 763.659845s  |  Pure Speed: 13.106409 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=10000 t=0.001000
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_104451\Bunny_Fracture_Result_step10000_t0.0010.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 10500 / 100000  |  Pure Compute: 801.492959s  |  Total: 802.197967s  |  Pure Speed: 13.100552 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=10500 t=0.001050
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_104451\Bunny_Fracture_Result_step10500_t0.0010.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 11000 / 100000  |  Pure Compute: 836.531311s  |  Total: 837.263944s  |  Pure Speed: 13.149538 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=11000 t=0.001100
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_104451\Bunny_Fracture_Result_step11000_t0.0011.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 11500 / 100000  |  Pure Compute: 874.557183s  |  Total: 875.325116s  |  Pure Speed: 13.149512 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=11500 t=0.001150
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_104451\Bunny_Fracture_Result_step11500_t0.0011.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 12000 / 100000  |  Pure Compute: 913.928364s  |  Total: 914.721170s  |  Pure Speed: 13.130132 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=12000 t=0.001200
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_104451\Bunny_Fracture_Result_step12000_t0.0012.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 12500 / 100000  |  Pure Compute: 953.429191s  |  Total: 954.248634s  |  Pure Speed: 13.110570 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=12500 t=0.001250
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_104451\Bunny_Fracture_Result_step12500_t0.0013.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 13000 / 100000  |  Pure Compute: 993.879232s  |  Total: 994.733069s  |  Pure Speed: 13.080060 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=13000 t=0.001300
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_104451\Bunny_Fracture_Result_step13000_t0.0013.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 13500 / 100000  |  Pure Compute: 1034.114398s  |  Total: 1035.000157s  |  Pure Speed: 13.054649 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=13500 t=0.001350
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_104451\Bunny_Fracture_Result_step13500_t0.0013.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 14000 / 100000  |  Pure Compute: 1071.339846s  |  Total: 1072.249042s  |  Pure Speed: 13.067749 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=14000 t=0.001400
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_104451\Bunny_Fracture_Result_step14000_t0.0014.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 14500 / 100000  |  Pure Compute: 1103.544043s  |  Total: 1104.484392s  |  Pure Speed: 13.139485 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=14500 t=0.001450
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_104451\Bunny_Fracture_Result_step14500_t0.0014.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 15000 / 100000  |  Pure Compute: 1142.646147s  |  Total: 1143.619610s  |  Pure Speed: 13.127424 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=15000 t=0.001500
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_104451\Bunny_Fracture_Result_step15000_t0.0015.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 15500 / 100000  |  Pure Compute: 1179.179473s  |  Total: 1180.194209s  |  Pure Speed: 13.144734 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=15500 t=0.001550
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_104451\Bunny_Fracture_Result_step15500_t0.0015.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 16000 / 100000  |  Pure Compute: 1211.318909s  |  Total: 1212.363810s  |  Pure Speed: 13.208743 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=16000 t=0.001600
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_104451\Bunny_Fracture_Result_step16000_t0.0016.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 16500 / 100000  |  Pure Compute: 1244.757103s  |  Total: 1245.833126s  |  Pure Speed: 13.255598 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=16500 t=0.001650
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_104451\Bunny_Fracture_Result_step16500_t0.0016.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 17000 / 100000  |  Pure Compute: 1280.222945s  |  Total: 1281.326313s  |  Pure Speed: 13.278937 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=17000 t=0.001700
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_104451\Bunny_Fracture_Result_step17000_t0.0017.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 17500 / 100000  |  Pure Compute: 1315.756920s  |  Total: 1316.894786s  |  Pure Speed: 13.300329 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=17500 t=0.001750
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_104451\Bunny_Fracture_Result_step17500_t0.0017.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 18000 / 100000  |  Pure Compute: 1351.909406s  |  Total: 1353.081196s  |  Pure Speed: 13.314502 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=18000 t=0.001800
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_104451\Bunny_Fracture_Result_step18000_t0.0018.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 18500 / 100000  |  Pure Compute: 1389.420059s  |  Total: 1390.618572s  |  Pure Speed: 13.314908 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=18500 t=0.001850
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_104451\Bunny_Fracture_Result_step18500_t0.0018.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 19000 / 100000  |  Pure Compute: 1430.195357s  |  Total: 1431.429536s  |  Pure Speed: 13.284898 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=19000 t=0.001900
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_104451\Bunny_Fracture_Result_step19000_t0.0019.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 19500 / 100000  |  Pure Compute: 1470.271323s  |  Total: 1471.539165s  |  Pure Speed: 13.262858 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=19500 t=0.001950
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_104451\Bunny_Fracture_Result_step19500_t0.0019.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 20000 / 100000  |  Pure Compute: 1509.190477s  |  Total: 1510.485123s  |  Pure Speed: 13.252138 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=20000 t=0.002000
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_104451\Bunny_Fracture_Result_step20000_t0.0020.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 20500 / 100000  |  Pure Compute: 1547.818377s  |  Total: 1549.144681s  |  Pure Speed: 13.244448 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=20500 t=0.002050
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_104451\Bunny_Fracture_Result_step20500_t0.0020.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 21000 / 100000  |  Pure Compute: 1587.679762s  |  Total: 1589.039842s  |  Pure Speed: 13.226849 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=21000 t=0.002100
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_104451\Bunny_Fracture_Result_step21000_t0.0021.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 21500 / 100000  |  Pure Compute: 1627.490018s  |  Total: 1628.879445s  |  Pure Speed: 13.210526 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=21500 t=0.002150
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_104451\Bunny_Fracture_Result_step21500_t0.0022.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 22000 / 100000  |  Pure Compute: 1669.144216s  |  Total: 1670.557836s  |  Pure Speed: 13.180407 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=22000 t=0.002200
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_104451\Bunny_Fracture_Result_step22000_t0.0022.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 22500 / 100000  |  Pure Compute: 1710.808657s  |  Total: 1712.255796s  |  Pure Speed: 13.151675 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=22500 t=0.002250
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_104451\Bunny_Fracture_Result_step22500_t0.0022.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 23000 / 100000  |  Pure Compute: 1749.648226s  |  Total: 1751.119246s  |  Pure Speed: 13.145500 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=23000 t=0.002300
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_104451\Bunny_Fracture_Result_step23000_t0.0023.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 23500 / 100000  |  Pure Compute: 1790.537362s  |  Total: 1792.041127s  |  Pure Speed: 13.124552 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=23500 t=0.002350
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_104451\Bunny_Fracture_Result_step23500_t0.0024.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 24000 / 100000  |  Pure Compute: 1830.913302s  |  Total: 1832.451125s  |  Pure Speed: 13.108212 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=24000 t=0.002400
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_104451\Bunny_Fracture_Result_step24000_t0.0024.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 24500 / 100000  |  Pure Compute: 1868.604327s  |  Total: 1870.167831s  |  Pure Speed: 13.111390 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=24500 t=0.002450
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_104451\Bunny_Fracture_Result_step24500_t0.0024.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 25000 / 100000  |  Pure Compute: 1898.572619s  |  Total: 1900.168911s  |  Pure Speed: 13.167787 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=25000 t=0.002500
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_104451\Bunny_Fracture_Result_step25000_t0.0025.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 25500 / 100000  |  Pure Compute: 1930.262072s  |  Total: 1931.890944s  |  Pure Speed: 13.210641 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=25500 t=0.002550
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_104451\Bunny_Fracture_Result_step25500_t0.0025.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 26000 / 100000  |  Pure Compute: 1962.831410s  |  Total: 1964.482877s  |  Pure Speed: 13.246171 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=26000 t=0.002600
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_104451\Bunny_Fracture_Result_step26000_t0.0026.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 26500 / 100000  |  Pure Compute: 1997.883230s  |  Total: 1999.566046s  |  Pure Speed: 13.264038 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=26500 t=0.002650
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_104451\Bunny_Fracture_Result_step26500_t0.0027.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 27000 / 100000  |  Pure Compute: 2034.064844s  |  Total: 2035.778714s  |  Pure Speed: 13.273913 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=27000 t=0.002700
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_104451\Bunny_Fracture_Result_step27000_t0.0027.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 27500 / 100000  |  Pure Compute: 2067.123411s  |  Total: 2068.860990s  |  Pure Speed: 13.303511 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=27500 t=0.002750
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_104451\Bunny_Fracture_Result_step27500_t0.0027.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 28000 / 100000  |  Pure Compute: 2103.346156s  |  Total: 2105.118198s  |  Pure Speed: 13.312122 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=28000 t=0.002800
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_104451\Bunny_Fracture_Result_step28000_t0.0028.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 28500 / 100000  |  Pure Compute: 2142.241962s  |  Total: 2144.046492s  |  Pure Speed: 13.303819 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=28500 t=0.002850
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_104451\Bunny_Fracture_Result_step28500_t0.0028.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 29000 / 100000  |  Pure Compute: 2173.010755s  |  Total: 2174.845152s  |  Pure Speed: 13.345539 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=29000 t=0.002900
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_104451\Bunny_Fracture_Result_step29000_t0.0029.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 29500 / 100000  |  Pure Compute: 2204.116219s  |  Total: 2205.972485s  |  Pure Speed: 13.384049 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=29500 t=0.002950
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_104451\Bunny_Fracture_Result_step29500_t0.0029.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 30000 / 100000  |  Pure Compute: 2235.244795s  |  Total: 2237.136421s  |  Pure Speed: 13.421349 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=30000 t=0.003000
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_104451\Bunny_Fracture_Result_step30000_t0.0030.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 30500 / 100000  |  Pure Compute: 2265.890553s  |  Total: 2267.809792s  |  Pure Speed: 13.460491 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=30500 t=0.003050
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_104451\Bunny_Fracture_Result_step30500_t0.0030.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 31000 / 100000  |  Pure Compute: 2297.013080s  |  Total: 2298.956998s  |  Pure Speed: 13.495787 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=31000 t=0.003100
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_104451\Bunny_Fracture_Result_step31000_t0.0031.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 31500 / 100000  |  Pure Compute: 2327.386919s  |  Total: 2329.361884s  |  Pure Speed: 13.534492 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=31500 t=0.003150
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_104451\Bunny_Fracture_Result_step31500_t0.0032.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 32000 / 100000  |  Pure Compute: 2367.949085s  |  Total: 2369.955124s  |  Pure Speed: 13.513804 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=32000 t=0.003200
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_104451\Bunny_Fracture_Result_step32000_t0.0032.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 32500 / 100000  |  Pure Compute: 2404.550338s  |  Total: 2406.588306s  |  Pure Speed: 13.516041 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=32500 t=0.003250
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_104451\Bunny_Fracture_Result_step32500_t0.0032.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 33000 / 100000  |  Pure Compute: 2440.590891s  |  Total: 2442.661176s  |  Pure Speed: 13.521316 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=33000 t=0.003300
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_104451\Bunny_Fracture_Result_step33000_t0.0033.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 33500 / 100000  |  Pure Compute: 2471.987489s  |  Total: 2474.090626s  |  Pure Speed: 13.551849 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=33500 t=0.003350
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_104451\Bunny_Fracture_Result_step33500_t0.0033.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 34000 / 100000  |  Pure Compute: 2502.375561s  |  Total: 2504.511932s  |  Pure Speed: 13.587089 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=34000 t=0.003400
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_104451\Bunny_Fracture_Result_step34000_t0.0034.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 34500 / 100000  |  Pure Compute: 2535.017718s  |  Total: 2537.180148s  |  Pure Speed: 13.609372 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=34500 t=0.003450
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_104451\Bunny_Fracture_Result_step34500_t0.0034.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 35000 / 100000  |  Pure Compute: 2569.399287s  |  Total: 2571.596311s  |  Pure Speed: 13.621861 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=35000 t=0.003500
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_104451\Bunny_Fracture_Result_step35000_t0.0035.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 35500 / 100000  |  Pure Compute: 2601.745163s  |  Total: 2603.965365s  |  Pure Speed: 13.644688 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=35500 t=0.003550
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_104451\Bunny_Fracture_Result_step35500_t0.0035.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 36000 / 100000  |  Pure Compute: 2636.614368s  |  Total: 2638.872138s  |  Pure Speed: 13.653874 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=36000 t=0.003600
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_104451\Bunny_Fracture_Result_step36000_t0.0036.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 36500 / 100000  |  Pure Compute: 2666.955206s  |  Total: 2669.250734s  |  Pure Speed: 13.686019 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=36500 t=0.003650
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_104451\Bunny_Fracture_Result_step36500_t0.0037.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 37000 / 100000  |  Pure Compute: 2701.305848s  |  Total: 2703.634427s  |  Pure Speed: 13.697079 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=37000 t=0.003700
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_104451\Bunny_Fracture_Result_step37000_t0.0037.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 37500 / 100000  |  Pure Compute: 2736.422403s  |  Total: 2738.789489s  |  Pure Speed: 13.704025 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=37500 t=0.003750
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_104451\Bunny_Fracture_Result_step37500_t0.0037.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 38000 / 100000  |  Pure Compute: 2772.994668s  |  Total: 2775.388844s  |  Pure Speed: 13.703596 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=38000 t=0.003800
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_104451\Bunny_Fracture_Result_step38000_t0.0038.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 38500 / 100000  |  Pure Compute: 2810.144361s  |  Total: 2812.573260s  |  Pure Speed: 13.700364 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=38500 t=0.003850
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_104451\Bunny_Fracture_Result_step38500_t0.0038.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 39000 / 100000  |  Pure Compute: 2848.497608s  |  Total: 2850.961324s  |  Pure Speed: 13.691428 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=39000 t=0.003900
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_104451\Bunny_Fracture_Result_step39000_t0.0039.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 39500 / 100000  |  Pure Compute: 2888.151103s  |  Total: 2890.661968s  |  Pure Speed: 13.676570 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=39500 t=0.003950
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_104451\Bunny_Fracture_Result_step39500_t0.0039.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 40000 / 100000  |  Pure Compute: 2925.720701s  |  Total: 2928.269211s  |  Pure Speed: 13.671845 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=40000 t=0.004000
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_104451\Bunny_Fracture_Result_step40000_t0.0040.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 40500 / 100000  |  Pure Compute: 2963.767510s  |  Total: 2966.351780s  |  Pure Speed: 13.665039 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=40500 t=0.004050
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_104451\Bunny_Fracture_Result_step40500_t0.0040.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 41000 / 100000  |  Pure Compute: 3003.401512s  |  Total: 3006.021608s  |  Pure Speed: 13.651188 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=41000 t=0.004100
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_104451\Bunny_Fracture_Result_step41000_t0.0041.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 41500 / 100000  |  Pure Compute: 3042.568270s  |  Total: 3045.228717s  |  Pure Speed: 13.639793 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=41500 t=0.004150
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_104451\Bunny_Fracture_Result_step41500_t0.0042.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 42000 / 100000  |  Pure Compute: 3084.573018s  |  Total: 3087.294691s  |  Pure Speed: 13.616147 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=42000 t=0.004200
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_104451\Bunny_Fracture_Result_step42000_t0.0042.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 42500 / 100000  |  Pure Compute: 3124.701269s  |  Total: 3127.461450s  |  Pure Speed: 13.601300 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=42500 t=0.004250
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_104451\Bunny_Fracture_Result_step42500_t0.0042.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 43000 / 100000  |  Pure Compute: 3162.383557s  |  Total: 3165.190436s  |  Pure Speed: 13.597339 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=43000 t=0.004300
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_104451\Bunny_Fracture_Result_step43000_t0.0043.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 43500 / 100000  |  Pure Compute: 3200.177974s  |  Total: 3203.025949s  |  Pure Speed: 13.592994 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=43500 t=0.004350
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_104451\Bunny_Fracture_Result_step43500_t0.0043.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 44000 / 100000  |  Pure Compute: 3238.538118s  |  Total: 3241.416660s  |  Pure Speed: 13.586377 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=44000 t=0.004400
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_104451\Bunny_Fracture_Result_step44000_t0.0044.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 44500 / 100000  |  Pure Compute: 3280.303957s  |  Total: 3283.220726s  |  Pure Speed: 13.565816 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=44500 t=0.004450
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_104451\Bunny_Fracture_Result_step44500_t0.0044.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 45000 / 100000  |  Pure Compute: 3324.633648s  |  Total: 3327.589662s  |  Pure Speed: 13.535326 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=45000 t=0.004500
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_104451\Bunny_Fracture_Result_step45000_t0.0045.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 45500 / 100000  |  Pure Compute: 3368.325464s  |  Total: 3371.314773s  |  Pure Speed: 13.508196 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=45500 t=0.004550
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_104451\Bunny_Fracture_Result_step45500_t0.0046.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 46000 / 100000  |  Pure Compute: 3411.111501s  |  Total: 3414.138997s  |  Pure Speed: 13.485340 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=46000 t=0.004600
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_104451\Bunny_Fracture_Result_step46000_t0.0046.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 46500 / 100000  |  Pure Compute: 3448.437390s  |  Total: 3451.500069s  |  Pure Speed: 13.484368 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=46500 t=0.004650
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_104451\Bunny_Fracture_Result_step46500_t0.0046.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 47000 / 100000  |  Pure Compute: 3486.709778s  |  Total: 3489.809179s  |  Pure Speed: 13.479757 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=47000 t=0.004700
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_104451\Bunny_Fracture_Result_step47000_t0.0047.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 47500 / 100000  |  Pure Compute: 3525.938510s  |  Total: 3529.074096s  |  Pure Speed: 13.471591 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=47500 t=0.004750
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_104451\Bunny_Fracture_Result_step47500_t0.0047.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 48000 / 100000  |  Pure Compute: 3565.572508s  |  Total: 3568.736940s  |  Pure Speed: 13.462074 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=48000 t=0.004800
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_104451\Bunny_Fracture_Result_step48000_t0.0048.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 48500 / 100000  |  Pure Compute: 3607.536264s  |  Total: 3610.737012s  |  Pure Speed: 13.444078 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=48500 t=0.004850
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_104451\Bunny_Fracture_Result_step48500_t0.0049.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 49000 / 100000  |  Pure Compute: 3649.981657s  |  Total: 3653.238139s  |  Pure Speed: 13.424725 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=49000 t=0.004900
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_104451\Bunny_Fracture_Result_step49000_t0.0049.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 49500 / 100000  |  Pure Compute: 3691.286224s  |  Total: 3694.585458s  |  Pure Speed: 13.409960 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=49500 t=0.004950
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_104451\Bunny_Fracture_Result_step49500_t0.0049.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 50000 / 100000  |  Pure Compute: 3732.347601s  |  Total: 3735.690880s  |  Pure Speed: 13.396394 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=50000 t=0.005000
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_104451\Bunny_Fracture_Result_step50000_t0.0050.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 50500 / 100000  |  Pure Compute: 3774.276838s  |  Total: 3777.664074s  |  Pure Speed: 13.380047 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=50500 t=0.005050
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_104451\Bunny_Fracture_Result_step50500_t0.0050.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 51000 / 100000  |  Pure Compute: 3815.909170s  |  Total: 3819.334400s  |  Pure Speed: 13.365098 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=51000 t=0.005100
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_104451\Bunny_Fracture_Result_step51000_t0.0051.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 51500 / 100000  |  Pure Compute: 3855.975245s  |  Total: 3859.435734s  |  Pure Speed: 13.355895 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=51500 t=0.005150
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_104451\Bunny_Fracture_Result_step51500_t0.0052.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 52000 / 100000  |  Pure Compute: 3895.551553s  |  Total: 3899.043309s  |  Pure Speed: 13.348559 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=52000 t=0.005200
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_104451\Bunny_Fracture_Result_step52000_t0.0052.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 52500 / 100000  |  Pure Compute: 3930.748921s  |  Total: 3934.276343s  |  Pure Speed: 13.356233 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=52500 t=0.005250
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_104451\Bunny_Fracture_Result_step52500_t0.0052.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 53000 / 100000  |  Pure Compute: 3970.791408s  |  Total: 3974.345138s  |  Pure Speed: 13.347465 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=53000 t=0.005300
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_104451\Bunny_Fracture_Result_step53000_t0.0053.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] ==================================================
+[INFO]    GRPD Solver Engine Initialized                 
+[INFO] ==================================================
+[INFO] [EngineRegistry] Creating Engine instance: PD
+[INFO] [PDEngine] PD Engine instance created.
+[INFO] ========== Registered Types Summary ===========
+[INFO]   TimeIntegrator    : CentralDifference, Explicit, Staggered
+[INFO]   FieldRegistry     : DoubleField, IntField
+[INFO]   PhysicsFields     : Mechanical, Thermal
+[INFO]   BCRegistry        : BODY_FORCE, CONV, DISP, FLUX, PRESSURE, T, VELOCITY
+[INFO]   MaterialRegistry  : FourierThermalMat, LinearElasticMat
+[INFO]   KernelRegistry    : NOSB_M, NOSB_T
+[INFO]   EngineRegistry    : PD
+[INFO] ===============================================
+[INFO] [EngineManager] Initializing solver: PD
+[INFO] [PDEngine] Initializing PD simulation context...
+[INFO] Model pre-processing...
+[INFO] [InitModel] grpd path: D:\Project_C++\GRPD\Examples\Bunny\Bunny.grpd
+[INFO] [InitModel] model name: Bunny
+[INFO] Calling Python pre-processor to generate .grpd mesh...
+[INFO] Mesh generated successfully by Python.
+[INFO] [Context Manager] Formalized model name to: Bunny
+[INFO] [Context Manager] Model dimension set to: 3D
+[INFO] [ReaderRegistry] Creating reader for: .grpd (name: Bunny)
+[INFO] [InitModel] Reading mesh file: D:\Project_C++\GRPD\Examples\Bunny\Bunny.grpd (reader: .grpd)
+[INFO] [GrpdMeshReader] Reading file: D:\Project_C++\GRPD\Examples\Bunny\Bunny.grpd
+[INFO] [GrpdMeshReader] Entering *PARTICLE section (Line 1)
+[INFO] [GrpdMeshReader] Entering *LOAD section (Line 127517)
+[INFO] [GrpdMeshReader] ============================================
+[INFO] [GrpdMeshReader]    File reading complete!
+[INFO] [GrpdMeshReader]    Total particles: 127514
+[INFO] [GrpdMeshReader]    Total load entries: 18371
+[INFO] [GrpdMeshReader] ============================================
+[INFO] [InitModel] Total particles loaded for model Bunny: 127514
+[INFO]   Particle[0] Part=1 Pos=(-30.648468, -4.933746, 0.500000) Vol=1.000000
+[INFO]   Particle[1] Part=1 Pos=(-30.648468, -3.933746, 0.500000) Vol=1.000000
+[INFO]   Particle[2] Part=1 Pos=(-30.648468, -2.933746, 0.500000) Vol=1.000000
+[INFO]   Particle[3] Part=1 Pos=(-30.648468, -1.933746, 0.500000) Vol=1.000000
+[INFO]   Particle[4] Part=1 Pos=(-29.648468, -5.933746, 0.500000) Vol=1.000000
+[INFO] Entering Material Initialization Phase...
+[INFO] Instantiating material [1] of type: LinearElasticMat
+[INFO] [MaterialRegistry] Using factory to create material: Ceramic_Glass (type: LinearElasticMat)
+[INFO] [Material] Attached DamageModel 'CriticalStretch' to material: Ceramic_Glass
+[INFO] [LinearElasticMat] Material 'Ceramic_Glass' is initialized. E = 70000.000000, nu = 0.220000, Density = 0.000000
+[INFO] [MaterialManager] Successfully added material instance: Ceramic_Glass
+[INFO] Successfully registered material ID 1 (Ceramic_Glass)
+[INFO] Assigning material pointers to particles...
+[INFO] Successfully assigned materials to 127514 particles.
+[INFO] Entering Field Registration Phase...
+[INFO] [FieldManager] Added field 'Displacement'.
+[INFO] [FieldManager] Added field 'Velocity'.
+[INFO] [FieldManager] Added field 'Acceleration'.
+[INFO] [MechanicalFields] Core fields registered: Displacement, Velocity, Acceleration.
+[INFO] [InitFields] Auto-registered PhysicsFields module: Mechanical
+[INFO] [FieldManager] Added field 'ID'.
+[INFO] [FieldManager] Added field 'PartID'.
+[INFO] [FieldManager] Added field 'MatID'.
+[INFO] [FieldManager] Added field 'Coords'.
+[INFO] [FieldManager] Added field 'Volume'.
+[INFO] [FieldManager] Resized all 8 fields for 127514 particles.
+[INFO] [MeshData] Populated particle geometry fields into FieldManager for 127514 particles.
+[INFO] [InitFields] All fields allocated for 127514 particles. Total fields: 8.
+[INFO] Entering Conditions Initialization Phase...
+[INFO] [ReaderRegistry] Creating reader for: .grpd (name: LoadReader)
+[INFO] [GrpdMeshReader] Reading file: D:\Project_C++\GRPD\Examples\Bunny\Bunny.grpd
+[INFO] [GrpdMeshReader] Entering *PARTICLE section (Line 1)
+[INFO] [GrpdMeshReader] Entering *LOAD section (Line 127517)
+[INFO] [GrpdMeshReader] ============================================
+[INFO] [GrpdMeshReader]    File reading complete!
+[INFO] [GrpdMeshReader]    Total particles: 127514
+[INFO] [GrpdMeshReader]    Total load entries: 18371
+[INFO] [GrpdMeshReader] ============================================
+[ERROR] [BCRegistry] Create BC failed: unknown type 'DISPLACEMENT'!
+[INFO] ==================================================
+[INFO]    GRPD Solver Engine Initialized                 
+[INFO] ==================================================
+[INFO] [EngineRegistry] Creating Engine instance: PD
+[INFO] [PDEngine] PD Engine instance created.
+[INFO] ========== Registered Types Summary ===========
+[INFO]   TimeIntegrator    : CentralDifference, Explicit, Staggered
+[INFO]   FieldRegistry     : DoubleField, IntField
+[INFO]   PhysicsFields     : Mechanical, Thermal
+[INFO]   BCRegistry        : BODY_FORCE, CONV, DISP, FLUX, PRESSURE, T, VELOCITY
+[INFO]   MaterialRegistry  : FourierThermalMat, LinearElasticMat
+[INFO]   KernelRegistry    : NOSB_M, NOSB_T
+[INFO]   EngineRegistry    : PD
+[INFO] ===============================================
+[INFO] [EngineManager] Initializing solver: PD
+[INFO] [PDEngine] Initializing PD simulation context...
+[INFO] Model pre-processing...
+[INFO] [InitModel] grpd path: D:\Project_C++\GRPD\Examples\Bunny\Bunny.grpd
+[INFO] [InitModel] model name: Bunny
+[INFO] Calling Python pre-processor to generate .grpd mesh...
+[INFO] Mesh generated successfully by Python.
+[INFO] [Context Manager] Formalized model name to: Bunny
+[INFO] [Context Manager] Model dimension set to: 3D
+[INFO] [ReaderRegistry] Creating reader for: .grpd (name: Bunny)
+[INFO] [InitModel] Reading mesh file: D:\Project_C++\GRPD\Examples\Bunny\Bunny.grpd (reader: .grpd)
+[INFO] [GrpdMeshReader] Reading file: D:\Project_C++\GRPD\Examples\Bunny\Bunny.grpd
+[INFO] [GrpdMeshReader] Entering *PARTICLE section (Line 1)
+[INFO] [GrpdMeshReader] Entering *LOAD section (Line 127517)
+[INFO] [GrpdMeshReader] ============================================
+[INFO] [GrpdMeshReader]    File reading complete!
+[INFO] [GrpdMeshReader]    Total particles: 127514
+[INFO] [GrpdMeshReader]    Total load entries: 18371
+[INFO] [GrpdMeshReader] ============================================
+[INFO] [InitModel] Total particles loaded for model Bunny: 127514
+[INFO]   Particle[0] Part=1 Pos=(-30.648468, -4.933746, 0.500000) Vol=1.000000
+[INFO]   Particle[1] Part=1 Pos=(-30.648468, -3.933746, 0.500000) Vol=1.000000
+[INFO]   Particle[2] Part=1 Pos=(-30.648468, -2.933746, 0.500000) Vol=1.000000
+[INFO]   Particle[3] Part=1 Pos=(-30.648468, -1.933746, 0.500000) Vol=1.000000
+[INFO]   Particle[4] Part=1 Pos=(-29.648468, -5.933746, 0.500000) Vol=1.000000
+[INFO] Entering Material Initialization Phase...
+[INFO] Instantiating material [1] of type: LinearElasticMat
+[INFO] [MaterialRegistry] Using factory to create material: Ceramic_Glass (type: LinearElasticMat)
+[INFO] [Material] Attached DamageModel 'CriticalStretch' to material: Ceramic_Glass
+[INFO] [LinearElasticMat] Material 'Ceramic_Glass' is initialized. E = 70000.000000, nu = 0.220000, Density = 0.000000
+[INFO] [MaterialManager] Successfully added material instance: Ceramic_Glass
+[INFO] Successfully registered material ID 1 (Ceramic_Glass)
+[INFO] Assigning material pointers to particles...
+[INFO] Successfully assigned materials to 127514 particles.
+[INFO] Entering Field Registration Phase...
+[INFO] [FieldManager] Added field 'Displacement'.
+[INFO] [FieldManager] Added field 'Velocity'.
+[INFO] [FieldManager] Added field 'Acceleration'.
+[INFO] [MechanicalFields] Core fields registered: Displacement, Velocity, Acceleration.
+[INFO] [InitFields] Auto-registered PhysicsFields module: Mechanical
+[INFO] [FieldManager] Added field 'ID'.
+[INFO] [FieldManager] Added field 'PartID'.
+[INFO] [FieldManager] Added field 'MatID'.
+[INFO] [FieldManager] Added field 'Coords'.
+[INFO] [FieldManager] Added field 'Volume'.
+[INFO] [FieldManager] Resized all 8 fields for 127514 particles.
+[INFO] [MeshData] Populated particle geometry fields into FieldManager for 127514 particles.
+[INFO] [InitFields] All fields allocated for 127514 particles. Total fields: 8.
+[INFO] Entering Conditions Initialization Phase...
+[INFO] [ReaderRegistry] Creating reader for: .grpd (name: LoadReader)
+[INFO] [GrpdMeshReader] Reading file: D:\Project_C++\GRPD\Examples\Bunny\Bunny.grpd
+[INFO] [GrpdMeshReader] Entering *PARTICLE section (Line 1)
+[INFO] [GrpdMeshReader] Entering *LOAD section (Line 127517)
+[INFO] [GrpdMeshReader] ============================================
+[INFO] [GrpdMeshReader]    File reading complete!
+[INFO] [GrpdMeshReader]    Total particles: 127514
+[INFO] [GrpdMeshReader]    Total load entries: 18371
+[INFO] [GrpdMeshReader] ============================================
+[INFO] [InitConditions] Load statistics:
+[INFO]   - DISP : 9458
+[INFO]   - VELOCITY : 8913
+[INFO] [InitConditions] Boundary conditions initialization complete.
+[INFO] [InitNeighbors] Entering Neighbor Search Phase...
+[INFO] [InitNeighbors] Horizon radius: 3.015000
+[INFO] [NeighborList] Starting full-flat CSR search for 127514 particles, horizon = 3.015000
+[INFO] [NeighborList] Cell grid: 29 x 22 x 28 = 17864 cells
+[INFO] [NeighborList] Flat cell list built in 3.000021 ms
+[INFO] [NeighborList] Pass 1 (count) done in 26.999950 ms
+[INFO] [NeighborList] Total bonds: 14324802, Memory: 163 MB
+[INFO] [NeighborList] Pass 2 (fill) done in 90.000153 ms
+[INFO] [NeighborList] Max neighbors: 122
+[INFO] [NeighborList] Total time: 120.000124 ms
+[INFO] [FieldManager] Added field 'NeighborCount'.
+[INFO] [InitNeighbors] NeighborCount field populated for 127514 particles.
+[INFO] [FieldManager] Added field 'Damage'.
+[INFO] [InitNeighbors] Global Damage scalar field properly initialized to 0.0
+[INFO] [InitNeighbors] Neighbor search phase complete.
+[INFO] Initializing Material-specific Damage Models...
+[INFO] [CriticalStretch] Initialized. Critical Stretch = 0.005000
+[INFO] Material Damage Models initialized. Total Active Models: 1
+[INFO] [InitPreCracks] Detected PreCracks configuration. Initializing geometric cuts...
+[INFO] Entering Solver Components Assembly Phase...
+[INFO] Building Time Integrator: CentralDifference
+[INFO] Time Integrator configured.
+[INFO] Building Space Kernel: NOSB_M
+[INFO] [NOSB_Base] Applied KernelWeightType: Constant
+[INFO] [NOSB_Base] Applied ZeroEnergyG0: 1.000000
+[INFO] [NOSB_Base] Applied ZeroEnergyMethod string: Silling
+[INFO] Space Kernel 'NOSB_M' configured.
+[INFO] Total kernels assembled: 1
+[INFO] [PDEngine] PD simulation context initialized successfully.
+[INFO] [EngineManager] All solvers initialized. Total: 1
+[INFO] [EngineManager] Entering Main Solver Phase
+[INFO] [EngineManager] Solving: PD
+[INFO] [PDEngine] Starting PD Engine Solve Phase...
+[INFO] [CentralDifference] Identified generic 2nd-order ODE couple: Displacement (u) <- Velocity (v) <- Acceleration (a)
+[INFO] [CentralDifference] Time loop: dt = 0.000000, totalSteps = 100000
+[INFO] [FieldManager] Added field 'ShapeTensorInv'.
+[INFO] [FieldManager] Added field 'VHorizon'.
+[INFO] [NOSB_Base] Computing InfluenceWeight + Shape Tensor Inverse (K^-1)...
+[INFO] [NOSB_Base] All NOSB base fields registered and Shape Tensor Inverse computed.
+[INFO] [FieldManager] Added field 'DeformationGradient'.
+[INFO] [FieldManager] Added field 'PK1Stress'.
+[INFO] [NOSB_M] Instantiated MechanicalStabilizer globally in Phase 0 using strategy: Silling
+[INFO] --- Step 0 / 100000  |  Pure Compute: 0.000000s  |  Total: 0.000000s  |  Pure Speed: 0.000000 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=0 t=0.000000
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_124020\Bunny_Fracture_Result_step00000_t0.0000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 500 / 100000  |  Pure Compute: 30.500102s  |  Total: 30.529581s  |  Pure Speed: 16.393388 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=500 t=0.000050
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_124020\Bunny_Fracture_Result_step00500_t0.0000.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 1000 / 100000  |  Pure Compute: 69.985682s  |  Total: 70.053517s  |  Pure Speed: 14.288637 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=1000 t=0.000100
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_124020\Bunny_Fracture_Result_step01000_t0.0001.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 1500 / 100000  |  Pure Compute: 99.282461s  |  Total: 99.385811s  |  Pure Speed: 15.108409 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=1500 t=0.000150
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_124020\Bunny_Fracture_Result_step01500_t0.0001.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 2000 / 100000  |  Pure Compute: 131.499886s  |  Total: 131.640918s  |  Pure Speed: 15.209139 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=2000 t=0.000200
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_124020\Bunny_Fracture_Result_step02000_t0.0002.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 2500 / 100000  |  Pure Compute: 162.166295s  |  Total: 162.338628s  |  Pure Speed: 15.416274 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=2500 t=0.000250
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_124020\Bunny_Fracture_Result_step02500_t0.0003.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 3000 / 100000  |  Pure Compute: 193.784599s  |  Total: 193.988889s  |  Pure Speed: 15.481106 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=3000 t=0.000300
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_124020\Bunny_Fracture_Result_step03000_t0.0003.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 3500 / 100000  |  Pure Compute: 224.634940s  |  Total: 224.867777s  |  Pure Speed: 15.580835 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=3500 t=0.000350
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_124020\Bunny_Fracture_Result_step03500_t0.0003.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 4000 / 100000  |  Pure Compute: 256.433810s  |  Total: 256.696473s  |  Pure Speed: 15.598567 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=4000 t=0.000400
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_124020\Bunny_Fracture_Result_step04000_t0.0004.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 4500 / 100000  |  Pure Compute: 285.908869s  |  Total: 286.206658s  |  Pure Speed: 15.739281 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=4500 t=0.000450
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_124020\Bunny_Fracture_Result_step04500_t0.0004.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 5000 / 100000  |  Pure Compute: 318.079196s  |  Total: 318.413603s  |  Pure Speed: 15.719356 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=5000 t=0.000500
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_124020\Bunny_Fracture_Result_step05000_t0.0005.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 5500 / 100000  |  Pure Compute: 350.215981s  |  Total: 350.585088s  |  Pure Speed: 15.704595 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=5500 t=0.000550
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_124020\Bunny_Fracture_Result_step05500_t0.0005.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 6000 / 100000  |  Pure Compute: 380.466458s  |  Total: 380.879459s  |  Pure Speed: 15.770116 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=6000 t=0.000600
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_124020\Bunny_Fracture_Result_step06000_t0.0006.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 6500 / 100000  |  Pure Compute: 412.203267s  |  Total: 412.649312s  |  Pure Speed: 15.768919 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=6500 t=0.000650
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_124020\Bunny_Fracture_Result_step06500_t0.0006.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 7000 / 100000  |  Pure Compute: 446.972638s  |  Total: 447.458299s  |  Pure Speed: 15.660914 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=7000 t=0.000700
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_124020\Bunny_Fracture_Result_step07000_t0.0007.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 7500 / 100000  |  Pure Compute: 481.706637s  |  Total: 482.226932s  |  Pure Speed: 15.569642 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=7500 t=0.000750
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_124020\Bunny_Fracture_Result_step07500_t0.0008.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 8000 / 100000  |  Pure Compute: 516.393046s  |  Total: 516.944450s  |  Pure Speed: 15.492075 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=8000 t=0.000800
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_124020\Bunny_Fracture_Result_step08000_t0.0008.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 8500 / 100000  |  Pure Compute: 552.194502s  |  Total: 552.775325s  |  Pure Speed: 15.393127 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=8500 t=0.000850
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_124020\Bunny_Fracture_Result_step08500_t0.0008.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 9000 / 100000  |  Pure Compute: 588.033838s  |  Total: 588.657366s  |  Pure Speed: 15.305242 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=9000 t=0.000900
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_124020\Bunny_Fracture_Result_step09000_t0.0009.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 9500 / 100000  |  Pure Compute: 624.458006s  |  Total: 625.107647s  |  Pure Speed: 15.213193 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=9500 t=0.000950
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_124020\Bunny_Fracture_Result_step09500_t0.0009.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 10000 / 100000  |  Pure Compute: 662.593719s  |  Total: 663.277970s  |  Pure Speed: 15.092205 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=10000 t=0.001000
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_124020\Bunny_Fracture_Result_step10000_t0.0010.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 10500 / 100000  |  Pure Compute: 700.214556s  |  Total: 700.935248s  |  Pure Speed: 14.995404 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=10500 t=0.001050
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_124020\Bunny_Fracture_Result_step10500_t0.0010.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 11000 / 100000  |  Pure Compute: 737.299467s  |  Total: 738.058751s  |  Pure Speed: 14.919311 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=11000 t=0.001100
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_124020\Bunny_Fracture_Result_step11000_t0.0011.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 11500 / 100000  |  Pure Compute: 773.993606s  |  Total: 774.784973s  |  Pure Speed: 14.858004 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=11500 t=0.001150
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_124020\Bunny_Fracture_Result_step11500_t0.0011.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 12000 / 100000  |  Pure Compute: 810.755694s  |  Total: 811.588079s  |  Pure Speed: 14.801006 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=12000 t=0.001200
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_124020\Bunny_Fracture_Result_step12000_t0.0012.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 12500 / 100000  |  Pure Compute: 848.761311s  |  Total: 849.629759s  |  Pure Speed: 14.727344 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=12500 t=0.001250
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_124020\Bunny_Fracture_Result_step12500_t0.0013.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 13000 / 100000  |  Pure Compute: 886.717980s  |  Total: 887.618464s  |  Pure Speed: 14.660806 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=13000 t=0.001300
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_124020\Bunny_Fracture_Result_step13000_t0.0013.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 13500 / 100000  |  Pure Compute: 925.262305s  |  Total: 926.206031s  |  Pure Speed: 14.590457 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=13500 t=0.001350
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_124020\Bunny_Fracture_Result_step13500_t0.0013.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 14000 / 100000  |  Pure Compute: 961.782090s  |  Total: 962.761978s  |  Pure Speed: 14.556312 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=14000 t=0.001400
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_124020\Bunny_Fracture_Result_step14000_t0.0014.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 14500 / 100000  |  Pure Compute: 998.405666s  |  Total: 999.419675s  |  Pure Speed: 14.523155 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=14500 t=0.001450
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_124020\Bunny_Fracture_Result_step14500_t0.0014.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 15000 / 100000  |  Pure Compute: 1035.309329s  |  Total: 1036.361683s  |  Pure Speed: 14.488423 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=15000 t=0.001500
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_124020\Bunny_Fracture_Result_step15000_t0.0015.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 15500 / 100000  |  Pure Compute: 1072.703721s  |  Total: 1073.790752s  |  Pure Speed: 14.449470 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=15500 t=0.001550
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_124020\Bunny_Fracture_Result_step15500_t0.0015.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 16000 / 100000  |  Pure Compute: 1110.784817s  |  Total: 1111.910617s  |  Pure Speed: 14.404230 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=16000 t=0.001600
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_124020\Bunny_Fracture_Result_step16000_t0.0016.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 16500 / 100000  |  Pure Compute: 1149.357932s  |  Total: 1150.527371s  |  Pure Speed: 14.355841 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=16500 t=0.001650
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_124020\Bunny_Fracture_Result_step16500_t0.0016.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 17000 / 100000  |  Pure Compute: 1186.181496s  |  Total: 1187.390626s  |  Pure Speed: 14.331702 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=17000 t=0.001700
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_124020\Bunny_Fracture_Result_step17000_t0.0017.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 17500 / 100000  |  Pure Compute: 1222.691757s  |  Total: 1223.939079s  |  Pure Speed: 14.312683 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=17500 t=0.001750
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_124020\Bunny_Fracture_Result_step17500_t0.0017.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 18000 / 100000  |  Pure Compute: 1261.756451s  |  Total: 1263.039435s  |  Pure Speed: 14.265828 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=18000 t=0.001800
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_124020\Bunny_Fracture_Result_step18000_t0.0018.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 18500 / 100000  |  Pure Compute: 1299.036319s  |  Total: 1300.354431s  |  Pure Speed: 14.241326 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=18500 t=0.001850
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_124020\Bunny_Fracture_Result_step18500_t0.0018.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 19000 / 100000  |  Pure Compute: 1336.106211s  |  Total: 1337.448083s  |  Pure Speed: 14.220426 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=19000 t=0.001900
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_124020\Bunny_Fracture_Result_step19000_t0.0019.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 19500 / 100000  |  Pure Compute: 1374.729744s  |  Total: 1376.104784s  |  Pure Speed: 14.184606 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=19500 t=0.001950
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_124020\Bunny_Fracture_Result_step19500_t0.0019.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 20000 / 100000  |  Pure Compute: 1411.999833s  |  Total: 1413.422927s  |  Pure Speed: 14.164308 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=20000 t=0.002000
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_124020\Bunny_Fracture_Result_step20000_t0.0020.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 20500 / 100000  |  Pure Compute: 1448.684301s  |  Total: 1450.137831s  |  Pure Speed: 14.150771 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=20500 t=0.002050
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_124020\Bunny_Fracture_Result_step20500_t0.0020.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 21000 / 100000  |  Pure Compute: 1485.631575s  |  Total: 1487.121522s  |  Pure Speed: 14.135402 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=21000 t=0.002100
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_124020\Bunny_Fracture_Result_step21000_t0.0021.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 21500 / 100000  |  Pure Compute: 1522.255717s  |  Total: 1523.774688s  |  Pure Speed: 14.123777 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=21500 t=0.002150
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_124020\Bunny_Fracture_Result_step21500_t0.0022.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 22000 / 100000  |  Pure Compute: 1558.632963s  |  Total: 1560.188981s  |  Pure Speed: 14.114933 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=22000 t=0.002200
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_124020\Bunny_Fracture_Result_step22000_t0.0022.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 22500 / 100000  |  Pure Compute: 1597.187760s  |  Total: 1598.786469s  |  Pure Speed: 14.087260 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=22500 t=0.002250
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_124020\Bunny_Fracture_Result_step22500_t0.0022.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 23000 / 100000  |  Pure Compute: 1636.067042s  |  Total: 1637.712577s  |  Pure Speed: 14.058104 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=23000 t=0.002300
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_124020\Bunny_Fracture_Result_step23000_t0.0023.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 23500 / 100000  |  Pure Compute: 1674.499102s  |  Total: 1676.179347s  |  Pure Speed: 14.034048 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=23500 t=0.002350
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_124020\Bunny_Fracture_Result_step23500_t0.0024.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 24000 / 100000  |  Pure Compute: 1712.717640s  |  Total: 1714.430411s  |  Pure Speed: 14.012818 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=24000 t=0.002400
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_124020\Bunny_Fracture_Result_step24000_t0.0024.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 24500 / 100000  |  Pure Compute: 1751.161392s  |  Total: 1752.907200s  |  Pure Speed: 13.990715 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=24500 t=0.002450
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_124020\Bunny_Fracture_Result_step24500_t0.0024.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 25000 / 100000  |  Pure Compute: 1789.665638s  |  Total: 1791.447506s  |  Pure Speed: 13.969090 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=25000 t=0.002500
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_124020\Bunny_Fracture_Result_step25000_t0.0025.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 25500 / 100000  |  Pure Compute: 1830.110275s  |  Total: 1831.928980s  |  Pure Speed: 13.933587 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=25500 t=0.002550
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_124020\Bunny_Fracture_Result_step25500_t0.0025.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 26000 / 100000  |  Pure Compute: 1869.699027s  |  Total: 1871.560931s  |  Pure Speed: 13.905981 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=26000 t=0.002600
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_124020\Bunny_Fracture_Result_step26000_t0.0026.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 26500 / 100000  |  Pure Compute: 1907.974028s  |  Total: 1909.866998s  |  Pure Speed: 13.889078 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=26500 t=0.002650
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_124020\Bunny_Fracture_Result_step26500_t0.0027.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 27000 / 100000  |  Pure Compute: 1946.457676s  |  Total: 1948.378968s  |  Pure Speed: 13.871352 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=27000 t=0.002700
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_124020\Bunny_Fracture_Result_step27000_t0.0027.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 27500 / 100000  |  Pure Compute: 1985.539408s  |  Total: 1987.489989s  |  Pure Speed: 13.850141 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=27500 t=0.002750
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_124020\Bunny_Fracture_Result_step27500_t0.0027.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 28000 / 100000  |  Pure Compute: 2024.977243s  |  Total: 2026.976940s  |  Pure Speed: 13.827316 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=28000 t=0.002800
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_124020\Bunny_Fracture_Result_step28000_t0.0028.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 28500 / 100000  |  Pure Compute: 2065.579053s  |  Total: 2067.608864s  |  Pure Speed: 13.797584 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=28500 t=0.002850
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_124020\Bunny_Fracture_Result_step28500_t0.0028.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 29000 / 100000  |  Pure Compute: 2105.353313s  |  Total: 2107.417049s  |  Pure Speed: 13.774410 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=29000 t=0.002900
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_124020\Bunny_Fracture_Result_step29000_t0.0029.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 29500 / 100000  |  Pure Compute: 2144.426171s  |  Total: 2146.528963s  |  Pure Speed: 13.756594 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=29500 t=0.002950
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_124020\Bunny_Fracture_Result_step29500_t0.0029.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 30000 / 100000  |  Pure Compute: 2182.697418s  |  Total: 2184.830017s  |  Pure Speed: 13.744461 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=30000 t=0.003000
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_124020\Bunny_Fracture_Result_step30000_t0.0030.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 30500 / 100000  |  Pure Compute: 2220.789647s  |  Total: 2222.970290s  |  Pure Speed: 13.733854 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=30500 t=0.003050
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_124020\Bunny_Fracture_Result_step30500_t0.0030.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 31000 / 100000  |  Pure Compute: 2259.243327s  |  Total: 2261.457805s  |  Pure Speed: 13.721408 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=31000 t=0.003100
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_124020\Bunny_Fracture_Result_step31000_t0.0031.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 31500 / 100000  |  Pure Compute: 2297.831734s  |  Total: 2300.087761s  |  Pure Speed: 13.708576 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=31500 t=0.003150
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_124020\Bunny_Fracture_Result_step31500_t0.0032.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 32000 / 100000  |  Pure Compute: 2335.722069s  |  Total: 2338.006144s  |  Pure Speed: 13.700260 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=32000 t=0.003200
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_124020\Bunny_Fracture_Result_step32000_t0.0032.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 32500 / 100000  |  Pure Compute: 2372.698281s  |  Total: 2375.011952s  |  Pure Speed: 13.697485 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=32500 t=0.003250
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_124020\Bunny_Fracture_Result_step32500_t0.0032.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 33000 / 100000  |  Pure Compute: 2409.604331s  |  Total: 2411.955492s  |  Pure Speed: 13.695195 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=33000 t=0.003300
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_124020\Bunny_Fracture_Result_step33000_t0.0033.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 33500 / 100000  |  Pure Compute: 2446.586874s  |  Total: 2448.973194s  |  Pure Speed: 13.692545 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=33500 t=0.003350
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_124020\Bunny_Fracture_Result_step33500_t0.0033.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 34000 / 100000  |  Pure Compute: 2483.111224s  |  Total: 2485.532327s  |  Pure Speed: 13.692500 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=34000 t=0.003400
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_124020\Bunny_Fracture_Result_step34000_t0.0034.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 34500 / 100000  |  Pure Compute: 2522.272863s  |  Total: 2524.732922s  |  Pure Speed: 13.678139 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=34500 t=0.003450
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_124020\Bunny_Fracture_Result_step34500_t0.0034.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 35000 / 100000  |  Pure Compute: 2561.730653s  |  Total: 2564.238105s  |  Pure Speed: 13.662639 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=35000 t=0.003500
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_124020\Bunny_Fracture_Result_step35000_t0.0035.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 35500 / 100000  |  Pure Compute: 2599.606841s  |  Total: 2602.154063s  |  Pure Speed: 13.655911 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=35500 t=0.003550
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_124020\Bunny_Fracture_Result_step35500_t0.0035.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 36000 / 100000  |  Pure Compute: 2638.629145s  |  Total: 2641.207756s  |  Pure Speed: 13.643448 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=36000 t=0.003600
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_124020\Bunny_Fracture_Result_step36000_t0.0036.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 36500 / 100000  |  Pure Compute: 2676.129776s  |  Total: 2678.749396s  |  Pure Speed: 13.639099 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=36500 t=0.003650
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_124020\Bunny_Fracture_Result_step36500_t0.0037.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 37000 / 100000  |  Pure Compute: 2715.739074s  |  Total: 2718.401452s  |  Pure Speed: 13.624284 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=37000 t=0.003700
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_124020\Bunny_Fracture_Result_step37000_t0.0037.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 37500 / 100000  |  Pure Compute: 2753.544194s  |  Total: 2756.249251s  |  Pure Speed: 13.618812 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=37500 t=0.003750
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_124020\Bunny_Fracture_Result_step37500_t0.0037.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 38000 / 100000  |  Pure Compute: 2791.767919s  |  Total: 2794.513351s  |  Pure Speed: 13.611447 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=38000 t=0.003800
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_124020\Bunny_Fracture_Result_step38000_t0.0038.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 38500 / 100000  |  Pure Compute: 2828.707730s  |  Total: 2831.488433s  |  Pure Speed: 13.610455 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=38500 t=0.003850
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_124020\Bunny_Fracture_Result_step38500_t0.0038.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 39000 / 100000  |  Pure Compute: 2865.700692s  |  Total: 2868.517240s  |  Pure Speed: 13.609237 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=39000 t=0.003900
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_124020\Bunny_Fracture_Result_step39000_t0.0039.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 39500 / 100000  |  Pure Compute: 2902.713326s  |  Total: 2905.564758s  |  Pure Speed: 13.607958 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=39500 t=0.003950
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_124020\Bunny_Fracture_Result_step39500_t0.0039.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 40000 / 100000  |  Pure Compute: 2942.078112s  |  Total: 2944.961094s  |  Pure Speed: 13.595832 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=40000 t=0.004000
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_124020\Bunny_Fracture_Result_step40000_t0.0040.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 40500 / 100000  |  Pure Compute: 2980.449253s  |  Total: 2983.364319s  |  Pure Speed: 13.588555 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=40500 t=0.004050
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_124020\Bunny_Fracture_Result_step40500_t0.0040.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 41000 / 100000  |  Pure Compute: 3019.099057s  |  Total: 3022.054968s  |  Pure Speed: 13.580210 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=41000 t=0.004100
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_124020\Bunny_Fracture_Result_step41000_t0.0041.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 41500 / 100000  |  Pure Compute: 3055.437098s  |  Total: 3058.433467s  |  Pure Speed: 13.582345 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=41500 t=0.004150
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_124020\Bunny_Fracture_Result_step41500_t0.0042.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 42000 / 100000  |  Pure Compute: 3091.893640s  |  Total: 3094.928771s  |  Pure Speed: 13.583908 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=42000 t=0.004200
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_124020\Bunny_Fracture_Result_step42000_t0.0042.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 42500 / 100000  |  Pure Compute: 3131.129861s  |  Total: 3134.195110s  |  Pure Speed: 13.573375 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=42500 t=0.004250
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_124020\Bunny_Fracture_Result_step42500_t0.0042.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 43000 / 100000  |  Pure Compute: 3167.908263s  |  Total: 3171.014436s  |  Pure Speed: 13.573625 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=43000 t=0.004300
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_124020\Bunny_Fracture_Result_step43000_t0.0043.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 43500 / 100000  |  Pure Compute: 3204.545519s  |  Total: 3207.681544s  |  Pure Speed: 13.574468 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=43500 t=0.004350
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_124020\Bunny_Fracture_Result_step43500_t0.0043.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 44000 / 100000  |  Pure Compute: 3242.847694s  |  Total: 3246.018653s  |  Pure Speed: 13.568321 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=44000 t=0.004400
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_124020\Bunny_Fracture_Result_step44000_t0.0044.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 44500 / 100000  |  Pure Compute: 3279.691625s  |  Total: 3282.899427s  |  Pure Speed: 13.568349 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=44500 t=0.004450
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_124020\Bunny_Fracture_Result_step44500_t0.0044.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 45000 / 100000  |  Pure Compute: 3317.139729s  |  Total: 3320.373179s  |  Pure Speed: 13.565904 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=45000 t=0.004500
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_124020\Bunny_Fracture_Result_step45000_t0.0045.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 45500 / 100000  |  Pure Compute: 3354.497335s  |  Total: 3357.766559s  |  Pure Speed: 13.563880 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=45500 t=0.004550
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_124020\Bunny_Fracture_Result_step45500_t0.0046.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 46000 / 100000  |  Pure Compute: 3391.048125s  |  Total: 3394.351138s  |  Pure Speed: 13.565127 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=46000 t=0.004600
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_124020\Bunny_Fracture_Result_step46000_t0.0046.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 46500 / 100000  |  Pure Compute: 3427.728200s  |  Total: 3431.070553s  |  Pure Speed: 13.565836 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=46500 t=0.004650
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_124020\Bunny_Fracture_Result_step46500_t0.0046.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 47000 / 100000  |  Pure Compute: 3463.639622s  |  Total: 3467.022159s  |  Pure Speed: 13.569541 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=47000 t=0.004700
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_124020\Bunny_Fracture_Result_step47000_t0.0047.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 47500 / 100000  |  Pure Compute: 3492.363162s  |  Total: 3495.773238s  |  Pure Speed: 13.601106 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=47500 t=0.004750
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_124020\Bunny_Fracture_Result_step47500_t0.0047.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 48000 / 100000  |  Pure Compute: 3522.232001s  |  Total: 3525.681341s  |  Pure Speed: 13.627722 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=48000 t=0.004800
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_124020\Bunny_Fracture_Result_step48000_t0.0048.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 48500 / 100000  |  Pure Compute: 3554.097800s  |  Total: 3557.583008s  |  Pure Speed: 13.646220 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=48500 t=0.004850
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_124020\Bunny_Fracture_Result_step48500_t0.0049.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 49000 / 100000  |  Pure Compute: 3587.326855s  |  Total: 3590.841755s  |  Pure Speed: 13.659196 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=49000 t=0.004900
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_124020\Bunny_Fracture_Result_step49000_t0.0049.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 49500 / 100000  |  Pure Compute: 3621.324413s  |  Total: 3624.869471s  |  Pure Speed: 13.669032 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=49500 t=0.004950
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_124020\Bunny_Fracture_Result_step49500_t0.0049.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 50000 / 100000  |  Pure Compute: 3656.110577s  |  Total: 3659.688434s  |  Pure Speed: 13.675735 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=50000 t=0.005000
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_124020\Bunny_Fracture_Result_step50000_t0.0050.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 50500 / 100000  |  Pure Compute: 3694.364401s  |  Total: 3697.981355s  |  Pure Speed: 13.669469 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=50500 t=0.005050
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_124020\Bunny_Fracture_Result_step50500_t0.0050.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 51000 / 100000  |  Pure Compute: 3732.501861s  |  Total: 3736.146144s  |  Pure Speed: 13.663757 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=51000 t=0.005100
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_124020\Bunny_Fracture_Result_step51000_t0.0051.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 51500 / 100000  |  Pure Compute: 3769.206326s  |  Total: 3772.885302s  |  Pure Speed: 13.663354 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=51500 t=0.005150
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_124020\Bunny_Fracture_Result_step51500_t0.0052.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 52000 / 100000  |  Pure Compute: 3805.919896s  |  Total: 3809.632704s  |  Pure Speed: 13.662925 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=52000 t=0.005200
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_124020\Bunny_Fracture_Result_step52000_t0.0052.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 52500 / 100000  |  Pure Compute: 3843.857750s  |  Total: 3847.599196s  |  Pure Speed: 13.658154 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=52500 t=0.005250
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_124020\Bunny_Fracture_Result_step52500_t0.0052.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 53000 / 100000  |  Pure Compute: 3880.903209s  |  Total: 3884.692162s  |  Pure Speed: 13.656615 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=53000 t=0.005300
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_124020\Bunny_Fracture_Result_step53000_t0.0053.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 53500 / 100000  |  Pure Compute: 3919.637931s  |  Total: 3923.467254s  |  Pure Speed: 13.649220 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=53500 t=0.005350
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_124020\Bunny_Fracture_Result_step53500_t0.0053.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 54000 / 100000  |  Pure Compute: 3957.905523s  |  Total: 3961.771814s  |  Pure Speed: 13.643580 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=54000 t=0.005400
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_124020\Bunny_Fracture_Result_step54000_t0.0054.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 54500 / 100000  |  Pure Compute: 3994.509592s  |  Total: 3998.421971s  |  Pure Speed: 13.643727 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=54500 t=0.005450
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_124020\Bunny_Fracture_Result_step54500_t0.0054.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 55000 / 100000  |  Pure Compute: 4031.633216s  |  Total: 4035.568958s  |  Pure Speed: 13.642114 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=55000 t=0.005500
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_124020\Bunny_Fracture_Result_step55000_t0.0055.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 55500 / 100000  |  Pure Compute: 4068.688326s  |  Total: 4072.663877s  |  Pure Speed: 13.640760 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=55500 t=0.005550
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_124020\Bunny_Fracture_Result_step55500_t0.0055.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 56000 / 100000  |  Pure Compute: 4105.497483s  |  Total: 4109.512673s  |  Pure Speed: 13.640247 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=56000 t=0.005600
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_124020\Bunny_Fracture_Result_step56000_t0.0056.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 56500 / 100000  |  Pure Compute: 4143.862606s  |  Total: 4147.913406s  |  Pure Speed: 13.634622 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=56500 t=0.005650
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_124020\Bunny_Fracture_Result_step56500_t0.0056.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 57000 / 100000  |  Pure Compute: 4181.740030s  |  Total: 4185.825066s  |  Pure Speed: 13.630690 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=57000 t=0.005700
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_124020\Bunny_Fracture_Result_step57000_t0.0057.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 57500 / 100000  |  Pure Compute: 4218.266615s  |  Total: 4222.391719s  |  Pure Speed: 13.631191 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=57500 t=0.005750
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_124020\Bunny_Fracture_Result_step57500_t0.0057.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 58000 / 100000  |  Pure Compute: 4254.012113s  |  Total: 4258.172553s  |  Pure Speed: 13.634188 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=58000 t=0.005800
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_124020\Bunny_Fracture_Result_step58000_t0.0058.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 58500 / 100000  |  Pure Compute: 4281.781085s  |  Total: 4285.972247s  |  Pure Speed: 13.662539 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=58500 t=0.005850
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_124020\Bunny_Fracture_Result_step58500_t0.0059.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 59000 / 100000  |  Pure Compute: 4313.566977s  |  Total: 4317.793610s  |  Pure Speed: 13.677775 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=59000 t=0.005900
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_124020\Bunny_Fracture_Result_step59000_t0.0059.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 59500 / 100000  |  Pure Compute: 4343.003454s  |  Total: 4347.256814s  |  Pure Speed: 13.700196 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=59500 t=0.005950
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_124020\Bunny_Fracture_Result_step59500_t0.0059.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 60000 / 100000  |  Pure Compute: 4375.527369s  |  Total: 4379.815596s  |  Pure Speed: 13.712633 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=60000 t=0.006000
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_124020\Bunny_Fracture_Result_step60000_t0.0060.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 60500 / 100000  |  Pure Compute: 4410.035613s  |  Total: 4414.365134s  |  Pure Speed: 13.718710 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=60500 t=0.006050
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_124020\Bunny_Fracture_Result_step60500_t0.0060.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 61000 / 100000  |  Pure Compute: 4444.225298s  |  Total: 4448.580935s  |  Pure Speed: 13.725677 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=61000 t=0.006100
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_124020\Bunny_Fracture_Result_step61000_t0.0061.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 61500 / 100000  |  Pure Compute: 4479.191259s  |  Total: 4483.589271s  |  Pure Speed: 13.730157 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=61500 t=0.006150
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_124020\Bunny_Fracture_Result_step61500_t0.0062.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 62000 / 100000  |  Pure Compute: 4514.602905s  |  Total: 4519.028224s  |  Pure Speed: 13.733212 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=62000 t=0.006200
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_124020\Bunny_Fracture_Result_step62000_t0.0062.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 62500 / 100000  |  Pure Compute: 4550.018652s  |  Total: 4554.485750s  |  Pure Speed: 13.736207 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=62500 t=0.006250
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_124020\Bunny_Fracture_Result_step62500_t0.0062.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 63000 / 100000  |  Pure Compute: 4586.797935s  |  Total: 4591.297260s  |  Pure Speed: 13.735072 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=63000 t=0.006300
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_124020\Bunny_Fracture_Result_step63000_t0.0063.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 63500 / 100000  |  Pure Compute: 4625.356030s  |  Total: 4629.894083s  |  Pure Speed: 13.728673 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=63500 t=0.006350
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_124020\Bunny_Fracture_Result_step63500_t0.0063.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 64000 / 100000  |  Pure Compute: 4662.225369s  |  Total: 4666.788420s  |  Pure Speed: 13.727350 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=64000 t=0.006400
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_124020\Bunny_Fracture_Result_step64000_t0.0064.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 64500 / 100000  |  Pure Compute: 4699.360293s  |  Total: 4703.963745s  |  Pure Speed: 13.725272 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=64500 t=0.006450
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_124020\Bunny_Fracture_Result_step64500_t0.0065.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 65000 / 100000  |  Pure Compute: 4736.146088s  |  Total: 4740.806699s  |  Pure Speed: 13.724239 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=65000 t=0.006500
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_124020\Bunny_Fracture_Result_step65000_t0.0065.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 65500 / 100000  |  Pure Compute: 4774.410626s  |  Total: 4779.104660s  |  Pure Speed: 13.718971 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=65500 t=0.006550
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_124020\Bunny_Fracture_Result_step65500_t0.0065.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 66000 / 100000  |  Pure Compute: 4810.879683s  |  Total: 4815.601906s  |  Pure Speed: 13.718905 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=66000 t=0.006600
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_124020\Bunny_Fracture_Result_step66000_t0.0066.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 66500 / 100000  |  Pure Compute: 4849.478551s  |  Total: 4854.235359s  |  Pure Speed: 13.712815 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=66500 t=0.006650
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_124020\Bunny_Fracture_Result_step66500_t0.0066.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 67000 / 100000  |  Pure Compute: 4886.987571s  |  Total: 4891.774018s  |  Pure Speed: 13.709877 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=67000 t=0.006700
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_124020\Bunny_Fracture_Result_step67000_t0.0067.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 67500 / 100000  |  Pure Compute: 4923.480232s  |  Total: 4928.296471s  |  Pure Speed: 13.709814 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=67500 t=0.006750
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_124020\Bunny_Fracture_Result_step67500_t0.0067.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 68000 / 100000  |  Pure Compute: 4951.205397s  |  Total: 4956.048058s  |  Pure Speed: 13.734029 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=68000 t=0.006800
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_124020\Bunny_Fracture_Result_step68000_t0.0068.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 68500 / 100000  |  Pure Compute: 4980.866082s  |  Total: 4985.741767s  |  Pure Speed: 13.752628 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=68500 t=0.006850
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_124020\Bunny_Fracture_Result_step68500_t0.0068.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 69000 / 100000  |  Pure Compute: 5012.328556s  |  Total: 5017.239723s  |  Pure Speed: 13.766057 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=69000 t=0.006900
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_124020\Bunny_Fracture_Result_step69000_t0.0069.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 69500 / 100000  |  Pure Compute: 5045.250606s  |  Total: 5050.197990s  |  Pure Speed: 13.775332 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=69500 t=0.006950
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_124020\Bunny_Fracture_Result_step69500_t0.0069.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 70000 / 100000  |  Pure Compute: 5081.124167s  |  Total: 5086.108011s  |  Pure Speed: 13.776479 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=70000 t=0.007000
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_124020\Bunny_Fracture_Result_step70000_t0.0070.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 70500 / 100000  |  Pure Compute: 5116.761169s  |  Total: 5121.784180s  |  Pure Speed: 13.778247 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=70500 t=0.007050
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_124020\Bunny_Fracture_Result_step70500_t0.0070.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 71000 / 100000  |  Pure Compute: 5152.256887s  |  Total: 5157.319497s  |  Pure Speed: 13.780369 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=71000 t=0.007100
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_124020\Bunny_Fracture_Result_step71000_t0.0071.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 71500 / 100000  |  Pure Compute: 5187.978271s  |  Total: 5193.075845s  |  Pure Speed: 13.781862 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=71500 t=0.007150
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_124020\Bunny_Fracture_Result_step71500_t0.0072.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 72000 / 100000  |  Pure Compute: 5225.813981s  |  Total: 5230.947742s  |  Pure Speed: 13.777758 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=72000 t=0.007200
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_124020\Bunny_Fracture_Result_step72000_t0.0072.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 72500 / 100000  |  Pure Compute: 5262.845984s  |  Total: 5268.021044s  |  Pure Speed: 13.775816 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=72500 t=0.007250
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_124020\Bunny_Fracture_Result_step72500_t0.0072.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 73000 / 100000  |  Pure Compute: 5300.659736s  |  Total: 5305.862637s  |  Pure Speed: 13.771871 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=73000 t=0.007300
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_124020\Bunny_Fracture_Result_step73000_t0.0073.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 73500 / 100000  |  Pure Compute: 5338.876322s  |  Total: 5344.117646s  |  Pure Speed: 13.766942 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=73500 t=0.007350
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_124020\Bunny_Fracture_Result_step73500_t0.0073.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 74000 / 100000  |  Pure Compute: 5375.681998s  |  Total: 5380.959448s  |  Pure Speed: 13.765695 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=74000 t=0.007400
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_124020\Bunny_Fracture_Result_step74000_t0.0074.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 74500 / 100000  |  Pure Compute: 5412.445335s  |  Total: 5417.762063s  |  Pure Speed: 13.764573 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=74500 t=0.007450
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_124020\Bunny_Fracture_Result_step74500_t0.0075.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 75000 / 100000  |  Pure Compute: 5448.881480s  |  Total: 5454.231391s  |  Pure Speed: 13.764293 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=75000 t=0.007500
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_124020\Bunny_Fracture_Result_step75000_t0.0075.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 75500 / 100000  |  Pure Compute: 5485.447437s  |  Total: 5490.840197s  |  Pure Speed: 13.763690 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=75500 t=0.007550
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_124020\Bunny_Fracture_Result_step75500_t0.0075.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 76000 / 100000  |  Pure Compute: 5523.144525s  |  Total: 5528.572896s  |  Pure Speed: 13.760277 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=76000 t=0.007600
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_124020\Bunny_Fracture_Result_step76000_t0.0076.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 76500 / 100000  |  Pure Compute: 5562.646540s  |  Total: 5568.108738s  |  Pure Speed: 13.752447 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=76500 t=0.007650
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_124020\Bunny_Fracture_Result_step76500_t0.0076.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 77000 / 100000  |  Pure Compute: 5599.464539s  |  Total: 5604.965757s  |  Pure Speed: 13.751315 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=77000 t=0.007700
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_124020\Bunny_Fracture_Result_step77000_t0.0077.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 77500 / 100000  |  Pure Compute: 5636.165817s  |  Total: 5641.695314s  |  Pure Speed: 13.750483 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=77500 t=0.007750
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_124020\Bunny_Fracture_Result_step77500_t0.0077.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 78000 / 100000  |  Pure Compute: 5673.340511s  |  Total: 5678.901408s  |  Pure Speed: 13.748514 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=78000 t=0.007800
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_124020\Bunny_Fracture_Result_step78000_t0.0078.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 78500 / 100000  |  Pure Compute: 5712.060117s  |  Total: 5717.670518s  |  Pure Speed: 13.742853 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=78500 t=0.007850
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_124020\Bunny_Fracture_Result_step78500_t0.0078.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 79000 / 100000  |  Pure Compute: 5748.654307s  |  Total: 5754.295494s  |  Pure Speed: 13.742347 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=79000 t=0.007900
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_124020\Bunny_Fracture_Result_step79000_t0.0079.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 79500 / 100000  |  Pure Compute: 5777.524640s  |  Total: 5783.200717s  |  Pure Speed: 13.760218 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=79500 t=0.007950
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_124020\Bunny_Fracture_Result_step79500_t0.0080.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 80000 / 100000  |  Pure Compute: 5808.090925s  |  Total: 5813.799813s  |  Pure Speed: 13.773889 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=80000 t=0.008000
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_124020\Bunny_Fracture_Result_step80000_t0.0080.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 80500 / 100000  |  Pure Compute: 5838.971633s  |  Total: 5844.713386s  |  Pure Speed: 13.786674 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=80500 t=0.008050
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_124020\Bunny_Fracture_Result_step80500_t0.0080.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 81000 / 100000  |  Pure Compute: 5868.550317s  |  Total: 5874.313656s  |  Pure Speed: 13.802387 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=81000 t=0.008100
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_124020\Bunny_Fracture_Result_step81000_t0.0081.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 81500 / 100000  |  Pure Compute: 5899.671435s  |  Total: 5905.466436s  |  Pure Speed: 13.814329 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=81500 t=0.008150
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_124020\Bunny_Fracture_Result_step81500_t0.0081.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 82000 / 100000  |  Pure Compute: 5932.462666s  |  Total: 5938.293004s  |  Pure Speed: 13.822253 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=82000 t=0.008200
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_124020\Bunny_Fracture_Result_step82000_t0.0082.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 82500 / 100000  |  Pure Compute: 5966.623219s  |  Total: 5972.488018s  |  Pure Speed: 13.826916 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=82500 t=0.008250
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_124020\Bunny_Fracture_Result_step82500_t0.0083.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 83000 / 100000  |  Pure Compute: 6003.263964s  |  Total: 6009.156781s  |  Pure Speed: 13.825812 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=83000 t=0.008300
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_124020\Bunny_Fracture_Result_step83000_t0.0083.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 83500 / 100000  |  Pure Compute: 6039.725952s  |  Total: 6045.658823s  |  Pure Speed: 13.825131 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=83500 t=0.008350
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_124020\Bunny_Fracture_Result_step83500_t0.0083.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 84000 / 100000  |  Pure Compute: 6075.777936s  |  Total: 6081.741418s  |  Pure Speed: 13.825390 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=84000 t=0.008400
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_124020\Bunny_Fracture_Result_step84000_t0.0084.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 84500 / 100000  |  Pure Compute: 6112.081152s  |  Total: 6118.075507s  |  Pure Speed: 13.825078 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=84500 t=0.008450
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_124020\Bunny_Fracture_Result_step84500_t0.0084.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 85000 / 100000  |  Pure Compute: 6148.513927s  |  Total: 6154.545538s  |  Pure Speed: 13.824479 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=85000 t=0.008500
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_124020\Bunny_Fracture_Result_step85000_t0.0085.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 85500 / 100000  |  Pure Compute: 6184.945000s  |  Total: 6191.007883s  |  Pure Speed: 13.823890 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=85500 t=0.008550
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_124020\Bunny_Fracture_Result_step85500_t0.0086.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 86000 / 100000  |  Pure Compute: 6225.112557s  |  Total: 6231.213123s  |  Pure Speed: 13.815011 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=86000 t=0.008600
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_124020\Bunny_Fracture_Result_step86000_t0.0086.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 86500 / 100000  |  Pure Compute: 6264.506787s  |  Total: 6270.651294s  |  Pure Speed: 13.807951 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=86500 t=0.008650
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_124020\Bunny_Fracture_Result_step86500_t0.0086.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 87000 / 100000  |  Pure Compute: 6301.354479s  |  Total: 6307.537813s  |  Pure Speed: 13.806555 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=87000 t=0.008700
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_124020\Bunny_Fracture_Result_step87000_t0.0087.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 87500 / 100000  |  Pure Compute: 6349.377593s  |  Total: 6355.597263s  |  Pure Speed: 13.780878 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=87500 t=0.008750
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_124020\Bunny_Fracture_Result_step87500_t0.0087.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 88000 / 100000  |  Pure Compute: 6389.799635s  |  Total: 6396.053061s  |  Pure Speed: 13.771950 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=88000 t=0.008800
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_124020\Bunny_Fracture_Result_step88000_t0.0088.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny
+[INFO] --- Step 88500 / 100000  |  Pure Compute: 6432.400715s  |  Total: 6438.690090s  |  Pure Speed: 13.758471 steps/s
+[INFO] Starting data export process...
+[INFO] Starting data export process step=88500 t=0.008850
+[INFO] Fetching model context for export: Bunny
+[INFO] Exporting to VTK format: D:\Project_C++\GRPD\Examples\Bunny\Result_20260331_124020\Bunny_Fracture_Result_step88500_t0.0089.vtk
+[INFO] Output format set to BINARY.
+[INFO] Successfully exported data for model: Bunny

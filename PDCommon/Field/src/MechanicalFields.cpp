@@ -4,18 +4,29 @@
 
 #include "MechanicalFields.h"
 #include "FieldManager.h"
+#include "FieldRegistry.h"
 #include "Logger.h"
 #include "PhysicsFieldRegistry.h"
 
 namespace PDCommon::Field {
 
 void MechanicalFields::registerFields(FieldManager &fm) {
-    // 力学核心场：位移、速度、加速度（均为三维矢量场）
-    fm.registerField<double>("Displacement", 3);
-    fm.registerField<double>("Velocity", 3);
-    fm.registerField<double>("Acceleration", 3);
-    LOG_INFO("[MechanicalFields] Core fields registered: "
-             "Displacement, Velocity, Acceleration.");
+  auto &reg = FieldRegistry::getInstance();
+  // 力学核心场：位移、速度、加速度（均为三维矢量场）
+  auto displacement = reg.createField("DoubleField", "Displacement", 3);
+  auto velocity = reg.createField("DoubleField", "Velocity", 3);
+  auto acceleration = reg.createField("DoubleField", "Acceleration", 3);
+  auto contactNormal = reg.createField("DoubleField", "ContactNormal", 3);
+  auto contactGap = reg.createField("DoubleField", "ContactGap", 1);
+  auto virtualSurfacePos = reg.createField("DoubleField", "VirtualSurfacePos", 3);
+  fm.addField(std::move(displacement));
+  fm.addField(std::move(velocity));
+  fm.addField(std::move(acceleration));
+  fm.addField(std::move(contactNormal));
+  fm.addField(std::move(contactGap));
+  fm.addField(std::move(virtualSurfacePos));
+  LOG_INFO("[MechanicalFields] Core fields registered: "
+           "Displacement, Velocity, Acceleration, ContactNormal, ContactGap, VirtualSurfacePos.");
 }
 
 // 静态注册到 PhysicsFieldRegistry

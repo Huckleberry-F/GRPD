@@ -17,7 +17,9 @@
 
 #include "PDContext.h"
 #include <functional>
+#include <memory>
 #include <string>
+#include <vector>
 
 namespace PDCommon::Kernel { class PDKernel; }
 
@@ -26,12 +28,7 @@ namespace Src::Integration {
 // 前置声明
 using PDCommon::Kernel::PDKernel;
 
-/// @brief 求解器配置参数（从 YAML 解析后传入）
-struct SolverConfig {
-  double dt = 1.0;          ///< 时间步长
-  double totalTime = 100.0; ///< 总求解时间
-  int outputInterval = 10;  ///< 输出间隔（步数）
-};
+#include <yaml-cpp/yaml.h>
 
 /// @brief 时间推进策略抽象基类
 class TimeIntegrator {
@@ -46,19 +43,91 @@ public:
   // 核心接口
   // -----------------------------------------------------------------------
 
-  /// @brief 执行完整的时间推进循环
+  /// @brief 从 YAML 读取控制参数（子类可 override 追加私有参数）
+  virtual void configure(const YAML::Node &solverNode);
+
+  /// @brief 执行完整的时间推进循环（多核协同版本）
   /// @param ctx            PD 仿真上下文
-  /// @param kernel         PD 积分核心 (L2)
-  /// @param config         求解器配置参数
+  /// @param kernels        PD 积分核心集合 (L2)，支持多场多核协同推进
   /// @param outputCallback 输出回调（由 PDSolver 提供）
-  virtual void run(PDCommon::Core::PDContext &ctx, PDKernel &kernel,
-                   const SolverConfig &config,
+  virtual void run(PDCommon::Core::PDContext &ctx,
+                   std::vector<std::unique_ptr<PDKernel>> &kernels,
                    std::function<void(int, double)> outputCallback) = 0;
 
   /// @brief 获取算法名称（如 "ExplicitEuler", "ADR"）
   virtual std::string getName() const = 0;
 
 protected:
+  struct LoadStepConfig {
+    int stepId = 0;
+    int numSubsteps = 1;     // 用于准静态步（如 ADR）定义细分
+    double targetTime = 0.0; // 显式算法判定本段结束的目标物理时间
+    double userDt = 0.0;     // 显式算法特定覆盖的步长 (0.0 表示自动计算)
+    int kbc = -1;            // 本步专用的 KBC 控制 (-1 表示使用全局配置)
+  };
+
+  std::vector<LoadStepConfig> loadStepConfigs_;
+  int kbc_ = 0;               ///< 加载控制：0=Ramp(坡道加载/查表), 1=Step(阶跃突加)
+  int defaultNumLoadSteps_ = 10;
+  int defaultNumSubsteps_ = 1;
+  double defaultEndTime_ = 1.0;
+  struct FirstOrderTarget {
+    std::string primaryName, rateName;
+    double *primaryPtr;
+    double *ratePtr;
+    size_t totalComponents;
+    int dimension;
+  };
+
+  struct SecondOrderTarget {
+    std::string uName, vName, aName;
+    double *uPtr;
+    double *vPtr;
+    double *aPtr;
+    size_t totalComponents;
+    int dimension;
+  };
+
+  double dt_ = 1.0;
+  double totalTime_ = 100.0;
+  int outputInterval_ = 10;
+  bool autoCalcDt_ = true; ///< 是否自动计算时间步（用户设 TimeStep_dt 后关闭）
+
+  /// @brief 通用算力流程：清零率场 → 施加 Neumann 源项 → 计算内力
+  /// @param ctx                PD 仿真上下文
+  /// @param kernels            PD 积分核心集合
+  /// @param rateFieldsToClear  需要清零的率场名称列表（一阶=TempRate, 二阶=Acceleration）
+  void evaluateForces(PDCommon::Core::PDContext &ctx,
+                      std::vector<std::unique_ptr<PDKernel>> &kernels,
+                      const std::vector<std::string> &rateFieldsToClear,
+                      int currentStep = 0,
+                      double activeLF = 1.0);
+
+  /// @brief 从 Kernel 的注册列表中自动解算和匹配二阶 ODE 系统（如 U -> V -> A）
+  /// @param kernels             所有算子内核集合
+  /// @param ctx                 用来查询实际场指针的上下文
+  /// @param out_soTargets       [Output] 匹配出的二阶组
+  /// @param out_accFieldNames   [Output] 需要被定期清零和重置的高阶率场（通常是加速度）
+  void extractSecondOrderTargets(const std::vector<std::unique_ptr<PDKernel>> &kernels,
+                                 PDCommon::Core::PDContext &ctx,
+                                 std::vector<SecondOrderTarget> &out_soTargets,
+                                 std::vector<std::string> &out_accFieldNames);
+
+  /// @brief 从 Kernel 注册列表中提取一阶系统依赖 (如 T -> T_rate)
+  void extractFirstOrderTargets(const std::vector<std::unique_ptr<PDKernel>> &kernels,
+                                PDCommon::Core::PDContext &ctx,
+                                std::vector<FirstOrderTarget> &out_foTargets,
+                                std::vector<std::string> &out_rateFieldNames);
+
+  /// @brief 基于 CFL 条件计算并返回安全时间步长（默认按机械波速计算，子类可按需重写）
+  /// @param ctx            PD 仿真上下文
+  /// @param massScale      质量缩放因子（动力学=1.0，ADR=用户设定值）
+  /// @param safetyFactor   CFL 安全系数（默认 0.8）
+  /// @return 计算出的安全时间步长上限
+  virtual double computeCFLTimestep(PDCommon::Core::PDContext &ctx,
+                                    double massScale = 1.0,
+                                    double safetyFactor = 0.8);
+
   TimeIntegrator() = default; // 只允许子类构造
 };
 

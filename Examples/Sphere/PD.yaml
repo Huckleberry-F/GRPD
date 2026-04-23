@@ -20,7 +20,7 @@ Parts:
     Thickness: 1.0
     Source: "Low_Res_Sphere.stl"
     RepairMesh: false
-    dx: 1.0          # 先用较大的 dx 快速测试
+    dx: 0.5          # 先用较大的 dx 快速测试
     Scale: 1.0     # Stanford Bunny 原始尺寸很小，需要放大
 
     # 3. 边界条件
@@ -28,13 +28,13 @@ Parts:
 BoundaryConditions:
   - BcID: 1
     Name: "Left_Fixed_Temp_500K"
-    Box: [-999.0, 999.0, -999.0, 999.0, -999.0, 1.0]  # z < 2.0mm → 左端第一层
+    Box: [-999.0, -20.0, -999.0, 999.0, -999.0, 999.0]  # z < 2.0mm → 左端第一层
     Type: "T"
     Value: 100.0
 
   - BcID: 2
     Name: "Right_Flux"
-    Box: [-999.0, 999.0, -999.0, 999.0, 105.0, 999.0]  # 上端面热流
+    Box: [-999.0, 999.0, -999.0, 999.0, 999.0, 999.0]  # 上端面热流
     Type: "FLUX"
     Value: 100.0
 
@@ -55,16 +55,17 @@ Materials:
 # dt_crit ≈ ρ·cp·dx² / (6k) = 7.85e-9 * 4.6e8 * 25 / 270 ≈ 0.334 s
 # dt = 0.01 远小于 dt_crit，稳定
 Solver:
-  Engine: "PD"
   Type: "Thermal"
+  TimeIntegrator: "Explicit"
+  Kernel: "NOSB_T"
   TotalTime: 10.0            # 10 秒
   TimeStep_dt: 0.01          # dt = 0.01 s
   OutputInterval: 100        # 每 100 步输出一次（共 10 个输出帧）
   OMP_Threads: 8
-  Horizon: 3.015              # 3.015 * dx = 3.015 * 1.0 = 3.015 mm
+  Horizon: 1.5075              # 3.015 * dx = 3.015 * 1.0 = 3.015 mm
   KernelWeightType: "Linear" # 可选: Constant, InverseDistance, Linear, Quadratic, Cubic, Quartic, Gaussian
   ZeroEnergyG0: 1.0          # 零能模式修正系数
-  ZeroEnergyMethod: "Silling"   # 可选: Silling, Wan, Zhang
+  ZeroEnergyMethod: "Zhang"   # 可选: Silling, Wan, Zhang
 
 # 6. 输出设置
 Writer:
@@ -83,3 +84,5 @@ Writer:
       Dimension: 1
     - Name: "NeighborCount"
       Dimension: 1
+
+# Updated for v3.1 project sync

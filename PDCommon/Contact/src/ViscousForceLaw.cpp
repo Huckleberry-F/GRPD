@@ -1,0 +1,90 @@
+#include "ViscousForceLaw.h"
+#include "ContactRegistry.h"
+#include "Logger.h"
+#include "MechanicalMaterial.h"
+#include "PDContext.h"
+#include "ParticleManager.h"
+#include <algorithm>
+#include <cmath>
+
+namespace PDCommon::Contact {
+
+void ViscousForceLaw::initialize(const YAML::Node &configNode) {
+  if (configNode["PenaltyFactor"])
+    penaltyFactor_ = configNode["PenaltyFactor"].as<double>();
+  if (configNode["PenaltyStiffness"])
+    penaltyStiffness_ = configNode["PenaltyStiffness"].as<double>();
+  if (configNode["DampingCoeff"])
+    dampingCoeff_ = configNode["DampingCoeff"].as<double>();
+
+  LOG_INFO("[ViscousForceLaw] Configured: Factor=" +
+           std::to_string(penaltyFactor_) +
+           ", DampingCoeff=" + std::to_string(dampingCoeff_));
+}
+
+void ViscousForceLaw::onPreContact(PDCommon::Core::PDContext &ctx,
+                                    double maxDx) {
+  if (penaltyStiffness_ < 0.0) {
+    auto &pm = ctx.getParticleManager();
+    const auto &particles = pm.getAllParticles();
+    double masterBulk = 1.0e5, slaveBulk = 1.0e5;
+    if (!masterIds_.empty()) {
+      auto *matBase = particles[masterIds_[0]].getMaterial();
+      auto *mechMat =
+          dynamic_cast<PDCommon::Material::MechanicalMaterial *>(matBase);
+      if (mechMat)
+        masterBulk = mechMat->getBulkModulus();
+    }
+    if (!slaveIds_.empty()) {
+      auto *matBase = particles[slaveIds_[0]].getMaterial();
+      auto *mechMat =
+          dynamic_cast<PDCommon::Material::MechanicalMaterial *>(matBase);
+      if (mechMat)
+        slaveBulk = mechMat->getBulkModulus();
+    }
+    double minK = std::min(masterBulk, slaveBulk);
+    const int dim = ctx.getDimension();
+    double effectiveThickness = (dim == 2) ? ctx.getThickness() : 1.0;
+    penaltyStiffness_ = penaltyFactor_ * minK * maxDx * effectiveThickness;
+    LOG_INFO("[ViscousForceLaw] Auto-Computed PenaltyStiffness: " +
+             std::to_string(penaltyStiffness_));
+  }
+}
+
+ForceResult ViscousForceLaw::computeForce(const ContactContext &pair) {
+  ForceResult result;
+
+  // 弹簧力（位移相关）
+  double f_spring = penaltyStiffness_ * pair.raw_penetration;
+
+  // 粘性阻尼力（速度相关）
+  // 多态隔离：直接使用 Axis B 预计算好的相对速度 (dv = v_i - v_j_equiv)
+  double dvx = pair.dvx;
+  double dvy = pair.dvy;
+  double dvz = pair.dvz;
+  double v_rel_n = dvx * pair.nx + dvy * pair.ny + dvz * pair.nz;
+
+  double m_eff = (pair.mass_i * pair.mass_j) / (pair.mass_i + pair.mass_j + 1e-30);
+  double c_crit = 2.0 * std::sqrt(penaltyStiffness_ * m_eff);
+  
+  // 阻尼力仅在粒子逼近时施加，防止阻碍分离
+  double f_damp = 0.0;
+  if (v_rel_n < 0.0) {
+      f_damp = dampingCoeff_ * c_crit * (-v_rel_n);
+  }
+
+  double forceMagnitude = f_spring + f_damp;
+  // 总力不允许为负（不允许变成吸引力）
+  if (forceMagnitude < 0.0)
+    forceMagnitude = 0.0;
+
+  result.fx = forceMagnitude * pair.nx;
+  result.fy = forceMagnitude * pair.ny;
+  result.fz = forceMagnitude * pair.nz;
+  return result;
+}
+
+} // namespace PDCommon::Contact
+
+REGISTER_FORCELAW_TYPE(Viscous, ViscousForceLaw)
+

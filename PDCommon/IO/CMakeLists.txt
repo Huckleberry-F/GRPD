@@ -5,11 +5,11 @@
 # 1. Define object library (produces .obj, not .lib)
 # Manually list source files for CMake stability
 add_library(IO_Obj OBJECT 
-    src/GrpdReader.cpp
     src/IOManager.cpp
     src/Outputer.cpp
     src/Writer.cpp
     src/VtkWriter.cpp
+    src/MeshData.cpp
     src/MeshReader.cpp
     src/ReaderRegistry.cpp
     src/ReaderManager.cpp
@@ -19,7 +19,6 @@ add_library(IO_Obj OBJECT
 
 # 2. Add header files to target
 target_sources(IO_Obj PRIVATE
-    include/GrpdReader.h
     include/IOManager.h
     include/Outputer.h
     include/Writer.h

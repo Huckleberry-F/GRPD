@@ -1,0 +1,91 @@
+#==============================================================================
+# GRPD 配置文件 - 斯坦福兔子 (Stanford Bunny) 陶瓷脆性断裂测试
+# 测试类型：兔子底部固定，头部受到侧向撞击（模拟“斩首”或颈部折断断裂）
+# 单位制：N-mm-tonne-s
+#   长度: mm
+#   质量: tonne (1e3 kg)
+#   时间: s
+#   力:   N (= tonne·mm/s²)
+#   应力: MPa (= N/mm²)
+# ==============================================================================
+
+# 1. 全局设置
+Assembly: {}
+
+# 2. 多模型几何定义
+Parts:
+  - PartID: 1
+    MatID: 1
+    Dimension: 3
+    Thickness: 1.0
+    Source: "FLATFOOT_StanfordBunny_jmil_HIGH_RES_Smoothed.stl"
+    RepairMesh: false
+    # 兔子尺寸约 86x67x84 mm。dx=1.0 时大约有几万个粒子，计算很快；
+    # 想要更精细的断口可以调小至 dx=0.5 (几十万粒子)。
+    dx: 1.0
+    Scale: 1.0
+
+# 3. 边界条件
+BoundaryConditions:
+  - BcID: 1
+    Name: "Fixed_Base"
+    # 固定兔子的底座/四肢 (Z 轴从 0 到 84，Z < 5.0 的区域全部固定)
+    Box: [-999.0, 999.0, -999.0, 999.0, -999.0, 5.0]
+    Type: "DISP"
+    Value: [0.0, 0.0, 0.0] # X, Y, Z 三向全固定
+  - BcID: 2
+    Name: "Impact_Head"
+    # 在兔子的头部/耳朵区域 (Z > 55.0) 施加侧向速度，迫使其头部弯折产生断裂
+    Box: [-999.0, 999.0, -999.0, 999.0, 55.0, 999.0]
+    Type: "VELOCITY"
+    Value: [200.0, 0.0, 0.0] # 以 200 mm/s 的向右速度推击头部，属于中低速撞击
+
+# 4. 预置裂纹 (PreCracks)
+# 这里我们不设置预置裂纹，让自然应力集中（比如纤细的颈部）去引导断裂的产生。
+PreCracks: []
+
+# 5. 材质物理属性 (极脆的玻璃/陶瓷本构)
+Materials:
+  - MatID: 1
+    Name: "Ceramic_Glass"
+    Type: "LinearElasticMat"
+    Density: 2.5e-9 # 玻璃/陶瓷密度: 约 2.5 g/cm³ -> 2.5e-9 tonne/mm³
+    YoungsModulus: 7.0e4 # 杨氏模量: 70 GPa = 70000 MPa
+    PoissonsRatio: 0.22 # 泊松比: 0.22 左右
+    # 断裂损伤准则
+    Damage:
+      Type: "CriticalStretch"
+      Critical_Stretch: 0.005 # 极脆！仅允许 0.5% 的临界伸长率，必定发生清脆的断裂
+
+# 6. 求解器控制
+Solver:
+  Engine: "PD"
+  Type: "Mechanical" # 纯力学
+  Kernel: "NOSB_M" # NOSB 核心
+  TimeIntegrator: "CentralDifference" # 中心差分
+  TotalTime: 1.0e-2 # 总时长 10 ms。在这个时间内头部被推移了 2 mm。
+  TimeStep_dt: 1.0e-7 # 显式积分步长。玻璃声速极快，需非常小的时间步
+  OutputInterval: 500 # 每 500 步输出一帧 (共计 200 帧)
+  OMP_Threads: 8 # 并行线程
+  Horizon: 3.015 # 邻近域半径 = 3.015 * dx
+  KernelWeightType: "Constant"
+  ZeroEnergyG0: 1.0 # 零能模式修正系数
+  ZeroEnergyMethod: "Silling"
+
+# 7. 输出设置
+Writer:
+  Name: "Bunny_Fracture_Result"
+  Type: "binary"
+  Variables:
+    - Name: "PartID"
+      Dimension: 1
+    - Name: "Displacement"
+      Dimension: 3
+    - Name: "Velocity"
+      Dimension: 3
+    - Name: "Damage" # [关键] 输出损伤场以便渲染断裂面和裂纹扩展
+      Dimension: 1
+    - Name: "PK1Stress"
+      Dimension: 9
+
+# Updated for v3.1 project sync

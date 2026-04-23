@@ -1,0 +1,81 @@
+#==============================================================================
+# 厚度对比实验 - h=1.0（默认）
+#==============================================================================
+
+Assembly: {}
+
+Parts:
+  - PartID: 1
+    MatID: 1
+    Dimension: 2
+    Length: 10.0
+    Width: 5.0
+    Thickness: 1.0 # h=1.0
+    dx: 0.05
+
+BoundaryConditions:
+  - Step: 1
+    BcID: 1
+    Name: "Fix_Left"
+    Box: [-0.01, 0.051, -0.01, 999.0, -999.0, 999.0]
+    Type: "UX"
+    Value: 0.0
+  - Step: 1
+    BcID: 2
+    Name: "Pull_Right_Force"
+    Box: [9.949, 10.01, -0.01, 999.0, -999.0, 999.0]
+    Type: "PX"
+    Value: 100.0
+  - Step: 1
+    BcID: 3
+    Name: "Fix_Left_Y"
+    Box: [-0.01, 0.051, -0.01, 999.0, -999.0, 999.0]
+    Type: "UY"
+    Value: 0.0
+
+Materials:
+  - MatID: 1
+    Name: "Steel_Elastic"
+    Type: "LinearElasticMat"
+    Density: 8.0e-9
+    YoungsModulus: 2.0e5
+    PoissonsRatio: 0.3
+
+Solver:
+  Engine: "PD"
+  Type: "Mechanical"
+  Kernel: "NOSB_M"
+  TimeIntegrator: "ADR"
+  LoadSteps:
+    - Step: 1
+      Time: 1.0
+      KBC: 1 # 第一段：显式指定斜坡平滑(Ramp)加载
+      NumSubsteps: 10 # 第一段为了快速通过弹性阶段，使用极少的截断粗糙过
+  MassScaleFactor: 1.25e8
+  MaxPseudoSteps: 20000
+  RampWaveRatio: 1.0
+  DampingMethod: "HybridKinetic"
+  Fracture_Strategy: "Staggered"
+  DispTol: 1.0e-6
+  ForceTol: 5.0e-3
+  OutputInterval: 1000
+  OMP_Threads: 16
+  Horizon: 0.15075
+  KernelWeightType: "Gaussian"
+  ZeroEnergyG0: 1.0
+  ZeroEnergyMethod: "Silling"
+
+Writer:
+  Name: "Result_h1"
+  Type: "binary"
+  Variables:
+    - Name: "PartID"
+      Dimension: 1
+    - Name: "Volume"
+      Dimension: 1
+    - Name: "Displacement"
+      Dimension: 3
+    - Name: "PK1Stress"
+      Dimension: 9
+    - Name: "Velocity"
+      Dimension: 3

@@ -5,7 +5,7 @@
 # ==============================================================================
 
 # 1. Set minimum CMake version (4.0.3 introduced improved FetchContent support)
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 4.0.3)
 
 # 2. Define project name, version, and language (C++)
 project(GRPD VERSION 1.0.0 LANGUAGES CXX)
@@ -32,9 +32,11 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY_DEBUG   "${CMAKE_SOURCE_DIR}/lib/debug")
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY_RELEASE "${CMAKE_SOURCE_DIR}/lib/release")
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY_DEBUG   "${CMAKE_SOURCE_DIR}/lib/debug")
 
-
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG "${PROJECT_SOURCE_DIR}/bin/debug")
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE "${PROJECT_SOURCE_DIR}/bin/release")
+# 确保输出目录在配置阶段被创建（MinGW 等单配置生成器不会自动创�?_RELEASE/_DEBUG 目录�?
+file(MAKE_DIRECTORY "${CMAKE_SOURCE_DIR}/bin/release")
+file(MAKE_DIRECTORY "${CMAKE_SOURCE_DIR}/bin/debug")
+file(MAKE_DIRECTORY "${CMAKE_SOURCE_DIR}/lib/release")
+file(MAKE_DIRECTORY "${CMAKE_SOURCE_DIR}/lib/debug")
 
 # ------------------------------------------------------------------------------
 # Core: Delegate control to top-level modules

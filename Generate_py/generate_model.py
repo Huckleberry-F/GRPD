@@ -37,7 +37,21 @@ def generate_from_yaml(yaml_path):
     output_file = os.path.join(yaml_dir, model_name + ".grpd")
     print(f"[INFO]  Output grpd path: {output_file}")
         
-    bc_configs = config.get('BoundaryConditions', [])
+    bc_entries = []
+    
+    # 1. 兼容原有全局 BoundaryConditions，并支持崭新的扁平化按步定义 (默认 Step = 0, 全时间通用)
+    if 'BoundaryConditions' in config:
+        for bc in config['BoundaryConditions']:
+            step_id = bc.get('Step', 0)  # 如果用户写了 Step，就认 Step。没写默认为 0
+            bc_entries.append({'step': step_id, 'bc': bc})
+            
+    # 2. 兼容旧版深度嵌套的 LoadStep_Conditions 语法
+    if 'LoadStep_Conditions' in config:
+        for step_node in config['LoadStep_Conditions']:
+            step_id = step_node.get('Step', 1)
+            bcs = step_node.get('BoundaryConditions', [])
+            for bc in bcs:
+                bc_entries.append({'step': step_id, 'bc': bc})
 
     # 存储所有物质点数据的全局大列表
     global_particles = []
@@ -125,6 +139,24 @@ def generate_from_yaml(yaml_path):
                 mesh_o3d.scale(scale, center=(0, 0, 0))
                 print(f"[STL]  Applied scale factor: {scale}")
             
+            # 旋转支持 (可选，绕XYZ轴的角度，单位：度)
+            rotation = part.get('Rotate', [0.0, 0.0, 0.0])
+            if rotation != [0.0, 0.0, 0.0]:
+                R = mesh_o3d.get_rotation_matrix_from_xyz((
+                    np.radians(rotation[0]), 
+                    np.radians(rotation[1]), 
+                    np.radians(rotation[2])
+                ))
+                mesh_o3d.rotate(R, center=(0, 0, 0))
+                print(f"[STL]  Applied rotation: {rotation} degrees")
+                
+            # 平移支持 (可选)
+            translate = part.get('Translate', [0.0, 0.0, 0.0])
+            if translate != [0.0, 0.0, 0.0]:
+                mesh_o3d.translate(translate)
+                print(f"[STL]  Applied translation: {translate}")
+
+            
             # 在包围盒内生成均匀网格点
             bbox = mesh_o3d.get_axis_aligned_bounding_box()
             bbox_min = bbox.get_min_bound()
@@ -145,7 +177,8 @@ def generate_from_yaml(yaml_path):
             
             if dim == 2:
                 z_coords = np.array([(bbox_min[2] + bbox_max[2]) / 2.0])
-                thickness = part.get('Thickness', bbox_max[2] - bbox_min[2])
+                # 2D: Volume = dx * dx * thickness（Thickness 可选，默认 1.0）
+                thickness = part.get('Thickness', 1.0)
                 volume = dx * dx * thickness
             else:
                 z_coords = np.arange(bbox_min[2] + dx/2, bbox_max[2], dx)
@@ -249,23 +282,63 @@ def generate_from_yaml(yaml_path):
             
         else:
             # ============================================================
-            # 原始矩形网格路径：Length x Width x Thickness + dx
+            # 原始内置网格路径：支持 Box / Circle / Sphere 几何图元
             # ============================================================
             dim = part['Dimension']
+            shape = part.get('Shape', 'Box')
             
-            x_coords = np.arange(dx / 2, part['Length'], dx)
-            y_coords = np.arange(dx / 2, part['Width'],  dx)
-            
-            if dim == 2:
-                X, Y = np.meshgrid(x_coords, y_coords, indexing='ij')
-                x_flat, y_flat = X.ravel(), Y.ravel()
-                z_flat = np.zeros_like(x_flat)
-                volume = dx * dx * part['Thickness']
-            else:
-                z_coords = np.arange(dx / 2, part['Thickness'], dx)
-                X, Y, Z = np.meshgrid(x_coords, y_coords, z_coords, indexing='ij')
-                x_flat, y_flat, z_flat = X.ravel(), Y.ravel(), Z.ravel()
-                volume = dx * dx * dx
+            if shape == 'Box':
+                x_coords = np.arange(dx / 2, part['Length'], dx)
+                y_coords = np.arange(dx / 2, part['Width'],  dx)
+                
+                if dim == 2:
+                    X, Y = np.meshgrid(x_coords, y_coords, indexing='ij')
+                    x_flat, y_flat = X.ravel(), Y.ravel()
+                    z_flat = np.zeros_like(x_flat)
+                    thickness = part.get('Thickness', 1.0)
+                    volume = dx * dx * thickness
+                else:
+                    z_coords = np.arange(dx / 2, part.get('Thickness', part.get('Height', dx)), dx)
+                    X, Y, Z = np.meshgrid(x_coords, y_coords, z_coords, indexing='ij')
+                    x_flat, y_flat, z_flat = X.ravel(), Y.ravel(), Z.ravel()
+                    volume = dx * dx * dx
+            elif shape == 'Sphere' or shape == 'Circle':
+                radius = part['Radius']
+                # 在 [-R, R] 构建包围盒
+                x_coords = np.arange(-radius + dx / 2, radius, dx)
+                y_coords = np.arange(-radius + dx / 2, radius, dx)
+                
+                if dim == 2:
+                    X, Y = np.meshgrid(x_coords, y_coords, indexing='ij')
+                    x_flat, y_flat = X.ravel(), Y.ravel()
+                    z_flat = np.zeros_like(x_flat)
+                    # 裁剪掉超出版径的点
+                    mask = (x_flat**2 + y_flat**2) <= radius**2
+                    x_flat, y_flat, z_flat = x_flat[mask], y_flat[mask], z_flat[mask]
+                    thickness = part.get('Thickness', 1.0)
+                    volume = dx * dx * thickness
+                else:
+                    z_coords = np.arange(-radius + dx / 2, radius, dx)
+                    X, Y, Z = np.meshgrid(x_coords, y_coords, z_coords, indexing='ij')
+                    x_flat, y_flat, z_flat = X.ravel(), Y.ravel(), Z.ravel()
+                    mask = (x_flat**2 + y_flat**2 + z_flat**2) <= radius**2
+                    x_flat, y_flat, z_flat = x_flat[mask], y_flat[mask], z_flat[mask]
+                    volume = dx * dx * dx
+
+
+        # 应用旋转支持 (针对原始矩形网格，绕自身原点旋转)
+        if 'Source' not in part:
+            rotation = part.get('Rotate', [0.0, 0.0, 0.0])
+            if rotation != [0.0, 0.0, 0.0]:
+                rx, ry, rz = np.radians(rotation)
+                Rx = np.array([[1, 0, 0], [0, np.cos(rx), -np.sin(rx)], [0, np.sin(rx), np.cos(rx)]])
+                Ry = np.array([[np.cos(ry), 0, np.sin(ry)], [0, 1, 0], [-np.sin(ry), 0, np.cos(ry)]])
+                Rz = np.array([[np.cos(rz), -np.sin(rz), 0], [np.sin(rz), np.cos(rz), 0], [0, 0, 1]])
+                R = Rz @ Ry @ Rx
+                pts = np.column_stack([x_flat, y_flat, z_flat])
+                pts_rot = pts @ R.T
+                x_flat, y_flat, z_flat = pts_rot[:,0], pts_rot[:,1], pts_rot[:,2]
+                print(f"[BUILD]  Applied primitive rotation: {rotation} degrees")
 
         # 应用平移偏移量 (非常关键，组合装配体必备)
         x_flat = x_flat + offset[0]
@@ -274,12 +347,21 @@ def generate_from_yaml(yaml_path):
 
         num_part_particles = len(x_flat)
         
+        # [NEW] 矢量化计算单 Part 内多材料区域
+        mat_flat = np.full(num_part_particles, mat_id, dtype=int)
+        if 'MatRegions' in part:
+            for region in part['MatRegions']:
+                box = region['Box']
+                r_mat = region.get('MatID', mat_id)
+                mask = in_box(x_flat, y_flat, z_flat, box)
+                mat_flat[mask] = r_mat
+
         # 将当前 Part 的点推入全局数组
         for i in range(num_part_particles):
             global_particles.append({
                 'ID': global_id,
                 'PartID': part_id,
-                'MatID': mat_id,
+                'MatID': mat_flat[i],
                 'X': x_flat[i],
                 'Y': y_flat[i],
                 'Z': z_flat[i],
@@ -294,6 +376,7 @@ def generate_from_yaml(yaml_path):
     all_y = np.array([p['Y'] for p in global_particles])
     all_z = np.array([p['Z'] for p in global_particles])
     all_ids = np.array([p['ID'] for p in global_particles])
+    all_part_ids = np.array([p['PartID'] for p in global_particles])
 
     # 2. 写入极其工整的 .grpd 文件
     output_dir = os.path.dirname(output_file)
@@ -303,6 +386,8 @@ def generate_from_yaml(yaml_path):
         
         # --- 写入几何块 ---
         f.write("*PARTICLE\n")
+        # HPC 前置预分配：向 C++ 引擎提前通告总粒子数，实现 Zero-Reallocation
+        f.write(f"TotalParticles,{total_particles}\n")
         # 表头也对其占位，方便阅读
         f.write(f"#{'ID':>19}, {'PartID':>19}, {'MatID':>19}, {'X':>19}, {'Y':>19}, {'Z':>19}, {'Volume':>19}\n")
         
@@ -312,31 +397,82 @@ def generate_from_yaml(yaml_path):
             line = f"{p['ID']:>20},{p['PartID']:>20},{p['MatID']:>20},{p['X']:>20.6f},{p['Y']:>20.6f},{p['Z']:>20.6f},{p['Volume']:>20.8f}\n"
             f.write(line)
             
-        # --- 写入边界条件块 ---
+        # --- 写入边界条件块 (ANSYS APDL 单自由度格式) ---
         f.write("*LOAD\n")
-        f.write(f"#{'ID':>19}, {'BcID':>19}, {'Type':>19}, {'Value(s)...':>19}\n")
+        f.write(f"#{'ID':>19}, {'Step':>19}, {'BcID':>19}, {'DOF':>19}, {'Value':>19}\n")
+        
+        # DOF 类型映射表：从旧的组合类型 + 轴索引映射到 APDL 标签
+        _DOF_MAP = {
+            'DISP': ['UX', 'UY', 'UZ'],
+            'VELOCITY': ['VX', 'VY', 'VZ'],
+            'BODY_FORCE': ['AX', 'AY', 'AZ'],
+            'PRESSURE': ['PX', 'PY', 'PZ'],
+        }
         
         bc_count = 0
-        for bc in bc_configs:
-            mask = in_box(all_x, all_y, all_z, bc['Box'])
+        for entry in bc_entries:
+            step_id = entry['step']
+            bc = entry['bc']
+            
+            box = bc.get('Box', [-1e6, 1e6, -1e6, 1e6, -1e6, 1e6])
+            mask = in_box(all_x, all_y, all_z, box)
+            
+            if 'PartID' in bc:
+                mask = mask & (all_part_ids == bc['PartID'])
+                
             if np.sum(mask) == 0:
                 continue
             
             bc_id = bc.get('BcID', 0)
             bc_type = bc['Type']
-            val_data = bc['Value'] 
+            val_data = bc['Value']
+            apply_dir = bc.get('ApplyDir', None)
             
-            # 核心升级：智能处理单参数与多参数
-            if isinstance(val_data, list):
-                val_str = ",".join([f"{v:>20.6f}" for v in val_data])
+            # ============================================================
+            # ANSYS APDL 单自由度平铺爆炸
+            # ============================================================
+            
+            # 情况 1：已经是单自由度标签 (UX, UY, VZ, T, FLUX, CONV 等)
+            if bc_type not in _DOF_MAP:
+                # 直接写入，值可以是标量或列表
+                if isinstance(val_data, list):
+                    val_str = ",".join([f"{float(v):>20.6f}" if not isinstance(v, str) else f"{v:>20}" for v in val_data])
+                else:
+                    val_str = f"{float(val_data):>20.6f}" if not isinstance(val_data, str) else f"{val_data:>20}"
+                
+                for i in range(total_particles):
+                    if mask[i]:
+                        line = f"{all_ids[i]:>20},{step_id:>20},{bc_id:>20},{bc_type:>20},{val_str}\n"
+                        f.write(line)
+                        bc_count += 1
             else:
-                val_str = f"{val_data:>20.6f}"
-            
-            for i in range(total_particles):
-                if mask[i]:
-                    line = f"{all_ids[i]:>20},{bc_id:>20},{bc_type:>20},{val_str}\n"
-                    f.write(line)
-                    bc_count += 1
+                # 情况 2：旧式组合标签 (DISP, VELOCITY 等)，需要爆炸为单 DOF 行
+                dof_labels = _DOF_MAP[bc_type]
+                
+                # 确保 val_data 是列表
+                if not isinstance(val_data, list):
+                    val_data = [val_data]
+                
+                # 确定每个方向是否生效
+                for axis in range(min(len(val_data), 3)):
+                    # 检查 ApplyDir：如果显式声明了，按它来决定
+                    if apply_dir is not None:
+                        if axis < len(apply_dir) and not apply_dir[axis]:
+                            continue  # 该方向不约束，直接跳过，不生成行
+                    
+                    dof_label = dof_labels[axis]
+                    val = val_data[axis]
+                    
+                    if isinstance(val, str):
+                        val_str = f"{val:>20}"
+                    else:
+                        val_str = f"{float(val):>20.6f}"
+                    
+                    for i in range(total_particles):
+                        if mask[i]:
+                            line = f"{all_ids[i]:>20},{step_id:>20},{bc_id:>20},{dof_label:>20},{val_str}\n"
+                            f.write(line)
+                            bc_count += 1
 
     print(f"[DONE] Assembly complete! Parts: {len(parts)}, Total particles: {total_particles}")
     print(f"[DONE] Mapped {bc_count} boundary condition data points.")

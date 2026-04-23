@@ -23,6 +23,17 @@
 
 namespace PDCommon::Kernel {
 
+/// @brief 影响函数（核函数）权重类型
+enum class InfluenceKernelType {
+  Constant,
+  InverseDistance,
+  Linear,
+  Quadratic,
+  Cubic,
+  Quartic,
+  Gaussian
+};
+
 class PDKernel {
 public:
   virtual ~PDKernel() = default;
@@ -47,6 +58,12 @@ public:
   /// @param ctx PD 仿真上下文
   virtual void computeForceState(PDCommon::Core::PDContext &ctx) = 0;
 
+  /// @brief 时间步积分完成后的善后钩子（可选重写）
+  /// @details 供子类在时间推进结束后执行状态变量演化、热应变更新、
+  ///          材料参数温度依赖刷新等后处理操作。默认空实现。
+  /// @param ctx PD 仿真上下文
+  virtual void postCompute(PDCommon::Core::PDContext &ctx) {}
+
   // -----------------------------------------------------------------------
   // 时间积分辅助信息
   // -----------------------------------------------------------------------
@@ -61,8 +78,53 @@ public:
   /// @brief 返回此核心需要时间积分的场列表
   virtual std::vector<IntegrationTarget> getIntegrationTargets() const = 0;
 
+  // -----------------------------------------------------------------------
+  // 质量缩放 (Mass Scaling) 接口 —— ADR 准静态积分器使用
+  // -----------------------------------------------------------------------
+
+  /// @brief 设置质量缩放因子（ADR 积分器在 preCompute 前调用）
+  /// @param factor 质量放大倍数，默认 1.0（不缩放）
+  void setMassScaleFactor(double factor) { massScaleFactor_ = factor; }
+
+  /// @brief 获取当前质量缩放因子
+  double getMassScaleFactor() const { return massScaleFactor_; }
+
 protected:
   PDKernel() = default; // 只允许子类构造
+
+  InfluenceKernelType kernelType_{InfluenceKernelType::Gaussian};
+  double massScaleFactor_{1.0}; ///< 质量缩放因子（ADR 用，默认不缩放）
+
+  /// @brief 获取指定核函数（影响函数）的权重值
+  inline double GetInfluenceWeight(double xi, double horizon,
+                                   InfluenceKernelType type) const {
+    switch (type) {
+    case InfluenceKernelType::InverseDistance:
+      return (xi > 1e-16) ? (1.0 / xi) : 0.0;
+    case InfluenceKernelType::Constant:
+      return 1.0;
+    case InfluenceKernelType::Linear: {
+      double r = 1.0 - xi / horizon;
+      return (r > 0.0) ? r : 0.0;
+    }
+    case InfluenceKernelType::Quadratic: {
+      double r = 1.0 - xi / horizon;
+      return (r > 0.0) ? r * r : 0.0;
+    }
+    case InfluenceKernelType::Cubic: {
+      double r = 1.0 - xi / horizon;
+      return (r > 0.0) ? r * r * r : 0.0;
+    }
+    case InfluenceKernelType::Quartic: {
+      double r = 1.0 - xi / horizon;
+      return (r > 0.0) ? r * r * r * r : 0.0;
+    }
+    case InfluenceKernelType::Gaussian:
+      return std::exp(-(xi * xi) / (horizon * horizon));
+    default:
+      return 1.0;
+    }
+  }
 };
 
 } // namespace PDCommon::Kernel
