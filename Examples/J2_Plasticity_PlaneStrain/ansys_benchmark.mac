@@ -4,14 +4,14 @@
 !
 ! 几何: 10 x 5 mm 矩形, 平面应变
 ! 材料: A36 结构钢 J2 等向强化
-!   E = 210000 MPa, ν = 0.3, σ_y = 250 MPa, H = 1000 MPa
-! 载荷: 左端固定, 右端施加 UX = 0.05 mm 拉伸位移
+!   E = 210000 MPa, ν = 0.3, σ_y = 100 MPa, H = 1000 MPa
+! 载荷: 左端全固定(UX+UY), 右端施加 1000 MPa 拉伸压力
 ! 单位: mm, N, MPa, tonne
 !==============================================================================
 
 FINISH
 /CLEAR,START
-/TITLE,J2 Plasticity Plane Strain Uniaxial Tension (GRPD Validation)
+/TITLE,J2 Plasticity Plane Strain - Pressure Load (GRPD Validation)
 
 !----------------------------------------------------------------------
 ! 1. 前处理
@@ -26,14 +26,12 @@ KEYOPT,1,6,0            ! 纯位移法
 ! --- 材料: A36 结构钢 J2 弹塑性 ---
 MP,EX,1,2.1e5           ! 弹性模量 E = 210000 MPa
 MP,PRXY,1,0.3           ! 泊松比 ν = 0.3
-MP,DENS,1,7.8e-9        ! 密度
+MP,DENS,1,7.8e-9        ! 密度 (tonne/mm³)
 
 ! 双线性等向强化塑性 (BISO)
-! σ_y = 250 MPa, 切线模量 E_T = E*H/(E+H) ≈ 995.3 MPa
-! 但 GRPD 中 H 直接是线性强化模量, ANSYS TB,BISO 用的也是切线模量
-! 对于小塑性应变, 差异很小。这里直接用 H = 1000 作为切线模量的近似。
+! σ_y = 100 MPa, 切线模量 E_T = 1000 MPa
 TB,BISO,1,1,2
-TBDATA,1,250.0          ! 屈服应力 σ_y = 250 MPa
+TBDATA,1,100.0          ! 屈服应力 σ_y = 100 MPa
 TBDATA,2,1000.0         ! 切线模量 E_T = 1000 MPa
 
 ! --- 建立几何 ---
@@ -41,7 +39,7 @@ TBDATA,2,1000.0         ! 切线模量 E_T = 1000 MPa
 RECTNG,0,10,0,5
 
 ! --- 网格划分 ---
-ESIZE,0.25
+ESIZE,0.1               ! dx = 0.1 mm, 与 GRPD 对齐
 AATT,1,,1
 AMESH,1
 
@@ -57,26 +55,23 @@ LNSRCH,ON
 
 ! --- 子步控制 ---
 TIME,1.0
-KBC,0                    ! 线性爬坡
+KBC,0                    ! 线性爬坡 (Ramp)
 AUTOTS,ON
-NSUBST,10,10,10
+NSUBST,10,50,5
 NEQIT,50
 
-! --- 左端固定 X 方向 ---
+! --- 左端全固定 (UX + UY) ---
 NSEL,S,LOC,X,-0.01,0.01
 D,ALL,UX,0.0
-NSEL,ALL
-
-! --- 左下角固定 Y 方向 (防止刚体运动) ---
-NSEL,S,LOC,X,-0.01,0.01
-NSEL,R,LOC,Y,-0.01,0.01
 D,ALL,UY,0.0
 NSEL,ALL
 
-! --- 右端施加 UX = 0.05 mm ---
-NSEL,S,LOC,X,9.99,10.01
-D,ALL,UX,0.01
-NSEL,ALL
+! --- 右端施加 1000 MPa 拉伸压力 ---
+! 方法：选中右端线(Line)，施加面压力
+! ANSYS 压力正方向为指向面内（压缩），负号代表拉伸
+LSEL,S,LOC,X,9.99,10.01
+SFL,ALL,PRES,-1000.0     ! -1000 MPa = 拉伸
+LSEL,ALL
 
 SOLVE
 FINISH
@@ -109,6 +104,7 @@ PPATH,2,,10,2.5,0
 PDEF,SX_Path,S,X
 PDEF,SEQV_Path,S,EQV
 PDEF,EPPL_Path,EPPL,EQV
+PDEF,UX_Path,U,X
 /PBC,PATH,,1
 PLPATH,SX_Path,SEQV_Path
 

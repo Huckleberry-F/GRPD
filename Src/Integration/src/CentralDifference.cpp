@@ -3,13 +3,13 @@
 // ============================================================================
 
 #include "CentralDifference.h"
-#include "BCManager.h"
 #include "Logger.h"
-#include "StringUtils.h"
 #include "PDKernel.h"
+#include "StringUtils.h"
 #include "TimeIntegratorRegistry.h"
 #include "Timer.h"
 #include <omp.h>
+
 
 namespace Src::Integration {
 
@@ -39,11 +39,14 @@ void CentralDifference::run(PDCommon::Core::PDContext &ctx,
   double limitDt = computeCFLTimestep(ctx);
   if (autoCalcDt_) {
     dt_ = limitDt;
-    LOG_INFO("[CentralDifference] Auto CFL enabled. Setting dt = " + PDCommon::Utils::StringUtils::toScientific(dt_));
+    LOG_INFO("[CentralDifference] Auto CFL enabled. Setting dt = " +
+             PDCommon::Utils::StringUtils::toScientific(dt_));
   } else {
     if (dt_ > limitDt) {
-      LOG_WARNING("[CentralDifference] Global TimeStep_dt (" + PDCommon::Utils::StringUtils::toScientific(dt_) + 
-                  ") EXCEEDS safe CFL limit (" + PDCommon::Utils::StringUtils::toScientific(limitDt) + 
+      LOG_WARNING("[CentralDifference] Global TimeStep_dt (" +
+                  PDCommon::Utils::StringUtils::toScientific(dt_) +
+                  ") EXCEEDS safe CFL limit (" +
+                  PDCommon::Utils::StringUtils::toScientific(limitDt) +
                   ")! Auto-clamping global dt to the safe limit.");
       dt_ = limitDt;
     }
@@ -52,8 +55,9 @@ void CentralDifference::run(PDCommon::Core::PDContext &ctx,
   // Verify inner load steps dt as well
   for (auto &config : loadStepConfigs_) {
     if (config.userDt > limitDt) {
-      LOG_WARNING("[CentralDifference] LoadStep " + std::to_string(config.stepId) + 
-                  " TimeStep_dt (" + PDCommon::Utils::StringUtils::toScientific(config.userDt) + 
+      LOG_WARNING("[CentralDifference] LoadStep " +
+                  std::to_string(config.stepId) + " TimeStep_dt (" +
+                  PDCommon::Utils::StringUtils::toScientific(config.userDt) +
                   ") EXCEEDS safe CFL limit! Auto-clamping to safe limit.");
       config.userDt = limitDt;
     }
@@ -61,7 +65,8 @@ void CentralDifference::run(PDCommon::Core::PDContext &ctx,
 
   LOG_INFO("[CentralDifference] Starting Explicit Loop with " +
            std::to_string(loadStepConfigs_.size()) +
-           " LoadStep(s). Default dt = " + PDCommon::Utils::StringUtils::toScientific(dt_));
+           " LoadStep(s). Default dt = " +
+           PDCommon::Utils::StringUtils::toScientific(dt_));
 
   int initialStepId = loadStepConfigs_.empty() ? 0 : loadStepConfigs_[0].stepId;
   int initKbc =
@@ -87,19 +92,22 @@ void CentralDifference::run(PDCommon::Core::PDContext &ctx,
     int currentKbc = (config.kbc >= 0) ? config.kbc : kbc_;
 
     LOG_INFO("=== Load Step " + std::to_string(config.stepId) + " / " +
-             std::to_string(loadStepConfigs_.size()) +
-             " | TargetTime: " + PDCommon::Utils::StringUtils::toScientific(targetTime) +
+             std::to_string(loadStepConfigs_.size()) + " | TargetTime: " +
+             PDCommon::Utils::StringUtils::toScientific(targetTime) +
              " | dt: " + PDCommon::Utils::StringUtils::toScientific(currentDt) +
              " | KBC: " + std::to_string(currentKbc) + " ===");
 
     while (currentTime < targetTime - 1e-12) {
       if (globalStepCounter % outputInterval == 0) {
         LOG_INFO(
-            "--- Step " + std::to_string(globalStepCounter) +
-            " | Time: " + PDCommon::Utils::StringUtils::toScientific(currentTime) +
-            "  |  Pure Compute: " + PDCommon::Utils::StringUtils::toScientific(timer.pureComputeTime()) +
-            "s" + "  |  Total: " + PDCommon::Utils::StringUtils::toScientific(timer.totalElapsed()) + "s" +
-            "  |  Speed: " +
+            "--- Step " + std::to_string(globalStepCounter) + " | Time: " +
+            PDCommon::Utils::StringUtils::toScientific(currentTime) +
+            "  |  Pure Compute: " +
+            PDCommon::Utils::StringUtils::toScientific(
+                timer.pureComputeTime()) +
+            "s" + "  |  Total: " +
+            PDCommon::Utils::StringUtils::toScientific(timer.totalElapsed()) +
+            "s" + "  |  Speed: " +
             std::to_string(static_cast<int>(timer.pureSpeed())) + " steps/s");
 
         if (outputCallback)
@@ -143,7 +151,8 @@ void CentralDifference::run(PDCommon::Core::PDContext &ctx,
       }
 
       // [状态递进]：非常关键！必须更新本构材料历史变量（如塑性应变 EqPS）
-      // 1. 中央场管理器统一执行所有具有 O(1) Swap 互换资格的物理场对，完美规避多材料双重互换 Bug
+      // 1. 中央场管理器统一执行所有具有 O(1) Swap
+      // 互换资格的物理场对，完美规避多材料双重互换 Bug
       ctx.getFieldManager().executeAllRegisteredSwaps();
 
       // 2. 依次通知所有材料实例，令其同步全局已被互换更新的最新内存指针
@@ -167,10 +176,12 @@ void CentralDifference::run(PDCommon::Core::PDContext &ctx,
   LOG_INFO(
       "--- Step " + std::to_string(globalStepCounter) +
       " | Time: " + PDCommon::Utils::StringUtils::toScientific(currentTime) +
-      "  |  Pure Compute: " + PDCommon::Utils::StringUtils::toScientific(timer.pureComputeTime()) +
-      "s" + "  |  Total: " + PDCommon::Utils::StringUtils::toScientific(timer.totalElapsed()) + "s" +
-      "  |  Speed: " +
-      std::to_string(static_cast<int>(timer.pureSpeed())) + " steps/s");
+      "  |  Pure Compute: " +
+      PDCommon::Utils::StringUtils::toScientific(timer.pureComputeTime()) +
+      "s" + "  |  Total: " +
+      PDCommon::Utils::StringUtils::toScientific(timer.totalElapsed()) + "s" +
+      "  |  Speed: " + std::to_string(static_cast<int>(timer.pureSpeed())) +
+      " steps/s");
   if (outputCallback) {
     outputCallback(globalStepCounter, currentTime);
   }

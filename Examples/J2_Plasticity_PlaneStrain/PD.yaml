@@ -61,8 +61,8 @@ BoundaryConditions:
     Name: "Pull_Right_UX"
     PartID: 1
     Box: [9.9, 10.1, -0.1, 5.1, -1.0, 1.0]
-    Type: "UX"
-    Value: 0.01
+    Type: "PX"
+    Value: 100.0
 
 # 4. 无接触对
 ContactPairs: []
@@ -83,9 +83,9 @@ Solver:
   OutputInterval: 1000
 
   MaxPseudoSteps: 20000
-  MassScaleFactor: 1.0e12
-  DispTol: 1.0e-6
-  ForceTol: 1.0e-4
+  MassScaleFactor: 1.0e8
+  DispTol: 1.0e-8
+  ForceTol: 1.0e-6
   MinRefForce: 1.0e-2
   # TimeStep_dt: 1.0e-3
   RampIters: 0
@@ -97,7 +97,7 @@ Solver:
     - Step: 1
       Time: 1.0
       KBC: 0
-      NumSubsteps: 200
+      NumSubsteps: 10
 
 # 6. IO输出设置
 Writer:

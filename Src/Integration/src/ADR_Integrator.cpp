@@ -40,6 +40,14 @@ void ADR_Integrator::configure(const YAML::Node &solverNode) {
     dampingMethod_ = solverNode["DampingMethod"].as<std::string>();
   if (solverNode["Fracture_Strategy"])
     fractureStrategy_ = solverNode["Fracture_Strategy"].as<std::string>();
+
+  // ADR 初始刚度法外循环参数（可选，有默认值）
+  if (solverNode["OuterLoopTol"])
+    outerLoopTol_ = solverNode["OuterLoopTol"].as<double>();
+  if (solverNode["OuterDispTol"])
+    outerDispTol_ = solverNode["OuterDispTol"].as<double>();
+  if (solverNode["MaxOuterIters"])
+    maxOuterIters_ = solverNode["MaxOuterIters"].as<int>();
 }
 
 // ---------------------------------------------------------------------------
@@ -156,14 +164,32 @@ void ADR_Integrator::run(PDCommon::Core::PDContext &ctx,
       saveBaseDisplacement();
 
       // =======================================================================
-      // 断裂稳定化机制分支 (Dual-Strategy Fracture Logic)
+      // ADR 初始刚度法外循环 (Initial Stiffness Outer Loop)
+      // 冻结非线性本构状态，让 ADR 在纯弹性系统中快速收敛，
+      // 然后解冻做一次完整的非线性本构评估，检查残差是否满足容差。
       // =======================================================================
-      bool fractureStabilized = false;
-      int fracIter = 0;
-      // Staggered 模式最多重启15次；FastInnerLoop 模式仅进行 1 次外层循环
-      const int MAX_FRAC_ITERS = (fractureStrategy_ == "Staggered") ? 15 : 1;
+      bool outerConverged = false;
+      int outerIter = 0;
+      double fIntTotal = 0.0; // 外循环中计算的全场总内力，子步结束后保存
 
-      while (!fractureStabilized && fracIter < MAX_FRAC_ITERS) {
+      while (!outerConverged && outerIter < maxOuterIters_) {
+
+        // [保存外循环位移快照] 用于宏观位移残差计算
+        saveOuterOldDisplacement();
+
+        // [传递外循环状态并冻结]
+        ctx.setOuterIter(outerIter);
+        ctx.setStateFrozen(true);
+
+        // =======================================================================
+        // 断裂稳定化机制分支 (Dual-Strategy Fracture Logic)
+        // =======================================================================
+        bool fractureStabilized = false;
+        int fracIter = 0;
+        // Staggered 模式最多重启15次；FastInnerLoop 模式仅进行 1 次外层循环
+        const int MAX_FRAC_ITERS = (fractureStrategy_ == "Staggered") ? 15 : 1;
+
+        while (!fractureStabilized && fracIter < MAX_FRAC_ITERS) {
         fractureStabilized = true;
 
         // [加载因子控制] 根据各自的子步数计算全局或局部LF
@@ -175,9 +201,9 @@ void ADR_Integrator::run(PDCommon::Core::PDContext &ctx,
                         loadStepConfigs_.size();
 
         int currentKbc = (stepConfig.kbc >= 0) ? stepConfig.kbc : kbc_;
-        // 核心修复：如果是断裂引起的二次松弛 (fracIter > 0)，千万不能在这个循环内部重新爬坡，否则会导致物理载荷瞬间掉落！
+        // 核心修复：断裂二次松弛 或 外循环重入时，强制无爬坡直接保载
         int rampIters =
-            (currentKbc == 1 || fracIter > 0) ? 0 : computeRampIters(ctx); // KBC=1 或 断裂重稳态，强制无爬坡直接保载
+            (currentKbc == 1 || fracIter > 0 || outerIter > 0) ? 0 : computeRampIters(ctx);
         LOG_INFO("    [Substep " + std::to_string(sub + 1) +
                  "] Computed RampIters: " + std::to_string(rampIters));
 
@@ -356,7 +382,89 @@ void ADR_Integrator::run(PDCommon::Core::PDContext &ctx,
         fracIter++;
       } // 结束 Staggered / FastInner 外层循环
 
+      // =================================================================
+      // [外循环修正] 解冻本构，做一次完整的非线性力评估
+      // =================================================================
+      ctx.setStateFrozen(false);
+
+      // 加载因子计算（复用当前子步的目标值）
+      double outerTargetLF = (static_cast<double>(stepIdx) +
+                              static_cast<double>(sub + 1) / currentNumSubsteps) /
+                             loadStepConfigs_.size();
+      double outerLocalLF = static_cast<double>(sub + 1) / currentNumSubsteps;
+      double outerActiveLF = (currentKbc == 1) ? 1.0 : outerLocalLF;
+
+      // 以解冻状态（完整非线性本构）重新评估内力
+      BC::applyConstraints(ctx.getBCManager(), outerActiveLF, stepConfig.stepId);
+      evaluateForces(ctx, kernels, accFieldNames_, stepConfig.stepId, outerActiveLF);
+
+      // =====================================================================
+      // [ANSYS 宏观力准则 Step 1] 在 BC 清零边界加速度之前，
+      // 统计全场（含边界节点支反力）的力 L2 范数作为结构总承载力参考基准
+      // =====================================================================
+      double sumFintAllSq = 0.0;
+      for (size_t k = 0; k < soTargets_.size(); ++k) {
+        const auto &so = soTargets_[k];
+        double localSq = 0.0;
+#pragma omp parallel for reduction(+ : localSq) schedule(static)
+        for (int i = 0; i < static_cast<int>(so.totalComponents); ++i) {
+          double f = so.aPtr[i] * massScaleFactor_;
+          localSq += f * f;
+        }
+        sumFintAllSq += localSq;
+      }
+      fIntTotal = std::sqrt(sumFintAllSq);
+
+      // [关键] 使用本子步的内力增量作为参考基准，而非全场总内力
+      // 避免载荷步越多、总力越大时判定过度宽松
+      double fIntIncrement = std::abs(fIntTotal - fIntPrevSubstep_);
+
+      // 重施约束：清零边界节点的加速度，仅保留自由粒子残差
+      BC::applyConstraints(ctx.getBCManager(), outerActiveLF, stepConfig.stepId);
+
+      // =====================================================================
+      // [ANSYS 宏观力准则 Step 2] 计算宏观力残差比 + 宏观位移残差比
+      // =====================================================================
+      double macroForceRatio = 0.0, macroDispRatio = 0.0;
+      computeOuterConvergence(fIntIncrement, macroForceRatio, macroDispRatio);
+
+      if (macroForceRatio <= outerLoopTol_) {
+        outerConverged = true;
+        LOG_INFO("    [NR] Converged at iter " +
+                 std::to_string(outerIter + 1) +
+                 " | MacroForce: " +
+                 PDCommon::Utils::StringUtils::toScientific(macroForceRatio) +
+                 " | MacroDisp: " +
+                 PDCommon::Utils::StringUtils::toScientific(macroDispRatio) +
+                 " | dFref: " +
+                 PDCommon::Utils::StringUtils::toScientific(fIntIncrement) +
+                 " (Total=" + PDCommon::Utils::StringUtils::toScientific(fIntTotal) + ")");
+      } else {
+        outerIter++;
+        isFirstExplicitTick_ = true; // 重置以驱动下一轮 ADR 内循环
+        LOG_INFO("    [NR] iter " +
+                 std::to_string(outerIter) + " / " +
+                 std::to_string(maxOuterIters_) +
+                 " | MacroForce: " +
+                 PDCommon::Utils::StringUtils::toScientific(macroForceRatio) +
+                 " (dFref=" +
+                 PDCommon::Utils::StringUtils::toScientific(fIntIncrement) + ")" +
+                 " | MacroDisp: " +
+                 PDCommon::Utils::StringUtils::toScientific(macroDispRatio));
+      }
+
+      } // 结束 NR 迭代循环
+
+      if (!outerConverged) {
+        LOG_WARNING("    [Step " + std::to_string(stepConfig.stepId) +
+                    " / Sub " + std::to_string(sub + 1) +
+                    "] NR did NOT converge within " +
+                    std::to_string(maxOuterIters_) + " iterations!");
+      }
+
       // [状态递进]
+      // 保存本子步收敛时的总内力范数，供下一子步外循环增量基准使用
+      fIntPrevSubstep_ = fIntTotal;
       ctx.getFieldManager().executeAllRegisteredSwaps();
       for (auto &[matName, matPtr] : ctx.getMaterialManager().getMaterials()) {
         if (matPtr)
@@ -400,12 +508,14 @@ void ADR_Integrator::initializeHistoryVariables() {
   aOld_.resize(soTargets_.size());
   dispOld_.resize(soTargets_.size());
   dispBase_.resize(soTargets_.size());
+  dispOuterOld_.resize(soTargets_.size());
 
   for (size_t k = 0; k < soTargets_.size(); ++k) {
     velHalfOld_[k].assign(soTargets_[k].totalComponents, 0.0);
     aOld_[k].assign(soTargets_[k].totalComponents, 0.0);
     dispOld_[k].assign(soTargets_[k].totalComponents, 0.0);
     dispBase_[k].assign(soTargets_[k].totalComponents, 0.0);
+    dispOuterOld_[k].assign(soTargets_[k].totalComponents, 0.0);
   }
   isFirstExplicitTick_ = true;
 }
@@ -426,6 +536,16 @@ void ADR_Integrator::saveOldDisplacement() {
 #pragma omp parallel for schedule(static)
     for (int i = 0; i < static_cast<int>(so.totalComponents); ++i) {
       dispOld_[k][i] = so.uPtr[i];
+    }
+  }
+}
+
+void ADR_Integrator::saveOuterOldDisplacement() {
+  for (size_t k = 0; k < soTargets_.size(); ++k) {
+    const auto &so = soTargets_[k];
+#pragma omp parallel for schedule(static)
+    for (int i = 0; i < static_cast<int>(so.totalComponents); ++i) {
+      dispOuterOld_[k][i] = so.uPtr[i];
     }
   }
 }
@@ -604,6 +724,53 @@ void ADR_Integrator::computeConvergenceCriteria(int updateRefMode) {
   // 使用相对不平衡量进行 TOL3 判定（结合 MINREF）
   double relative_denom3 = std::max(initialResidualRef_, minRefForce_);
   TOL3_ = TOL3_ / relative_denom3;
+}
+
+// ---------------------------------------------------------------------------
+// computeOuterConvergence：ANSYS 风格宏观收敛准则
+// 力准则：||R_free|| / max(||F_int_all||, MINREF)  → 工程相对残差
+// 位移准则：||du_outer|| / ||du_substep||            → 位移进展比
+// ---------------------------------------------------------------------------
+void ADR_Integrator::computeOuterConvergence(
+    double fIntTotal, double &macroForceRatio, double &macroDispRatio) {
+
+  // --- 力残差分子：自由粒子的不平衡力 L2 范数 ---
+  double sumResFreeSq = 0.0;
+  for (size_t k = 0; k < soTargets_.size(); ++k) {
+    const auto &so = soTargets_[k];
+    double localSq = 0.0;
+#pragma omp parallel for reduction(+ : localSq) schedule(static)
+    for (int i = 0; i < static_cast<int>(so.totalComponents); ++i) {
+      double f = so.aPtr[i] * massScaleFactor_;
+      localSq += f * f;
+    }
+    sumResFreeSq += localSq;
+  }
+  double resFree = std::sqrt(sumResFreeSq);
+
+  // --- 力残差比 ---
+  double fRef = std::max(fIntTotal, minRefForce_);
+  macroForceRatio = resFree / fRef;
+
+  // --- 位移残差比：本轮外循环位移增量 / 本子步总位移增量 ---
+  double sumDuOuterSq = 0.0;
+  double sumDuSubstepSq = 0.0;
+  for (size_t k = 0; k < soTargets_.size(); ++k) {
+    const auto &so = soTargets_[k];
+    double localOuterSq = 0.0;
+    double localSubstepSq = 0.0;
+#pragma omp parallel for reduction(+ : localOuterSq, localSubstepSq) schedule(static)
+    for (int i = 0; i < static_cast<int>(so.totalComponents); ++i) {
+      double du_outer = so.uPtr[i] - dispOuterOld_[k][i];
+      double du_sub = so.uPtr[i] - dispBase_[k][i];
+      localOuterSq += du_outer * du_outer;
+      localSubstepSq += du_sub * du_sub;
+    }
+    sumDuOuterSq += localOuterSq;
+    sumDuSubstepSq += localSubstepSq;
+  }
+  double denomDisp = std::max(std::sqrt(sumDuSubstepSq), 1.0e-30);
+  macroDispRatio = std::sqrt(sumDuOuterSq) / denomDisp;
 }
 
 } // namespace Src::Integration

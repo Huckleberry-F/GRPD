@@ -3,7 +3,6 @@
 // ============================================================================
 
 #include "TimeIntegrator.h"
-#include "BCManager.h"
 #include "ContactManager.h"
 #include "FieldManager.h"
 #include "Logger.h"
@@ -159,7 +158,7 @@ double TimeIntegrator::computeCFLTimestep(PDCommon::Core::PDContext &ctx,
         double rho_eff = rho * massScale;
         double c_eff = std::sqrt(E / rho_eff);
         double limitDt_mat = safetyFactor * dx / c_eff;
-        
+
         LOG_INFO("[" + getName() + "] Material [" + name + "]: WaveSpeed c = " +
                  PDCommon::Utils::StringUtils::toScientific(c_eff) +
                  ", Safe CFL dt = " +

@@ -71,6 +71,14 @@ private:
 
   double minRefForce_ = 1.0e-6; ///< 最低参考力截断值 (MINREF)，用于相对力判定兜底
   double initialResidualRef_ = 0.0; ///< 子步初始参考力范数快照 (R_ref)
+  double fIntPrevSubstep_ = 0.0; ///< 上一子步收敛时的全场总内力范数（用于外循环增量基准）
+
+  // -----------------------------------------------------------------------
+  // ADR 初始刚度法外循环参数（非线性本构交错修正）
+  // -----------------------------------------------------------------------
+  double outerLoopTol_ = 5.0e-3;  ///< 外循环宏观力残差收敛容差（ANSYS标准 0.5%）
+  double outerDispTol_ = 5.0e-2;  ///< 外循环宏观位移残差收敛容差（ANSYS标准 5%）
+  int maxOuterIters_ = 10;        ///< 最大外循环迭代次数（默认 10）
 
   /// @brief 阻尼策略："Viscous"=Underwood粘性阻尼, "LocalKinetic"=局部动能阻尼
   std::string dampingMethod_ = "Viscous";
@@ -89,6 +97,7 @@ private:
   std::vector<std::vector<double>> aOld_;
   std::vector<std::vector<double>> dispOld_;
   std::vector<std::vector<double>> dispBase_;
+  std::vector<std::vector<double>> dispOuterOld_; ///< 外循环位移快照
   bool isFirstExplicitTick_ = true;
   double TOL1_ = 0.0;
   double TOL2_ = 0.0;
@@ -98,9 +107,15 @@ private:
   void initializeHistoryVariables();
   void saveBaseDisplacement();
   void saveOldDisplacement();
+  void saveOuterOldDisplacement();  ///< 保存外循环开始时的位移
   double computeAdaptiveDamping(double dt);
   void updateKinematicsLeapfrog(double cn, double dt);
   void computeConvergenceCriteria(int updateRefMode);
+
+  /// @brief 计算外循环宏观收敛准则（ANSYS风格）
+  /// @param[out] macroForceRatio 宏观力残差比 = ||R_free|| / max(||F_int_all||, MINREF)
+  /// @param[out] macroDispRatio  宏观位移残差比 = ||du_outer|| / ||du_substep||
+  void computeOuterConvergence(double fIntTotal, double &macroForceRatio, double &macroDispRatio);
 };
 
 } // namespace Src::Integration

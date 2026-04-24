@@ -125,6 +125,24 @@ public:
   bool isIncrementStart() const { return isIncrementStart_; }
   void setIncrementStart(bool v) { isIncrementStart_ = v; }
 
+  // -----------------------------------------------------------------------
+  // 本构状态冻结标志 (ADR 初始刚度法：内循环中冻结非线性本构)
+  // -----------------------------------------------------------------------
+
+  /// @brief 查询当前是否处于状态冻结模式
+  /// @details 冻结时，力学本构应退化为纯弹性计算，跳过路径依赖的状态演化
+  bool isStateFrozen() const { return stateFrozen_; }
+
+  /// @brief 设置状态冻结标志
+  /// @param frozen true=冻结（纯弹性），false=解冻（完整非线性本构）
+  void setStateFrozen(bool frozen) { stateFrozen_ = frozen; }
+
+  /// @brief 获取 ADR 外循环当前迭代次数
+  int getOuterIter() const { return outerIter_; }
+
+  /// @brief 设置 ADR 外循环当前迭代次数
+  void setOuterIter(int iter) { outerIter_ = iter; }
+
 private:
   std::string name_;                                    ///< 模型名称
   int dimension_ = 3;                                   ///< 模型维度 (默认 3D)
@@ -140,6 +158,8 @@ private:
   PDCommon::BC::BCManager bcManager_; ///< 边界条件管理器
   PDCommon::Contact::ContactManager contactManager_; ///< 接触系统管理器
   bool isIncrementStart_ = false; ///< 是否处于当前增量步（或物理物理时间步）的首个迭代
+  bool stateFrozen_ = false;       ///< 本构状态冻结标志（ADR 初始刚度法）
+  int outerIter_ = 0;              ///< ADR 初始刚度法外循环迭代次数
 };
 
 } // namespace PDCommon::Core

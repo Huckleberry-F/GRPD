@@ -382,16 +382,21 @@ General-Peridynamics/
 
 ## 📌 版本更新日志 (Changelog)
 
-### v4.5 — 面向 ADR 准静态松弛的 NTS 权重冻结与完美接触生态 (Robust Quasi-Static Topology Anchoring & Contact Ecology)
+### v4.6 — 面向 ADR 准静态松弛的 NTS 权重冻结与完美接触生态 (Robust Quasi-Static Topology Anchoring & Contact Ecology)
 
 - **子步级别接触几何锚定 (Incremental Topology Freezing)**: 为彻底攻克 Node-To-Surface (NTS) 高阶曲面平滑插值在 `ADR` 人工松弛虚步下所带来的非保守内力振荡难题，首次全面引入子步起点缓存锚定机制。基于扩展后的 `PDContext` 信号总线，`NTSEvaluator` 具备智能区分物理时间递进与松弛下山试探的能力。在同一个 LoadStep 子步期间强制锁死投影法线与逆距离拓扑，把 NTS 从极具破坏性的非定常雅可比降维成了超强收敛的全等二次保守形式。将原本 20000 步拒不收敛的接触工况，提速至极细步长的数百次微循环内精确结晶至 $10^{-6}$ 精度。
 - **混合状态接触场零损传输 (Lossless State Forwarding)**: 针对因引入 Topology Cache 后遗留的 `ContactNormal` 和 `VirtualSurfacePos` 瞬态可视化场消隐问题，深度修正了 `onPreEvaluate` 生命周期。在完全不需要重新分配与搜索的虚步内安全避让 `std::fill` 清空管线，确保用户在 ParaView 后处理中能实时捕获并追踪到被严丝合缝冻结的主面轮廓变迁。
 
-### v4.4 — 接触底层扁平化与双轴正交解耦 (Contact Flattening & Dual-Axis Orthogonal Decoupling)
+### v4.5 — 接触底层扁平化与双轴正交解耦 (Contact Flattening & Dual-Axis Orthogonal Decoupling)
 
 - **架构降维与极致扁平化 (Flattened Architecture)**: 彻底移除了人为编造的 `StandardContactAlgorithm` 组装器与 `IContactDetector` 抽象封装层。将空间哈希网格探测循环 (Spatial Hash) 直接打入顶层算法 `NTNContact` 内部；促使 `NTN` 与基于质心投影的 `Kinematic` 成为平级的直系调度入口，显著缩短并净化了底层引擎 OMP 并发的物理调用栈深度。
 - **双轴正交极简注册中心 (Dual-Axis Factory Registration)**: 重塑了全局 `ContactRegistry` 出厂协议。使得力学公式（ForceLaw，如 Penalty/Silling）与几何算法（Type，如 NTN/NTS）被物理隔离。允许直接在 YAML 下发 `Type: "NTN"` 叠加 `ForceLaw: "Penalty"` 的搭积木配置，实现新力学算子的一键全局多搜索系适配。
 - **斩断技术债务底座清理 (Eradication of Legacy Wrappers)**: 大刀阔斧地彻底移除了包含 `PenaltyContact`, `ViscousPenaltyContact`，`NodeNodeContact` 在内的共 17 个由于早期架构混乱而滋生的废弃过渡封装文件头与源文件，实现了系统全代码库的极致“纯净态”。
+
+### v4.4 — 弹塑性 ADR 初始刚度法与 ANSYS 宏观收敛准则 (Initial Stiffness Method & Macroscopic Convergence)
+
+- **嵌套循环双层演化架构 (Nested Initial Stiffness Method)**: 彻底重构了 `ADR_Integrator` 的时间积分回路，针对高度非线性的弹塑性本构引入了双层嵌套循环。内层冻结历史状态以获取纯弹性的稳定矩阵与快速松弛；外层解冻本构状态并使用 `NR` (Newton-Raphson) 逻辑进行非线性校正与试探，从根本上压制了由于刚度突变导致的动能激增与非物理震荡，完美对齐了商用有限元在弹塑性阶跃加载下的求解范式。
+- **ANSYS 风格宏观收敛基准 (Macroscopic Convergence Criteria)**: 抛弃了传统显式松弛对微小局部残差极度敏感的相对波峰判定法，完全引入工程化的宏观力/位移检验体系。以每子步的**内力增量 (`dFref`)**为基准分母，以自由粒子不平衡力为分子；并同步统计宏观位移进展率。将复杂材料在多重载荷步下的无解不收敛困境彻底终结，使得大型塑性计算的 NR 外循环能稳定在数次迭代内极速收敛。
 
 ### v4.3 — 运动学库仑摩擦机制与项目级极限参数字典 (Coulomb Friction & Full-Stack YAML Mapping)
 
