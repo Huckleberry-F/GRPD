@@ -378,7 +378,7 @@ void ADR_Integrator::run(PDCommon::Core::PDContext &ctx,
     }
 
     // 宣告本 LoadStep 彻底结束，让 Boundary Conditions 记忆最终态
-    BC::commitEndStep(ctx.getBCManager());
+    BC::commitEndStep(ctx.getBCManager(), stepConfig.stepId);
   }
 
   LOG_INFO(

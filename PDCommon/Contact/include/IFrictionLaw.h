@@ -20,6 +20,12 @@ public:
   /// @brief 从 YAML 初始化参数（如 frictionCoeff 等）
   virtual void initialize(const YAML::Node &configNode) = 0;
 
+  /// @brief 预处理钩子（在每步接触力计算前调用）
+  /// @details 子类可覆写此方法，向 FieldManager 注册/获取所需的历史状态场指针。
+  ///          默认空实现，无状态需求的摩擦定律无需覆写。
+  /// @param ctx 仿真上下文（含 FieldManager、ParticleManager 等）
+  virtual void onPreContact(PDCommon::Core::PDContext &ctx) {}
+
   /// @brief 计算切向摩擦力并叠加到(fx, fy, fz)上
   /// @param pair 从轴 B 提取出的通用几何与运动学上下文
   /// @param normalForceMag 从轴 C 算出的本分步法向排斥力大小

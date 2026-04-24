@@ -89,6 +89,7 @@ void GeneralContact::computeContactForce(PDCommon::Core::PDContext &ctx) {
   evaluator_->onPreEvaluate(ctx, maxDx);
   normalLaw_->setContactParticleIds(masterIds_, slaveIds_);
   normalLaw_->onPreContact(ctx, maxDx);
+  if (frictionLaw_) frictionLaw_->onPreContact(ctx);
 
   // 3. Axis A: Build Search Engine Sub-grid
   double evalRatio = evaluator_->getSearchRadiusRatio();

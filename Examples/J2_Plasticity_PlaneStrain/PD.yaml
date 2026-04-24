@@ -1,0 +1,119 @@
+#==============================================================================
+# GRPD J2 塑性测试 - 平面应变单轴拉伸
+# 用于验证 J2 弹塑性本构的 Radial Return 算法精度
+#==============================================================================
+
+# 1. 建模系统
+System:
+  Dimension: 2
+  SavePath: "output"
+
+Assembly: {}
+
+Parts:
+  - PartID: 1
+    MatID: 1
+    Dimension: 2
+    Shape: "Box"
+    Length: 10.0
+    Width: 5.0
+    dx: 0.1
+    Offset: [0.0, 0.0, 0.0]
+
+# 2. 材料赋予 (A36 结构钢, J2 等向强化)
+Materials:
+  - MatID: 1
+    Name: "A36_Steel"
+    Type: "J2PlasticityMat"
+    Density: 7.8e-9
+    YoungsModulus: 2.1e5
+    PoissonsRatio: 0.3
+    YieldStress: 100.0
+    HardeningModulus: 1000.0
+    HardeningType: "Isotropic"
+    LargeDeformation: false
+
+PreCracks: []
+
+# 3. 边界施加
+BoundaryConditions:
+  # 固定左端 X 方向
+  - Step: 0
+    BcID: 1
+    Name: "Fix_Left_UX"
+    PartID: 1
+    Box: [-0.1, 0.1, -0.1, 5.1, -1.0, 1.0]
+    Type: "UX"
+    Value: 0.0
+
+  # 固定左下角 Y 方向 (防止刚体旋转)
+  - Step: 0
+    BcID: 2
+    Name: "Fix_Left_UY"
+    PartID: 1
+    Box: [-0.1, 0.1, -0.1, 5.1, -1.0, 1.0]
+    Type: "UY"
+    Value: 0.0
+
+  # Step 1: 右端施加 X 方向拉伸位移 (进入塑性区)
+  - Step: 1
+    BcID: 3
+    Name: "Pull_Right_UX"
+    PartID: 1
+    Box: [9.9, 10.1, -0.1, 5.1, -1.0, 1.0]
+    Type: "UX"
+    Value: 0.01
+
+# 4. 无接触对
+ContactPairs: []
+
+# 5. 求解积分器选择
+Solver:
+  Engine: "PD"
+  Type: "Mechanical"
+  Kernel: "NOSB_M"
+  TimeIntegrator: "ADR"
+
+  DynamicShapeTensor: false
+  KernelWeightType: "Gaussian"
+  ZeroEnergyG0: 1.0
+  ZeroEnergyMethod: "Zhang"
+  Horizon: 0.3015
+  OMP_Threads: 16
+  OutputInterval: 1000
+
+  MaxPseudoSteps: 20000
+  MassScaleFactor: 1.0e12
+  DispTol: 1.0e-6
+  ForceTol: 1.0e-4
+  MinRefForce: 1.0e-2
+  # TimeStep_dt: 1.0e-3
+  RampIters: 0
+  RampWaveRatio: 5.0
+  DampingMethod: "HybridKinetic"
+  Fracture_Strategy: "Strict"
+
+  LoadSteps:
+    - Step: 1
+      Time: 1.0
+      KBC: 0
+      NumSubsteps: 200
+
+# 6. IO输出设置
+Writer:
+  Type: "binary"
+  Variables:
+    - Name: "PartID"
+      Dimension: 1
+    - Name: "Displacement"
+      Dimension: 3
+    - Name: "Velocity"
+      Dimension: 3
+    - Name: "Acceleration"
+      Dimension: 3
+    - Name: "PK1Stress"
+      Dimension: 9
+    - Name: "EqPlasticStrain_Old"
+      Dimension: 1
+    - Name: "VonMisesStress"
+      Dimension: 1
