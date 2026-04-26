@@ -173,7 +173,13 @@ void NOSB_M::ComputeMechanicalState(PDContext &ctx) {
             FPtr[idx9 + 4], FPtr[idx9 + 5], FPtr[idx9 + 6], FPtr[idx9 + 7],
             FPtr[idx9 + 8];
 
-        Eigen::Matrix3d P_mat = matArrCache_[i]->ComputePK1Stress(F_mat, i);
+        // ADR 初始刚度法：冻结状态时根据 outerIter 选择塑性读取模式
+        int stateMode = 0;
+        if (ctx.isStateFrozen()) {
+          stateMode = (ctx.getOuterIter() == 0) ? 1 : 2;
+        }
+        int effectiveId = i;
+        Eigen::Matrix3d P_mat = matArrCache_[i]->ComputePK1Stress(F_mat, effectiveId, stateMode);
 
         double p00 = P_mat(0, 0), p01 = P_mat(0, 1), p02 = P_mat(0, 2);
         double p10 = P_mat(1, 0), p11 = P_mat(1, 1), p12 = P_mat(1, 2);

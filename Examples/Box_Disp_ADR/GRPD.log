@@ -7097,3 +7097,2286 @@
     | ==================================================
     | Outputting: PD
     | Post-processing Phase finished.
+
+[10:04:14] [INFO ] [EngineManager]
+    | ==================================================
+    | GRPD Solver Engine Initialized                 
+    | ==================================================
+
+[10:04:14] [INFO ] [EngineRegistry]
+    | Creating Engine instance: PD
+
+[10:04:14] [INFO ] [PDEngine]
+    | PD Engine instance created.
+    | ===============================================
+    | ========== Registered Types Summary ===========
+    | TimeIntegrator    : ADR, CentralDifference, Explicit, Staggered
+    | FieldRegistry     : DoubleField, IntField
+    | PhysicsFields     : Mechanical, Thermal
+    | BCRegistry        : AX, AY, AZ, CONV, FLUX, PX, PY, PZ, T, UX, UY, UZ, VX, VY, VZ
+    | ReaderRegistry    : .grpd, .inp
+    | StabilizerRegistry: Mechanical_Silling, Mechanical_Wan, Mechanical_Zhang, Thermal_Silling,
+    | Thermal_Wan, Thermal_Zhang
+    | ContactRegistry   : [Type] General, [ForceLaw] KinematicNormal, [ForceLaw] Nonlinear, [ForceLaw]
+    | Penalty, [ForceLaw] Silling, [ForceLaw] Viscous, [Evaluator] NTC, [Evaluator] NTN, [Evaluator] NTS,
+    | [FrictionLaw] ElasticStickSlip, [FrictionLaw] ExplicitImpulse, [FrictionLaw] TanhRegularized
+    | MaterialRegistry  : FourierThermalMat, J2PlasticityMat, JCPlasticityMat, LinearElasticMat
+    | KernelRegistry    : NOSB_M, NOSB_T
+    | EngineRegistry    : PD
+    | ===============================================
+
+[10:04:14] [INFO ] [EngineManager]
+    | Initializing solver: PD
+
+[10:04:14] [INFO ] [PDEngine]
+    | Initializing PD simulation context...
+
+[10:04:14] [INFO ] [InitModel]
+    | ==================================================
+    | Model pre-processing...
+    | ==================================================
+    | grpd path: D:\Project_C++\GRPD\Examples\Box_Disp_ADR\Box_Disp_ADR.grpd
+    | model name: Box_Disp_ADR
+    | Found existing .grpd mesh file at: D:\Project_C++\GRPD\Examples\Box_Disp_ADR\Box_Disp_ADR.grpd.
+    | Skipping generation.
+
+[10:04:14] [INFO ] [Context Manager]
+    | Formalized model name to: Box_Disp_ADR
+    | Model dimension set to: 3D
+
+[10:04:14] [INFO ] [ReaderRegistry]
+    | Creating reader for: .grpd (name: Box_Disp_ADR)
+
+[10:04:14] [INFO ] [InitModel]
+    | Reading mesh file: D:\Project_C++\GRPD\Examples\Box_Disp_ADR\Box_Disp_ADR.grpd (reader: .grpd)
+
+[10:04:14] [INFO ] [GrpdMeshReader]
+    | Reading file: D:\Project_C++\GRPD\Examples\Box_Disp_ADR\Box_Disp_ADR.grpd
+    | Entering *PARTICLE section (Line 1)
+    | Entering *LOAD section (Line 50003)
+[10:04:14] [ERROR] [GrpdMeshReader]
+    | Line 50005 load parse failed: stoi
+    | Line 50006 load parse failed: stoi
+    | Line 50007 load parse failed: stoi
+    | Line 50008 load parse failed: stoi
+    | Line 50009 load parse failed: stoi
+    | Line 50010 load parse failed: stoi
+    | Line 50011 load parse failed: stoi
+    | Line 50012 load parse failed: stoi
+    | Line 50013 load parse failed: stoi
+    | Line 50014 load parse failed: stoi
+    | Line 50015 load parse failed: stoi
+    | Line 50016 load parse failed: stoi
+    | Line 50017 load parse failed: stoi
+    | Line 50018 load parse failed: stoi
+    | Line 50019 load parse failed: stoi
+    | Line 50020 load parse failed: stoi
+    | Line 50021 load parse failed: stoi
+    | Line 50022 load parse failed: stoi
+    | Line 50023 load parse failed: stoi
+    | Line 50024 load parse failed: stoi
+    | Line 50025 load parse failed: stoi
+    | Line 50026 load parse failed: stoi
+    | Line 50027 load parse failed: stoi
+    | Line 50028 load parse failed: stoi
+    | Line 50029 load parse failed: stoi
+    | Line 50030 load parse failed: stoi
+    | Line 50031 load parse failed: stoi
+    | Line 50032 load parse failed: stoi
+    | Line 50033 load parse failed: stoi
+    | Line 50034 load parse failed: stoi
+    | Line 50035 load parse failed: stoi
+    | Line 50036 load parse failed: stoi
+    | Line 50037 load parse failed: stoi
+    | Line 50038 load parse failed: stoi
+    | Line 50039 load parse failed: stoi
+    | Line 50040 load parse failed: stoi
+    | Line 50041 load parse failed: stoi
+    | Line 50042 load parse failed: stoi
+    | Line 50043 load parse failed: stoi
+    | Line 50044 load parse failed: stoi
+    | Line 50045 load parse failed: stoi
+    | Line 50046 load parse failed: stoi
+    | Line 50047 load parse failed: stoi
+    | Line 50048 load parse failed: stoi
+    | Line 50049 load parse failed: stoi
+    | Line 50050 load parse failed: stoi
+    | Line 50051 load parse failed: stoi
+    | Line 50052 load parse failed: stoi
+    | Line 50053 load parse failed: stoi
+    | Line 50054 load parse failed: stoi
+    | Line 50055 load parse failed: stoi
+    | Line 50056 load parse failed: stoi
+    | Line 50057 load parse failed: stoi
+    | Line 50058 load parse failed: stoi
+    | Line 50059 load parse failed: stoi
+    | Line 50060 load parse failed: stoi
+    | Line 50061 load parse failed: stoi
+    | Line 50062 load parse failed: stoi
+    | Line 50063 load parse failed: stoi
+    | Line 50064 load parse failed: stoi
+    | Line 50065 load parse failed: stoi
+    | Line 50066 load parse failed: stoi
+    | Line 50067 load parse failed: stoi
+    | Line 50068 load parse failed: stoi
+    | Line 50069 load parse failed: stoi
+    | Line 50070 load parse failed: stoi
+    | Line 50071 load parse failed: stoi
+    | Line 50072 load parse failed: stoi
+    | Line 50073 load parse failed: stoi
+    | Line 50074 load parse failed: stoi
+    | Line 50075 load parse failed: stoi
+    | Line 50076 load parse failed: stoi
+    | Line 50077 load parse failed: stoi
+    | Line 50078 load parse failed: stoi
+    | Line 50079 load parse failed: stoi
+    | Line 50080 load parse failed: stoi
+    | Line 50081 load parse failed: stoi
+    | Line 50082 load parse failed: stoi
+    | Line 50083 load parse failed: stoi
+    | Line 50084 load parse failed: stoi
+    | Line 50085 load parse failed: stoi
+    | Line 50086 load parse failed: stoi
+    | Line 50087 load parse failed: stoi
+    | Line 50088 load parse failed: stoi
+    | Line 50089 load parse failed: stoi
+    | Line 50090 load parse failed: stoi
+    | Line 50091 load parse failed: stoi
+    | Line 50092 load parse failed: stoi
+    | Line 50093 load parse failed: stoi
+    | Line 50094 load parse failed: stoi
+    | Line 50095 load parse failed: stoi
+    | Line 50096 load parse failed: stoi
+    | Line 50097 load parse failed: stoi
+    | Line 50098 load parse failed: stoi
+    | Line 50099 load parse failed: stoi
+    | Line 50100 load parse failed: stoi
+    | Line 50101 load parse failed: stoi
+    | Line 50102 load parse failed: stoi
+    | Line 50103 load parse failed: stoi
+    | Line 50104 load parse failed: stoi
+    | Line 50105 load parse failed: stoi
+    | Line 50106 load parse failed: stoi
+    | Line 50107 load parse failed: stoi
+    | Line 50108 load parse failed: stoi
+    | Line 50109 load parse failed: stoi
+    | Line 50110 load parse failed: stoi
+    | Line 50111 load parse failed: stoi
+    | Line 50112 load parse failed: stoi
+    | Line 50113 load parse failed: stoi
+    | Line 50114 load parse failed: stoi
+    | Line 50115 load parse failed: stoi
+    | Line 50116 load parse failed: stoi
+    | Line 50117 load parse failed: stoi
+    | Line 50118 load parse failed: stoi
+    | Line 50119 load parse failed: stoi
+    | Line 50120 load parse failed: stoi
+    | Line 50121 load parse failed: stoi
+    | Line 50122 load parse failed: stoi
+    | Line 50123 load parse failed: stoi
+    | Line 50124 load parse failed: stoi
+    | Line 50125 load parse failed: stoi
+    | Line 50126 load parse failed: stoi
+    | Line 50127 load parse failed: stoi
+    | Line 50128 load parse failed: stoi
+    | Line 50129 load parse failed: stoi
+    | Line 50130 load parse failed: stoi
+    | Line 50131 load parse failed: stoi
+    | Line 50132 load parse failed: stoi
+    | Line 50133 load parse failed: stoi
+    | Line 50134 load parse failed: stoi
+    | Line 50135 load parse failed: stoi
+    | Line 50136 load parse failed: stoi
+    | Line 50137 load parse failed: stoi
+    | Line 50138 load parse failed: stoi
+    | Line 50139 load parse failed: stoi
+    | Line 50140 load parse failed: stoi
+    | Line 50141 load parse failed: stoi
+    | Line 50142 load parse failed: stoi
+    | Line 50143 load parse failed: stoi
+    | Line 50144 load parse failed: stoi
+    | Line 50145 load parse failed: stoi
+    | Line 50146 load parse failed: stoi
+    | Line 50147 load parse failed: stoi
+    | Line 50148 load parse failed: stoi
+    | Line 50149 load parse failed: stoi
+    | Line 50150 load parse failed: stoi
+    | Line 50151 load parse failed: stoi
+    | Line 50152 load parse failed: stoi
+    | Line 50153 load parse failed: stoi
+    | Line 50154 load parse failed: stoi
+    | Line 50155 load parse failed: stoi
+    | Line 50156 load parse failed: stoi
+    | Line 50157 load parse failed: stoi
+    | Line 50158 load parse failed: stoi
+    | Line 50159 load parse failed: stoi
+    | Line 50160 load parse failed: stoi
+    | Line 50161 load parse failed: stoi
+    | Line 50162 load parse failed: stoi
+    | Line 50163 load parse failed: stoi
+    | Line 50164 load parse failed: stoi
+    | Line 50165 load parse failed: stoi
+    | Line 50166 load parse failed: stoi
+    | Line 50167 load parse failed: stoi
+    | Line 50168 load parse failed: stoi
+    | Line 50169 load parse failed: stoi
+    | Line 50170 load parse failed: stoi
+    | Line 50171 load parse failed: stoi
+    | Line 50172 load parse failed: stoi
+    | Line 50173 load parse failed: stoi
+    | Line 50174 load parse failed: stoi
+    | Line 50175 load parse failed: stoi
+    | Line 50176 load parse failed: stoi
+    | Line 50177 load parse failed: stoi
+    | Line 50178 load parse failed: stoi
+    | Line 50179 load parse failed: stoi
+    | Line 50180 load parse failed: stoi
+    | Line 50181 load parse failed: stoi
+    | Line 50182 load parse failed: stoi
+    | Line 50183 load parse failed: stoi
+    | Line 50184 load parse failed: stoi
+    | Line 50185 load parse failed: stoi
+    | Line 50186 load parse failed: stoi
+    | Line 50187 load parse failed: stoi
+    | Line 50188 load parse failed: stoi
+    | Line 50189 load parse failed: stoi
+    | Line 50190 load parse failed: stoi
+    | Line 50191 load parse failed: stoi
+    | Line 50192 load parse failed: stoi
+    | Line 50193 load parse failed: stoi
+    | Line 50194 load parse failed: stoi
+    | Line 50195 load parse failed: stoi
+    | Line 50196 load parse failed: stoi
+    | Line 50197 load parse failed: stoi
+    | Line 50198 load parse failed: stoi
+    | Line 50199 load parse failed: stoi
+    | Line 50200 load parse failed: stoi
+    | Line 50201 load parse failed: stoi
+    | Line 50202 load parse failed: stoi
+    | Line 50203 load parse failed: stoi
+    | Line 50204 load parse failed: stoi
+    | Line 50205 load parse failed: stoi
+    | Line 50206 load parse failed: stoi
+    | Line 50207 load parse failed: stoi
+    | Line 50208 load parse failed: stoi
+    | Line 50209 load parse failed: stoi
+    | Line 50210 load parse failed: stoi
+    | Line 50211 load parse failed: stoi
+    | Line 50212 load parse failed: stoi
+    | Line 50213 load parse failed: stoi
+    | Line 50214 load parse failed: stoi
+    | Line 50215 load parse failed: stoi
+    | Line 50216 load parse failed: stoi
+    | Line 50217 load parse failed: stoi
+    | Line 50218 load parse failed: stoi
+    | Line 50219 load parse failed: stoi
+    | Line 50220 load parse failed: stoi
+    | Line 50221 load parse failed: stoi
+    | Line 50222 load parse failed: stoi
+    | Line 50223 load parse failed: stoi
+    | Line 50224 load parse failed: stoi
+    | Line 50225 load parse failed: stoi
+    | Line 50226 load parse failed: stoi
+    | Line 50227 load parse failed: stoi
+    | Line 50228 load parse failed: stoi
+    | Line 50229 load parse failed: stoi
+    | Line 50230 load parse failed: stoi
+    | Line 50231 load parse failed: stoi
+    | Line 50232 load parse failed: stoi
+    | Line 50233 load parse failed: stoi
+    | Line 50234 load parse failed: stoi
+    | Line 50235 load parse failed: stoi
+    | Line 50236 load parse failed: stoi
+    | Line 50237 load parse failed: stoi
+    | Line 50238 load parse failed: stoi
+    | Line 50239 load parse failed: stoi
+    | Line 50240 load parse failed: stoi
+    | Line 50241 load parse failed: stoi
+    | Line 50242 load parse failed: stoi
+    | Line 50243 load parse failed: stoi
+    | Line 50244 load parse failed: stoi
+    | Line 50245 load parse failed: stoi
+    | Line 50246 load parse failed: stoi
+    | Line 50247 load parse failed: stoi
+    | Line 50248 load parse failed: stoi
+    | Line 50249 load parse failed: stoi
+    | Line 50250 load parse failed: stoi
+    | Line 50251 load parse failed: stoi
+    | Line 50252 load parse failed: stoi
+    | Line 50253 load parse failed: stoi
+    | Line 50254 load parse failed: stoi
+    | Line 50255 load parse failed: stoi
+    | Line 50256 load parse failed: stoi
+    | Line 50257 load parse failed: stoi
+    | Line 50258 load parse failed: stoi
+    | Line 50259 load parse failed: stoi
+    | Line 50260 load parse failed: stoi
+    | Line 50261 load parse failed: stoi
+    | Line 50262 load parse failed: stoi
+    | Line 50263 load parse failed: stoi
+    | Line 50264 load parse failed: stoi
+    | Line 50265 load parse failed: stoi
+    | Line 50266 load parse failed: stoi
+    | Line 50267 load parse failed: stoi
+    | Line 50268 load parse failed: stoi
+    | Line 50269 load parse failed: stoi
+    | Line 50270 load parse failed: stoi
+    | Line 50271 load parse failed: stoi
+    | Line 50272 load parse failed: stoi
+    | Line 50273 load parse failed: stoi
+    | Line 50274 load parse failed: stoi
+    | Line 50275 load parse failed: stoi
+    | Line 50276 load parse failed: stoi
+    | Line 50277 load parse failed: stoi
+    | Line 50278 load parse failed: stoi
+    | Line 50279 load parse failed: stoi
+    | Line 50280 load parse failed: stoi
+    | Line 50281 load parse failed: stoi
+    | Line 50282 load parse failed: stoi
+    | Line 50283 load parse failed: stoi
+    | Line 50284 load parse failed: stoi
+    | Line 50285 load parse failed: stoi
+    | Line 50286 load parse failed: stoi
+    | Line 50287 load parse failed: stoi
+    | Line 50288 load parse failed: stoi
+    | Line 50289 load parse failed: stoi
+    | Line 50290 load parse failed: stoi
+    | Line 50291 load parse failed: stoi
+    | Line 50292 load parse failed: stoi
+    | Line 50293 load parse failed: stoi
+    | Line 50294 load parse failed: stoi
+    | Line 50295 load parse failed: stoi
+    | Line 50296 load parse failed: stoi
+    | Line 50297 load parse failed: stoi
+    | Line 50298 load parse failed: stoi
+    | Line 50299 load parse failed: stoi
+    | Line 50300 load parse failed: stoi
+    | Line 50301 load parse failed: stoi
+    | Line 50302 load parse failed: stoi
+    | Line 50303 load parse failed: stoi
+    | Line 50304 load parse failed: stoi
+    | Line 50305 load parse failed: stoi
+    | Line 50306 load parse failed: stoi
+    | Line 50307 load parse failed: stoi
+    | Line 50308 load parse failed: stoi
+    | Line 50309 load parse failed: stoi
+    | Line 50310 load parse failed: stoi
+    | Line 50311 load parse failed: stoi
+    | Line 50312 load parse failed: stoi
+    | Line 50313 load parse failed: stoi
+    | Line 50314 load parse failed: stoi
+    | Line 50315 load parse failed: stoi
+    | Line 50316 load parse failed: stoi
+    | Line 50317 load parse failed: stoi
+    | Line 50318 load parse failed: stoi
+    | Line 50319 load parse failed: stoi
+    | Line 50320 load parse failed: stoi
+    | Line 50321 load parse failed: stoi
+    | Line 50322 load parse failed: stoi
+    | Line 50323 load parse failed: stoi
+    | Line 50324 load parse failed: stoi
+    | Line 50325 load parse failed: stoi
+    | Line 50326 load parse failed: stoi
+    | Line 50327 load parse failed: stoi
+    | Line 50328 load parse failed: stoi
+    | Line 50329 load parse failed: stoi
+    | Line 50330 load parse failed: stoi
+    | Line 50331 load parse failed: stoi
+    | Line 50332 load parse failed: stoi
+    | Line 50333 load parse failed: stoi
+    | Line 50334 load parse failed: stoi
+    | Line 50335 load parse failed: stoi
+    | Line 50336 load parse failed: stoi
+    | Line 50337 load parse failed: stoi
+    | Line 50338 load parse failed: stoi
+    | Line 50339 load parse failed: stoi
+    | Line 50340 load parse failed: stoi
+    | Line 50341 load parse failed: stoi
+    | Line 50342 load parse failed: stoi
+    | Line 50343 load parse failed: stoi
+    | Line 50344 load parse failed: stoi
+    | Line 50345 load parse failed: stoi
+    | Line 50346 load parse failed: stoi
+    | Line 50347 load parse failed: stoi
+    | Line 50348 load parse failed: stoi
+    | Line 50349 load parse failed: stoi
+    | Line 50350 load parse failed: stoi
+    | Line 50351 load parse failed: stoi
+    | Line 50352 load parse failed: stoi
+    | Line 50353 load parse failed: stoi
+    | Line 50354 load parse failed: stoi
+    | Line 50355 load parse failed: stoi
+    | Line 50356 load parse failed: stoi
+    | Line 50357 load parse failed: stoi
+    | Line 50358 load parse failed: stoi
+    | Line 50359 load parse failed: stoi
+    | Line 50360 load parse failed: stoi
+    | Line 50361 load parse failed: stoi
+    | Line 50362 load parse failed: stoi
+    | Line 50363 load parse failed: stoi
+    | Line 50364 load parse failed: stoi
+    | Line 50365 load parse failed: stoi
+    | Line 50366 load parse failed: stoi
+    | Line 50367 load parse failed: stoi
+    | Line 50368 load parse failed: stoi
+    | Line 50369 load parse failed: stoi
+    | Line 50370 load parse failed: stoi
+    | Line 50371 load parse failed: stoi
+    | Line 50372 load parse failed: stoi
+    | Line 50373 load parse failed: stoi
+    | Line 50374 load parse failed: stoi
+    | Line 50375 load parse failed: stoi
+    | Line 50376 load parse failed: stoi
+    | Line 50377 load parse failed: stoi
+    | Line 50378 load parse failed: stoi
+    | Line 50379 load parse failed: stoi
+    | Line 50380 load parse failed: stoi
+    | Line 50381 load parse failed: stoi
+    | Line 50382 load parse failed: stoi
+    | Line 50383 load parse failed: stoi
+    | Line 50384 load parse failed: stoi
+    | Line 50385 load parse failed: stoi
+    | Line 50386 load parse failed: stoi
+    | Line 50387 load parse failed: stoi
+    | Line 50388 load parse failed: stoi
+    | Line 50389 load parse failed: stoi
+    | Line 50390 load parse failed: stoi
+    | Line 50391 load parse failed: stoi
+    | Line 50392 load parse failed: stoi
+    | Line 50393 load parse failed: stoi
+    | Line 50394 load parse failed: stoi
+    | Line 50395 load parse failed: stoi
+    | Line 50396 load parse failed: stoi
+    | Line 50397 load parse failed: stoi
+    | Line 50398 load parse failed: stoi
+    | Line 50399 load parse failed: stoi
+    | Line 50400 load parse failed: stoi
+    | Line 50401 load parse failed: stoi
+    | Line 50402 load parse failed: stoi
+    | Line 50403 load parse failed: stoi
+    | Line 50404 load parse failed: stoi
+    | Line 50405 load parse failed: stoi
+    | Line 50406 load parse failed: stoi
+    | Line 50407 load parse failed: stoi
+    | Line 50408 load parse failed: stoi
+    | Line 50409 load parse failed: stoi
+    | Line 50410 load parse failed: stoi
+    | Line 50411 load parse failed: stoi
+    | Line 50412 load parse failed: stoi
+    | Line 50413 load parse failed: stoi
+    | Line 50414 load parse failed: stoi
+    | Line 50415 load parse failed: stoi
+    | Line 50416 load parse failed: stoi
+    | Line 50417 load parse failed: stoi
+    | Line 50418 load parse failed: stoi
+    | Line 50419 load parse failed: stoi
+    | Line 50420 load parse failed: stoi
+    | Line 50421 load parse failed: stoi
+    | Line 50422 load parse failed: stoi
+    | Line 50423 load parse failed: stoi
+    | Line 50424 load parse failed: stoi
+    | Line 50425 load parse failed: stoi
+    | Line 50426 load parse failed: stoi
+    | Line 50427 load parse failed: stoi
+    | Line 50428 load parse failed: stoi
+    | Line 50429 load parse failed: stoi
+    | Line 50430 load parse failed: stoi
+    | Line 50431 load parse failed: stoi
+    | Line 50432 load parse failed: stoi
+    | Line 50433 load parse failed: stoi
+    | Line 50434 load parse failed: stoi
+    | Line 50435 load parse failed: stoi
+    | Line 50436 load parse failed: stoi
+    | Line 50437 load parse failed: stoi
+    | Line 50438 load parse failed: stoi
+    | Line 50439 load parse failed: stoi
+    | Line 50440 load parse failed: stoi
+    | Line 50441 load parse failed: stoi
+    | Line 50442 load parse failed: stoi
+    | Line 50443 load parse failed: stoi
+    | Line 50444 load parse failed: stoi
+    | Line 50445 load parse failed: stoi
+    | Line 50446 load parse failed: stoi
+    | Line 50447 load parse failed: stoi
+    | Line 50448 load parse failed: stoi
+    | Line 50449 load parse failed: stoi
+    | Line 50450 load parse failed: stoi
+    | Line 50451 load parse failed: stoi
+    | Line 50452 load parse failed: stoi
+    | Line 50453 load parse failed: stoi
+    | Line 50454 load parse failed: stoi
+    | Line 50455 load parse failed: stoi
+    | Line 50456 load parse failed: stoi
+    | Line 50457 load parse failed: stoi
+    | Line 50458 load parse failed: stoi
+    | Line 50459 load parse failed: stoi
+    | Line 50460 load parse failed: stoi
+    | Line 50461 load parse failed: stoi
+    | Line 50462 load parse failed: stoi
+    | Line 50463 load parse failed: stoi
+    | Line 50464 load parse failed: stoi
+    | Line 50465 load parse failed: stoi
+    | Line 50466 load parse failed: stoi
+    | Line 50467 load parse failed: stoi
+    | Line 50468 load parse failed: stoi
+    | Line 50469 load parse failed: stoi
+    | Line 50470 load parse failed: stoi
+    | Line 50471 load parse failed: stoi
+    | Line 50472 load parse failed: stoi
+    | Line 50473 load parse failed: stoi
+    | Line 50474 load parse failed: stoi
+    | Line 50475 load parse failed: stoi
+    | Line 50476 load parse failed: stoi
+    | Line 50477 load parse failed: stoi
+    | Line 50478 load parse failed: stoi
+    | Line 50479 load parse failed: stoi
+    | Line 50480 load parse failed: stoi
+    | Line 50481 load parse failed: stoi
+    | Line 50482 load parse failed: stoi
+    | Line 50483 load parse failed: stoi
+    | Line 50484 load parse failed: stoi
+    | Line 50485 load parse failed: stoi
+    | Line 50486 load parse failed: stoi
+    | Line 50487 load parse failed: stoi
+    | Line 50488 load parse failed: stoi
+    | Line 50489 load parse failed: stoi
+    | Line 50490 load parse failed: stoi
+    | Line 50491 load parse failed: stoi
+    | Line 50492 load parse failed: stoi
+    | Line 50493 load parse failed: stoi
+    | Line 50494 load parse failed: stoi
+    | Line 50495 load parse failed: stoi
+    | Line 50496 load parse failed: stoi
+    | Line 50497 load parse failed: stoi
+    | Line 50498 load parse failed: stoi
+    | Line 50499 load parse failed: stoi
+    | Line 50500 load parse failed: stoi
+    | Line 50501 load parse failed: stoi
+    | Line 50502 load parse failed: stoi
+    | Line 50503 load parse failed: stoi
+    | Line 50504 load parse failed: stoi
+    | Line 50505 load parse failed: stoi
+    | Line 50506 load parse failed: stoi
+    | Line 50507 load parse failed: stoi
+    | Line 50508 load parse failed: stoi
+    | Line 50509 load parse failed: stoi
+    | Line 50510 load parse failed: stoi
+    | Line 50511 load parse failed: stoi
+    | Line 50512 load parse failed: stoi
+    | Line 50513 load parse failed: stoi
+    | Line 50514 load parse failed: stoi
+    | Line 50515 load parse failed: stoi
+    | Line 50516 load parse failed: stoi
+    | Line 50517 load parse failed: stoi
+    | Line 50518 load parse failed: stoi
+    | Line 50519 load parse failed: stoi
+    | Line 50520 load parse failed: stoi
+    | Line 50521 load parse failed: stoi
+    | Line 50522 load parse failed: stoi
+    | Line 50523 load parse failed: stoi
+    | Line 50524 load parse failed: stoi
+    | Line 50525 load parse failed: stoi
+    | Line 50526 load parse failed: stoi
+    | Line 50527 load parse failed: stoi
+    | Line 50528 load parse failed: stoi
+    | Line 50529 load parse failed: stoi
+    | Line 50530 load parse failed: stoi
+    | Line 50531 load parse failed: stoi
+    | Line 50532 load parse failed: stoi
+    | Line 50533 load parse failed: stoi
+    | Line 50534 load parse failed: stoi
+    | Line 50535 load parse failed: stoi
+    | Line 50536 load parse failed: stoi
+    | Line 50537 load parse failed: stoi
+    | Line 50538 load parse failed: stoi
+    | Line 50539 load parse failed: stoi
+    | Line 50540 load parse failed: stoi
+    | Line 50541 load parse failed: stoi
+    | Line 50542 load parse failed: stoi
+    | Line 50543 load parse failed: stoi
+    | Line 50544 load parse failed: stoi
+    | Line 50545 load parse failed: stoi
+    | Line 50546 load parse failed: stoi
+    | Line 50547 load parse failed: stoi
+    | Line 50548 load parse failed: stoi
+    | Line 50549 load parse failed: stoi
+    | Line 50550 load parse failed: stoi
+    | Line 50551 load parse failed: stoi
+    | Line 50552 load parse failed: stoi
+    | Line 50553 load parse failed: stoi
+    | Line 50554 load parse failed: stoi
+    | Line 50555 load parse failed: stoi
+    | Line 50556 load parse failed: stoi
+    | Line 50557 load parse failed: stoi
+    | Line 50558 load parse failed: stoi
+    | Line 50559 load parse failed: stoi
+    | Line 50560 load parse failed: stoi
+    | Line 50561 load parse failed: stoi
+    | Line 50562 load parse failed: stoi
+    | Line 50563 load parse failed: stoi
+    | Line 50564 load parse failed: stoi
+    | Line 50565 load parse failed: stoi
+    | Line 50566 load parse failed: stoi
+    | Line 50567 load parse failed: stoi
+    | Line 50568 load parse failed: stoi
+    | Line 50569 load parse failed: stoi
+    | Line 50570 load parse failed: stoi
+    | Line 50571 load parse failed: stoi
+    | Line 50572 load parse failed: stoi
+    | Line 50573 load parse failed: stoi
+    | Line 50574 load parse failed: stoi
+    | Line 50575 load parse failed: stoi
+    | Line 50576 load parse failed: stoi
+    | Line 50577 load parse failed: stoi
+    | Line 50578 load parse failed: stoi
+    | Line 50579 load parse failed: stoi
+    | Line 50580 load parse failed: stoi
+    | Line 50581 load parse failed: stoi
+    | Line 50582 load parse failed: stoi
+    | Line 50583 load parse failed: stoi
+    | Line 50584 load parse failed: stoi
+    | Line 50585 load parse failed: stoi
+    | Line 50586 load parse failed: stoi
+    | Line 50587 load parse failed: stoi
+    | Line 50588 load parse failed: stoi
+    | Line 50589 load parse failed: stoi
+    | Line 50590 load parse failed: stoi
+    | Line 50591 load parse failed: stoi
+    | Line 50592 load parse failed: stoi
+    | Line 50593 load parse failed: stoi
+    | Line 50594 load parse failed: stoi
+    | Line 50595 load parse failed: stoi
+    | Line 50596 load parse failed: stoi
+    | Line 50597 load parse failed: stoi
+    | Line 50598 load parse failed: stoi
+    | Line 50599 load parse failed: stoi
+    | Line 50600 load parse failed: stoi
+    | Line 50601 load parse failed: stoi
+    | Line 50602 load parse failed: stoi
+    | Line 50603 load parse failed: stoi
+    | Line 50604 load parse failed: stoi
+    | Line 50605 load parse failed: stoi
+    | Line 50606 load parse failed: stoi
+    | Line 50607 load parse failed: stoi
+    | Line 50608 load parse failed: stoi
+    | Line 50609 load parse failed: stoi
+    | Line 50610 load parse failed: stoi
+    | Line 50611 load parse failed: stoi
+    | Line 50612 load parse failed: stoi
+    | Line 50613 load parse failed: stoi
+    | Line 50614 load parse failed: stoi
+    | Line 50615 load parse failed: stoi
+    | Line 50616 load parse failed: stoi
+    | Line 50617 load parse failed: stoi
+    | Line 50618 load parse failed: stoi
+    | Line 50619 load parse failed: stoi
+    | Line 50620 load parse failed: stoi
+    | Line 50621 load parse failed: stoi
+    | Line 50622 load parse failed: stoi
+    | Line 50623 load parse failed: stoi
+    | Line 50624 load parse failed: stoi
+    | Line 50625 load parse failed: stoi
+    | Line 50626 load parse failed: stoi
+    | Line 50627 load parse failed: stoi
+    | Line 50628 load parse failed: stoi
+    | Line 50629 load parse failed: stoi
+    | Line 50630 load parse failed: stoi
+    | Line 50631 load parse failed: stoi
+    | Line 50632 load parse failed: stoi
+    | Line 50633 load parse failed: stoi
+    | Line 50634 load parse failed: stoi
+    | Line 50635 load parse failed: stoi
+    | Line 50636 load parse failed: stoi
+    | Line 50637 load parse failed: stoi
+    | Line 50638 load parse failed: stoi
+    | Line 50639 load parse failed: stoi
+    | Line 50640 load parse failed: stoi
+    | Line 50641 load parse failed: stoi
+    | Line 50642 load parse failed: stoi
+    | Line 50643 load parse failed: stoi
+    | Line 50644 load parse failed: stoi
+    | Line 50645 load parse failed: stoi
+    | Line 50646 load parse failed: stoi
+    | Line 50647 load parse failed: stoi
+    | Line 50648 load parse failed: stoi
+    | Line 50649 load parse failed: stoi
+    | Line 50650 load parse failed: stoi
+    | Line 50651 load parse failed: stoi
+    | Line 50652 load parse failed: stoi
+    | Line 50653 load parse failed: stoi
+    | Line 50654 load parse failed: stoi
+    | Line 50655 load parse failed: stoi
+    | Line 50656 load parse failed: stoi
+    | Line 50657 load parse failed: stoi
+    | Line 50658 load parse failed: stoi
+    | Line 50659 load parse failed: stoi
+    | Line 50660 load parse failed: stoi
+    | Line 50661 load parse failed: stoi
+    | Line 50662 load parse failed: stoi
+    | Line 50663 load parse failed: stoi
+    | Line 50664 load parse failed: stoi
+    | Line 50665 load parse failed: stoi
+    | Line 50666 load parse failed: stoi
+    | Line 50667 load parse failed: stoi
+    | Line 50668 load parse failed: stoi
+    | Line 50669 load parse failed: stoi
+    | Line 50670 load parse failed: stoi
+    | Line 50671 load parse failed: stoi
+    | Line 50672 load parse failed: stoi
+    | Line 50673 load parse failed: stoi
+    | Line 50674 load parse failed: stoi
+    | Line 50675 load parse failed: stoi
+    | Line 50676 load parse failed: stoi
+    | Line 50677 load parse failed: stoi
+    | Line 50678 load parse failed: stoi
+    | Line 50679 load parse failed: stoi
+    | Line 50680 load parse failed: stoi
+    | Line 50681 load parse failed: stoi
+    | Line 50682 load parse failed: stoi
+    | Line 50683 load parse failed: stoi
+    | Line 50684 load parse failed: stoi
+    | Line 50685 load parse failed: stoi
+    | Line 50686 load parse failed: stoi
+    | Line 50687 load parse failed: stoi
+    | Line 50688 load parse failed: stoi
+    | Line 50689 load parse failed: stoi
+    | Line 50690 load parse failed: stoi
+    | Line 50691 load parse failed: stoi
+    | Line 50692 load parse failed: stoi
+    | Line 50693 load parse failed: stoi
+    | Line 50694 load parse failed: stoi
+    | Line 50695 load parse failed: stoi
+    | Line 50696 load parse failed: stoi
+    | Line 50697 load parse failed: stoi
+    | Line 50698 load parse failed: stoi
+    | Line 50699 load parse failed: stoi
+    | Line 50700 load parse failed: stoi
+    | Line 50701 load parse failed: stoi
+    | Line 50702 load parse failed: stoi
+    | Line 50703 load parse failed: stoi
+    | Line 50704 load parse failed: stoi
+    | Line 50705 load parse failed: stoi
+    | Line 50706 load parse failed: stoi
+    | Line 50707 load parse failed: stoi
+    | Line 50708 load parse failed: stoi
+    | Line 50709 load parse failed: stoi
+    | Line 50710 load parse failed: stoi
+    | Line 50711 load parse failed: stoi
+    | Line 50712 load parse failed: stoi
+    | Line 50713 load parse failed: stoi
+    | Line 50714 load parse failed: stoi
+    | Line 50715 load parse failed: stoi
+    | Line 50716 load parse failed: stoi
+    | Line 50717 load parse failed: stoi
+    | Line 50718 load parse failed: stoi
+    | Line 50719 load parse failed: stoi
+    | Line 50720 load parse failed: stoi
+    | Line 50721 load parse failed: stoi
+    | Line 50722 load parse failed: stoi
+    | Line 50723 load parse failed: stoi
+    | Line 50724 load parse failed: stoi
+    | Line 50725 load parse failed: stoi
+    | Line 50726 load parse failed: stoi
+    | Line 50727 load parse failed: stoi
+    | Line 50728 load parse failed: stoi
+    | Line 50729 load parse failed: stoi
+    | Line 50730 load parse failed: stoi
+    | Line 50731 load parse failed: stoi
+    | Line 50732 load parse failed: stoi
+    | Line 50733 load parse failed: stoi
+    | Line 50734 load parse failed: stoi
+    | Line 50735 load parse failed: stoi
+    | Line 50736 load parse failed: stoi
+    | Line 50737 load parse failed: stoi
+    | Line 50738 load parse failed: stoi
+    | Line 50739 load parse failed: stoi
+    | Line 50740 load parse failed: stoi
+    | Line 50741 load parse failed: stoi
+    | Line 50742 load parse failed: stoi
+    | Line 50743 load parse failed: stoi
+    | Line 50744 load parse failed: stoi
+    | Line 50745 load parse failed: stoi
+    | Line 50746 load parse failed: stoi
+    | Line 50747 load parse failed: stoi
+    | Line 50748 load parse failed: stoi
+    | Line 50749 load parse failed: stoi
+    | Line 50750 load parse failed: stoi
+    | Line 50751 load parse failed: stoi
+    | Line 50752 load parse failed: stoi
+    | Line 50753 load parse failed: stoi
+    | Line 50754 load parse failed: stoi
+    | Line 50755 load parse failed: stoi
+    | Line 50756 load parse failed: stoi
+    | Line 50757 load parse failed: stoi
+    | Line 50758 load parse failed: stoi
+    | Line 50759 load parse failed: stoi
+    | Line 50760 load parse failed: stoi
+    | Line 50761 load parse failed: stoi
+    | Line 50762 load parse failed: stoi
+    | Line 50763 load parse failed: stoi
+    | Line 50764 load parse failed: stoi
+    | Line 50765 load parse failed: stoi
+    | Line 50766 load parse failed: stoi
+    | Line 50767 load parse failed: stoi
+    | Line 50768 load parse failed: stoi
+    | Line 50769 load parse failed: stoi
+    | Line 50770 load parse failed: stoi
+    | Line 50771 load parse failed: stoi
+    | Line 50772 load parse failed: stoi
+    | Line 50773 load parse failed: stoi
+    | Line 50774 load parse failed: stoi
+    | Line 50775 load parse failed: stoi
+    | Line 50776 load parse failed: stoi
+    | Line 50777 load parse failed: stoi
+    | Line 50778 load parse failed: stoi
+    | Line 50779 load parse failed: stoi
+    | Line 50780 load parse failed: stoi
+    | Line 50781 load parse failed: stoi
+    | Line 50782 load parse failed: stoi
+    | Line 50783 load parse failed: stoi
+    | Line 50784 load parse failed: stoi
+    | Line 50785 load parse failed: stoi
+    | Line 50786 load parse failed: stoi
+    | Line 50787 load parse failed: stoi
+    | Line 50788 load parse failed: stoi
+    | Line 50789 load parse failed: stoi
+    | Line 50790 load parse failed: stoi
+    | Line 50791 load parse failed: stoi
+    | Line 50792 load parse failed: stoi
+    | Line 50793 load parse failed: stoi
+    | Line 50794 load parse failed: stoi
+    | Line 50795 load parse failed: stoi
+    | Line 50796 load parse failed: stoi
+    | Line 50797 load parse failed: stoi
+    | Line 50798 load parse failed: stoi
+    | Line 50799 load parse failed: stoi
+    | Line 50800 load parse failed: stoi
+    | Line 50801 load parse failed: stoi
+    | Line 50802 load parse failed: stoi
+    | Line 50803 load parse failed: stoi
+    | Line 50804 load parse failed: stoi
+    | Line 50805 load parse failed: stoi
+    | Line 50806 load parse failed: stoi
+    | Line 50807 load parse failed: stoi
+    | Line 50808 load parse failed: stoi
+    | Line 50809 load parse failed: stoi
+    | Line 50810 load parse failed: stoi
+    | Line 50811 load parse failed: stoi
+    | Line 50812 load parse failed: stoi
+    | Line 50813 load parse failed: stoi
+    | Line 50814 load parse failed: stoi
+    | Line 50815 load parse failed: stoi
+    | Line 50816 load parse failed: stoi
+    | Line 50817 load parse failed: stoi
+    | Line 50818 load parse failed: stoi
+    | Line 50819 load parse failed: stoi
+    | Line 50820 load parse failed: stoi
+    | Line 50821 load parse failed: stoi
+    | Line 50822 load parse failed: stoi
+    | Line 50823 load parse failed: stoi
+    | Line 50824 load parse failed: stoi
+    | Line 50825 load parse failed: stoi
+    | Line 50826 load parse failed: stoi
+    | Line 50827 load parse failed: stoi
+    | Line 50828 load parse failed: stoi
+    | Line 50829 load parse failed: stoi
+    | Line 50830 load parse failed: stoi
+    | Line 50831 load parse failed: stoi
+    | Line 50832 load parse failed: stoi
+    | Line 50833 load parse failed: stoi
+    | Line 50834 load parse failed: stoi
+    | Line 50835 load parse failed: stoi
+    | Line 50836 load parse failed: stoi
+    | Line 50837 load parse failed: stoi
+    | Line 50838 load parse failed: stoi
+    | Line 50839 load parse failed: stoi
+    | Line 50840 load parse failed: stoi
+    | Line 50841 load parse failed: stoi
+    | Line 50842 load parse failed: stoi
+    | Line 50843 load parse failed: stoi
+    | Line 50844 load parse failed: stoi
+    | Line 50845 load parse failed: stoi
+    | Line 50846 load parse failed: stoi
+    | Line 50847 load parse failed: stoi
+    | Line 50848 load parse failed: stoi
+    | Line 50849 load parse failed: stoi
+    | Line 50850 load parse failed: stoi
+    | Line 50851 load parse failed: stoi
+    | Line 50852 load parse failed: stoi
+    | Line 50853 load parse failed: stoi
+    | Line 50854 load parse failed: stoi
+    | Line 50855 load parse failed: stoi
+    | Line 50856 load parse failed: stoi
+    | Line 50857 load parse failed: stoi
+    | Line 50858 load parse failed: stoi
+    | Line 50859 load parse failed: stoi
+    | Line 50860 load parse failed: stoi
+    | Line 50861 load parse failed: stoi
+    | Line 50862 load parse failed: stoi
+    | Line 50863 load parse failed: stoi
+    | Line 50864 load parse failed: stoi
+    | Line 50865 load parse failed: stoi
+    | Line 50866 load parse failed: stoi
+    | Line 50867 load parse failed: stoi
+    | Line 50868 load parse failed: stoi
+    | Line 50869 load parse failed: stoi
+    | Line 50870 load parse failed: stoi
+    | Line 50871 load parse failed: stoi
+    | Line 50872 load parse failed: stoi
+    | Line 50873 load parse failed: stoi
+    | Line 50874 load parse failed: stoi
+    | Line 50875 load parse failed: stoi
+    | Line 50876 load parse failed: stoi
+    | Line 50877 load parse failed: stoi
+    | Line 50878 load parse failed: stoi
+    | Line 50879 load parse failed: stoi
+    | Line 50880 load parse failed: stoi
+    | Line 50881 load parse failed: stoi
+    | Line 50882 load parse failed: stoi
+    | Line 50883 load parse failed: stoi
+    | Line 50884 load parse failed: stoi
+    | Line 50885 load parse failed: stoi
+    | Line 50886 load parse failed: stoi
+    | Line 50887 load parse failed: stoi
+    | Line 50888 load parse failed: stoi
+    | Line 50889 load parse failed: stoi
+    | Line 50890 load parse failed: stoi
+    | Line 50891 load parse failed: stoi
+    | Line 50892 load parse failed: stoi
+    | Line 50893 load parse failed: stoi
+    | Line 50894 load parse failed: stoi
+    | Line 50895 load parse failed: stoi
+    | Line 50896 load parse failed: stoi
+    | Line 50897 load parse failed: stoi
+    | Line 50898 load parse failed: stoi
+    | Line 50899 load parse failed: stoi
+    | Line 50900 load parse failed: stoi
+    | Line 50901 load parse failed: stoi
+    | Line 50902 load parse failed: stoi
+    | Line 50903 load parse failed: stoi
+    | Line 50904 load parse failed: stoi
+    | Line 50905 load parse failed: stoi
+    | Line 50906 load parse failed: stoi
+    | Line 50907 load parse failed: stoi
+    | Line 50908 load parse failed: stoi
+    | Line 50909 load parse failed: stoi
+    | Line 50910 load parse failed: stoi
+    | Line 50911 load parse failed: stoi
+    | Line 50912 load parse failed: stoi
+    | Line 50913 load parse failed: stoi
+    | Line 50914 load parse failed: stoi
+    | Line 50915 load parse failed: stoi
+    | Line 50916 load parse failed: stoi
+    | Line 50917 load parse failed: stoi
+    | Line 50918 load parse failed: stoi
+    | Line 50919 load parse failed: stoi
+    | Line 50920 load parse failed: stoi
+    | Line 50921 load parse failed: stoi
+    | Line 50922 load parse failed: stoi
+    | Line 50923 load parse failed: stoi
+    | Line 50924 load parse failed: stoi
+    | Line 50925 load parse failed: stoi
+    | Line 50926 load parse failed: stoi
+    | Line 50927 load parse failed: stoi
+    | Line 50928 load parse failed: stoi
+    | Line 50929 load parse failed: stoi
+    | Line 50930 load parse failed: stoi
+    | Line 50931 load parse failed: stoi
+    | Line 50932 load parse failed: stoi
+    | Line 50933 load parse failed: stoi
+    | Line 50934 load parse failed: stoi
+    | Line 50935 load parse failed: stoi
+    | Line 50936 load parse failed: stoi
+    | Line 50937 load parse failed: stoi
+    | Line 50938 load parse failed: stoi
+    | Line 50939 load parse failed: stoi
+    | Line 50940 load parse failed: stoi
+    | Line 50941 load parse failed: stoi
+    | Line 50942 load parse failed: stoi
+    | Line 50943 load parse failed: stoi
+    | Line 50944 load parse failed: stoi
+    | Line 50945 load parse failed: stoi
+    | Line 50946 load parse failed: stoi
+    | Line 50947 load parse failed: stoi
+    | Line 50948 load parse failed: stoi
+    | Line 50949 load parse failed: stoi
+    | Line 50950 load parse failed: stoi
+    | Line 50951 load parse failed: stoi
+    | Line 50952 load parse failed: stoi
+    | Line 50953 load parse failed: stoi
+    | Line 50954 load parse failed: stoi
+    | Line 50955 load parse failed: stoi
+    | Line 50956 load parse failed: stoi
+    | Line 50957 load parse failed: stoi
+    | Line 50958 load parse failed: stoi
+    | Line 50959 load parse failed: stoi
+    | Line 50960 load parse failed: stoi
+    | Line 50961 load parse failed: stoi
+    | Line 50962 load parse failed: stoi
+    | Line 50963 load parse failed: stoi
+    | Line 50964 load parse failed: stoi
+    | Line 50965 load parse failed: stoi
+    | Line 50966 load parse failed: stoi
+    | Line 50967 load parse failed: stoi
+    | Line 50968 load parse failed: stoi
+    | Line 50969 load parse failed: stoi
+    | Line 50970 load parse failed: stoi
+    | Line 50971 load parse failed: stoi
+    | Line 50972 load parse failed: stoi
+    | Line 50973 load parse failed: stoi
+    | Line 50974 load parse failed: stoi
+    | Line 50975 load parse failed: stoi
+    | Line 50976 load parse failed: stoi
+    | Line 50977 load parse failed: stoi
+    | Line 50978 load parse failed: stoi
+    | Line 50979 load parse failed: stoi
+    | Line 50980 load parse failed: stoi
+    | Line 50981 load parse failed: stoi
+    | Line 50982 load parse failed: stoi
+    | Line 50983 load parse failed: stoi
+    | Line 50984 load parse failed: stoi
+    | Line 50985 load parse failed: stoi
+    | Line 50986 load parse failed: stoi
+    | Line 50987 load parse failed: stoi
+    | Line 50988 load parse failed: stoi
+    | Line 50989 load parse failed: stoi
+    | Line 50990 load parse failed: stoi
+    | Line 50991 load parse failed: stoi
+    | Line 50992 load parse failed: stoi
+    | Line 50993 load parse failed: stoi
+    | Line 50994 load parse failed: stoi
+    | Line 50995 load parse failed: stoi
+    | Line 50996 load parse failed: stoi
+    | Line 50997 load parse failed: stoi
+    | Line 50998 load parse failed: stoi
+    | Line 50999 load parse failed: stoi
+    | Line 51000 load parse failed: stoi
+    | Line 51001 load parse failed: stoi
+    | Line 51002 load parse failed: stoi
+    | Line 51003 load parse failed: stoi
+    | Line 51004 load parse failed: stoi
+[10:04:15] [INFO ] [GrpdMeshReader]
+    | ============================================
+    | File reading complete!
+    | Total particles: 50000
+    | Total load entries: 0
+    | ============================================
+
+[10:04:15] [INFO ] [ParticleManager]
+    | Pre-allocated memory for 50000 particles
+
+[10:04:15] [INFO ] [InitModel]
+    | Total particles loaded for model Box_Disp_ADR: 50000
+
+[10:04:15] [INFO ] [InitMaterial]
+    | ==================================================
+    | Entering Material Initialization Phase...
+    | ==================================================
+    | Instantiating material [1] of type: J2PlasticityMat
+
+[10:04:15] [INFO ] [MaterialRegistry]
+    | Using factory to create material: Steel_Plastic (type: J2PlasticityMat)
+
+[10:04:15] [INFO ] [J2PlasticityMat]
+    | Hardening Type: Isotropic
+
+[10:04:15] [INFO ] [MaterialManager]
+    | Successfully added material instance: Steel_Plastic
+
+[10:04:15] [INFO ] [InitMaterial]
+    | Successfully registered material ID 1 (Steel_Plastic)
+    | Assigning material pointers to particles...
+    | Successfully assigned materials to 50000 particles.
+
+[10:04:15] [INFO ] [InitFields]
+    | ==================================================
+    | Entering Field Registration Phase...
+    | ==================================================
+
+[10:04:15] [INFO ] [FieldManager]
+    | Added field 'Displacement'.
+    | Added field 'Velocity'.
+    | Added field 'Acceleration'.
+    | Added field 'ContactNormal'.
+    | Added field 'ContactGap'.
+    | Added field 'VirtualSurfacePos'.
+
+[10:04:15] [INFO ] [MechanicalFields]
+    | Core fields registered: Displacement, Velocity, Acceleration, ContactNormal, ContactGap,
+    | VirtualSurfacePos.
+
+[10:04:15] [INFO ] [InitFields]
+    | Auto-registered PhysicsFields module: Mechanical
+
+[10:04:15] [INFO ] [FieldManager]
+    | Added field 'ID'.
+    | Added field 'PartID'.
+    | Added field 'MatID'.
+    | Added field 'Coords'.
+    | Added field 'Volume'.
+    | Added field 'ActiveStatus'.
+
+[10:04:15] [INFO ] [InitFields]
+    | Global ActiveStatus field registered.
+
+[10:04:15] [INFO ] [FieldManager]
+    | Added field 'EqPlasticStrain_Old'.
+    | Added field 'EqPlasticStrain_Trial'.
+    | Registered swap pair: EqPlasticStrain_Old <-> EqPlasticStrain_Trial
+    | Added field 'PlasticStrain_Old'.
+    | Added field 'PlasticStrain_Trial'.
+    | Registered swap pair: PlasticStrain_Old <-> PlasticStrain_Trial
+    | Added field 'VonMisesStress'.
+    | Resized all 17 fields for 50000 particles.
+
+[10:04:15] [INFO ] [InitFields]
+    | ActiveStatus initialized to 1 for all particles.
+    | Binding high-speed material state pointers...
+
+[10:04:15] [INFO ] [MeshData]
+    | Populated particle geometry fields into FieldManager for 50000 particles.
+
+[10:04:15] [INFO ] [InitFields]
+    | All fields allocated for 50000 particles. Total fields: 17.
+
+[10:04:15] [INFO ] [InitConditions]
+    | ==================================================
+    | Entering Conditions Initialization Phase...
+    | ==================================================
+
+[10:04:15] [INFO ] [ReaderRegistry]
+    | Creating reader for: .grpd (name: LoadReader)
+
+[10:04:15] [INFO ] [GrpdMeshReader]
+    | Reading file: D:\Project_C++\GRPD\Examples\Box_Disp_ADR\Box_Disp_ADR.grpd
+    | Entering *PARTICLE section (Line 1)
+    | Entering *LOAD section (Line 50003)
+[10:04:15] [ERROR] [GrpdMeshReader]
+    | Line 50005 load parse failed: stoi
+    | Line 50006 load parse failed: stoi
+    | Line 50007 load parse failed: stoi
+    | Line 50008 load parse failed: stoi
+    | Line 50009 load parse failed: stoi
+    | Line 50010 load parse failed: stoi
+    | Line 50011 load parse failed: stoi
+    | Line 50012 load parse failed: stoi
+    | Line 50013 load parse failed: stoi
+    | Line 50014 load parse failed: stoi
+    | Line 50015 load parse failed: stoi
+    | Line 50016 load parse failed: stoi
+    | Line 50017 load parse failed: stoi
+    | Line 50018 load parse failed: stoi
+    | Line 50019 load parse failed: stoi
+    | Line 50020 load parse failed: stoi
+    | Line 50021 load parse failed: stoi
+    | Line 50022 load parse failed: stoi
+    | Line 50023 load parse failed: stoi
+    | Line 50024 load parse failed: stoi
+    | Line 50025 load parse failed: stoi
+    | Line 50026 load parse failed: stoi
+    | Line 50027 load parse failed: stoi
+    | Line 50028 load parse failed: stoi
+    | Line 50029 load parse failed: stoi
+    | Line 50030 load parse failed: stoi
+    | Line 50031 load parse failed: stoi
+    | Line 50032 load parse failed: stoi
+    | Line 50033 load parse failed: stoi
+    | Line 50034 load parse failed: stoi
+    | Line 50035 load parse failed: stoi
+    | Line 50036 load parse failed: stoi
+    | Line 50037 load parse failed: stoi
+    | Line 50038 load parse failed: stoi
+    | Line 50039 load parse failed: stoi
+    | Line 50040 load parse failed: stoi
+    | Line 50041 load parse failed: stoi
+    | Line 50042 load parse failed: stoi
+    | Line 50043 load parse failed: stoi
+    | Line 50044 load parse failed: stoi
+    | Line 50045 load parse failed: stoi
+    | Line 50046 load parse failed: stoi
+    | Line 50047 load parse failed: stoi
+    | Line 50048 load parse failed: stoi
+    | Line 50049 load parse failed: stoi
+    | Line 50050 load parse failed: stoi
+    | Line 50051 load parse failed: stoi
+    | Line 50052 load parse failed: stoi
+    | Line 50053 load parse failed: stoi
+    | Line 50054 load parse failed: stoi
+    | Line 50055 load parse failed: stoi
+    | Line 50056 load parse failed: stoi
+    | Line 50057 load parse failed: stoi
+    | Line 50058 load parse failed: stoi
+    | Line 50059 load parse failed: stoi
+    | Line 50060 load parse failed: stoi
+    | Line 50061 load parse failed: stoi
+    | Line 50062 load parse failed: stoi
+    | Line 50063 load parse failed: stoi
+    | Line 50064 load parse failed: stoi
+    | Line 50065 load parse failed: stoi
+    | Line 50066 load parse failed: stoi
+    | Line 50067 load parse failed: stoi
+    | Line 50068 load parse failed: stoi
+    | Line 50069 load parse failed: stoi
+    | Line 50070 load parse failed: stoi
+    | Line 50071 load parse failed: stoi
+    | Line 50072 load parse failed: stoi
+    | Line 50073 load parse failed: stoi
+    | Line 50074 load parse failed: stoi
+    | Line 50075 load parse failed: stoi
+    | Line 50076 load parse failed: stoi
+    | Line 50077 load parse failed: stoi
+    | Line 50078 load parse failed: stoi
+    | Line 50079 load parse failed: stoi
+    | Line 50080 load parse failed: stoi
+    | Line 50081 load parse failed: stoi
+    | Line 50082 load parse failed: stoi
+    | Line 50083 load parse failed: stoi
+    | Line 50084 load parse failed: stoi
+    | Line 50085 load parse failed: stoi
+    | Line 50086 load parse failed: stoi
+    | Line 50087 load parse failed: stoi
+    | Line 50088 load parse failed: stoi
+    | Line 50089 load parse failed: stoi
+    | Line 50090 load parse failed: stoi
+    | Line 50091 load parse failed: stoi
+    | Line 50092 load parse failed: stoi
+    | Line 50093 load parse failed: stoi
+    | Line 50094 load parse failed: stoi
+    | Line 50095 load parse failed: stoi
+    | Line 50096 load parse failed: stoi
+    | Line 50097 load parse failed: stoi
+    | Line 50098 load parse failed: stoi
+    | Line 50099 load parse failed: stoi
+    | Line 50100 load parse failed: stoi
+    | Line 50101 load parse failed: stoi
+    | Line 50102 load parse failed: stoi
+    | Line 50103 load parse failed: stoi
+    | Line 50104 load parse failed: stoi
+    | Line 50105 load parse failed: stoi
+    | Line 50106 load parse failed: stoi
+    | Line 50107 load parse failed: stoi
+    | Line 50108 load parse failed: stoi
+    | Line 50109 load parse failed: stoi
+    | Line 50110 load parse failed: stoi
+    | Line 50111 load parse failed: stoi
+    | Line 50112 load parse failed: stoi
+    | Line 50113 load parse failed: stoi
+    | Line 50114 load parse failed: stoi
+    | Line 50115 load parse failed: stoi
+    | Line 50116 load parse failed: stoi
+    | Line 50117 load parse failed: stoi
+    | Line 50118 load parse failed: stoi
+    | Line 50119 load parse failed: stoi
+    | Line 50120 load parse failed: stoi
+    | Line 50121 load parse failed: stoi
+    | Line 50122 load parse failed: stoi
+    | Line 50123 load parse failed: stoi
+    | Line 50124 load parse failed: stoi
+    | Line 50125 load parse failed: stoi
+    | Line 50126 load parse failed: stoi
+    | Line 50127 load parse failed: stoi
+    | Line 50128 load parse failed: stoi
+    | Line 50129 load parse failed: stoi
+    | Line 50130 load parse failed: stoi
+    | Line 50131 load parse failed: stoi
+    | Line 50132 load parse failed: stoi
+    | Line 50133 load parse failed: stoi
+    | Line 50134 load parse failed: stoi
+    | Line 50135 load parse failed: stoi
+    | Line 50136 load parse failed: stoi
+    | Line 50137 load parse failed: stoi
+    | Line 50138 load parse failed: stoi
+    | Line 50139 load parse failed: stoi
+    | Line 50140 load parse failed: stoi
+    | Line 50141 load parse failed: stoi
+    | Line 50142 load parse failed: stoi
+    | Line 50143 load parse failed: stoi
+    | Line 50144 load parse failed: stoi
+    | Line 50145 load parse failed: stoi
+    | Line 50146 load parse failed: stoi
+    | Line 50147 load parse failed: stoi
+    | Line 50148 load parse failed: stoi
+    | Line 50149 load parse failed: stoi
+    | Line 50150 load parse failed: stoi
+    | Line 50151 load parse failed: stoi
+    | Line 50152 load parse failed: stoi
+    | Line 50153 load parse failed: stoi
+    | Line 50154 load parse failed: stoi
+    | Line 50155 load parse failed: stoi
+    | Line 50156 load parse failed: stoi
+    | Line 50157 load parse failed: stoi
+    | Line 50158 load parse failed: stoi
+    | Line 50159 load parse failed: stoi
+    | Line 50160 load parse failed: stoi
+    | Line 50161 load parse failed: stoi
+    | Line 50162 load parse failed: stoi
+    | Line 50163 load parse failed: stoi
+    | Line 50164 load parse failed: stoi
+    | Line 50165 load parse failed: stoi
+    | Line 50166 load parse failed: stoi
+    | Line 50167 load parse failed: stoi
+    | Line 50168 load parse failed: stoi
+    | Line 50169 load parse failed: stoi
+    | Line 50170 load parse failed: stoi
+    | Line 50171 load parse failed: stoi
+    | Line 50172 load parse failed: stoi
+    | Line 50173 load parse failed: stoi
+    | Line 50174 load parse failed: stoi
+    | Line 50175 load parse failed: stoi
+    | Line 50176 load parse failed: stoi
+    | Line 50177 load parse failed: stoi
+    | Line 50178 load parse failed: stoi
+    | Line 50179 load parse failed: stoi
+    | Line 50180 load parse failed: stoi
+    | Line 50181 load parse failed: stoi
+    | Line 50182 load parse failed: stoi
+    | Line 50183 load parse failed: stoi
+    | Line 50184 load parse failed: stoi
+    | Line 50185 load parse failed: stoi
+    | Line 50186 load parse failed: stoi
+    | Line 50187 load parse failed: stoi
+    | Line 50188 load parse failed: stoi
+    | Line 50189 load parse failed: stoi
+    | Line 50190 load parse failed: stoi
+    | Line 50191 load parse failed: stoi
+    | Line 50192 load parse failed: stoi
+    | Line 50193 load parse failed: stoi
+    | Line 50194 load parse failed: stoi
+    | Line 50195 load parse failed: stoi
+    | Line 50196 load parse failed: stoi
+    | Line 50197 load parse failed: stoi
+    | Line 50198 load parse failed: stoi
+    | Line 50199 load parse failed: stoi
+    | Line 50200 load parse failed: stoi
+    | Line 50201 load parse failed: stoi
+    | Line 50202 load parse failed: stoi
+    | Line 50203 load parse failed: stoi
+    | Line 50204 load parse failed: stoi
+    | Line 50205 load parse failed: stoi
+    | Line 50206 load parse failed: stoi
+    | Line 50207 load parse failed: stoi
+    | Line 50208 load parse failed: stoi
+    | Line 50209 load parse failed: stoi
+    | Line 50210 load parse failed: stoi
+    | Line 50211 load parse failed: stoi
+    | Line 50212 load parse failed: stoi
+    | Line 50213 load parse failed: stoi
+    | Line 50214 load parse failed: stoi
+    | Line 50215 load parse failed: stoi
+    | Line 50216 load parse failed: stoi
+    | Line 50217 load parse failed: stoi
+    | Line 50218 load parse failed: stoi
+    | Line 50219 load parse failed: stoi
+    | Line 50220 load parse failed: stoi
+    | Line 50221 load parse failed: stoi
+    | Line 50222 load parse failed: stoi
+    | Line 50223 load parse failed: stoi
+    | Line 50224 load parse failed: stoi
+    | Line 50225 load parse failed: stoi
+    | Line 50226 load parse failed: stoi
+    | Line 50227 load parse failed: stoi
+    | Line 50228 load parse failed: stoi
+    | Line 50229 load parse failed: stoi
+    | Line 50230 load parse failed: stoi
+    | Line 50231 load parse failed: stoi
+    | Line 50232 load parse failed: stoi
+    | Line 50233 load parse failed: stoi
+    | Line 50234 load parse failed: stoi
+    | Line 50235 load parse failed: stoi
+    | Line 50236 load parse failed: stoi
+    | Line 50237 load parse failed: stoi
+    | Line 50238 load parse failed: stoi
+    | Line 50239 load parse failed: stoi
+    | Line 50240 load parse failed: stoi
+    | Line 50241 load parse failed: stoi
+    | Line 50242 load parse failed: stoi
+    | Line 50243 load parse failed: stoi
+    | Line 50244 load parse failed: stoi
+    | Line 50245 load parse failed: stoi
+    | Line 50246 load parse failed: stoi
+    | Line 50247 load parse failed: stoi
+    | Line 50248 load parse failed: stoi
+    | Line 50249 load parse failed: stoi
+    | Line 50250 load parse failed: stoi
+    | Line 50251 load parse failed: stoi
+    | Line 50252 load parse failed: stoi
+    | Line 50253 load parse failed: stoi
+    | Line 50254 load parse failed: stoi
+    | Line 50255 load parse failed: stoi
+    | Line 50256 load parse failed: stoi
+    | Line 50257 load parse failed: stoi
+    | Line 50258 load parse failed: stoi
+    | Line 50259 load parse failed: stoi
+    | Line 50260 load parse failed: stoi
+    | Line 50261 load parse failed: stoi
+    | Line 50262 load parse failed: stoi
+    | Line 50263 load parse failed: stoi
+    | Line 50264 load parse failed: stoi
+    | Line 50265 load parse failed: stoi
+    | Line 50266 load parse failed: stoi
+    | Line 50267 load parse failed: stoi
+    | Line 50268 load parse failed: stoi
+    | Line 50269 load parse failed: stoi
+    | Line 50270 load parse failed: stoi
+    | Line 50271 load parse failed: stoi
+    | Line 50272 load parse failed: stoi
+    | Line 50273 load parse failed: stoi
+    | Line 50274 load parse failed: stoi
+    | Line 50275 load parse failed: stoi
+    | Line 50276 load parse failed: stoi
+    | Line 50277 load parse failed: stoi
+    | Line 50278 load parse failed: stoi
+    | Line 50279 load parse failed: stoi
+    | Line 50280 load parse failed: stoi
+    | Line 50281 load parse failed: stoi
+    | Line 50282 load parse failed: stoi
+    | Line 50283 load parse failed: stoi
+    | Line 50284 load parse failed: stoi
+    | Line 50285 load parse failed: stoi
+    | Line 50286 load parse failed: stoi
+    | Line 50287 load parse failed: stoi
+    | Line 50288 load parse failed: stoi
+    | Line 50289 load parse failed: stoi
+    | Line 50290 load parse failed: stoi
+    | Line 50291 load parse failed: stoi
+    | Line 50292 load parse failed: stoi
+    | Line 50293 load parse failed: stoi
+    | Line 50294 load parse failed: stoi
+    | Line 50295 load parse failed: stoi
+    | Line 50296 load parse failed: stoi
+    | Line 50297 load parse failed: stoi
+    | Line 50298 load parse failed: stoi
+    | Line 50299 load parse failed: stoi
+    | Line 50300 load parse failed: stoi
+    | Line 50301 load parse failed: stoi
+    | Line 50302 load parse failed: stoi
+    | Line 50303 load parse failed: stoi
+    | Line 50304 load parse failed: stoi
+    | Line 50305 load parse failed: stoi
+    | Line 50306 load parse failed: stoi
+    | Line 50307 load parse failed: stoi
+    | Line 50308 load parse failed: stoi
+    | Line 50309 load parse failed: stoi
+    | Line 50310 load parse failed: stoi
+    | Line 50311 load parse failed: stoi
+    | Line 50312 load parse failed: stoi
+    | Line 50313 load parse failed: stoi
+    | Line 50314 load parse failed: stoi
+    | Line 50315 load parse failed: stoi
+    | Line 50316 load parse failed: stoi
+    | Line 50317 load parse failed: stoi
+    | Line 50318 load parse failed: stoi
+    | Line 50319 load parse failed: stoi
+    | Line 50320 load parse failed: stoi
+    | Line 50321 load parse failed: stoi
+    | Line 50322 load parse failed: stoi
+    | Line 50323 load parse failed: stoi
+    | Line 50324 load parse failed: stoi
+    | Line 50325 load parse failed: stoi
+    | Line 50326 load parse failed: stoi
+    | Line 50327 load parse failed: stoi
+    | Line 50328 load parse failed: stoi
+    | Line 50329 load parse failed: stoi
+    | Line 50330 load parse failed: stoi
+    | Line 50331 load parse failed: stoi
+    | Line 50332 load parse failed: stoi
+    | Line 50333 load parse failed: stoi
+    | Line 50334 load parse failed: stoi
+    | Line 50335 load parse failed: stoi
+    | Line 50336 load parse failed: stoi
+    | Line 50337 load parse failed: stoi
+    | Line 50338 load parse failed: stoi
+    | Line 50339 load parse failed: stoi
+    | Line 50340 load parse failed: stoi
+    | Line 50341 load parse failed: stoi
+    | Line 50342 load parse failed: stoi
+    | Line 50343 load parse failed: stoi
+    | Line 50344 load parse failed: stoi
+    | Line 50345 load parse failed: stoi
+    | Line 50346 load parse failed: stoi
+    | Line 50347 load parse failed: stoi
+    | Line 50348 load parse failed: stoi
+    | Line 50349 load parse failed: stoi
+    | Line 50350 load parse failed: stoi
+    | Line 50351 load parse failed: stoi
+    | Line 50352 load parse failed: stoi
+    | Line 50353 load parse failed: stoi
+    | Line 50354 load parse failed: stoi
+    | Line 50355 load parse failed: stoi
+    | Line 50356 load parse failed: stoi
+    | Line 50357 load parse failed: stoi
+    | Line 50358 load parse failed: stoi
+    | Line 50359 load parse failed: stoi
+    | Line 50360 load parse failed: stoi
+    | Line 50361 load parse failed: stoi
+    | Line 50362 load parse failed: stoi
+    | Line 50363 load parse failed: stoi
+    | Line 50364 load parse failed: stoi
+    | Line 50365 load parse failed: stoi
+    | Line 50366 load parse failed: stoi
+    | Line 50367 load parse failed: stoi
+    | Line 50368 load parse failed: stoi
+    | Line 50369 load parse failed: stoi
+    | Line 50370 load parse failed: stoi
+    | Line 50371 load parse failed: stoi
+    | Line 50372 load parse failed: stoi
+    | Line 50373 load parse failed: stoi
+    | Line 50374 load parse failed: stoi
+    | Line 50375 load parse failed: stoi
+    | Line 50376 load parse failed: stoi
+    | Line 50377 load parse failed: stoi
+    | Line 50378 load parse failed: stoi
+    | Line 50379 load parse failed: stoi
+    | Line 50380 load parse failed: stoi
+    | Line 50381 load parse failed: stoi
+    | Line 50382 load parse failed: stoi
+    | Line 50383 load parse failed: stoi
+    | Line 50384 load parse failed: stoi
+    | Line 50385 load parse failed: stoi
+    | Line 50386 load parse failed: stoi
+    | Line 50387 load parse failed: stoi
+    | Line 50388 load parse failed: stoi
+    | Line 50389 load parse failed: stoi
+    | Line 50390 load parse failed: stoi
+    | Line 50391 load parse failed: stoi
+    | Line 50392 load parse failed: stoi
+    | Line 50393 load parse failed: stoi
+    | Line 50394 load parse failed: stoi
+    | Line 50395 load parse failed: stoi
+    | Line 50396 load parse failed: stoi
+    | Line 50397 load parse failed: stoi
+    | Line 50398 load parse failed: stoi
+    | Line 50399 load parse failed: stoi
+    | Line 50400 load parse failed: stoi
+    | Line 50401 load parse failed: stoi
+    | Line 50402 load parse failed: stoi
+    | Line 50403 load parse failed: stoi
+    | Line 50404 load parse failed: stoi
+    | Line 50405 load parse failed: stoi
+    | Line 50406 load parse failed: stoi
+    | Line 50407 load parse failed: stoi
+    | Line 50408 load parse failed: stoi
+    | Line 50409 load parse failed: stoi
+    | Line 50410 load parse failed: stoi
+    | Line 50411 load parse failed: stoi
+    | Line 50412 load parse failed: stoi
+    | Line 50413 load parse failed: stoi
+    | Line 50414 load parse failed: stoi
+    | Line 50415 load parse failed: stoi
+    | Line 50416 load parse failed: stoi
+    | Line 50417 load parse failed: stoi
+    | Line 50418 load parse failed: stoi
+    | Line 50419 load parse failed: stoi
+    | Line 50420 load parse failed: stoi
+    | Line 50421 load parse failed: stoi
+    | Line 50422 load parse failed: stoi
+    | Line 50423 load parse failed: stoi
+    | Line 50424 load parse failed: stoi
+    | Line 50425 load parse failed: stoi
+    | Line 50426 load parse failed: stoi
+    | Line 50427 load parse failed: stoi
+    | Line 50428 load parse failed: stoi
+    | Line 50429 load parse failed: stoi
+    | Line 50430 load parse failed: stoi
+    | Line 50431 load parse failed: stoi
+    | Line 50432 load parse failed: stoi
+    | Line 50433 load parse failed: stoi
+    | Line 50434 load parse failed: stoi
+    | Line 50435 load parse failed: stoi
+    | Line 50436 load parse failed: stoi
+    | Line 50437 load parse failed: stoi
+    | Line 50438 load parse failed: stoi
+    | Line 50439 load parse failed: stoi
+    | Line 50440 load parse failed: stoi
+    | Line 50441 load parse failed: stoi
+    | Line 50442 load parse failed: stoi
+    | Line 50443 load parse failed: stoi
+    | Line 50444 load parse failed: stoi
+    | Line 50445 load parse failed: stoi
+    | Line 50446 load parse failed: stoi
+    | Line 50447 load parse failed: stoi
+    | Line 50448 load parse failed: stoi
+    | Line 50449 load parse failed: stoi
+    | Line 50450 load parse failed: stoi
+    | Line 50451 load parse failed: stoi
+    | Line 50452 load parse failed: stoi
+    | Line 50453 load parse failed: stoi
+    | Line 50454 load parse failed: stoi
+    | Line 50455 load parse failed: stoi
+    | Line 50456 load parse failed: stoi
+    | Line 50457 load parse failed: stoi
+    | Line 50458 load parse failed: stoi
+    | Line 50459 load parse failed: stoi
+    | Line 50460 load parse failed: stoi
+    | Line 50461 load parse failed: stoi
+    | Line 50462 load parse failed: stoi
+    | Line 50463 load parse failed: stoi
+    | Line 50464 load parse failed: stoi
+    | Line 50465 load parse failed: stoi
+    | Line 50466 load parse failed: stoi
+    | Line 50467 load parse failed: stoi
+    | Line 50468 load parse failed: stoi
+    | Line 50469 load parse failed: stoi
+    | Line 50470 load parse failed: stoi
+    | Line 50471 load parse failed: stoi
+    | Line 50472 load parse failed: stoi
+    | Line 50473 load parse failed: stoi
+    | Line 50474 load parse failed: stoi
+    | Line 50475 load parse failed: stoi
+    | Line 50476 load parse failed: stoi
+    | Line 50477 load parse failed: stoi
+    | Line 50478 load parse failed: stoi
+    | Line 50479 load parse failed: stoi
+    | Line 50480 load parse failed: stoi
+    | Line 50481 load parse failed: stoi
+    | Line 50482 load parse failed: stoi
+    | Line 50483 load parse failed: stoi
+    | Line 50484 load parse failed: stoi
+    | Line 50485 load parse failed: stoi
+    | Line 50486 load parse failed: stoi
+    | Line 50487 load parse failed: stoi
+    | Line 50488 load parse failed: stoi
+    | Line 50489 load parse failed: stoi
+    | Line 50490 load parse failed: stoi
+    | Line 50491 load parse failed: stoi
+    | Line 50492 load parse failed: stoi
+    | Line 50493 load parse failed: stoi
+    | Line 50494 load parse failed: stoi
+    | Line 50495 load parse failed: stoi
+    | Line 50496 load parse failed: stoi
+    | Line 50497 load parse failed: stoi
+    | Line 50498 load parse failed: stoi
+    | Line 50499 load parse failed: stoi
+    | Line 50500 load parse failed: stoi
+    | Line 50501 load parse failed: stoi
+    | Line 50502 load parse failed: stoi
+    | Line 50503 load parse failed: stoi
+    | Line 50504 load parse failed: stoi
+    | Line 50505 load parse failed: stoi
+    | Line 50506 load parse failed: stoi
+    | Line 50507 load parse failed: stoi
+    | Line 50508 load parse failed: stoi
+    | Line 50509 load parse failed: stoi
+    | Line 50510 load parse failed: stoi
+    | Line 50511 load parse failed: stoi
+    | Line 50512 load parse failed: stoi
+    | Line 50513 load parse failed: stoi
+    | Line 50514 load parse failed: stoi
+    | Line 50515 load parse failed: stoi
+    | Line 50516 load parse failed: stoi
+    | Line 50517 load parse failed: stoi
+    | Line 50518 load parse failed: stoi
+    | Line 50519 load parse failed: stoi
+    | Line 50520 load parse failed: stoi
+    | Line 50521 load parse failed: stoi
+    | Line 50522 load parse failed: stoi
+    | Line 50523 load parse failed: stoi
+    | Line 50524 load parse failed: stoi
+    | Line 50525 load parse failed: stoi
+    | Line 50526 load parse failed: stoi
+    | Line 50527 load parse failed: stoi
+    | Line 50528 load parse failed: stoi
+    | Line 50529 load parse failed: stoi
+    | Line 50530 load parse failed: stoi
+    | Line 50531 load parse failed: stoi
+    | Line 50532 load parse failed: stoi
+    | Line 50533 load parse failed: stoi
+    | Line 50534 load parse failed: stoi
+    | Line 50535 load parse failed: stoi
+    | Line 50536 load parse failed: stoi
+    | Line 50537 load parse failed: stoi
+    | Line 50538 load parse failed: stoi
+    | Line 50539 load parse failed: stoi
+    | Line 50540 load parse failed: stoi
+    | Line 50541 load parse failed: stoi
+    | Line 50542 load parse failed: stoi
+    | Line 50543 load parse failed: stoi
+    | Line 50544 load parse failed: stoi
+    | Line 50545 load parse failed: stoi
+    | Line 50546 load parse failed: stoi
+    | Line 50547 load parse failed: stoi
+    | Line 50548 load parse failed: stoi
+    | Line 50549 load parse failed: stoi
+    | Line 50550 load parse failed: stoi
+    | Line 50551 load parse failed: stoi
+    | Line 50552 load parse failed: stoi
+    | Line 50553 load parse failed: stoi
+    | Line 50554 load parse failed: stoi
+    | Line 50555 load parse failed: stoi
+    | Line 50556 load parse failed: stoi
+    | Line 50557 load parse failed: stoi
+    | Line 50558 load parse failed: stoi
+    | Line 50559 load parse failed: stoi
+    | Line 50560 load parse failed: stoi
+    | Line 50561 load parse failed: stoi
+    | Line 50562 load parse failed: stoi
+    | Line 50563 load parse failed: stoi
+    | Line 50564 load parse failed: stoi
+    | Line 50565 load parse failed: stoi
+    | Line 50566 load parse failed: stoi
+    | Line 50567 load parse failed: stoi
+    | Line 50568 load parse failed: stoi
+    | Line 50569 load parse failed: stoi
+    | Line 50570 load parse failed: stoi
+    | Line 50571 load parse failed: stoi
+    | Line 50572 load parse failed: stoi
+    | Line 50573 load parse failed: stoi
+    | Line 50574 load parse failed: stoi
+    | Line 50575 load parse failed: stoi
+    | Line 50576 load parse failed: stoi
+    | Line 50577 load parse failed: stoi
+    | Line 50578 load parse failed: stoi
+    | Line 50579 load parse failed: stoi
+    | Line 50580 load parse failed: stoi
+    | Line 50581 load parse failed: stoi
+    | Line 50582 load parse failed: stoi
+    | Line 50583 load parse failed: stoi
+    | Line 50584 load parse failed: stoi
+    | Line 50585 load parse failed: stoi
+    | Line 50586 load parse failed: stoi
+    | Line 50587 load parse failed: stoi
+    | Line 50588 load parse failed: stoi
+    | Line 50589 load parse failed: stoi
+    | Line 50590 load parse failed: stoi
+    | Line 50591 load parse failed: stoi
+    | Line 50592 load parse failed: stoi
+    | Line 50593 load parse failed: stoi
+    | Line 50594 load parse failed: stoi
+    | Line 50595 load parse failed: stoi
+    | Line 50596 load parse failed: stoi
+    | Line 50597 load parse failed: stoi
+    | Line 50598 load parse failed: stoi
+    | Line 50599 load parse failed: stoi
+    | Line 50600 load parse failed: stoi
+    | Line 50601 load parse failed: stoi
+    | Line 50602 load parse failed: stoi
+    | Line 50603 load parse failed: stoi
+    | Line 50604 load parse failed: stoi
+    | Line 50605 load parse failed: stoi
+    | Line 50606 load parse failed: stoi
+    | Line 50607 load parse failed: stoi
+    | Line 50608 load parse failed: stoi
+    | Line 50609 load parse failed: stoi
+    | Line 50610 load parse failed: stoi
+    | Line 50611 load parse failed: stoi
+    | Line 50612 load parse failed: stoi
+    | Line 50613 load parse failed: stoi
+    | Line 50614 load parse failed: stoi
+    | Line 50615 load parse failed: stoi
+    | Line 50616 load parse failed: stoi
+    | Line 50617 load parse failed: stoi
+    | Line 50618 load parse failed: stoi
+    | Line 50619 load parse failed: stoi
+    | Line 50620 load parse failed: stoi
+    | Line 50621 load parse failed: stoi
+    | Line 50622 load parse failed: stoi
+    | Line 50623 load parse failed: stoi
+    | Line 50624 load parse failed: stoi
+    | Line 50625 load parse failed: stoi
+    | Line 50626 load parse failed: stoi
+    | Line 50627 load parse failed: stoi
+    | Line 50628 load parse failed: stoi
+    | Line 50629 load parse failed: stoi
+    | Line 50630 load parse failed: stoi
+    | Line 50631 load parse failed: stoi
+    | Line 50632 load parse failed: stoi
+    | Line 50633 load parse failed: stoi
+    | Line 50634 load parse failed: stoi
+    | Line 50635 load parse failed: stoi
+    | Line 50636 load parse failed: stoi
+    | Line 50637 load parse failed: stoi
+    | Line 50638 load parse failed: stoi
+    | Line 50639 load parse failed: stoi
+    | Line 50640 load parse failed: stoi
+    | Line 50641 load parse failed: stoi
+    | Line 50642 load parse failed: stoi
+    | Line 50643 load parse failed: stoi
+    | Line 50644 load parse failed: stoi
+    | Line 50645 load parse failed: stoi
+    | Line 50646 load parse failed: stoi
+    | Line 50647 load parse failed: stoi
+    | Line 50648 load parse failed: stoi
+    | Line 50649 load parse failed: stoi
+    | Line 50650 load parse failed: stoi
+    | Line 50651 load parse failed: stoi
+    | Line 50652 load parse failed: stoi
+    | Line 50653 load parse failed: stoi
+    | Line 50654 load parse failed: stoi
+    | Line 50655 load parse failed: stoi
+    | Line 50656 load parse failed: stoi
+    | Line 50657 load parse failed: stoi
+    | Line 50658 load parse failed: stoi
+    | Line 50659 load parse failed: stoi
+    | Line 50660 load parse failed: stoi
+    | Line 50661 load parse failed: stoi
+    | Line 50662 load parse failed: stoi
+    | Line 50663 load parse failed: stoi
+    | Line 50664 load parse failed: stoi
+    | Line 50665 load parse failed: stoi
+    | Line 50666 load parse failed: stoi
+    | Line 50667 load parse failed: stoi
+    | Line 50668 load parse failed: stoi
+    | Line 50669 load parse failed: stoi
+    | Line 50670 load parse failed: stoi
+    | Line 50671 load parse failed: stoi
+    | Line 50672 load parse failed: stoi
+    | Line 50673 load parse failed: stoi
+    | Line 50674 load parse failed: stoi
+    | Line 50675 load parse failed: stoi
+    | Line 50676 load parse failed: stoi
+    | Line 50677 load parse failed: stoi
+    | Line 50678 load parse failed: stoi
+    | Line 50679 load parse failed: stoi
+    | Line 50680 load parse failed: stoi
+    | Line 50681 load parse failed: stoi
+    | Line 50682 load parse failed: stoi
+    | Line 50683 load parse failed: stoi
+    | Line 50684 load parse failed: stoi
+    | Line 50685 load parse failed: stoi
+    | Line 50686 load parse failed: stoi
+    | Line 50687 load parse failed: stoi
+    | Line 50688 load parse failed: stoi
+    | Line 50689 load parse failed: stoi
+    | Line 50690 load parse failed: stoi
+    | Line 50691 load parse failed: stoi
+    | Line 50692 load parse failed: stoi
+    | Line 50693 load parse failed: stoi
+    | Line 50694 load parse failed: stoi
+    | Line 50695 load parse failed: stoi
+    | Line 50696 load parse failed: stoi
+    | Line 50697 load parse failed: stoi
+    | Line 50698 load parse failed: stoi
+    | Line 50699 load parse failed: stoi
+    | Line 50700 load parse failed: stoi
+    | Line 50701 load parse failed: stoi
+    | Line 50702 load parse failed: stoi
+    | Line 50703 load parse failed: stoi
+    | Line 50704 load parse failed: stoi
+    | Line 50705 load parse failed: stoi
+    | Line 50706 load parse failed: stoi
+    | Line 50707 load parse failed: stoi
+    | Line 50708 load parse failed: stoi
+    | Line 50709 load parse failed: stoi
+    | Line 50710 load parse failed: stoi
+    | Line 50711 load parse failed: stoi
+    | Line 50712 load parse failed: stoi
+    | Line 50713 load parse failed: stoi
+    | Line 50714 load parse failed: stoi
+    | Line 50715 load parse failed: stoi
+    | Line 50716 load parse failed: stoi
+    | Line 50717 load parse failed: stoi
+    | Line 50718 load parse failed: stoi
+    | Line 50719 load parse failed: stoi
+    | Line 50720 load parse failed: stoi
+    | Line 50721 load parse failed: stoi
+    | Line 50722 load parse failed: stoi
+    | Line 50723 load parse failed: stoi
+    | Line 50724 load parse failed: stoi
+    | Line 50725 load parse failed: stoi
+    | Line 50726 load parse failed: stoi
+    | Line 50727 load parse failed: stoi
+    | Line 50728 load parse failed: stoi
+    | Line 50729 load parse failed: stoi
+    | Line 50730 load parse failed: stoi
+    | Line 50731 load parse failed: stoi
+    | Line 50732 load parse failed: stoi
+    | Line 50733 load parse failed: stoi
+    | Line 50734 load parse failed: stoi
+    | Line 50735 load parse failed: stoi
+    | Line 50736 load parse failed: stoi
+    | Line 50737 load parse failed: stoi
+    | Line 50738 load parse failed: stoi
+    | Line 50739 load parse failed: stoi
+    | Line 50740 load parse failed: stoi
+    | Line 50741 load parse failed: stoi
+    | Line 50742 load parse failed: stoi
+    | Line 50743 load parse failed: stoi
+    | Line 50744 load parse failed: stoi
+    | Line 50745 load parse failed: stoi
+    | Line 50746 load parse failed: stoi
+    | Line 50747 load parse failed: stoi
+    | Line 50748 load parse failed: stoi
+    | Line 50749 load parse failed: stoi
+    | Line 50750 load parse failed: stoi
+    | Line 50751 load parse failed: stoi
+    | Line 50752 load parse failed: stoi
+    | Line 50753 load parse failed: stoi
+    | Line 50754 load parse failed: stoi
+    | Line 50755 load parse failed: stoi
+    | Line 50756 load parse failed: stoi
+    | Line 50757 load parse failed: stoi
+    | Line 50758 load parse failed: stoi
+    | Line 50759 load parse failed: stoi
+    | Line 50760 load parse failed: stoi
+    | Line 50761 load parse failed: stoi
+    | Line 50762 load parse failed: stoi
+    | Line 50763 load parse failed: stoi
+    | Line 50764 load parse failed: stoi
+    | Line 50765 load parse failed: stoi
+    | Line 50766 load parse failed: stoi
+    | Line 50767 load parse failed: stoi
+    | Line 50768 load parse failed: stoi
+    | Line 50769 load parse failed: stoi
+    | Line 50770 load parse failed: stoi
+    | Line 50771 load parse failed: stoi
+    | Line 50772 load parse failed: stoi
+    | Line 50773 load parse failed: stoi
+    | Line 50774 load parse failed: stoi
+    | Line 50775 load parse failed: stoi
+    | Line 50776 load parse failed: stoi
+    | Line 50777 load parse failed: stoi
+    | Line 50778 load parse failed: stoi
+    | Line 50779 load parse failed: stoi
+    | Line 50780 load parse failed: stoi
+    | Line 50781 load parse failed: stoi
+    | Line 50782 load parse failed: stoi
+    | Line 50783 load parse failed: stoi
+    | Line 50784 load parse failed: stoi
+    | Line 50785 load parse failed: stoi
+    | Line 50786 load parse failed: stoi
+    | Line 50787 load parse failed: stoi
+    | Line 50788 load parse failed: stoi
+    | Line 50789 load parse failed: stoi
+    | Line 50790 load parse failed: stoi
+    | Line 50791 load parse failed: stoi
+    | Line 50792 load parse failed: stoi
+    | Line 50793 load parse failed: stoi
+    | Line 50794 load parse failed: stoi
+    | Line 50795 load parse failed: stoi
+    | Line 50796 load parse failed: stoi
+    | Line 50797 load parse failed: stoi
+    | Line 50798 load parse failed: stoi
+    | Line 50799 load parse failed: stoi
+    | Line 50800 load parse failed: stoi
+    | Line 50801 load parse failed: stoi
+    | Line 50802 load parse failed: stoi
+    | Line 50803 load parse failed: stoi
+    | Line 50804 load parse failed: stoi
+    | Line 50805 load parse failed: stoi
+    | Line 50806 load parse failed: stoi
+    | Line 50807 load parse failed: stoi
+    | Line 50808 load parse failed: stoi
+    | Line 50809 load parse failed: stoi
+    | Line 50810 load parse failed: stoi
+    | Line 50811 load parse failed: stoi
+    | Line 50812 load parse failed: stoi
+    | Line 50813 load parse failed: stoi
+    | Line 50814 load parse failed: stoi
+    | Line 50815 load parse failed: stoi
+    | Line 50816 load parse failed: stoi
+    | Line 50817 load parse failed: stoi
+    | Line 50818 load parse failed: stoi
+    | Line 50819 load parse failed: stoi
+    | Line 50820 load parse failed: stoi
+    | Line 50821 load parse failed: stoi
+    | Line 50822 load parse failed: stoi
+    | Line 50823 load parse failed: stoi
+    | Line 50824 load parse failed: stoi
+    | Line 50825 load parse failed: stoi
+    | Line 50826 load parse failed: stoi
+    | Line 50827 load parse failed: stoi
+    | Line 50828 load parse failed: stoi
+    | Line 50829 load parse failed: stoi
+    | Line 50830 load parse failed: stoi
+    | Line 50831 load parse failed: stoi
+    | Line 50832 load parse failed: stoi
+    | Line 50833 load parse failed: stoi
+    | Line 50834 load parse failed: stoi
+    | Line 50835 load parse failed: stoi
+    | Line 50836 load parse failed: stoi
+    | Line 50837 load parse failed: stoi
+    | Line 50838 load parse failed: stoi
+    | Line 50839 load parse failed: stoi
+    | Line 50840 load parse failed: stoi
+    | Line 50841 load parse failed: stoi
+    | Line 50842 load parse failed: stoi
+    | Line 50843 load parse failed: stoi
+    | Line 50844 load parse failed: stoi
+    | Line 50845 load parse failed: stoi
+    | Line 50846 load parse failed: stoi
+    | Line 50847 load parse failed: stoi
+    | Line 50848 load parse failed: stoi
+    | Line 50849 load parse failed: stoi
+    | Line 50850 load parse failed: stoi
+    | Line 50851 load parse failed: stoi
+    | Line 50852 load parse failed: stoi
+    | Line 50853 load parse failed: stoi
+    | Line 50854 load parse failed: stoi
+    | Line 50855 load parse failed: stoi
+    | Line 50856 load parse failed: stoi
+    | Line 50857 load parse failed: stoi
+    | Line 50858 load parse failed: stoi
+    | Line 50859 load parse failed: stoi
+    | Line 50860 load parse failed: stoi
+    | Line 50861 load parse failed: stoi
+    | Line 50862 load parse failed: stoi
+    | Line 50863 load parse failed: stoi
+    | Line 50864 load parse failed: stoi
+    | Line 50865 load parse failed: stoi
+    | Line 50866 load parse failed: stoi
+    | Line 50867 load parse failed: stoi
+    | Line 50868 load parse failed: stoi
+    | Line 50869 load parse failed: stoi
+    | Line 50870 load parse failed: stoi
+    | Line 50871 load parse failed: stoi
+    | Line 50872 load parse failed: stoi
+    | Line 50873 load parse failed: stoi
+    | Line 50874 load parse failed: stoi
+    | Line 50875 load parse failed: stoi
+    | Line 50876 load parse failed: stoi
+    | Line 50877 load parse failed: stoi
+    | Line 50878 load parse failed: stoi
+    | Line 50879 load parse failed: stoi
+    | Line 50880 load parse failed: stoi
+    | Line 50881 load parse failed: stoi
+    | Line 50882 load parse failed: stoi
+    | Line 50883 load parse failed: stoi
+    | Line 50884 load parse failed: stoi
+    | Line 50885 load parse failed: stoi
+    | Line 50886 load parse failed: stoi
+    | Line 50887 load parse failed: stoi
+    | Line 50888 load parse failed: stoi
+    | Line 50889 load parse failed: stoi
+    | Line 50890 load parse failed: stoi
+    | Line 50891 load parse failed: stoi
+    | Line 50892 load parse failed: stoi
+    | Line 50893 load parse failed: stoi
+    | Line 50894 load parse failed: stoi
+    | Line 50895 load parse failed: stoi
+    | Line 50896 load parse failed: stoi
+    | Line 50897 load parse failed: stoi
+    | Line 50898 load parse failed: stoi
+    | Line 50899 load parse failed: stoi
+    | Line 50900 load parse failed: stoi
+    | Line 50901 load parse failed: stoi
+    | Line 50902 load parse failed: stoi
+    | Line 50903 load parse failed: stoi
+    | Line 50904 load parse failed: stoi
+    | Line 50905 load parse failed: stoi
+    | Line 50906 load parse failed: stoi
+    | Line 50907 load parse failed: stoi
+    | Line 50908 load parse failed: stoi
+    | Line 50909 load parse failed: stoi
+    | Line 50910 load parse failed: stoi
+    | Line 50911 load parse failed: stoi
+    | Line 50912 load parse failed: stoi
+    | Line 50913 load parse failed: stoi
+    | Line 50914 load parse failed: stoi
+    | Line 50915 load parse failed: stoi
+    | Line 50916 load parse failed: stoi
+    | Line 50917 load parse failed: stoi
+    | Line 50918 load parse failed: stoi
+    | Line 50919 load parse failed: stoi
+    | Line 50920 load parse failed: stoi
+    | Line 50921 load parse failed: stoi
+    | Line 50922 load parse failed: stoi
+    | Line 50923 load parse failed: stoi
+    | Line 50924 load parse failed: stoi
+    | Line 50925 load parse failed: stoi
+    | Line 50926 load parse failed: stoi
+    | Line 50927 load parse failed: stoi
+    | Line 50928 load parse failed: stoi
+    | Line 50929 load parse failed: stoi
+    | Line 50930 load parse failed: stoi
+    | Line 50931 load parse failed: stoi
+    | Line 50932 load parse failed: stoi
+    | Line 50933 load parse failed: stoi
+    | Line 50934 load parse failed: stoi
+    | Line 50935 load parse failed: stoi
+    | Line 50936 load parse failed: stoi
+    | Line 50937 load parse failed: stoi
+    | Line 50938 load parse failed: stoi
+    | Line 50939 load parse failed: stoi
+    | Line 50940 load parse failed: stoi
+    | Line 50941 load parse failed: stoi
+    | Line 50942 load parse failed: stoi
+    | Line 50943 load parse failed: stoi
+    | Line 50944 load parse failed: stoi
+    | Line 50945 load parse failed: stoi
+    | Line 50946 load parse failed: stoi
+    | Line 50947 load parse failed: stoi
+    | Line 50948 load parse failed: stoi
+    | Line 50949 load parse failed: stoi
+    | Line 50950 load parse failed: stoi
+    | Line 50951 load parse failed: stoi
+    | Line 50952 load parse failed: stoi
+    | Line 50953 load parse failed: stoi
+    | Line 50954 load parse failed: stoi
+    | Line 50955 load parse failed: stoi
+    | Line 50956 load parse failed: stoi
+    | Line 50957 load parse failed: stoi
+    | Line 50958 load parse failed: stoi
+    | Line 50959 load parse failed: stoi
+    | Line 50960 load parse failed: stoi
+    | Line 50961 load parse failed: stoi
+    | Line 50962 load parse failed: stoi
+    | Line 50963 load parse failed: stoi
+    | Line 50964 load parse failed: stoi
+    | Line 50965 load parse failed: stoi
+    | Line 50966 load parse failed: stoi
+    | Line 50967 load parse failed: stoi
+    | Line 50968 load parse failed: stoi
+    | Line 50969 load parse failed: stoi
+    | Line 50970 load parse failed: stoi
+    | Line 50971 load parse failed: stoi
+    | Line 50972 load parse failed: stoi
+    | Line 50973 load parse failed: stoi
+    | Line 50974 load parse failed: stoi
+    | Line 50975 load parse failed: stoi
+    | Line 50976 load parse failed: stoi
+    | Line 50977 load parse failed: stoi
+    | Line 50978 load parse failed: stoi
+    | Line 50979 load parse failed: stoi
+    | Line 50980 load parse failed: stoi
+    | Line 50981 load parse failed: stoi
+    | Line 50982 load parse failed: stoi
+    | Line 50983 load parse failed: stoi
+    | Line 50984 load parse failed: stoi
+    | Line 50985 load parse failed: stoi
+    | Line 50986 load parse failed: stoi
+    | Line 50987 load parse failed: stoi
+    | Line 50988 load parse failed: stoi
+    | Line 50989 load parse failed: stoi
+    | Line 50990 load parse failed: stoi
+    | Line 50991 load parse failed: stoi
+    | Line 50992 load parse failed: stoi
+    | Line 50993 load parse failed: stoi
+    | Line 50994 load parse failed: stoi
+    | Line 50995 load parse failed: stoi
+    | Line 50996 load parse failed: stoi
+    | Line 50997 load parse failed: stoi
+    | Line 50998 load parse failed: stoi
+    | Line 50999 load parse failed: stoi
+    | Line 51000 load parse failed: stoi
+    | Line 51001 load parse failed: stoi
+    | Line 51002 load parse failed: stoi
+    | Line 51003 load parse failed: stoi
+    | Line 51004 load parse failed: stoi
+[10:04:15] [INFO ] [GrpdMeshReader]
+    | ============================================
+    | File reading complete!
+    | Total particles: 50000
+    | Total load entries: 0
+    | ============================================
+
+[10:04:15] [INFO ] [InitConditions]
+    | Load statistics:
+    | Boundary conditions initialization complete.
+
+[10:04:15] [INFO ] [InitNeighbors]
+    | ==================================================
+    | Entering Neighbor Search Phase...
+    | ==================================================
+    | Horizon radius: 3.015000
+
+[10:04:15] [INFO ] [NeighborList]
+    | Starting full-flat CSR search for 50000 particles, horizon = 3.015000
+    | Cell grid: 33 x 17 x 3 = 1683 cells
+    | Flat cell list built in 1.999855 ms
+    | Pass 1 (count) done in 12.000084 ms
+    | Total bonds: 5213528, Memory: 59 MB
+    | Pass 2 (fill) done in 41.000128 ms
+    | Max neighbors: 122
+    | Total time: 55.000067 ms
+
+[10:04:15] [INFO ] [FieldManager]
+    | Added field 'NeighborCount'.
+
+[10:04:15] [INFO ] [InitNeighbors]
+    | NeighborCount field populated for 50000 particles.
+
+[10:04:15] [INFO ] [FieldManager]
+    | Added field 'BondIntegrity'.
+
+[10:04:15] [INFO ] [InitNeighbors]
+    | Global BondIntegrity scalar field properly initialized to 0.0
+
+[10:04:15] [INFO ] [FieldManager]
+    | Added field 'IsSurface'.
+
+[10:04:15] [INFO ] [SurfaceDetector]
+    | Volume Deficit check complete. Identified 12968 surface particles out of 50000 (Threshold:
+    | 0.750000).
+
+[10:04:15] [INFO ] [InitNeighbors]
+    | Neighbor search phase complete.
+
+[10:04:15] [INFO ] [InitContact]
+    | ==================================================
+    | Entering Contact Initialization Phase...
+    | ==================================================
+    | No explicit ContactPairs defined in YAML. Contact engine skipping.
+    | Initializing Material-specific BondIntegrity Models...
+    | Material BondIntegrity Models initialized. Total Active Models: 0
+
+[10:04:15] [INFO ] [InitSolverComponents]
+    | ==================================================
+    | Entering Solver Components Assembly Phase...
+    | ==================================================
+    | Building Time Integrator: ADR
+
+[10:04:15] [INFO ] [TimeIntegrator]
+    | Explicitly set OMP Threads to: 8
+
+[10:04:15] [INFO ] [InitSolverComponents]
+    | Time Integrator configured.
+    | Building Space Kernel: NOSB_M
+
+[10:04:15] [INFO ] [NOSB_Base]
+    | Applied KernelWeightType: Gaussian
+    | Applied ZeroEnergyG0: 0.200000
+    | Applied ZeroEnergyMethod string: Zhang
+
+[10:04:15] [INFO ] [InitSolverComponents]
+    | Space Kernel 'NOSB_M' configured.
+    | Total kernels assembled: 1
+
+[10:04:15] [INFO ] [PDEngine]
+    | PD simulation context initialized successfully.
+
+[10:04:15] [INFO ] [EngineManager]
+    | All solvers initialized. Total: 1
+    | ==================================================
+    | Entering Main Solver Phase
+    | ==================================================
+    | Solving: PD
+
+[10:04:15] [INFO ] [PDEngine]
+    | Starting PD Engine Solve Phase...
+
+[10:04:15] [INFO ] [ADR]
+    | Identified 2nd-order ODE coupling: Displacement <- Velocity <- Acceleration
+
+[10:04:15] [INFO ] [FieldManager]
+    | Added field 'ShapeTensorInv'.
+    | Added field 'VHorizon'.
+    | Added field 'SumFac'.
+    | Added field 'SumOmegaRaw'.
+
+[10:04:15] [INFO ] [NOSB_Base]
+    | Computing InfluenceWeight + Shape Tensor Inverse (K^-1)...
+    | All NOSB base fields registered and Shape Tensor Inverse computed.
+
+[10:04:15] [INFO ] [FieldManager]
+    | Added field 'DeformationGradient'.
+    | Added field 'PK1Stress'.
+
+[10:04:15] [INFO ] [NOSB_M]
+    | Instantiated MechanicalStabilizer globally in Phase 0 using strategy: Zhang
+
+[10:04:15] [INFO ] [ADR]
+    | Material [Steel_Plastic]: WaveSpeed c = 4.472136e+02, Safe CFL dt = 1.788854e-03
+    | Computed safe CFL limit dt: 1.788854e-03 (dx = 1.000000e+00, c = 4.472136e+02)
+
+[10:04:15] [INFO ] [ADR_Integrator]
+    | Auto CFL enabled. Setting dt = 1.788854e-03
+    | Starting Custom ADR: NumLoadSteps = 1, MassScale = 1.250000e+08, DampingMethod = HybridKinetic, dt
+    | = 1.788854e-03
+    | === Load Step 1 / 1 | NumSubsteps: 10 | KBC: 0 ===
+    |     [Substep 1] Computed RampIters: 139
+    |     [Step 1 / Sub 1] Converged. Iter: 161 | TOL1(V): 0.000000e+00 | TOL2(dU): 0.000000e+00 |
+    |     TOL3(ResRatio): 0.000000e+00
+    |     [Substep 2] Computed RampIters: 139
+    |     [Step 1 / Sub 2] Converged. Iter: 161 | TOL1(V): 0.000000e+00 | TOL2(dU): 0.000000e+00 |
+    |     TOL3(ResRatio): 0.000000e+00
+    |     [Substep 3] Computed RampIters: 139

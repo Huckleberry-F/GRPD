@@ -158,7 +158,7 @@ J2PlasticityMat::ComputeEngineeringStress(const Eigen::Matrix3d &strain) const {
 // 核心状态相关本构算法：包含小变形下的径向返回
 // ---------------------------------------------------------------------------
 Eigen::Matrix3d J2PlasticityMat::ComputePK1Stress(const Eigen::Matrix3d &F,
-                                                  int particleId) const {
+                                                  int particleId, int stateMode) const {
   if (particleId < 0 || eqPSOld_ == nullptr) {
     // 降级为纯弹性
     Eigen::Matrix3d strain =
@@ -179,11 +179,25 @@ Eigen::Matrix3d J2PlasticityMat::ComputePK1Stress(const Eigen::Matrix3d &F,
     eps = 0.5 * (F + F.transpose()) - I;
   }
 
-  // --- 路线二：纯正 AoS 访存连段 ---
-  // 正如您所洞见的！9个分量紧密相连，一次 Cache Miss 即可将全部 72 字节拉入
-  // CPU！
-  Eigen::Matrix3d eps_p_old = Eigen::Matrix3d::Zero();
   int idx9 = particleId * 9;
+
+  if (stateMode == 1 || stateMode == 2) {
+    // [ADR 初始刚度法核心逻辑]
+    // stateMode == 1: outerIter=0的冻结态，读取Old场(上一个载荷子步的塑性历史)
+    // stateMode == 2: outerIter>0的冻结态，读取Trial场(上一次外循环本构试探更新后的最新塑性场)
+    Eigen::Matrix3d eps_p_fixed = Eigen::Matrix3d::Zero();
+    const double* ps_ptr = (stateMode == 1) ? pSOld_ : pSTrial_;
+    
+    eps_p_fixed << ps_ptr[idx9], ps_ptr[idx9 + 1], ps_ptr[idx9 + 2],
+        ps_ptr[idx9 + 3], ps_ptr[idx9 + 4], ps_ptr[idx9 + 5], ps_ptr[idx9 + 6],
+        ps_ptr[idx9 + 7], ps_ptr[idx9 + 8];
+        
+    Eigen::Matrix3d eps_e = eps - eps_p_fixed;
+    return ComputeEngineeringStress(eps_e); // 直接返回刚度预测，不更新塑性参量
+  }
+
+  // 以下为正常本构计算 (stateMode == 0)
+  Eigen::Matrix3d eps_p_old = Eigen::Matrix3d::Zero();
   eps_p_old << pSOld_[idx9], pSOld_[idx9 + 1], pSOld_[idx9 + 2],
       pSOld_[idx9 + 3], pSOld_[idx9 + 4], pSOld_[idx9 + 5], pSOld_[idx9 + 6],
       pSOld_[idx9 + 7], pSOld_[idx9 + 8];

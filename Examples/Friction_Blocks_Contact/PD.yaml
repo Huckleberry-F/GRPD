@@ -1,5 +1,5 @@
 #==============================================================================
-# GRPD ADR Quasi-Static Contact Benchmark - 摩擦方块纯推力对标跑通验�?
+# GRPD ADR Quasi-Static Contact Benchmark - 摩擦方块纯推力对标跑通验证
 #==============================================================================
 
 # 1. 建模系统
@@ -16,7 +16,7 @@ Parts:
     Shape: "Box"
     Length: 20.0
     Width: 5.0
-    dx: 0.25
+    dx: 0.125
     Offset: [-10.0, -5.0, 0.0]
 
   - PartID: 2
@@ -25,8 +25,8 @@ Parts:
     Shape: "Box"
     Length: 10.0
     Width: 5.0
-    dx: 0.25
-    Offset: [-5.0, 0.25, 0.0]
+    dx: 0.125
+    Offset: [-5.0, 0.0, 0.0]
 
 # 2. 材料赋予
 Materials:
@@ -52,28 +52,35 @@ BoundaryConditions:
     BcID: 1
     Name: "Fix_Base_Bottom"
     PartID: 1
-    Box: [-11.0, 11.0, -5.1, -4.8, -1.0, 1.0]
+    Box: [-11.0, 11.0, -5.1, -4.9, -1.0, 1.0]
     Type: "DISP"
     Value: [0.0, 0.0, 0.0]
-  # 锁住滑块 X 方向，消除NTS光滑面上的刚体漂�?
-  - Step: 0
+
+  - Step: 2
     BcID: 2
-    Name: "Fix_Slider_X"
+    Name: "Push_Right_Disp"
     PartID: 2
-    Box: [-6.0, 6.0, 4.8, 5.1, -1.0, 1.0]
-    Type: "DISP"
-    Value: [0.0, 0.0, 0.0]
-    ApplyDir: [true, false, false]
+    Box: [-6.0, 6.0, 4.9, 5.1, -1.0, 1.0]
+    Type: "UX"
+    Value: 2.0
 
   - Step: 1
     BcID: 3
     Name: "Push_Down_Pressure"
     PartID: 2
-    Box: [-6.0, 6.0, 4.8, 5.1, -1.0, 1.0]
+    Box: [-6.0, 6.0, 4.9, 5.1, -1.0, 1.0]
     Type: "PY"
     Value: -10000.0
 
-# 4. 接触对设?
+  - Step: 2
+    BcID: 4
+    Name: "Push_Down_Pressure_Keep"
+    PartID: 2
+    Box: [-6.0, 6.0, 4.9, 5.1, -1.0, 1.0]
+    Type: "PY"
+    Value: -10000.0
+
+# 4. 接触对设置
 ContactPairs:
   - Name: "Blocks_Normal_Contact"
     Type: "General"
@@ -82,19 +89,22 @@ ContactPairs:
     # PenaltyFactor: 1.0
     # DampingCoeff: 0.3
     # 【摩擦法则配置区】你可以随时在此切换刚刚新增的摩擦引擎！
-    FrictionLaw: "TanhRegularized" # 选项: ExplicitImpulse / TanhRegularized / ElasticStickSlip
-    FrictionCoeff: 0.0 # 启动摩擦?
+    FrictionLaw: "ElasticStickSlip" # 选项: ExplicitImpulse / TanhRegularized / ElasticStickSlip
+    FrictionCoeff: 0.15 # 启动摩擦
 
     # TanhRegularized 专属参数
     # VRef: 1.0e-3 # 参考正则化速度，越小拐角越尖锐
 
-    # ElasticStickSlip 专属参数 (如果你要切换到该法则，取消下方注�?
-    # ShearStiffness: 1.0e6 # 静摩擦的微观弹簧刚度系数
+    # ElasticStickSlip 专属参数
+    ShearStiffness: 0.0 # 设为0.0开启智能推导
+    StiffnessMode: 1 # 0: Abaqus风格(基于允许滑移量), 1: Ansys风格(基于KTN比例)
+    AllowableSlipRatio: 0.005 # Abaqus风格专属: 允许滑移率(默认0.5% dx)
+    AnsysKTNRatio: 1.0 # Ansys风格专属: KTS/KTN 刚度比例(默认1.0)
 
     MasterPartID: 1
     SlavePartID: 2
-    PinballRatio: 1.5
-    SmoothRatio: 1.0
+    PinballRatio: 1.0
+    SmoothRatio: 2.0
     RestitutionCoeff: 0.0
 # 5. 求解积分器选择
 Solver:
@@ -107,14 +117,17 @@ Solver:
   KernelWeightType: "Linear"
   ZeroEnergyG0: 1.0
   ZeroEnergyMethod: "Zhang"
-  Horizon: 0.75375
+  Horizon: 0.376875
   OMP_Threads: 16
   OutputInterval: 1000
 
   MaxPseudoSteps: 20000
   MassScaleFactor: 1.0e8
-  DispTol: 1.0e-6
-  ForceTol: 5.0e-3
+  MaxNRSteps: 50
+  NRStateFrozen: false
+  NRDispTol: 5.0e-2
+  NRForceTol: 5.0e-3
+  KineticTol: 1.0e-5
   MinRefForce: 1.0e-2
   RampIters: 0
   RampWaveRatio: 5.0
@@ -125,7 +138,11 @@ Solver:
     - Step: 1
       Time: 1.0
       KBC: 0
-      NumSubsteps: 10
+      NumSubsteps: 20
+    - Step: 2
+      Time: 2.0
+      KBC: 0
+      NumSubsteps: 20
 
 # 6. IO输出设置
 Writer:
@@ -146,4 +163,6 @@ Writer:
     - Name: "ContactGap"
       Dimension: 1
     - Name: "VirtualSurfacePos"
+      Dimension: 3
+    - Name: "FrictionShearForce"
       Dimension: 3

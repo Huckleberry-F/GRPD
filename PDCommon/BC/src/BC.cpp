@@ -33,9 +33,11 @@ void BC::applyConstraints(BCManager &mgr, double loadFactor, int currentStep) {
   }
 }
 
-void BC::commitEndStep(BCManager &mgr) {
+void BC::commitEndStep(BCManager &mgr, int currentStep) {
   for (auto &entry : mgr.getBCs()) {
-    entry.bc->commitEndStep();
+    if (entry.step == 0 || entry.step == currentStep) {
+      entry.bc->commitEndStep();
+    }
   }
 }
 

@@ -58,6 +58,7 @@ public:
   } // Dirichlet: 直接设定位移值
 
   void commitEndStep() override;
+  void setPrevVal(double val) override { prevVal_ = val; }
 
 private:
   int particleId_;
@@ -82,6 +83,7 @@ public:
   void apply() override;
   void apply(double loadFactor) override;
   void commitEndStep() override;
+  void setPrevVal(double val) override { prevVal_ = val; }
 
   bool isConstraint() const override {
     return false;
@@ -109,6 +111,7 @@ public:
   void apply() override;
   void apply(double loadFactor) override;
   void commitEndStep() override;
+  void setPrevVal(double val) override { prevVal_ = val; }
 
   bool isConstraint() const override {
     return true;
@@ -136,6 +139,7 @@ public:
   void apply() override;
   void apply(double loadFactor) override;
   void commitEndStep() override;
+  void setPrevVal(double val) override { prevVal_ = val; }
 
   void setScalingFactors(double dx, double density, double massScale) override {
     dx_ = dx;

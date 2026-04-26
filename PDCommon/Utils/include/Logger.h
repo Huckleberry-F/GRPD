@@ -14,6 +14,19 @@
 namespace PDCommon {
 namespace Utils {
 
+namespace Colors {
+  inline const std::string RESET   = "\033[0m";
+  inline const std::string BLACK   = "\033[30m";
+  inline const std::string RED     = "\033[31m";
+  inline const std::string GREEN   = "\033[32m";
+  inline const std::string YELLOW  = "\033[33m";
+  inline const std::string BLUE    = "\033[34m";
+  inline const std::string MAGENTA = "\033[35m";
+  inline const std::string CYAN    = "\033[36m";
+  inline const std::string WHITE   = "\033[37m";
+  inline const std::string GRAY    = "\033[90m";
+} // namespace Colors
+
 /**
  * @brief Global logger manager (Singleton pattern)
  * Handles all log output (console and file) and Logo display.

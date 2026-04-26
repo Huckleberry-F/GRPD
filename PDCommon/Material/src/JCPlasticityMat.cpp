@@ -76,9 +76,9 @@ void JCPlasticityMat::commitState() {
 }
 
 Eigen::Matrix3d JCPlasticityMat::ComputePK1Stress(const Eigen::Matrix3d &F,
-                                                  int particleId) const {
+                                                  int particleId, int stateMode) const {
   // 先通过基类求得应力和 J2 塑性应变 Trial 态
-  Eigen::Matrix3d stress = J2PlasticityMat::ComputePK1Stress(F, particleId);
+  Eigen::Matrix3d stress = J2PlasticityMat::ComputePK1Stress(F, particleId, stateMode);
 
   // 如果无状态变量指针或是负的ID (纯弹性回调)，则直接返回应力，不计算损伤
   if (particleId < 0 || eqPSOld_ == nullptr || damageOld_ == nullptr) {

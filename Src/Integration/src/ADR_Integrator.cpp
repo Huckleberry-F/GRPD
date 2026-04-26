@@ -24,10 +24,8 @@ void ADR_Integrator::configure(const YAML::Node &solverNode) {
 
   if (solverNode["MaxPseudoSteps"])
     maxPseudoSteps_ = solverNode["MaxPseudoSteps"].as<int>();
-  if (solverNode["DispTol"])
-    dispTol_ = solverNode["DispTol"].as<double>();
-  if (solverNode["ForceTol"])
-    forceTol_ = solverNode["ForceTol"].as<double>();
+  if (solverNode["KineticTol"])
+    kineticTol_ = solverNode["KineticTol"].as<double>();
   if (solverNode["MinRefForce"])
     minRefForce_ = solverNode["MinRefForce"].as<double>();
   if (solverNode["MassScaleFactor"])
@@ -40,6 +38,16 @@ void ADR_Integrator::configure(const YAML::Node &solverNode) {
     dampingMethod_ = solverNode["DampingMethod"].as<std::string>();
   if (solverNode["Fracture_Strategy"])
     fractureStrategy_ = solverNode["Fracture_Strategy"].as<std::string>();
+
+  // ADR 初始刚度法外循环参数（可选，有默认值）
+  if (solverNode["NRForceTol"])
+    NRForceTol_ = solverNode["NRForceTol"].as<double>();
+  if (solverNode["NRDispTol"])
+    NRDispTol_ = solverNode["NRDispTol"].as<double>();
+  if (solverNode["MaxNRSteps"])
+    maxNRIters_ = solverNode["MaxNRSteps"].as<int>();
+  if (solverNode["NRStateFrozen"])
+    NRStateFrozen_ = solverNode["NRStateFrozen"].as<bool>();
 }
 
 // ---------------------------------------------------------------------------
@@ -156,207 +164,350 @@ void ADR_Integrator::run(PDCommon::Core::PDContext &ctx,
       saveBaseDisplacement();
 
       // =======================================================================
-      // 断裂稳定化机制分支 (Dual-Strategy Fracture Logic)
+      // ADR 初始刚度法外循环 (Initial Stiffness Outer Loop)
+      // 冻结非线性本构状态，让 ADR 在纯弹性系统中快速收敛，
+      // 然后解冻做一次完整的非线性本构评估，检查残差是否满足容差。
       // =======================================================================
-      bool fractureStabilized = false;
-      int fracIter = 0;
-      // Staggered 模式最多重启15次；FastInnerLoop 模式仅进行 1 次外层循环
-      const int MAX_FRAC_ITERS = (fractureStrategy_ == "Staggered") ? 15 : 1;
+      bool NRConverged = false;
+      int NRIter = 0;
+      double fIntTotal = 0.0; // 外循环中计算的全场总内力，子步结束后保存
 
-      while (!fractureStabilized && fracIter < MAX_FRAC_ITERS) {
-        fractureStabilized = true;
+      while (!NRConverged && NRIter < maxNRIters_) {
 
-        // [加载因子控制] 根据各自的子步数计算全局或局部LF
-        double targetLF = (static_cast<double>(stepIdx) +
-                           static_cast<double>(sub + 1) / currentNumSubsteps) /
+        // [保存外循环位移快照] 用于宏观位移残差计算
+        saveNROldDisplacement();
+
+        // [传递外循环状态并根据配置决定是否冻结]
+        ctx.setOuterIter(NRIter);
+        ctx.setStateFrozen(NRStateFrozen_);
+
+        // =======================================================================
+        // 断裂稳定化机制分支 (Dual-Strategy Fracture Logic)
+        // =======================================================================
+        bool fractureStabilized = false;
+        int fracIter = 0;
+        // Staggered 模式最多重启15次；FastInnerLoop 模式仅进行 1 次外层循环
+        const int MAX_FRAC_ITERS = (fractureStrategy_ == "Staggered") ? 15 : 1;
+        
+        bool innerConverged = false;
+
+        while (!fractureStabilized && fracIter < MAX_FRAC_ITERS) {
+          fractureStabilized = true;
+
+          // [加载因子控制] 根据各自的子步数计算全局或局部LF
+          double targetLF =
+              (static_cast<double>(stepIdx) +
+               static_cast<double>(sub + 1) / currentNumSubsteps) /
+              loadStepConfigs_.size();
+          double prevLF = (static_cast<double>(stepIdx) +
+                           static_cast<double>(sub) / currentNumSubsteps) /
                           loadStepConfigs_.size();
-        double prevLF = (static_cast<double>(stepIdx) +
-                         static_cast<double>(sub) / currentNumSubsteps) /
-                        loadStepConfigs_.size();
 
-        int currentKbc = (stepConfig.kbc >= 0) ? stepConfig.kbc : kbc_;
-        // 核心修复：如果是断裂引起的二次松弛 (fracIter > 0)，千万不能在这个循环内部重新爬坡，否则会导致物理载荷瞬间掉落！
-        int rampIters =
-            (currentKbc == 1 || fracIter > 0) ? 0 : computeRampIters(ctx); // KBC=1 或 断裂重稳态，强制无爬坡直接保载
-        LOG_INFO("    [Substep " + std::to_string(sub + 1) +
-                 "] Computed RampIters: " + std::to_string(rampIters));
+          int currentKbc = (stepConfig.kbc >= 0) ? stepConfig.kbc : kbc_;
+          // 核心修复：断裂二次松弛 或 外循环重入时，强制无爬坡直接保载
+          int rampIters = (currentKbc == 1 || fracIter > 0 || NRIter > 0)
+                              ? 0
+                              : computeRampIters(ctx);
+          LOG_INFO("    [Substep " + std::to_string(sub + 1) +
+                   "] Computed RampIters: " + std::to_string(rampIters));
 
-        bool converged = false;
-        int iter = 0;
+          int iter = 0;
+          maxKineticEnergy_ = 0.0; // Reset peak kinetic energy tracker for each
+                                   // new relaxation process
 
-        while (!converged && iter < maxPseudoSteps_) {
-          bool inRampPhase = (iter < rampIters);
-          double currentLF = targetLF;
+          while (!innerConverged && iter < maxPseudoSteps_) {
+            bool inRampPhase = (iter < rampIters);
+            double currentLF = targetLF;
 
-          double baseLocalLF =
-              static_cast<double>(sub + 1) / currentNumSubsteps;
-          double prevLocalLF = static_cast<double>(sub) / currentNumSubsteps;
-          double currentLocalLF = baseLocalLF;
+            double baseLocalLF =
+                static_cast<double>(sub + 1) / currentNumSubsteps;
+            double prevLocalLF = static_cast<double>(sub) / currentNumSubsteps;
+            double currentLocalLF = baseLocalLF;
 
-          if (inRampPhase) {
-            currentLF =
-                prevLF + (targetLF - prevLF) *
-                             (static_cast<double>(iter + 1) / rampIters);
-            currentLocalLF =
-                prevLocalLF + (baseLocalLF - prevLocalLF) *
-                                  (static_cast<double>(iter + 1) / rampIters);
-          }
+            if (inRampPhase) {
+              currentLF =
+                  prevLF + (targetLF - prevLF) *
+                               (static_cast<double>(iter + 1) / rampIters);
+              currentLocalLF =
+                  prevLocalLF + (baseLocalLF - prevLocalLF) *
+                                    (static_cast<double>(iter + 1) / rampIters);
+            }
 
-          double activeLF = (currentKbc == 1) ? 1.0 : currentLocalLF;
+            double activeLF = (currentKbc == 1) ? 1.0 : currentLocalLF;
 
-          saveOldDisplacement();
+            saveOldDisplacement();
 
-          timer.tick();
+            timer.tick();
 
-          // 核心控制：告知所有后续流程当前是否是子步(非迭代)的起跑线
-          // 若为是，接触模块需要冻结几何拓扑法向等信息，维持本子步内的完全保守力场
-          ctx.setIncrementStart(iter == 0);
+            // 核心控制：告知所有后续流程当前是否是子步(非迭代)的起跑线
+            // 若为是，接触模块需要冻结几何拓扑法向等信息，维持本子步内的完全保守力场
+            ctx.setIncrementStart(iter == 0);
 
-          // ✨ [核心工序流水线表达]
-          BC::applyConstraints(ctx.getBCManager(), activeLF, stepConfig.stepId);
-          ctx.setCurrentDt(dt); // 同步真实 dt 给接触模块
-          evaluateForces(ctx, kernels, accFieldNames_, stepConfig.stepId,
-                         activeLF);
-          BC::applyConstraints(ctx.getBCManager(), activeLF,
-                               stepConfig.stepId); // 重施约束斩断支座虚假加速度
+            // ✨ [核心工序流水线表达]
+            BC::applyConstraints(ctx.getBCManager(), activeLF,
+                                 stepConfig.stepId);
+            ctx.setCurrentDt(dt); // 同步真实 dt 给接触模块
+            evaluateForces(ctx, kernels, accFieldNames_, stepConfig.stepId,
+                           activeLF);
 
-          // 【混合加速断裂机制分支】：若开启
-          // FastInnerLoop，则在内存循环中做极速判定
-          if (fractureStrategy_ == "FastInnerLoop") {
-            if (iter > rampIters + 20 && iter % 50 == 0) {
-              for (auto &kernel : kernels) {
-                kernel->postCompute(ctx); // 立刻断键，利用余下步骤阻尼自然耗散
+            // =====================================================================
+            // [内循环实时宏观力基准] 在约束斩断支反力之前，提取全场内部合力
+            // =====================================================================
+            double currentSumFintSq = 0.0;
+            for (size_t iTarget = 0; iTarget < soTargets_.size(); ++iTarget) {
+              const auto &so = soTargets_[iTarget];
+              double localSq = 0.0;
+#pragma omp parallel for reduction(+ : localSq) schedule(static)
+              for (int i = 0; i < static_cast<int>(so.totalComponents); ++i) {
+                double f = so.aPtr[i] * massScaleFactor_;
+                localSq += f * f;
+              }
+              currentSumFintSq += localSq;
+            }
+            double currentFIntTotal = std::sqrt(currentSumFintSq);
+            double currentFRef = std::max(
+                std::abs(currentFIntTotal - fIntPrevSubstep_), minRefForce_);
+
+            BC::applyConstraints(
+                ctx.getBCManager(), activeLF,
+                stepConfig.stepId); // 重施约束斩断支座虚假加速度
+
+            // 【混合加速断裂机制分支】：若开启
+            // FastInnerLoop，则在内存循环中做极速判定
+            if (fractureStrategy_ == "FastInnerLoop") {
+              if (iter > rampIters + 20 && iter % 50 == 0) {
+                for (auto &kernel : kernels) {
+                  kernel->postCompute(
+                      ctx); // 立刻断键，利用余下步骤阻尼自然耗散
+                }
               }
             }
-          }
 
-          double cn = computeAdaptiveDamping(dt); // 依据响应提取耗散系数
-          updateKinematicsLeapfrog(cn, dt);       // 积分器速度/位移步进推演
+            double cn = computeAdaptiveDamping(dt); // 依据响应提取耗散系数
+            updateKinematicsLeapfrog(cn, dt);       // 积分器速度/位移步进推演
 
-          BC::applyConstraints(ctx.getBCManager(), activeLF,
-                               stepConfig.stepId); // 始终强制冻结位移边界
+            BC::applyConstraints(ctx.getBCManager(), activeLF,
+                                 stepConfig.stepId); // 始终强制冻结位移边界
 
-          // 动态捕获当前子步的真实最大不平衡量作为 R_ref
-          int updateRefMode = 0;
-          if (iter == 0) {
-            updateRefMode = 1; // 子步/重开步的起点：重置基准
-          } else {
-            // [修复] 始终追踪全过程的最大残差作为基准
-            // 防止 kbc=1 时 rampIters=0 导致无法捕获波峰残差，致使基准过小
-            updateRefMode = 2; 
-          }
+            computeConvergenceCriteria(
+                currentFRef); // 收集收敛 TOL 数据，使用真实的宏观工程残差比
 
-          computeConvergenceCriteria(updateRefMode); // 收集收敛 TOL 数据
+            timer.tock();
 
-          timer.tock();
+            // [收敛判定与日志输出]
+            if (!inRampPhase && iter > rampIters + 20) {
+              // 全新的纯粹收敛准则：力平衡 + 动能彻底耗散
+              bool criteria_converged =
+                  (forceRatio_ <= NRForceTol_ && kineticRatio_ <= kineticTol_);
 
-          // [收敛判定与日志输出]
-          if (!inRampPhase && iter > rampIters + 20) {
-            bool criteria_strict = (TOL2_ < dispTol_ && TOL3_ < forceTol_);
-            bool criteria_kinematics =
-                (TOL3_ < forceTol_ * 0.5 && TOL1_ < 1e-6);
-            // [修复] 增加绝对静止防死锁判据：若体系动能极小 (1e-8) 且位移增量已满足容差，
-            // 说明属于恒定载荷/保持步，此时即便浮点底噪引发残差假性偏大，也直接强制物理收敛，拒绝无效空转计算
-            bool criteria_still = (TOL1_ < 1e-8 && TOL2_ < dispTol_);
+              // 绝对静止防死锁兜底：系统动能彻底归零(1e-8)，即使存在数值底噪导致的残差，也强制退出
+              bool criteria_still = (kineticRatio_ < 1e-8);
 
-            if (criteria_strict || criteria_kinematics || criteria_still) {
-              converged = true;
+              if (criteria_converged || criteria_still) {
+                innerConverged = true;
+                LOG_INFO(
+                    "    [Step " + std::to_string(step + 1) + " / Sub " +
+                    std::to_string(sub + 1) + "] Converged. Iter: " +
+                    std::to_string(iter + 1) + " | KineticRatio: " +
+                    PDCommon::Utils::StringUtils::toScientific(kineticRatio_) +
+                    " | DispRatio: " +
+                    PDCommon::Utils::StringUtils::toScientific(dispRatio_) +
+                    " | ForceRatio: " +
+                    PDCommon::Utils::StringUtils::toScientific(forceRatio_));
+              }
+            }
+
+            if (iter % outputInterval_ == 0 && iter > 0) {
+              double prevPhysicalTime =
+                  (stepIdx == 0) ? 0.0
+                                 : loadStepConfigs_[stepIdx - 1].targetTime;
+              double stepPhysicalTime = stepConfig.targetTime;
+              double currentPhysicalTime =
+                  prevPhysicalTime +
+                  currentLocalLF * (stepPhysicalTime - prevPhysicalTime);
+
               LOG_INFO(
-                  "    [Step " + std::to_string(step + 1) + " / Sub " +
-                  std::to_string(sub + 1) + "] Converged. Iter: " +
-                  std::to_string(iter + 1) + " | TOL1(V): " +
-                  PDCommon::Utils::StringUtils::toScientific(TOL1_) +
-                  " | TOL2(dU): " +
-                  PDCommon::Utils::StringUtils::toScientific(TOL2_) +
-                  " | TOL3(ResRatio): " +
-                  PDCommon::Utils::StringUtils::toScientific(TOL3_));
+                  "    > Sub " + std::to_string(sub + 1) + " Iter " +
+                  std::to_string(iter) + " | Time: " +
+                  PDCommon::Utils::StringUtils::toScientific(
+                      currentPhysicalTime) +
+                  " | KineticRatio: " +
+                  PDCommon::Utils::StringUtils::toScientific(kineticRatio_) +
+                  " | DispRatio: " +
+                  PDCommon::Utils::StringUtils::toScientific(dispRatio_) +
+                  " | ForceRatio: " +
+                  PDCommon::Utils::StringUtils::toScientific(forceRatio_) +
+                  " | Speed: " +
+                  std::to_string(static_cast<int>(timer.pureSpeed())) +
+                  " steps/s" + (inRampPhase ? " [Ramping]" : ""));
+            }
+
+            iter++;
+            isFirstExplicitTick_ = false;
+          }
+
+          if (!innerConverged) {
+            LOG_WARNING(
+                "    [Step " + std::to_string(step + 1) + " / Sub " +
+                std::to_string(sub + 1) +
+                "] Reached MaxPseudoSteps without convergence!" +
+                " | KineticRatio: " +
+                PDCommon::Utils::StringUtils::toScientific(kineticRatio_) +
+                " | DispRatio: " +
+                PDCommon::Utils::StringUtils::toScientific(dispRatio_) +
+                " | ForceRatio: " +
+                PDCommon::Utils::StringUtils::toScientific(forceRatio_));
+          }
+
+          if (fractureStrategy_ == "Staggered") {
+            // [物理场后处理演算 (含断裂发生)] - 严格交错机制下在静力平衡后执行
+            auto *activeStatusField =
+                ctx.getFieldManager().getFieldAs<int>("ActiveStatus");
+            int healthBefore = 0;
+            if (activeStatusField) {
+              const int *ptr = activeStatusField->dataPtr();
+              int numParticles = ctx.getParticleManager().getTotalParticles();
+              for (int i = 0; i < numParticles; ++i)
+                healthBefore += ptr[i];
+            }
+
+            for (auto &kernel : kernels) {
+              kernel->postCompute(ctx);
+            }
+
+            int healthAfter = 0;
+            if (activeStatusField) {
+              const int *ptr = activeStatusField->dataPtr();
+              int numParticles = ctx.getParticleManager().getTotalParticles();
+              for (int i = 0; i < numParticles; ++i)
+                healthAfter += ptr[i];
+            }
+
+            if (healthAfter < healthBefore) {
+              fractureStabilized = false;
+              LOG_INFO(
+                  "    >> [*FRACTURE*] " +
+                  std::to_string(healthBefore - healthAfter) +
+                  " points fractured in quasistatic equilibrium! Restarting "
+                  "pseudo-relaxation to dissipate crack energy (FracIter: " +
+                  std::to_string(fracIter + 1) + ").");
+
+              isFirstExplicitTick_ = true;
+            }
+          } else {
+            // FastInnerLoop: 外层仅走1次，此处做最后一次保底收尾
+            for (auto &kernel : kernels) {
+              kernel->postCompute(ctx);
             }
           }
 
-          if (iter % outputInterval_ == 0 && iter > 0) {
-            double prevPhysicalTime =
-                (stepIdx == 0) ? 0.0 : loadStepConfigs_[stepIdx - 1].targetTime;
-            double stepPhysicalTime = stepConfig.targetTime;
-            double currentPhysicalTime =
-                prevPhysicalTime +
-                currentLocalLF * (stepPhysicalTime - prevPhysicalTime);
+          fracIter++;
+        } // 结束 Staggered / FastInner 外层循环
 
-            LOG_INFO(
-                "    > Sub " + std::to_string(sub + 1) + " Iter " +
-                std::to_string(iter) + " | Time: " +
-                PDCommon::Utils::StringUtils::toScientific(
-                    currentPhysicalTime) +
-                " | TOL1(V): " +
-                PDCommon::Utils::StringUtils::toScientific(TOL1_) +
-                " | TOL2(dU): " +
-                PDCommon::Utils::StringUtils::toScientific(TOL2_) +
-                " | TOL3(ResRatio): " +
-                PDCommon::Utils::StringUtils::toScientific(TOL3_) + " | Speed: " +
-                std::to_string(static_cast<int>(timer.pureSpeed())) +
-                " steps/s" + (inRampPhase ? " [Ramping]" : ""));
+        // =================================================================
+        // [外循环修正] 解冻本构，做一次完整的非线性力评估
+        // =================================================================
+        ctx.setStateFrozen(false);
+
+        // 加载因子计算（复用当前子步的目标值）
+        double NRTargetLF =
+            (static_cast<double>(stepIdx) +
+             static_cast<double>(sub + 1) / currentNumSubsteps) /
+            loadStepConfigs_.size();
+        double NRLocalLF = static_cast<double>(sub + 1) / currentNumSubsteps;
+        double NRActiveLF = (currentKbc == 1) ? 1.0 : NRLocalLF;
+
+        // 以解冻状态（完整非线性本构）重新评估内力
+        BC::applyConstraints(ctx.getBCManager(), NRActiveLF, stepConfig.stepId);
+        evaluateForces(ctx, kernels, accFieldNames_, stepConfig.stepId,
+                       NRActiveLF);
+
+        // =====================================================================
+        // [ANSYS 宏观力准则 Step 1] 在 BC 清零边界加速度之前，
+        // 统计全场（含边界节点支反力）的力 L2 范数作为结构总承载力参考基准
+        // =====================================================================
+        double sumFintAllSq = 0.0;
+        for (size_t k = 0; k < soTargets_.size(); ++k) {
+          const auto &so = soTargets_[k];
+          double localSq = 0.0;
+#pragma omp parallel for reduction(+ : localSq) schedule(static)
+          for (int i = 0; i < static_cast<int>(so.totalComponents); ++i) {
+            double f = so.aPtr[i] * massScaleFactor_;
+            localSq += f * f;
           }
-
-          iter++;
-          isFirstExplicitTick_ = false;
+          sumFintAllSq += localSq;
         }
+        fIntTotal = std::sqrt(sumFintAllSq);
 
-        if (!converged) {
-          LOG_WARNING("    [Step " + std::to_string(step + 1) + " / Sub " +
-                      std::to_string(sub + 1) +
-                      "] Reached MaxPseudoSteps without convergence!" +
-                      " | TOL1(V): " +
-                      PDCommon::Utils::StringUtils::toScientific(TOL1_) +
-                      " | TOL2(dU): " +
-                      PDCommon::Utils::StringUtils::toScientific(TOL2_) +
-                      " | TOL3(ResRatio): " +
-                      PDCommon::Utils::StringUtils::toScientific(TOL3_));
-        }
+        // [关键] 使用本子步的内力增量作为参考基准，而非全场总内力
+        // 避免载荷步越多、总力越大时判定过度宽松
+        double fIntIncrement = std::abs(fIntTotal - fIntPrevSubstep_);
 
-        if (fractureStrategy_ == "Staggered") {
-          // [物理场后处理演算 (含断裂发生)] - 严格交错机制下在静力平衡后执行
-          auto *activeStatusField =
-              ctx.getFieldManager().getFieldAs<int>("ActiveStatus");
-          int healthBefore = 0;
-          if (activeStatusField) {
-            const int *ptr = activeStatusField->dataPtr();
-            int numParticles = ctx.getParticleManager().getTotalParticles();
-            for (int i = 0; i < numParticles; ++i)
-              healthBefore += ptr[i];
-          }
+        // 重施约束：清零边界节点的加速度，仅保留自由粒子残差
+        BC::applyConstraints(ctx.getBCManager(), NRActiveLF, stepConfig.stepId);
 
-          for (auto &kernel : kernels) {
-            kernel->postCompute(ctx);
-          }
+        // =====================================================================
+        // [ANSYS 宏观力准则 Step 2] 计算宏观力残差比 + 宏观位移残差比
+        // =====================================================================
+        double macroForceRatio = 0.0, macroDispRatio = 0.0;
+        computeNRConvergence(fIntIncrement, macroForceRatio, macroDispRatio);
 
-          int healthAfter = 0;
-          if (activeStatusField) {
-            const int *ptr = activeStatusField->dataPtr();
-            int numParticles = ctx.getParticleManager().getTotalParticles();
-            for (int i = 0; i < numParticles; ++i)
-              healthAfter += ptr[i];
-          }
+        bool forceConverged = (macroForceRatio <= NRForceTol_);
+        bool dispConverged = (macroDispRatio <= NRDispTol_);
 
-          if (healthAfter < healthBefore) {
-            fractureStabilized = false;
-            LOG_INFO("    >> [*FRACTURE*] " +
-                     std::to_string(healthBefore - healthAfter) +
-                     " points fractured in quasistatic equilibrium! Restarting "
-                     "pseudo-relaxation to dissipate crack energy (FracIter: " +
-                     std::to_string(fracIter + 1) + ").");
+        // 【修正】如果在 NR 的第一轮 (NRIter ==
+        // 0)，由于本次迭代的位移恰等于本子步的总位移， macroDispRatio
+        // 必然等于 1.0。因此在第一轮只要力收敛即可；或者当力极其收敛时豁免位移检查。
+        bool strictConverged = forceConverged && dispConverged;
+        bool waiveDispConverged =
+            forceConverged &&
+            (NRIter == 0 || macroForceRatio <= 0.1 * NRForceTol_);
 
-            isFirstExplicitTick_ = true;
-          }
+        // 【核心修复】外循环收敛的绝对前提是：内循环本身必须已经收敛！
+        // 如果内循环是因为跑满 MaxPseudoSteps 而超时的，说明动能并未彻底耗散，
+        // 此时测到的极小残差可能是系统在振荡过程中恰好穿过平衡点造成的“假象”。
+        // 因此，如果 innerConverged == false，外循环绝对不能放行，必须强制触发下一轮
+        // NR 迭代。
+        if (innerConverged && (strictConverged || waiveDispConverged)) {
+          NRConverged = true;
+          LOG_INFO("    " + PDCommon::Utils::Colors::MAGENTA + "[NR]" +
+                   PDCommon::Utils::Colors::RESET + " Converged at iter " +
+                   std::to_string(NRIter + 1) + " | MacroForce: " +
+                   PDCommon::Utils::StringUtils::toScientific(macroForceRatio) +
+                   " | MacroDisp: " +
+                   PDCommon::Utils::StringUtils::toScientific(macroDispRatio) +
+                   " | dFref: " +
+                   PDCommon::Utils::StringUtils::toScientific(fIntIncrement) +
+                   " (Total=" +
+                   PDCommon::Utils::StringUtils::toScientific(fIntTotal) + ")");
         } else {
-          // FastInnerLoop: 外层仅走1次，此处做最后一次保底收尾
-          for (auto &kernel : kernels) {
-            kernel->postCompute(ctx);
-          }
+          NRIter++;
+          isFirstExplicitTick_ = true; // 重置以驱动下一轮 ADR 内循环
+          LOG_INFO("    " + PDCommon::Utils::Colors::MAGENTA + "[NR]" +
+                   PDCommon::Utils::Colors::RESET + " iter " +
+                   std::to_string(NRIter) + " / " +
+                   std::to_string(maxNRIters_) + " | MacroForce: " +
+                   PDCommon::Utils::StringUtils::toScientific(macroForceRatio) +
+                   " (dFref=" +
+                   PDCommon::Utils::StringUtils::toScientific(fIntIncrement) +
+                   ")" + " | MacroDisp: " +
+                   PDCommon::Utils::StringUtils::toScientific(macroDispRatio));
         }
 
-        fracIter++;
-      } // 结束 Staggered / FastInner 外层循环
+      } // 结束 NR 迭代循环
+
+      if (!NRConverged) {
+        LOG_WARNING("    [Step " + std::to_string(stepConfig.stepId) +
+                    " / Sub " + std::to_string(sub + 1) + "] " +
+                    PDCommon::Utils::Colors::MAGENTA + "[NR]" +
+                    PDCommon::Utils::Colors::RESET +
+                    " did NOT converge within " + std::to_string(maxNRIters_) +
+                    " iterations!");
+      }
 
       // [状态递进]
+      // 保存本子步收敛时的总内力范数，供下一子步外循环增量基准使用
+      fIntPrevSubstep_ = fIntTotal;
       ctx.getFieldManager().executeAllRegisteredSwaps();
       for (auto &[matName, matPtr] : ctx.getMaterialManager().getMaterials()) {
         if (matPtr)
@@ -378,15 +529,16 @@ void ADR_Integrator::run(PDCommon::Core::PDContext &ctx,
     }
 
     // 宣告本 LoadStep 彻底结束，让 Boundary Conditions 记忆最终态
-    BC::commitEndStep(ctx.getBCManager());
+    BC::commitEndStep(ctx.getBCManager(), stepConfig.stepId);
   }
 
-  LOG_INFO(
-      "--- ADR Complete | Total Substeps: " + std::to_string(globalSubstepCounter) +
-      "  |  Pure Compute: " + PDCommon::Utils::StringUtils::toScientific(timer.pureComputeTime()) +
-      "s" + "  |  Total: " + PDCommon::Utils::StringUtils::toScientific(timer.totalElapsed()) + "s" +
-      "  |  Speed: " +
-      std::to_string(static_cast<int>(timer.pureSpeed())) + " steps/s");
+  LOG_INFO("--- ADR Complete | Total Substeps: " +
+           std::to_string(globalSubstepCounter) + "  |  Pure Compute: " +
+           PDCommon::Utils::StringUtils::toScientific(timer.pureComputeTime()) +
+           "s" + "  |  Total: " +
+           PDCommon::Utils::StringUtils::toScientific(timer.totalElapsed()) +
+           "s" + "  |  Speed: " +
+           std::to_string(static_cast<int>(timer.pureSpeed())) + " steps/s");
 
   timer.logSummary("ADR_Integrator");
 }
@@ -400,12 +552,14 @@ void ADR_Integrator::initializeHistoryVariables() {
   aOld_.resize(soTargets_.size());
   dispOld_.resize(soTargets_.size());
   dispBase_.resize(soTargets_.size());
+  dispNROld_.resize(soTargets_.size());
 
   for (size_t k = 0; k < soTargets_.size(); ++k) {
     velHalfOld_[k].assign(soTargets_[k].totalComponents, 0.0);
     aOld_[k].assign(soTargets_[k].totalComponents, 0.0);
     dispOld_[k].assign(soTargets_[k].totalComponents, 0.0);
     dispBase_[k].assign(soTargets_[k].totalComponents, 0.0);
+    dispNROld_[k].assign(soTargets_[k].totalComponents, 0.0);
   }
   isFirstExplicitTick_ = true;
 }
@@ -426,6 +580,16 @@ void ADR_Integrator::saveOldDisplacement() {
 #pragma omp parallel for schedule(static)
     for (int i = 0; i < static_cast<int>(so.totalComponents); ++i) {
       dispOld_[k][i] = so.uPtr[i];
+    }
+  }
+}
+
+void ADR_Integrator::saveNROldDisplacement() {
+  for (size_t k = 0; k < soTargets_.size(); ++k) {
+    const auto &so = soTargets_[k];
+#pragma omp parallel for schedule(static)
+    for (int i = 0; i < static_cast<int>(so.totalComponents); ++i) {
+      dispNROld_[k][i] = so.uPtr[i];
     }
   }
 }
@@ -553,10 +717,10 @@ void ADR_Integrator::updateKinematicsLeapfrog(double cn, double dt) {
   }
 }
 
-void ADR_Integrator::computeConvergenceCriteria(int updateRefMode) {
-  TOL1_ = 0.0;
-  TOL2_ = 0.0;
-  TOL3_ = 0.0;
+void ADR_Integrator::computeConvergenceCriteria(double currentFRef) {
+  kineticRatio_ = 0.0;
+  dispRatio_ = 0.0;
+  forceRatio_ = 0.0;
   double denom_TOL2 = 0.0;
 
   for (size_t k = 0; k < soTargets_.size(); ++k) {
@@ -579,31 +743,80 @@ void ADR_Integrator::computeConvergenceCriteria(int updateRefMode) {
       local_denom_tol2 += du_substep * du_substep;
       local_tol3 += raw_acc * raw_acc;
     }
-    TOL1_ += local_tol1;
-    TOL2_ += local_tol2;
+    kineticRatio_ += local_tol1;
+    dispRatio_ += local_tol2;
     denom_TOL2 += local_denom_tol2;
-    TOL3_ += local_tol3;
+    forceRatio_ += local_tol3;
   }
 
-  TOL1_ = std::sqrt(TOL1_);
-  TOL2_ = std::sqrt(TOL2_);
+  double currentKinetic =
+      std::sqrt(kineticRatio_); // Actually the L2 norm of velocity
+  if (currentKinetic > maxKineticEnergy_) {
+    maxKineticEnergy_ = currentKinetic;
+  }
+  // 如果 peak 极小，说明系统从一开始就没动过，避免除零
+  double effectiveMaxK = std::max(maxKineticEnergy_, 1.0e-12);
+  kineticRatio_ = currentKinetic / effectiveMaxK;
+
+  dispRatio_ = std::sqrt(dispRatio_);
   denom_TOL2 = std::sqrt(denom_TOL2);
-  TOL3_ = std::sqrt(TOL3_);
-
-  // 动态截取全过程真正的最大峰值作为参考残差
-  if (updateRefMode == 1) {
-    initialResidualRef_ = TOL3_;
-  } else if (updateRefMode == 2) {
-    initialResidualRef_ = std::max(initialResidualRef_, TOL3_);
-  }
+  forceRatio_ = std::sqrt(forceRatio_);
 
   // 使用相对位移进行 TOL2 判定（防阶跃/静止状态微扰除零）
   double effective_denom2 = std::max(denom_TOL2, 1.0e-5);
-  TOL2_ = TOL2_ / effective_denom2;
+  dispRatio_ = dispRatio_ / effective_denom2;
 
-  // 使用相对不平衡量进行 TOL3 判定（结合 MINREF）
-  double relative_denom3 = std::max(initialResidualRef_, minRefForce_);
-  TOL3_ = TOL3_ / relative_denom3;
+  // [统一收敛架构]：直接使用实时的全场内力增量基准（currentFRef）计算真实的工程物理残差比
+  forceRatio_ = forceRatio_ / currentFRef;
+}
+
+// ---------------------------------------------------------------------------
+// computeNRConvergence：ANSYS 风格宏观收敛准则
+// 力准则：||R_free|| / max(||F_int_all||, MINREF)  → 工程相对残差
+// 位移准则：||du_NR|| / ||du_substep||            → 位移进展比
+// ---------------------------------------------------------------------------
+void ADR_Integrator::computeNRConvergence(double fIntTotal,
+                                          double &macroForceRatio,
+                                          double &macroDispRatio) {
+
+  // --- 力残差分子：自由粒子的不平衡力 L2 范数 ---
+  double sumResFreeSq = 0.0;
+  for (size_t k = 0; k < soTargets_.size(); ++k) {
+    const auto &so = soTargets_[k];
+    double localSq = 0.0;
+#pragma omp parallel for reduction(+ : localSq) schedule(static)
+    for (int i = 0; i < static_cast<int>(so.totalComponents); ++i) {
+      double f = so.aPtr[i] * massScaleFactor_;
+      localSq += f * f;
+    }
+    sumResFreeSq += localSq;
+  }
+  double resFree = std::sqrt(sumResFreeSq);
+
+  // --- 力残差比 ---
+  double fRef = std::max(fIntTotal, minRefForce_);
+  macroForceRatio = resFree / fRef;
+
+  // --- 位移残差比：本轮外循环位移增量 / 本子步总位移增量 ---
+  double sumDuNRSq = 0.0;
+  double sumDuSubstepSq = 0.0;
+  for (size_t k = 0; k < soTargets_.size(); ++k) {
+    const auto &so = soTargets_[k];
+    double localNRSq = 0.0;
+    double localSubstepSq = 0.0;
+#pragma omp parallel for reduction(+ : localNRSq, localSubstepSq)              \
+    schedule(static)
+    for (int i = 0; i < static_cast<int>(so.totalComponents); ++i) {
+      double du_NR = so.uPtr[i] - dispNROld_[k][i];
+      double du_sub = so.uPtr[i] - dispBase_[k][i];
+      localNRSq += du_NR * du_NR;
+      localSubstepSq += du_sub * du_sub;
+    }
+    sumDuNRSq += localNRSq;
+    sumDuSubstepSq += localSubstepSq;
+  }
+  double denomDisp = std::max(std::sqrt(sumDuSubstepSq), 1.0e-30);
+  macroDispRatio = std::sqrt(sumDuNRSq) / denomDisp;
 }
 
 } // namespace Src::Integration

@@ -1,6 +1,5 @@
 #include "BCManager.h"
 #include "BCRegistry.h"
-#include "FieldManager.h"
 #include "IOManager.h"
 #include "Logger.h"
 #include "MechanicalMaterial.h"
@@ -12,7 +11,6 @@
 #include <map>
 #include <string>
 #include <vector>
-
 
 namespace Src::Engine::Solvers::PD::Init {
 
@@ -57,36 +55,63 @@ void InitConditions(PDCommon::Core::PDContext &ctx, const YAML::Node &config) {
   }
 
   double dx = 1.0;
-  if (config["Parts"] && config["Parts"].IsSequence() && config["Parts"].size() > 0) {
-    if (config["Parts"][0]["dx"]) dx = config["Parts"][0]["dx"].as<double>();
+  if (config["Parts"] && config["Parts"].IsSequence() &&
+      config["Parts"].size() > 0) {
+    if (config["Parts"][0]["dx"])
+      dx = config["Parts"][0]["dx"].as<double>();
   }
 
+  // 1. 按照 Step 对载荷进行分组，确保按时间顺序解析
+  std::map<int, std::vector<PDCommon::IO::LoadEntry>> loadsByStep;
   for (const auto &entry : loads) {
-    std::string bcName = entry.type + "_BC" + std::to_string(entry.bcID) +
-                         "_P" + std::to_string(entry.nodeID);
+    loadsByStep[entry.step].push_back(entry);
+  }
 
-    auto bc =
-        PDCommon::BC::BCRegistry::getInstance().createBC(entry.type, bcName);
-    if (!bc) {
-      LOG_WARNING("[InitConditions] Unknown BC type: " + entry.type);
-      bcStats["Unknown"]++;
-      continue;
+  // 2. 状态追踪器：用于记录每个粒子上一步的最终载荷值，映射为 <节点ID,
+  // 边界类型> -> 上步终值
+  std::map<std::pair<int, std::string>, double> finalValuesTracker;
+
+  // 3. 按照时间步顺序依次处理载荷
+  for (auto const &[step, stepLoads] : loadsByStep) {
+    for (const auto &entry : stepLoads) {
+      std::string bcName = entry.type + "_BC" + std::to_string(entry.bcID) +
+                           "_P" + std::to_string(entry.nodeID);
+
+      auto bc =
+          PDCommon::BC::BCRegistry::getInstance().createBC(entry.type, bcName);
+      if (!bc) {
+        LOG_WARNING("[InitConditions] Unknown BC type: " + entry.type);
+        bcStats["Unknown"]++;
+        continue;
+      }
+
+      bc->initialize(fieldManager, entry.nodeID, entry.values);
+      bc->setTableNames(entry.tableNames); // 绑定表格映射名称
+
+      // 核心功能：检查上一步是否对该节点施加了同类型载荷，若有，自动继承上一步的终点值作为本步的起点
+      auto key = std::make_pair(entry.nodeID, entry.type);
+      if (finalValuesTracker.count(key) > 0) {
+        bc->setPrevVal(finalValuesTracker[key]);
+      }
+
+      // 更新该节点同类型载荷的最新终态目标值，供后续Step使用
+      if (!entry.values.empty()) {
+        finalValuesTracker[key] = entry.values[0];
+      }
+
+      double density = 1.0;
+      if (entry.nodeID >= 0 && entry.nodeID < particles.size()) {
+        auto *mat = dynamic_cast<PDCommon::Material::MechanicalMaterial *>(
+            particles[entry.nodeID].getMaterial());
+        if (mat)
+          density = mat->getDensity();
+      }
+      // 将底层缩放因子注入给支持的面压换算高阶 BC
+      bc->setScalingFactors(dx, density, massScale);
+
+      bcStats[entry.type]++;
+      bcManager.addBC(std::move(bc), entry.step);
     }
-
-    bc->initialize(fieldManager, entry.nodeID, entry.values);
-    bc->setTableNames(entry.tableNames); // 绑定表格映射名称
-
-    double density = 1.0;
-    if (entry.nodeID >= 0 && entry.nodeID < particles.size()) {
-      auto *mat = dynamic_cast<PDCommon::Material::MechanicalMaterial*>(
-          particles[entry.nodeID].getMaterial());
-      if (mat) density = mat->getDensity();
-    }
-    // 将底层缩放因子注入给支持的面压换算高阶 BC
-    bc->setScalingFactors(dx, density, massScale);
-
-    bcStats[entry.type]++;
-    bcManager.addBC(std::move(bc), entry.step);
   }
 
   // 初始施加（此时默认第一步的静态载荷，或者是通用全局载荷 Step = 0）

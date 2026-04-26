@@ -1,5 +1,7 @@
 #include "ContactManager.h"
 #include "ContactRegistry.h"
+#include "FieldManager.h"
+#include "TypedField.h"
 #include "Logger.h"
 #include "PDEnginePre.h"
 #include "ParticleManager.h"
@@ -96,6 +98,27 @@ void InitContact(PDCommon::Core::PDContext &ctx, const YAML::Node &config) {
                std::to_string(masterIds.size()) + " nodes) <- Slave Part " +
                std::to_string(slavePart) + " (" +
                std::to_string(slaveIds.size()) + " nodes)]");
+
+      // 若配置了 ElasticStickSlip 摩擦定律，预注册其所需的状态场
+      // 确保第一次 VTK 输出时场已存在，避免 "Unknown output variable" 警告
+      std::string frictionType =
+          node["FrictionLaw"] ? node["FrictionLaw"].as<std::string>() : "";
+      if (frictionType == "ElasticStickSlip") {
+        auto &fm = ctx.getFieldManager();
+        size_t np = particles.size();
+        if (!fm.hasField("FrictionShearForce")) {
+          auto f = std::make_unique<PDCommon::Field::TypedField<double>>(
+              "FrictionShearForce", 3);
+          f->resize(np);
+          fm.addField(std::move(f));
+        }
+        if (!fm.hasField("FrictionContactActive")) {
+          auto f = std::make_unique<PDCommon::Field::TypedField<int>>(
+              "FrictionContactActive", 1);
+          f->resize(np);
+          fm.addField(std::move(f));
+        }
+      }
 
     } catch (const std::exception &e) {
       LOG_ERROR(

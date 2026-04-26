@@ -60,6 +60,9 @@ public:
   /// @brief 传入底层缩放相关的参数供高级边界条件（如压强转体力）使用
   virtual void setScalingFactors(double dx, double density, double massScale) {}
 
+  /// @brief 手动注入该 BC 在起始时的初始值（用于跨步载荷继承）
+  virtual void setPrevVal(double val) {}
+
   /// @brief 施加边界条件的核心虚函数
   /// @brief 施加边界条件的核心虚函数
   /// 每个具体的派生类将实现自己的施加逻辑
@@ -100,8 +103,8 @@ public:
   static void applyConstraints(BCManager &mgr,
                                double loadFactor, int currentStep = 0);
 
-  /// @brief 通知所有 BC 提交载荷步结束状态
-  static void commitEndStep(BCManager &mgr);
+  /// @brief 通知当前活动步的 BC 提交载荷步结束状态
+  static void commitEndStep(BCManager &mgr, int currentStep = 0);
 
 protected:
   std::string name_; // 边界条件实例名称
