@@ -386,6 +386,20 @@ General-Peridynamics/
 
 ---
 
+## 📊 项目规模 (Project Statistics)
+
+经过严格精简的代码库架构，剔除所有第三方冗余依赖，核心引擎及测试基准代码规模（截至当前）统计如下：
+
+- **有效代码行数（包含代码与纯注释）**：**15,591** 行
+- **纯代码行数（排除纯注释与空行）**：**12,560** 行
+- **纯注释行数**：3,031 行
+- **空行数**：3,332 行
+- **物理总行数**：18,923 行
+
+*(注：统计范围包含 `Src`, `PDCommon`, `Examples`, `Generate_py` 等核心 C++ 源文件与 Python 预处理脚本，已排除 `Third` 库等外部组件)*
+
+---
+
 ## 📌 版本更新日志 (Changelog)
 
 ### v4.6 — 面向 ADR 准静态松弛的 NTS 权重冻结与完美接触生态 (Robust Quasi-Static Topology Anchoring & Contact Ecology)
@@ -399,10 +413,10 @@ General-Peridynamics/
 - **双轴正交极简注册中心 (Dual-Axis Factory Registration)**: 重塑了全局 `ContactRegistry` 出厂协议。使得力学公式（ForceLaw，如 Penalty/Silling）与几何算法（Type，如 NTN/NTS）被物理隔离。允许直接在 YAML 下发 `Type: "NTN"` 叠加 `ForceLaw: "Penalty"` 的搭积木配置，实现新力学算子的一键全局多搜索系适配。
 - **斩断技术债务底座清理 (Eradication of Legacy Wrappers)**: 大刀阔斧地彻底移除了包含 `PenaltyContact`, `ViscousPenaltyContact`，`NodeNodeContact` 在内的共 17 个由于早期架构混乱而滋生的废弃过渡封装文件头与源文件，实现了系统全代码库的极致“纯净态”。
 
-### v4.4 — 弹塑性 ADR 初始刚度法与 ANSYS 宏观收敛准则 (Initial Stiffness Method & Macroscopic Convergence)
+### v4.4 — 弹塑性 ADR 初始刚度法与多级宏观收敛架构 (Initial Stiffness Method & Multi-Criteria Convergence)
 
 - **嵌套循环双层演化架构 (Nested Initial Stiffness Method)**: 彻底重构了 `ADR_Integrator` 的时间积分回路，针对高度非线性的弹塑性本构引入了双层嵌套循环。内层冻结历史状态以获取纯弹性的稳定矩阵与快速松弛；外层解冻本构状态并使用 `NR` (Newton-Raphson) 逻辑进行非线性校正与试探，从根本上压制了由于刚度突变导致的动能激增与非物理震荡，完美对齐了商用有限元在弹塑性阶跃加载下的求解范式。
-- **ANSYS 风格宏观收敛基准 (Macroscopic Convergence Criteria)**: 抛弃了传统显式松弛对微小局部残差极度敏感的相对波峰判定法，完全引入工程化的宏观力/位移检验体系。以每子步的**内力增量 (`dFref`)**为基准分母，以自由粒子不平衡力为分子；并同步统计宏观位移进展率。将复杂材料在多重载荷步下的无解不收敛困境彻底终结，使得大型塑性计算的 NR 外循环能稳定在数次迭代内极速收敛。
+- **ANSYS 风格双重宏观收敛防线 (Dual-Criteria Macroscopic Convergence)**: 抛弃了传统显式松弛单靠动能或局部残差定死活的判定法，全面引入工程化的宏观力/位移双线检验体系 (`ForceTol` / `DispTol`)。利用真实的子步内力增量 (`dFref`) 为基准核算全场工程残差；同时特设了**“首步 Predictor 位移豁免”**与**“内力极度平衡弹性放行”**等大量工业级 Heuristics（试探规则）。彻底解决了在极小底噪下长期死锁 20000 步的痛点，确保每一轮外循环收敛都是真正的物理静态平衡点。
 
 ### v4.3 — 运动学库仑摩擦机制与项目级极限参数字典 (Coulomb Friction & Full-Stack YAML Mapping)
 

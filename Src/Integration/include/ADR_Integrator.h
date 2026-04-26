@@ -63,22 +63,21 @@ private:
   // -----------------------------------------------------------------------
   // numLoadSteps_, numSubsteps_, loadStepConfigs_, kbc_ 已移至 TimeIntegrator 基类
   int maxPseudoSteps_ = 5000; ///< 每个 Substep 内允许的最大迭代数
-  double dispTol_ = 1.0e-6;   ///< 位移收敛阈值 TOL2
-  double forceTol_ = 1.0e-4;  ///< 力平衡收敛阈值 TOL3
+  double kineticTol_ = 1.0e-5; ///< 动能耗散收敛阈值 TOL1 (替代位移阈值)
   double massScaleFactor_ = 1.0e5; ///< 质量缩放因子（默认放大 10^5 倍）
   double rampWaveRatio_ = 2.0; ///< 爬坡期覆盖特征波长倍数（默认2倍模型长度）
   int rampItersOverride_ = 0;  ///< 手动指定爬坡步数（0=自动物理计算）
 
   double minRefForce_ = 1.0e-6; ///< 最低参考力截断值 (MINREF)，用于相对力判定兜底
-  double initialResidualRef_ = 0.0; ///< 子步初始参考力范数快照 (R_ref)
   double fIntPrevSubstep_ = 0.0; ///< 上一子步收敛时的全场总内力范数（用于外循环增量基准）
 
   // -----------------------------------------------------------------------
   // ADR 初始刚度法外循环参数（非线性本构交错修正）
   // -----------------------------------------------------------------------
-  double outerLoopTol_ = 5.0e-3;  ///< 外循环宏观力残差收敛容差（ANSYS标准 0.5%）
-  double outerDispTol_ = 5.0e-2;  ///< 外循环宏观位移残差收敛容差（ANSYS标准 5%）
-  int maxOuterIters_ = 10;        ///< 最大外循环迭代次数（默认 10）
+  double NRForceTol_ = 5.0e-3;  ///< 外循环宏观力残差收敛容差（ANSYS标准 0.5%）
+  double NRDispTol_ = 5.0e-2;  ///< 外循环宏观位移残差收敛容差（ANSYS标准 5%）
+  int maxNRIters_ = 10;        ///< 最大外循环迭代次数（默认 10）
+  bool NRStateFrozen_ = true;  ///< 是否在外循环期间冻结非线性状态（初始刚度法），默认 true
 
   /// @brief 阻尼策略："Viscous"=Underwood粘性阻尼, "LocalKinetic"=局部动能阻尼
   std::string dampingMethod_ = "Viscous";
@@ -97,25 +96,26 @@ private:
   std::vector<std::vector<double>> aOld_;
   std::vector<std::vector<double>> dispOld_;
   std::vector<std::vector<double>> dispBase_;
-  std::vector<std::vector<double>> dispOuterOld_; ///< 外循环位移快照
+  std::vector<std::vector<double>> dispNROld_; ///< 外循环位移快照
   bool isFirstExplicitTick_ = true;
-  double TOL1_ = 0.0;
-  double TOL2_ = 0.0;
-  double TOL3_ = 0.0;
+  double kineticRatio_ = 0.0;
+  double dispRatio_ = 0.0;
+  double forceRatio_ = 0.0;
+  double maxKineticEnergy_ = 0.0; ///< 记录内循环的历史最大动能（L2范数）
   double lastValidCn_ = 0.0;
 
   void initializeHistoryVariables();
   void saveBaseDisplacement();
   void saveOldDisplacement();
-  void saveOuterOldDisplacement();  ///< 保存外循环开始时的位移
+  void saveNROldDisplacement();  ///< 保存外循环开始时的位移
   double computeAdaptiveDamping(double dt);
   void updateKinematicsLeapfrog(double cn, double dt);
-  void computeConvergenceCriteria(int updateRefMode);
+  void computeConvergenceCriteria(double currentFRef);
 
   /// @brief 计算外循环宏观收敛准则（ANSYS风格）
   /// @param[out] macroForceRatio 宏观力残差比 = ||R_free|| / max(||F_int_all||, MINREF)
-  /// @param[out] macroDispRatio  宏观位移残差比 = ||du_outer|| / ||du_substep||
-  void computeOuterConvergence(double fIntTotal, double &macroForceRatio, double &macroDispRatio);
+  /// @param[out] macroDispRatio  宏观位移残差比 = ||du_NR|| / ||du_substep||
+  void computeNRConvergence(double fIntTotal, double &macroForceRatio, double &macroDispRatio);
 };
 
 } // namespace Src::Integration

@@ -29,7 +29,7 @@ Materials:
     YoungsModulus: 2.1e5
     PoissonsRatio: 0.3
     YieldStress: 100.0
-    HardeningModulus: 1000.0
+    HardeningModulus: 2.0e4
     HardeningType: "Isotropic"
     LargeDeformation: false
 
@@ -62,7 +62,7 @@ BoundaryConditions:
     PartID: 1
     Box: [9.9, 10.1, -0.1, 5.1, -1.0, 1.0]
     Type: "PX"
-    Value: 100.0
+    Value: 150.0
 
 # 4. 无接触对
 ContactPairs: []
@@ -80,12 +80,15 @@ Solver:
   ZeroEnergyMethod: "Zhang"
   Horizon: 0.3015
   OMP_Threads: 16
-  OutputInterval: 1000
+  OutputInterval: 20000
 
   MaxPseudoSteps: 20000
   MassScaleFactor: 1.0e8
-  DispTol: 1.0e-8
-  ForceTol: 1.0e-6
+  MaxNRSteps: 50
+  NRStateFrozen: false
+  NRDispTol: 5.0e-2
+  NRForceTol: 5.0e-3
+  KineticTol: 1.0e-5
   MinRefForce: 1.0e-2
   # TimeStep_dt: 1.0e-3
   RampIters: 0
