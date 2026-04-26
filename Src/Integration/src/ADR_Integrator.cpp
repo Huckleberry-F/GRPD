@@ -188,6 +188,8 @@ void ADR_Integrator::run(PDCommon::Core::PDContext &ctx,
         int fracIter = 0;
         // Staggered 模式最多重启15次；FastInnerLoop 模式仅进行 1 次外层循环
         const int MAX_FRAC_ITERS = (fractureStrategy_ == "Staggered") ? 15 : 1;
+        
+        bool innerConverged = false;
 
         while (!fractureStabilized && fracIter < MAX_FRAC_ITERS) {
           fractureStabilized = true;
@@ -209,12 +211,11 @@ void ADR_Integrator::run(PDCommon::Core::PDContext &ctx,
           LOG_INFO("    [Substep " + std::to_string(sub + 1) +
                    "] Computed RampIters: " + std::to_string(rampIters));
 
-          bool converged = false;
           int iter = 0;
           maxKineticEnergy_ = 0.0; // Reset peak kinetic energy tracker for each
                                    // new relaxation process
 
-          while (!converged && iter < maxPseudoSteps_) {
+          while (!innerConverged && iter < maxPseudoSteps_) {
             bool inRampPhase = (iter < rampIters);
             double currentLF = targetLF;
 
@@ -303,7 +304,7 @@ void ADR_Integrator::run(PDCommon::Core::PDContext &ctx,
               bool criteria_still = (kineticRatio_ < 1e-8);
 
               if (criteria_converged || criteria_still) {
-                converged = true;
+                innerConverged = true;
                 LOG_INFO(
                     "    [Step " + std::to_string(step + 1) + " / Sub " +
                     std::to_string(sub + 1) + "] Converged. Iter: " +
@@ -345,7 +346,7 @@ void ADR_Integrator::run(PDCommon::Core::PDContext &ctx,
             isFirstExplicitTick_ = false;
           }
 
-          if (!converged) {
+          if (!innerConverged) {
             LOG_WARNING(
                 "    [Step " + std::to_string(step + 1) + " / Sub " +
                 std::to_string(sub + 1) +
@@ -465,9 +466,9 @@ void ADR_Integrator::run(PDCommon::Core::PDContext &ctx,
         // 【核心修复】外循环收敛的绝对前提是：内循环本身必须已经收敛！
         // 如果内循环是因为跑满 MaxPseudoSteps 而超时的，说明动能并未彻底耗散，
         // 此时测到的极小残差可能是系统在振荡过程中恰好穿过平衡点造成的“假象”。
-        // 因此，如果 converged == false，外循环绝对不能放行，必须强制触发下一轮
+        // 因此，如果 innerConverged == false，外循环绝对不能放行，必须强制触发下一轮
         // NR 迭代。
-        if (converged && (strictConverged || waiveDispConverged)) {
+        if (innerConverged && (strictConverged || waiveDispConverged)) {
           NRConverged = true;
           LOG_INFO("    " + PDCommon::Utils::Colors::MAGENTA + "[NR]" +
                    PDCommon::Utils::Colors::RESET + " Converged at iter " +
