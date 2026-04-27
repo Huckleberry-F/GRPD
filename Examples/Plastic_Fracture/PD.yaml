@@ -112,6 +112,14 @@ Solver:
   RampWaveRatio: 10.0
   DampingMethod: "HybridKinetic"
   Fracture_Strategy: "Staggered"
+
+  # --- ADR 初始刚度法双层循环参数 ---
+  KineticTol: 1.0e-4 # 内层拟时间循环：动能彻底耗散的门槛比率
+  NRForceTol: 0.05 # 外层 NR 循环：宏观不平衡力残差比 (5%)
+  NRDispTol: 0.05 # 外层 NR 循环：宏观位移进展比 (5%)
+  MaxNRSteps: 20 # 每子步最大 NR 迭代次数
+  NRStateFrozen: false # 开启初始刚度法 (内循环维持纯弹性试探)
+
   DispTol: 1.0e-5
   ForceTol: 1.0e-3
   OutputInterval: 1000
@@ -140,7 +148,7 @@ Writer:
       Dimension: 1
     - Name: "VonMisesStress"
       Dimension: 1
-    - Name: "Damage_Trial"
+    - Name: "Damage"
       Dimension: 1
     - Name: "ShapeTensorInv"
       Dimension: 9
