@@ -394,11 +394,13 @@ void ADR_Integrator::run(PDCommon::Core::PDContext &ctx,
 
               isFirstExplicitTick_ = true;
             }
-          } else {
+          } else if (fractureStrategy_ == "FastInnerLoop") {
             // FastInnerLoop: 外层仅走1次，此处做最后一次保底收尾
             for (auto &kernel : kernels) {
               kernel->postCompute(ctx);
             }
+          } else if (fractureStrategy_ == "ImplicitConverged" || fractureStrategy_ == "ImplicitState") {
+            // [ImplicitConverged / ImplicitState] 试探阶段完全绕过断裂物理更新，留到 NR 外循环收敛后再评估 (ImplicitState通过TrialDamage实时断开受力)
           }
 
           fracIter++;
@@ -469,6 +471,50 @@ void ADR_Integrator::run(PDCommon::Core::PDContext &ctx,
         // 因此，如果 innerConverged == false，外循环绝对不能放行，必须强制触发下一轮
         // NR 迭代。
         if (innerConverged && (strictConverged || waiveDispConverged)) {
+          // =====================================================================
+          // [ImplicitConverged 策略核心] 收敛后拦截，执行试探性断裂并决策是否重启 NR
+          // =====================================================================
+          if (fractureStrategy_ == "ImplicitConverged") {
+            auto *activeStatusField =
+                ctx.getFieldManager().getFieldAs<int>("ActiveStatus");
+            int healthBefore = 0;
+            if (activeStatusField) {
+              const int *ptr = activeStatusField->dataPtr();
+              int numParticles = ctx.getParticleManager().getTotalParticles();
+              for (int i = 0; i < numParticles; ++i)
+                healthBefore += ptr[i];
+            }
+
+            for (auto &kernel : kernels) {
+              kernel->postCompute(ctx);
+            }
+
+            int healthAfter = 0;
+            if (activeStatusField) {
+              const int *ptr = activeStatusField->dataPtr();
+              int numParticles = ctx.getParticleManager().getTotalParticles();
+              for (int i = 0; i < numParticles; ++i)
+                healthAfter += ptr[i];
+            }
+
+            if (healthAfter < healthBefore) {
+              NRConverged = false;
+              LOG_INFO("    >> " + PDCommon::Utils::Colors::YELLOW + "[*FRACTURE*]" + PDCommon::Utils::Colors::RESET +
+                       " NR Converged, but " + std::to_string(healthBefore - healthAfter) + 
+                       " bonds broke! Topology changed, restarting NR iteration.");
+              NRIter++;
+              isFirstExplicitTick_ = true;
+              continue;
+            }
+          } else if (fractureStrategy_ == "ImplicitState") {
+            // =====================================================================
+            // [ImplicitState 策略核心] 收敛后直接固化试探断裂，不重启 NR
+            // =====================================================================
+            for (auto &kernel : kernels) {
+              kernel->postCompute(ctx);
+            }
+          }
+
           NRConverged = true;
           LOG_INFO("    " + PDCommon::Utils::Colors::MAGENTA + "[NR]" +
                    PDCommon::Utils::Colors::RESET + " Converged at iter " +
@@ -503,6 +549,30 @@ void ADR_Integrator::run(PDCommon::Core::PDContext &ctx,
                     PDCommon::Utils::Colors::RESET +
                     " did NOT converge within " + std::to_string(maxNRIters_) +
                     " iterations!");
+
+        // =====================================================================
+        // [Auto-Switch 降级回滚保护] 
+        // =====================================================================
+        if (fractureStrategy_ == "ImplicitConverged" || fractureStrategy_ == "Staggered") {
+          LOG_WARNING("    >> " + PDCommon::Utils::Colors::RED + "[Auto-Switch]" + PDCommon::Utils::Colors::RESET +
+                      " Severe tearing detected! Rolling back substep and permanently switching to FastInnerLoop explicit dynamics...");
+
+          for (size_t k = 0; k < soTargets_.size(); ++k) {
+            const auto &so = soTargets_[k];
+#pragma omp parallel for schedule(static)
+            for (int i = 0; i < static_cast<int>(so.totalComponents); ++i) {
+              so.uPtr[i] = dispBase_[k][i];
+              so.vPtr[i] = 0.0;
+              so.aPtr[i] = 0.0;
+            }
+          }
+          isFirstExplicitTick_ = true;
+          maxNRIters_ = 1;
+          NRStateFrozen_ = false;
+          fractureStrategy_ = "FastInnerLoop";
+          sub--; // 重做当前子步
+          continue;
+        }
       }
 
       // [状态递进]

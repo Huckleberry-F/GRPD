@@ -29,7 +29,7 @@ Materials:
     YoungsModulus: 2.1e5
     PoissonsRatio: 0.3
     YieldStress: 100.0
-    HardeningModulus: 2.0e4
+    HardeningModulus: 1000.0
     HardeningType: "Isotropic"
     LargeDeformation: false
 

@@ -111,7 +111,7 @@ Solver:
   MassScaleFactor: 1.0e10
   RampWaveRatio: 10.0
   DampingMethod: "HybridKinetic"
-  Fracture_Strategy: "Staggered"
+  Fracture_Strategy: "ImplicitConverged"
 
   # --- ADR 初始刚度法双层循环参数 ---
   KineticTol: 1.0e-4 # 内层拟时间循环：动能彻底耗散的门槛比率
@@ -148,7 +148,7 @@ Writer:
       Dimension: 1
     - Name: "VonMisesStress"
       Dimension: 1
-    - Name: "Damage"
+    - Name: "Damage_Trial"
       Dimension: 1
     - Name: "ShapeTensorInv"
       Dimension: 9

@@ -102,52 +102,57 @@ python ..\..\Generate_py\generate_model.py PD.yaml
 
 ### 1. 系统模块层级图 (System Component Diagram)
 
-展示整个 `GRPD` 的目录结构与模块宏观职责划分。严格遵守“解耦”和“高内聚低耦合”原则，`Engine` 和 `PDCommon` 形成了清晰的边界。
+展示整个 `GRPD` 的真实运行时调用关系。系统彻底移除了早期的物理隔离“求解器”，采用了**“通用引擎外壳 + 底层多态物理插件”**的极端解耦架构：
 
 ```mermaid
 graph TD
-    Main("应用入口 (Main.cpp/Start.cpp)")
-    Main --> EngineSys
+    Main("应用入口 (main.cpp)")
+    Main --> EM["EngineManager (顶层调度)"]
 
-    subgraph EngineSys ["⚙️ 引擎层 (Src/Engine)"]
+    subgraph EngineSys ["⚙️ 引擎控制与积分层 (Src)"]
         direction TB
-        EM["EngineManager (调度器)"]
-        Solvers{"求解器 (Solvers)"}
-        Mech["Mechanical Solver"]
-        Therm["Thermal Solver"]
-
-        EM --> Solvers
-        Solvers --> Mech
-        Solvers --> Therm
+        EM --> |实例化| PDEngine["PDEngine (通用 PD 求解器)"]
+        PDEngine --> |持有| TimeIntegrator{"TimeIntegrator (时间积分器)"}
+        TimeIntegrator -.->|多态挂载| ADR["ADR / CentralDifference / ExplicitEuler"]
     end
 
-    subgraph PDCommon ["🧩 公共基建与物理模块 (PDCommon)"]
-        direction TB
-        FM["Field (物理场)"]
-        Mat["Material (本构)"]
-        Kernel["Kernel (算子)"]
-        BC["BC (边界约束)"]
-        Neighbors["Neighbor (近邻拓扑)"]
-        Damage["Damage (断裂损伤)"]
-        Contact["Contact (接触摩擦)"]
-    end
-
-    subgraph IOLayer ["💾 数据与 IO"]
+    subgraph PDContext ["📦 数据枢纽 (PDContext)"]
         direction LR
-        IOIn["YAML / STL 解析"]
-        IOOut["VTK / 结果输出"]
+        FM["FieldManager (物理场/状态变量)"]
+        PM["ParticleManager (粒子拓扑)"]
+        NL["NeighborList (近邻与键)"]
     end
 
-    %% 连接关系
-    EngineSys ==>|依赖/调用| PDCommon
-    Main ==>|触发配置读取| IOIn
-    EM ==>|调度保存| IOOut
-    Solvers -.->|注册&生成| FM
-    Solvers -.->|更新位移/约束| BC
-    Solvers -.->|防穿透与摩擦| Contact
-    Solvers -.->|底层积分与受力| Kernel
-    Kernel -.->|本构状态| Mat
-    Mat -.->|演化与断键| Damage
+    subgraph PDCommon ["🧩 物理基建多态插槽 (PDCommon)"]
+        direction TB
+        Kernel{"PDKernel (积分核)"} -.->|力学| NOSB_M["NOSB_M (态基力学)"]
+        Kernel -.->|热学| NOSB_T["NOSB_T (态基热传导)"]
+
+        Mat{"Material (材料本构)"} -.-> JC["JC/J2 Plasticity"]
+        Mat -.-> Linear["LinearElastic"]
+
+        Contact{"Contact (接触算子)"} -.-> NTN["NTN / NTS"]
+        BC{"BC (边界约束)"} -.-> MechBC["Mechanical BC"]
+        Damage{"Fracture (损伤断裂)"} -.-> EqPS["EqPS / Stretch"]
+    end
+
+    %% 核心关系连线
+    PDEngine ==>|独占并维护| PDContext
+    PDEngine -->|装载并调用| Kernel
+    PDEngine -->|装载并调用| Mat
+    PDEngine -->|装载并调用| Contact
+    PDEngine -->|装载并调用| BC
+
+    TimeIntegrator ==>|时间循环驱动| Kernel
+    TimeIntegrator ==>|预测修正| Contact
+    Kernel ==>|应力应变查询| Mat
+    Mat ==>|失效评估| Damage
+
+    %% 数据交互
+    Kernel -.->|读坐标/写内力| FM
+    Mat -.->|读写内部状态| FM
+    Contact -.->|读写速度/力| FM
+    Damage -.->|断键| NL
 ```
 
 ### 2. 核心架构与设计模式类图 (Design Patterns)
@@ -156,67 +161,109 @@ GRPD 采用了大量现代 C++ 架构设计，其中最核心的是：**“Manag
 
 ```mermaid
 classDiagram
-    %% 核心管理器 (纯容器，由 Solver/Engine 持有)
+    class PDEngine {
+        +run()
+    }
+
+    class PDContext {
+        +ParticleManager
+        +FieldManager
+        +ContactManager
+    }
+
     class FieldManager {
-        <<Container>>
-        +addField(unique_ptr field)
-        +getField(name)
+        +addField()
+        +getField()
     }
 
-    %% 统一注册表模板 (真正的单例)
-    class Registry~T~ {
-        <<Singleton>>
-        -unordered_map factories
-        +create(name) T
+    class Registry {
+        -factories
+        +create()
     }
 
-    %% 基类与实现
+    class TimeIntegrator {
+        +run()
+    }
+
+    class ADR_Integrator {
+        -forceResidual
+        -isStateFrozen
+        +checkConvergence()
+    }
+
     class MaterialBase {
-        <<Abstract>>
         +allocateStateVariables()
         +computeForce()
+        +commitState()
     }
+
     class JCPlasticityMat {
         +computeForce()
     }
+
+    class LinearElasticMat {
+        +computeForce()
+    }
+
     class KernelBase {
-        <<Abstract>>
         +computeForceState()
     }
+
     class NOSB_Mechanical {
         +computeForceState()
     }
+
+    class NOSB_Thermal {
+        +computeForceState()
+    }
+
     class ContactBase {
-        <<Abstract>>
         +computeContactForce()
     }
+
     class KinematicContact {
         +computeContactForce()
     }
+
     class DamageModelBase {
-        <<Abstract>>
         +computeFracture()
     }
+
     class EqPSFracture {
         +computeFracture()
     }
 
-    %% 关系连线
-    MaterialBase <|-- JCPlasticityMat : 继承
-    KernelBase <|-- NOSB_Mechanical : 继承
-    ContactBase <|-- KinematicContact : 继承
-    DamageModelBase <|-- EqPSFracture : 继承
+    PDEngine *-- PDContext
+    PDEngine *-- TimeIntegrator
+    PDContext *-- FieldManager
 
-    Registry ..> MaterialBase : 多态创建
-    Registry ..> KernelBase : 多态创建
-    Registry ..> ContactBase : 多态创建
-    Registry ..> DamageModelBase : 多态创建
+    TimeIntegrator <|-- ADR_Integrator
+    MaterialBase <|-- JCPlasticityMat
+    MaterialBase <|-- LinearElasticMat
+    KernelBase <|-- NOSB_Mechanical
+    KernelBase <|-- NOSB_Thermal
+    ContactBase <|-- KinematicContact
+    DamageModelBase <|-- EqPSFracture
 
-    %% 核心数据总线依赖 (FieldManager)
-    MaterialBase ..> FieldManager : 读写本构状态/应力
-    KernelBase ..> FieldManager : 获取坐标/更新内力
-    ContactBase ..> FieldManager : 修改速度/计算惩罚斥力
-    DamageModelBase ..> FieldManager : 读取等效塑性/执行断键
+    Registry ..> TimeIntegrator
+    Registry ..> MaterialBase
+    Registry ..> KernelBase
+    Registry ..> ContactBase
+    Registry ..> DamageModelBase
+
+    TimeIntegrator ..> PDContext
+    TimeIntegrator ..> MaterialBase
+    TimeIntegrator ..> KernelBase
+    TimeIntegrator ..> ContactBase
+    TimeIntegrator ..> DamageModelBase
+
+    MaterialBase ..> FieldManager
+    KernelBase ..> FieldManager
+    ContactBase ..> FieldManager
+    DamageModelBase ..> FieldManager
+
+    note for Registry "Factory Pattern"
+    note for PDContext "Unified Data Hub"
 ```
 
 ### 3. 主计算循环时序图 (Main Computation Flow)
@@ -245,11 +292,11 @@ sequenceDiagram
     loop Time Integration (dt)
         Solver->>Solver: 1. 运动学更新 (预测步)
         Solver->>Solver: 2. 施加边界条件 (BC)
-        
+
         Solver->>Contact: 3. 计算多体接触防穿透斥力与摩擦
         Solver->>Mat: 4. 内力积分与本构计算 (态基/弹性/塑性)
         Mat->>Damage: 5. 评估损伤阈值与断裂执行 (断键)
-        
+
         Solver->>Solver: 6. 运动学校正步与状态互换更新 (Swap)
 
         opt 输出间隔 (OutputInterval = 1000)
@@ -261,21 +308,68 @@ sequenceDiagram
     EM-->>Main: 退出程序
 ```
 
-### 4. 静态资产：多态插件矩阵与求解能力兵器库 (Static Plugins & Arsenal)
+### 4. 准静态松弛时序图 (ADR 初始刚度双层循环)
+
+专门针对基于 `ADR_Integrator` 的显式/隐式准静态松弛算法。展示了在宏观 LoadStep 增量步下，内部 NR 循环如何通过冻结本构（初始刚度法）实现稳定迭代与物理历史落盘的架构。
+
+```mermaid
+sequenceDiagram
+    participant IO as IO Module
+    participant EM as EngineManager
+    participant Solver as ADR_Integrator
+    participant Contact as ContactManager
+    participant Mat as Kernel & Material
+    participant Damage as DamageModel
+
+    EM->>Solver: 启动准静态多级加载 (LoadSteps)
+
+    note over Solver,Damage: 准静态积分外层大循环 (Outer Loop)
+    loop LoadStep 增量步
+        Solver->>Solver: 解除本构状态冻结 (stateFrozen=false)
+        
+        loop NR 初始刚度松弛 (Inner Loop)
+            Solver->>Solver: 1. 运动学更新 (预测步)
+            Solver->>Solver: 2. 施加边界条件 (BC)
+            
+            Solver->>Contact: 3. 计算多体接触防穿透斥力
+            
+            note over Solver,Mat: 冻结本构 (纯弹性试探以维持矩阵刚度稳定)
+            Solver->>Mat: 4. 内力积分与纯弹性计算
+            
+            Solver->>Solver: 计算宏观力残差 (Force Convergence Check)
+            
+            opt 如果残差达标 (Converged)
+                Solver->>Solver: break 跳出内层试探循环
+            end
+            
+            Solver->>Solver: 6. 运动学校正与自适应阻尼衰减 (Swap)
+        end
+        
+        note over Mat,Damage: 子步收敛，物理历史真实落盘
+        Mat->>Mat: 7. 物理状态固化 (commitState)
+        Mat->>Damage: 8. 评估损伤阈值与执行断键
+        
+        opt 输出间隔 (OutputInterval)
+            Solver->>IO: 将当前收敛物理场写入 VTK
+        end
+    end
+```
+
+### 5. 静态资产：多态插件矩阵与求解能力兵器库 (Static Plugins & Arsenal)
 
 得益于底层的 `Registry` 与 `Factory` 架构，GRPD 引擎已挂载并开放了极为丰富的物理拓展池。它代表了引擎的**软件设计与外延能力**。使用者仅需在 YAML 中简单声明对应 `Type` 即可无缝切换不同物理环境的模拟配置，展现出高度工业级的复合分析能力。全系模块及其主要应用场景如下：
 
-| **架构层级** | **功能注册组件 (YAML Type)** | **核心能力与适用场景说明** |
-| :--- | :--- | :--- |
-| 💾 **网格解析与接口<br>(IO Readers)** | `GrpdMesh`<br>`InpMesh` | 自定义高并发扁平化点云读取格式、Abaqus 标准 `inp` 网格（六面体/四面体）提取与脱水重组。 |
-| 🗃️ **多物理场发生器<br>(Physics Fields)** | `Mechanical`<br>`Thermal` | 基于求解类型自动开辟场内存：位移/速度/加速度场（力学），温度/热通量场（热学）。 |
-| ⏱️ **演化积分控制<br>(Time Integrator)** | `ExplicitEuler`<br>`CentralDifference`<br>`ADR`<br>`StaggeredIntegrator` | 显式前向欧拉（一阶热扩散）、显式二阶中心差分（高速冲击）、自适应动态弛豫（静力平衡态）、多场交错步耦合控制。 |
-| ⚙️ **空间计算核<br>(PDKernel)** | `NOSB_M`<br>`NOSB_T` | 力学非常规态基（处理大变形/大旋转客观应力率）、热传导态基（无网格多维连续热通量演化）。 |
-| 🧱 **材料本构库<br>(Material)** | `LinearElastic`<br>`J2Plasticity`<br>`JCPlasticity`<br>`FourierThermal` | 圣维南线弹性介质、J2 Von-Mises 流动塑性径向返回、具备应变率极高敏及热软化的强冲击 Johnson-Cook 本构、傅里叶导热介质。 |
-| 💥 **损伤与断裂演化<br>(Fracture Model)** | `BondStretchFracture`<br>`EqPSFracture`<br>`DamageValueFracture` | 经典临界伸长率断裂、等效塑性演化破坏、以及包含拉伸保护阈值与应力三轴度（$p/q$）加持的高爆延性毁伤网络。 |
-| 🛡️ **接触与碰撞机制<br>(Contact Mechanics)** | `Kinematic`<br>`Penalty`<br>`NTN` / `NTS` | 纯净宏观非背景库仑滑动摩擦法则、防穿模罚函数阻力、MPM动量投影网格法（防跳弹爆炸）、NTS 子步稳固几何插值体系。 |
-| ⚖️ **稳定器与抗沙漏<br>(Stabilizers)** | `Zhang`<br>`Wan`<br>`Silling` | 高效二次型张量投影阻力阵列、四阶刚度张量缩并、经典标量力补偿。彻底根治点阵离散零阶能震荡（Zero-Energy Oscillations）。 |
-| 🛑 **驱动边界网<br>(Boundary Control)** | `DISP`, `VELOCITY`<br>`BODY_FORCE`, `PRESSURE`<br>`TEMPERATURE`, `HEAT_FLUX` | 全系支持分步递增（坡道/阶跃）解析，支持 AABB 框或 `PartID` 自适应扫描绑定，涵盖拉压、速度投射乃至智能 2D 等效面压驱动。 |
+| **架构层级**                                 | **功能注册组件 (YAML Type)**                                                 | **核心能力与适用场景说明**                                                                                              |
+| :------------------------------------------- | :--------------------------------------------------------------------------- | :---------------------------------------------------------------------------------------------------------------------- |
+| 💾 **网格解析与接口<br>(IO Readers)**        | `GrpdMesh`<br>`InpMesh`                                                      | 自定义高并发扁平化点云读取格式、Abaqus 标准 `inp` 网格（六面体/四面体）提取与脱水重组。                                 |
+| 🗃️ **多物理场发生器<br>(Physics Fields)**    | `Mechanical`<br>`Thermal`                                                    | 基于求解类型自动开辟场内存：位移/速度/加速度场（力学），温度/热通量场（热学）。                                         |
+| ⏱️ **演化积分控制<br>(Time Integrator)**     | `ExplicitEuler`<br>`CentralDifference`<br>`ADR`<br>`StaggeredIntegrator`     | 显式前向欧拉（一阶热扩散）、显式二阶中心差分（高速冲击）、自适应动态弛豫（静力平衡态）、多场交错步耦合控制。            |
+| ⚙️ **空间计算核<br>(PDKernel)**              | `NOSB_M`<br>`NOSB_T`                                                         | 力学非常规态基（处理大变形/大旋转客观应力率）、热传导态基（无网格多维连续热通量演化）。                                 |
+| 🧱 **材料本构库<br>(Material)**              | `LinearElastic`<br>`J2Plasticity`<br>`JCPlasticity`<br>`FourierThermal`      | 圣维南线弹性介质、J2 Von-Mises 流动塑性径向返回、具备应变率极高敏及热软化的强冲击 Johnson-Cook 本构、傅里叶导热介质。   |
+| 💥 **损伤与断裂演化<br>(Fracture Model)**    | `BondStretchFracture`<br>`EqPSFracture`<br>`DamageValueFracture`             | 经典临界伸长率断裂、等效塑性演化破坏、以及包含拉伸保护阈值与应力三轴度（$p/q$）加持的高爆延性毁伤网络。                 |
+| 🛡️ **接触与碰撞机制<br>(Contact Mechanics)** | `Kinematic`<br>`Penalty`<br>`NTN` / `NTS`                                    | 纯净宏观非背景库仑滑动摩擦法则、防穿模罚函数阻力、MPM动量投影网格法（防跳弹爆炸）、NTS 子步稳固几何插值体系。           |
+| ⚖️ **稳定器与抗沙漏<br>(Stabilizers)**       | `Zhang`<br>`Wan`<br>`Silling`                                                | 高效二次型张量投影阻力阵列、四阶刚度张量缩并、经典标量力补偿。彻底根治点阵离散零阶能震荡（Zero-Energy Oscillations）。  |
+| 🛑 **驱动边界网<br>(Boundary Control)**      | `DISP`, `VELOCITY`<br>`BODY_FORCE`, `PRESSURE`<br>`TEMPERATURE`, `HEAT_FLUX` | 全系支持分步递增（坡道/阶跃）解析，支持 AABB 框或 `PartID` 自适应扫描绑定，涵盖拉压、速度投射乃至智能 2D 等效面压驱动。 |
 
 ---
 
@@ -284,17 +378,19 @@ sequenceDiagram
 ## 🏗️ 动态管线：引擎工作流与 8 层执行体系 (Dynamic Pipeline)
 
 > 💡 **架构哲学：如何理解“多态矩阵”与“8层执行体系”的关系？**
-> 
+>
 > 在您向他人展示架构时，可以这样清晰界定两者的角色：
-> - **多态矩阵（第 4 节）**是系统的**静态能力兵器库**。它回答的是：*“这套系统目前能解什么物理问题？”*
-> - **8 层体系（第 5 节）**是系统的**动态内核流水线**。它回答的是：*“这套系统在计算机里是怎么一步步跑起来的？”*
-> 
+>
+> - **多态矩阵（第 4 节）**是系统的**静态能力兵器库**。它回答的是：_“这套系统目前能解什么物理问题？”_
+> - **8 层体系（第 5 节）**是系统的**动态内核流水线**。它回答的是：_“这套系统在计算机里是怎么一步步跑起来的？”_
+>
 > **两者的完美交叉**：8 层体系（流水线）在底层代码里定义了极其死板的“插槽（抽象基类接口）”，而多态矩阵就是运行时根据 `PD.yaml` 装填进去的“插件弹药”。例如，流水线的第 7 层只负责无脑调用 `MaterialBase->computeForce()`，而真正执行物理定律的，是从多态矩阵中提取出来的那个 `J2Plasticity`。流水线骨架永远不变，兵器库无限扩充。
 
 > **注：这里的“多层体系”指的是项目在软件架构上实施的“横向分层”隔离机制**。如同网络 OSI 七层模型一样，GRPD 引擎将整个计算流程从“外”到“内”、从“高阶时间控制”到“微观材料响应”划分为 8 个互不依赖、单向调用的层级。每一层只知道自己该做什么，并通过标准化接口（如 `PDContext` 和 `FieldManager`）与上下层通信，实现了**全链路的互不侵入**，确保了极端的模块化，防止了面条式代码 (Spaghetti Code) 的产生。
 
 > ⏳ **层级间的逻辑联系（线性还是交叉？）**
 > 这 8 个层级在时间轴上并不是简单的“一溜烟跑完”的纯线性，而是**“线性初始化 + 嵌套循环计算”**的逻辑关联：
+>
 > - **单次线性流水 (层1 -> 层2 -> 层3)**：这三层是初始化阶段，在 $t=0$ 时刻严格按顺序**只执行一次**。
 > - **嵌套高频循环 (层4 托管 -> 依次调用 层5/层6/层7/层8)**：第 4 层（时间积分器）是一个永不停止的时钟主控（Master Loop）。在它的每次滴答（时间步 $dt$）内，它会向下**依次**发号施令，按序激活第 5、6、7、8 层的计算操作，并将各层算出的受力累加起来去更新粒子的下一步运动。
 
@@ -396,11 +492,19 @@ General-Peridynamics/
 - **空行数**：3,332 行
 - **物理总行数**：18,923 行
 
-*(注：统计范围包含 `Src`, `PDCommon`, `Examples`, `Generate_py` 等核心 C++ 源文件与 Python 预处理脚本，已排除 `Third` 库等外部组件)*
+_(注：统计范围包含 `Src`, `PDCommon`, `Examples`, `Generate_py` 等核心 C++ 源文件与 Python 预处理脚本，已排除 `Third` 库等外部组件)_
 
 ---
 
 ## 📌 版本更新日志 (Changelog)
+
+### v4.7 — 自适应隐显断裂切换架构 (Adaptive IM-EX Fracture Architecture)
+
+- **自适应隐显断裂切换架构 (IM-EX Architecture)**: 彻底重构了 `ADR_Integrator` 的断裂控制流，将断裂拓扑变化对拟静态平衡迭代的直接冲击完全剥离。根据极端非线性力学需求，实现了商用级稳健的断裂判定网络，支持在物理撕裂失稳时跨求解模态的降级自保。
+- **三重断裂判定策略 (Tri-Fracture Strategies)**: 全面实装了三种高度解耦的断裂评估策略，满足从理想准静态到高爆冲击的全场景覆盖：
+  1. 🌟 `ImplicitConverged` **(隐式收敛重启 - 黄金稳定标准)**：在 NR 外循环中冻结拓扑（假装没断），等宏观力残差与位移双重收敛后，再执行断键。如果发生新断键，立刻没收收敛态并利用刚收敛的位移场无缝重启 NR 迭代。以保守的方式根治了刚度断崖下降带来的伪震荡。
+  2. 🧩 `ImplicitState` **(隐式试探状态法 - 连续介质对齐)**：将断裂作为试探状态变量混入 NR 迭代，由 `Trial Damage` 实时卸载本构力。系统利用单次 NR 循环自然寻找带裂纹的平衡点，收敛后直接物理固化 (Commit) 拓扑，无需重启外循环。
+  3. 🚀 `FastInnerLoop` **(极速发散降级 - 显式安全网)**：专为对付全局宏观撕裂和结构连环失稳设计。当隐式 NR 迭代彻底发散时自动触发 **[Auto-Switch]**，利用底层态基机制对本子步进行 O(1) 级轻量无损回滚（恢复粒子初始坐标并清空速率）。随即强行切换求解器为纯显式动力学循环，利用惯性项硬抗极值点推过失稳带。
 
 ### v4.6 — 面向 ADR 准静态松弛的 NTS 权重冻结与完美接触生态 (Robust Quasi-Static Topology Anchoring & Contact Ecology)
 

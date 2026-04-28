@@ -7,11 +7,6 @@
 2. **黄金标准 (Strategy 2)**：引入 `ImplicitConverged` 策略，实现“基于 Trial 损伤寻找平衡，收敛后固化断裂”的隐式标准流程。
 3. **自适应降级 (Auto-Switch)**：当结构发生全局撕裂（NR 无法收敛）时，自动回滚状态，无缝切换到 `FastInnerLoop` 纯动态显式模式。
 
-## ⚠️ User Review Required
-> [!WARNING]
-> **回滚 (Rollback) 机制确认**
-> 因为 GRPD 所有的历史变量更新都在最后一步统一 `executeAllRegisteredSwaps()`，所以子步内的回滚非常轻量：只需要把当前位移 `uPtr` 强行覆盖回 `dispBase_`，并清空速度即可。**请确认这种轻量级回滚是否足以恢复您的模型状态？**
-
 ## 🔧 拟修改文件列表
 
 ### 1. [MODIFY] `Src/Integration/src/ADR_Integrator.cpp`
