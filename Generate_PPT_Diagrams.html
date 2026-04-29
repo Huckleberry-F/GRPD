@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <title>GRPD 架构图 PPT 矢量导出工具</title>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <style>
+        body { 
+            font-family: 'Segoe UI', "Microsoft YaHei", sans-serif; 
+            padding: 40px; 
+            background-color: #f0f2f5;
+            color: #333;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        h1 { text-align: center; color: #1a1a1a; margin-bottom: 10px;}
+        .instruction {
+            background: #e6f7ff;
+            border: 1px solid #91d5ff;
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 30px;
+            font-size: 15px;
+            line-height: 1.6;
+        }
+        .instruction strong { color: #d4380d; }
+        .diagram-container { 
+            background: white; 
+            padding: 30px; 
+            border-radius: 12px; 
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05); 
+            margin-bottom: 40px; 
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .diagram-container h2 { margin-top: 0; color: #0056b3; width: 100%; border-bottom: 2px solid #f0f0f0; padding-bottom: 10px;}
+        .mermaid { margin: 20px 0; width: 100%; display: flex; justify-content: center; background: none; border: none; font-family: inherit;}
+        .download-btn { 
+            margin-top: 20px; 
+            padding: 12px 24px; 
+            background: #1890ff; 
+            color: white; 
+            border: none; 
+            border-radius: 6px; 
+            cursor: pointer; 
+            font-size: 16px;
+            font-weight: bold;
+            transition: background 0.3s;
+            box-shadow: 0 2px 4px rgba(24, 144, 255, 0.3);
+        }
+        .download-btn:hover { background: #096dd9; }
+    </style>
+</head>
+<body>
+    <h1>GRPD 架构图 PPT 矢量素材生成器</h1>
+    
+    <div class="instruction">
+        <b>💡 PPT 使用秘籍（如何不截图，获得完美矢量图）：</b><br>
+        1. 点击下方蓝色的【下载矢量图】按钮，会保存一个 `.svg` 文件到您的电脑。<br>
+        2. 打开您的 PowerPoint (PPT)，直接把下载好的 `.svg` 文件<b>拖进 PPT 页面</b>里。<br>
+        3. 在 PPT 中选中这个图，点击右键，选择 <strong>“转换为形状” (Convert to Shape)</strong>。<br>
+        4. 奇迹发生了：图表里的所有方块、文字、连线全都变成了 PPT 原生形状！您可以随意更改颜色、字体、拆分重组！
+    </div>
+
+    <!-- 图 1：系统模块层级图 -->
+    <div class="diagram-container">
+        <h2>1. 系统模块层级图 (运行时与调度)</h2>
+        <pre class="mermaid" id="diagram1">
+graph TD
+    Main("应用入口 (main.cpp)")
+    Main --> EM["EngineManager (顶层调度)"]
+
+    subgraph EngineSys ["⚙️ 引擎控制与积分层 (Src)"]
+        direction TB
+        EM --> |实例化| PDEngine["PDEngine (通用 PD 求解器)"]
+        PDEngine --> |持有| TimeIntegrator{"TimeIntegrator (时间积分器)"}
+        TimeIntegrator -.->|多态挂载| ADR["ADR / CentralDifference / ExplicitEuler"]
+    end
+
+    subgraph PDContext ["📦 数据枢纽 (PDContext)"]
+        direction LR
+        FM["FieldManager (物理场/状态变量)"]
+        PM["ParticleManager (粒子拓扑)"]
+        NL["NeighborList (近邻与键)"]
+    end
+
+    subgraph PDCommon ["🧩 物理基建多态插槽 (PDCommon)"]
+        direction TB
+        Kernel{"PDKernel (积分核)"} -.->|力学| NOSB_M["NOSB_M (态基力学)"]
+        Kernel -.->|热学| NOSB_T["NOSB_T (态基热传导)"]
+
+        Mat{"Material (材料本构)"} -.-> JC["JC/J2 Plasticity"]
+        Mat -.-> Linear["LinearElastic"]
+
+        Contact{"Contact (接触算子)"} -.-> NTN["NTN / NTS"]
+        BC{"BC (边界约束)"} -.-> MechBC["Mechanical BC"]
+        Damage{"Fracture (损伤断裂)"} -.-> EqPS["EqPS / Stretch"]
+    end
+
+    PDEngine ==>|独占并维护| PDContext
+    PDEngine -->|装载并调用| Kernel
+    PDEngine -->|装载并调用| Mat
+    PDEngine -->|装载并调用| Contact
+    PDEngine -->|装载并调用| BC
+    
+    TimeIntegrator ==>|时间循环驱动| Kernel
+    TimeIntegrator ==>|预测修正| Contact
+    Kernel ==>|应力应变查询| Mat
+    Mat ==>|失效评估| Damage
+    
+    Kernel -.->|读坐标/写内力| FM
+    Mat -.->|读写内部状态| FM
+    Contact -.->|读写速度/力| FM
+    Damage -.->|断键| NL
+        </pre>
+        <button class="download-btn" onclick="downloadSVG('diagram1', 'GRPD_01_Architecture.svg')">📥 下载图 1 矢量图 (SVG)</button>
+    </div>
+
+    <!-- 图 2：核心架构与设计模式类图 -->
+    <div class="diagram-container">
+        <h2>2. 核心架构与设计模式类图 (编译时与多态扩展)</h2>
+        <pre class="mermaid" id="diagram2">
+classDiagram
+    class PDEngine {
+        +run()
+    }
+
+    class PDContext {
+        +ParticleManager
+        +FieldManager
+        +ContactManager
+    }
+
+    class FieldManager {
+        +addField()
+        +getField()
+    }
+
+    class Registry {
+        -factories
+        +create()
+    }
+
+    class TimeIntegrator {
+        +run()
+    }
+
+    class ADR_Integrator {
+        -forceResidual
+        -isStateFrozen
+        +checkConvergence()
+    }
+
+    class MaterialBase {
+        +allocateStateVariables()
+        +computeForce()
+        +commitState()
+    }
+
+    class JCPlasticityMat {
+        +computeForce()
+    }
+
+    class LinearElasticMat {
+        +computeForce()
+    }
+
+    class KernelBase {
+        +computeForceState()
+    }
+
+    class NOSB_Mechanical {
+        +computeForceState()
+    }
+
+    class NOSB_Thermal {
+        +computeForceState()
+    }
+
+    class ContactBase {
+        +computeContactForce()
+    }
+
+    class KinematicContact {
+        +computeContactForce()
+    }
+
+    class DamageModelBase {
+        +computeFracture()
+    }
+
+    class EqPSFracture {
+        +computeFracture()
+    }
+
+    PDEngine *-- PDContext
+    PDEngine *-- TimeIntegrator
+    PDContext *-- FieldManager
+
+    TimeIntegrator <|-- ADR_Integrator
+    MaterialBase <|-- JCPlasticityMat
+    MaterialBase <|-- LinearElasticMat
+    KernelBase <|-- NOSB_Mechanical
+    KernelBase <|-- NOSB_Thermal
+    ContactBase <|-- KinematicContact
+    DamageModelBase <|-- EqPSFracture
+
+    Registry ..> TimeIntegrator
+    Registry ..> MaterialBase
+    Registry ..> KernelBase
+    Registry ..> ContactBase
+    Registry ..> DamageModelBase
+
+    TimeIntegrator ..> PDContext
+    TimeIntegrator ..> MaterialBase
+    TimeIntegrator ..> KernelBase
+    TimeIntegrator ..> ContactBase
+    TimeIntegrator ..> DamageModelBase
+
+    MaterialBase ..> FieldManager
+    KernelBase ..> FieldManager
+    ContactBase ..> FieldManager
+    DamageModelBase ..> FieldManager
+
+    note for Registry "Factory Pattern"
+    note for PDContext "Unified Data Hub"
+        </pre>
+        <button class="download-btn" onclick="downloadSVG('diagram2', 'GRPD_02_Design_Patterns.svg')">📥 下载图 2 矢量图 (SVG)</button>
+    </div>
+
+    <!-- 图 3：主计算循环时序图 -->
+    <div class="diagram-container">
+        <h2>3. 主计算循环时序图 (时间循环流水线)</h2>
+        <pre class="mermaid" id="diagram3">
+sequenceDiagram
+    participant Main as Main
+    participant IO as IO Module
+    participant EM as EngineManager
+    participant Solver as Integrator(ADR/CentralD)
+    participant Contact as ContactManager
+    participant Mat as Kernel & Material
+    participant Damage as DamageModel
+
+    Main->>IO: 解析 PD.yaml
+    IO-->>Main: 返回配置参数
+    Main->>EM: 初始化引擎 (配置树)
+    EM->>Solver: 实例化具体的 Solver (如 PDEngine)
+
+    note over Solver,Damage: 初始化阶段
+    Solver->>Mat: allocateStateVariables() & preCompute()
+
+    note over Solver,Damage: 时间步求解大循环 (Loop: dt)
+    loop Time Integration
+        Solver->>Solver: 1. 运动学更新 (预测步)
+        Solver->>Solver: 2. 施加边界条件 (BC)
+        
+        Solver->>Contact: 3. 计算多体接触防穿透斥力与摩擦
+        Solver->>Mat: 4. 内力积分与本构计算 (态基/弹性/塑性)
+        Mat->>Damage: 5. 评估损伤阈值与断裂执行 (断键)
+        
+        Solver->>Solver: 6. 运动学校正步与状态互换更新 (Swap)
+
+        opt 输出间隔 (OutputInterval)
+            Solver->>IO: 将当前所有场写入 VTK
+        end
+    end
+
+    Solver-->>EM: 求解完成
+    EM-->>Main: 退出程序
+        </pre>
+        <button class="download-btn" onclick="downloadSVG('diagram3', 'GRPD_03_Time_Loop.svg')">📥 下载图 3 矢量图 (SVG)</button>
+    </div>
+
+    <!-- 图 4：准静态隐式/显式松弛时序图 (ADR NR Loop) -->
+    <div class="diagram-container">
+        <h2>4. 准静态松弛时序图 (ADR 初始刚度双层循环)</h2>
+        <pre class="mermaid" id="diagram4">
+sequenceDiagram
+    participant IO as IO Module
+    participant EM as EngineManager
+    participant Solver as ADR_Integrator
+    participant Contact as ContactManager
+    participant Mat as Kernel & Material
+    participant Damage as DamageModel
+
+    EM->>Solver: 启动准静态多级加载 (LoadSteps)
+
+    note over Solver,Damage: 准静态积分外层大循环 (Outer Loop)
+    loop LoadStep 增量步
+        Solver->>Solver: 解除本构状态冻结 (stateFrozen=false)
+        
+        loop NR 初始刚度松弛 (Inner Loop)
+            Solver->>Solver: 1. 运动学更新 (预测步)
+            Solver->>Solver: 2. 施加边界条件 (BC)
+            
+            Solver->>Contact: 3. 计算多体接触防穿透斥力
+            
+            note over Solver,Mat: 冻结本构 (纯弹性试探以维持矩阵刚度稳定)
+            Solver->>Mat: 4. 内力积分与纯弹性计算
+            
+            Solver->>Solver: 计算宏观力残差 (Force Convergence Check)
+            
+            opt 如果残差达标 (Converged)
+                Solver->>Solver: break 跳出内层试探循环
+            end
+            
+            Solver->>Solver: 6. 运动学校正与自适应阻尼衰减 (Swap)
+        end
+        
+        note over Mat,Damage: 子步收敛，物理历史真实落盘
+        Mat->>Mat: 7. 物理状态固化 (commitState)
+        Mat->>Damage: 8. 评估损伤阈值与执行断键
+        
+        opt 输出间隔 (OutputInterval)
+            Solver->>IO: 将当前收敛物理场写入 VTK
+        end
+    end
+        </pre>
+        <button class="download-btn" onclick="downloadSVG('diagram4', 'GRPD_04_ADR_Loop.svg')">📥 下载图 4 矢量图 (SVG)</button>
+    </div>
+
+    <script>
+        // 初始化 Mermaid，放大图表尺寸和字体以获得更高清晰度，适合 PPT 展示
+        mermaid.initialize({ 
+            startOnLoad: true, 
+            theme: 'default',
+            securityLevel: 'loose',
+            themeVariables: {
+                fontFamily: 'Segoe UI, "Microsoft YaHei", sans-serif'
+            },
+            // 全局关闭 htmlLabels，确保类图、时序图等所有图表的文字都不用 foreignObject
+            htmlLabels: false, 
+            flowchart: { 
+                htmlLabels: false, 
+                useMaxWidth: false
+            },
+            sequence: { 
+                useMaxWidth: false, 
+                noteMargin: 10,
+                messageMargin: 20,  // 减小消息间距
+                actorMargin: 30     // 减小参与者间距
+            },
+            class: { 
+                htmlLabels: false, 
+                useMaxWidth: false
+            }
+        });
+        
+        // 确保 SVG 中的内联样式被直接写入元素中，防止导出后丢失样式
+        function downloadSVG(id, filename) {
+            const container = document.getElementById(id);
+            const svg = container.querySelector('svg');
+            if(!svg) { 
+                alert('图表还在渲染中，请稍等一秒再试！'); 
+                return; 
+            }
+            
+            // 获取渲染后的 SVG 字符串
+            const svgData = new XMLSerializer().serializeToString(svg);
+            
+            // 构造下载 Blob
+            const blob = new Blob([svgData], {type: "image/svg+xml;charset=utf-8"});
+            const url = URL.createObjectURL(blob);
+            
+            // 触发下载
+            const link = document.createElement("a");
+            link.href = url;
+            link.download = filename;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+        }
+    </script>
+</body>
+</html>

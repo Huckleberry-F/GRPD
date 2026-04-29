@@ -304,17 +304,10 @@ void ADR_Integrator::run(PDCommon::Core::PDContext &ctx,
             }
 
             // 【显式准静态拓展】：若 NRStateFrozen 为 false，说明用户希望在 ADR
-            // 内部实时更新本构。 此时必须在每一微步 Commit
-            // State，让材料具备真实的卸载路径，避免势能平原漂移。 这本质上将
-            // ADR 退化成了纯正的显式动力学求解器（类似 Abaqus/Explicit）。
-            if (!NRStateFrozen_) {
-              ctx.getFieldManager().executeAllRegisteredSwaps();
-              for (auto &[matName, matPtr] :
-                   ctx.getMaterialManager().getMaterials()) {
-                if (matPtr)
-                  matPtr->commitState();
-              }
-            }
+            // 内部实时更新本构（Trial状态）。
+            // [修改]：不再在每一微步 Commit State。这意味着每次本构积分都以**上一个收敛子步的真实历史**为起点，
+            // 避免了内循环由于震荡产生虚假的塑性累积路径，从而保证了路径无关性。
+            // 真实的 commit 留到外循环（NR/Substep）彻底收敛后执行。
 
             double cn = computeAdaptiveDamping(dt); // 依据响应提取耗散系数
             updateKinematicsLeapfrog(cn, dt);       // 积分器速度/位移步进推演

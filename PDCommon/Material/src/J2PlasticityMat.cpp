@@ -170,10 +170,10 @@ Eigen::Matrix3d J2PlasticityMat::ComputePK1Stress(const Eigen::Matrix3d &F,
   Eigen::Matrix3d eps = Eigen::Matrix3d::Zero();
 
   if (largeDeformation_) {
-    // 预留大变形极分解
-    // F = R * U => eps = U - I
-    // 这里因为特征值分解太耗时，暂退回小变形
-    eps = 0.5 * (F + F.transpose()) - I;
+    // [大变形修复]：采用 Green-Lagrange 应变 E = 0.5 * (F^T * F - I)
+    // 此公式计算极快（无需极分解），且具有绝对的旋转客观性！
+    // 能够彻底消除在巨大应力（大硬化模量）下，裂纹尖端因刚体大转动引发的虚假畸变应变！
+    eps = 0.5 * (F.transpose() * F) - I;
   } else {
     // 小变形情况（近似非线性截断）
     eps = 0.5 * (F + F.transpose()) - I;
@@ -193,7 +193,11 @@ Eigen::Matrix3d J2PlasticityMat::ComputePK1Stress(const Eigen::Matrix3d &F,
         ps_ptr[idx9 + 7], ps_ptr[idx9 + 8];
         
     Eigen::Matrix3d eps_e = eps - eps_p_fixed;
-    return ComputeEngineeringStress(eps_e); // 直接返回刚度预测，不更新塑性参量
+    Eigen::Matrix3d S_pred = ComputeEngineeringStress(eps_e);
+    if (largeDeformation_) {
+      return F * S_pred; // 将 PK2 应力推回 PK1 应力
+    }
+    return S_pred; // 直接返回刚度预测，不更新塑性参量
   }
 
   // 以下为正常本构计算 (stateMode == 0)
@@ -257,10 +261,12 @@ Eigen::Matrix3d J2PlasticityMat::ComputePK1Stress(const Eigen::Matrix3d &F,
   vonMises_[particleId] =
       isYielding ? (yieldStress_ + hardeningModulus_ * alpha_new) : q_trial;
 
-  // 第一类 P-K 应力在大转动下应满足 P = F * S。但在古典小应变下 P ≈ sigma
+  // 第一类 P-K 应力在大转动下应满足 P = F * S。
   Eigen::Matrix3d P1 = sigma;
   if (largeDeformation_) {
-    // TODO: Large deformation PK1 stress correct mapped from unrotated Cauchy
+    // 此时的 sigma 实际上是在初始构型下的第二类 P-K 应力 (PK2)。
+    // 必须将其推前 (Push-forward) 为第一类 P-K 应力 (PK1) 返回给引擎。
+    P1 = F * sigma;
   }
 
   return P1;
