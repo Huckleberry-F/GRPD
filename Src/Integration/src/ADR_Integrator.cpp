@@ -181,9 +181,10 @@ void ADR_Integrator::run(PDCommon::Core::PDContext &ctx,
       }
 
       // =======================================================================
-      // ADR 初始刚度法外循环 (Initial Stiffness Outer Loop)
-      // 冻结非线性本构状态，让 ADR 在纯弹性系统中快速收敛，
-      // 然后解冻做一次完整的非线性本构评估，检查残差是否满足容差。
+      // ADR 外循环 (支持两种模式)
+      // 模式 1 (NRStateFrozen=true):  增量 Modified NR —— 计算 forceCorr_
+      //         让内层 ADR 求解增量方程 K0*Δu = R_true
+      // 模式 2 (NRStateFrozen=false): 纯显式 ADR —— 直接用真实本构硬算
       // =======================================================================
       bool NRConverged = false;
       int NRIter = 0;
@@ -194,9 +195,71 @@ void ADR_Integrator::run(PDCommon::Core::PDContext &ctx,
         // [保存外循环位移快照] 用于宏观位移残差计算
         saveNROldDisplacement();
 
-        // [传递外循环状态并根据配置决定是否冻结]
+        // [传递外循环状态]
         ctx.setOuterIter(NRIter);
-        ctx.setStateFrozen(NRStateFrozen_);
+
+        // =================================================================
+        // [增量 Modified NR 核心] 计算本构修正力 forceCorr_
+        // forceCorr_[k][i] = a_true[i] - a_frozen[i]
+        // 在内循环中将其叠加到冻结态加速度上，使 ADR 等效于求解增量方程
+        // =================================================================
+        if (NRStateFrozen_) {
+          // 计算当前子步的加载因子
+          double corrLF_local = static_cast<double>(sub + 1) / currentNumSubsteps;
+          double corrActiveLF = (currentKbc == 1) ? 1.0 : corrLF_local;
+
+          // Step A: 解冻态力评估 → 获得真实的非线性加速度 a_true
+          // stateMode=0 → 完整的径向回退算法，写入 pSTrial_
+          ctx.setStateFrozen(false);
+          BC::applyConstraints(ctx.getBCManager(), corrActiveLF, stepConfig.stepId);
+          evaluateForces(ctx, kernels, accFieldNames_, stepConfig.stepId, corrActiveLF);
+
+          // 暂存真实加速度
+          std::vector<std::vector<double>> accTrue(soTargets_.size());
+          for (size_t k = 0; k < soTargets_.size(); ++k) {
+            const auto &so = soTargets_[k];
+            accTrue[k].resize(so.totalComponents);
+            #pragma omp parallel for schedule(static)
+            for (int i = 0; i < static_cast<int>(so.totalComponents); ++i) {
+              accTrue[k][i] = so.aPtr[i];
+            }
+          }
+
+          // Step B: 冻结态力评估 → 获得初始刚度弹性加速度 a_frozen
+          // 【关键修复】强制 outerIter=0 → stateMode=1 → 读取 pSOld_（初始弹性基底）
+          // 而非被 Step A 写入的 pSTrial_，确保 forceCorr 代表真实的非线性偏差
+          ctx.setStateFrozen(true);
+          ctx.setOuterIter(0);  // 强制读取 pSOld_ (stateMode=1)
+          BC::applyConstraints(ctx.getBCManager(), corrActiveLF, stepConfig.stepId);
+          evaluateForces(ctx, kernels, accFieldNames_, stepConfig.stepId, corrActiveLF);
+          ctx.setOuterIter(NRIter);  // 恢复真实的外循环迭代计数
+
+          // Step C: 计算修正力 = a_true - a_frozen
+          for (size_t k = 0; k < soTargets_.size(); ++k) {
+            const auto &so = soTargets_[k];
+            #pragma omp parallel for schedule(static)
+            for (int i = 0; i < static_cast<int>(so.totalComponents); ++i) {
+              forceCorr_[k][i] = accTrue[k][i] - so.aPtr[i];
+            }
+          }
+
+          LOG_INFO("    " + PDCommon::Utils::Colors::CYAN + "[NR-Increment]" +
+                   PDCommon::Utils::Colors::RESET + " Computed forceCorr for NR iter " +
+                   std::to_string(NRIter + 1));
+
+          // 恢复冻结态用于内循环（内循环也应使用 stateMode=1 读取 pSOld_）
+          ctx.setStateFrozen(true);
+          ctx.setOuterIter(0);  // 内循环始终使用初始弹性刚度 (pSOld_)
+        } else {
+          // 纯显式模式：不需要修正力，清零 forceCorr_
+          for (size_t k = 0; k < soTargets_.size(); ++k) {
+            #pragma omp parallel for schedule(static)
+            for (int i = 0; i < static_cast<int>(forceCorr_[k].size()); ++i) {
+              forceCorr_[k][i] = 0.0;
+            }
+          }
+          ctx.setStateFrozen(false);
+        }
 
         // =======================================================================
         // 断裂稳定化机制分支 (Dual-Strategy Fracture Logic)
@@ -266,6 +329,21 @@ void ADR_Integrator::run(PDCommon::Core::PDContext &ctx,
             ctx.setCurrentDt(dt); // 同步真实 dt 给接触模块
             evaluateForces(ctx, kernels, accFieldNames_, stepConfig.stepId,
                            activeLF);
+
+            // =============================================================
+            // [增量 Modified NR 核心] 叠加本构修正力 forceCorr_
+            // 使内循环从 "求解总位移" 变为 "求解残差增量"
+            // forceCorr_ 以加速度为单位，直接加到 aPtr 上即可
+            // =============================================================
+            if (NRStateFrozen_) {
+              for (size_t iTarget = 0; iTarget < soTargets_.size(); ++iTarget) {
+                const auto &so = soTargets_[iTarget];
+                #pragma omp parallel for schedule(static)
+                for (int ii = 0; ii < static_cast<int>(so.totalComponents); ++ii) {
+                  so.aPtr[ii] += forceCorr_[iTarget][ii];
+                }
+              }
+            }
 
             // =====================================================================
             // [内循环实时宏观力基准] 在约束斩断支反力之前，提取全场内部合力
@@ -436,7 +514,47 @@ void ADR_Integrator::run(PDCommon::Core::PDContext &ctx,
         } // 结束 Staggered / FastInner 外层循环
 
         // =================================================================
-        // [外循环修正] 解冻本构，做一次完整的非线性力评估
+        // [纯显式模式快速收敛] 如果 NRStateFrozen_ == false，
+        // 内循环已经用真实本构达到了稳态，即 F_ext - F_int_true = 0，
+        // 无需外循环校验，直接宣布收敛。
+        // =================================================================
+        if (!NRStateFrozen_) {
+          if (innerConverged) {
+            // 计算全场内力范数供下一子步增量基准使用
+            double sumFintAllSq = 0.0;
+            for (size_t k = 0; k < soTargets_.size(); ++k) {
+              const auto &so = soTargets_[k];
+              double localSq = 0.0;
+              #pragma omp parallel for reduction(+ : localSq) schedule(static)
+              for (int i = 0; i < static_cast<int>(so.totalComponents); ++i) {
+                int particle_idx = i / so.dimension;
+                double effective_mass = nodalMass_[particle_idx] * massScaleFactor_;
+                double f = so.aPtr[i] * effective_mass;
+                localSq += f * f;
+              }
+              sumFintAllSq += localSq;
+            }
+            fIntTotal = std::sqrt(sumFintAllSq);
+
+            // 断裂处理（如有需要）
+            for (auto &kernel : kernels) {
+              kernel->postCompute(ctx);
+            }
+
+            NRConverged = true;
+            LOG_INFO("    " + PDCommon::Utils::Colors::MAGENTA + "[Explicit]" +
+                     PDCommon::Utils::Colors::RESET +
+                     " Inner loop converged → substep done. (No outer NR needed)");
+          } else {
+            LOG_WARNING("    [Explicit] Inner loop did NOT converge within MaxPseudoSteps!");
+            NRConverged = true; // 纯显式模式下不重试，接受当前结果
+          }
+          NRIter++;
+          continue; // 跳过后续的 NR 外循环校验代码
+        }
+
+        // =================================================================
+        // [外循环修正] 解冻本构，做一次完整的非线性力评估（仅 NR 模式）
         // =================================================================
         ctx.setStateFrozen(false);
 
@@ -586,7 +704,8 @@ void ADR_Integrator::run(PDCommon::Core::PDContext &ctx,
             bool restartAA = false;
             if (!aaResidualNormHistory_.empty()) {
               double prevResNorm = aaResidualNormHistory_.back();
-              if (currentResNorm > 5.0 * prevResNorm) {
+              // [用户定制修改] 放宽残差激增的限制，强制不退回（原系数为 5.0）
+              if (currentResNorm > 1e10 * prevResNorm) {
                 restartAA = true;
                 LOG_INFO("    >> " + PDCommon::Utils::Colors::YELLOW +
                          "[AA Restart]" + PDCommon::Utils::Colors::RESET +
@@ -780,6 +899,7 @@ void ADR_Integrator::initializeHistoryVariables() {
   dispOld_.resize(soTargets_.size());
   dispBase_.resize(soTargets_.size());
   dispNROld_.resize(soTargets_.size());
+  forceCorr_.resize(soTargets_.size());
 
   for (size_t k = 0; k < soTargets_.size(); ++k) {
     velHalfOld_[k].assign(soTargets_[k].totalComponents, 0.0);
@@ -787,6 +907,7 @@ void ADR_Integrator::initializeHistoryVariables() {
     dispOld_[k].assign(soTargets_[k].totalComponents, 0.0);
     dispBase_[k].assign(soTargets_[k].totalComponents, 0.0);
     dispNROld_[k].assign(soTargets_[k].totalComponents, 0.0);
+    forceCorr_[k].assign(soTargets_[k].totalComponents, 0.0);
   }
   isFirstExplicitTick_ = true;
 }

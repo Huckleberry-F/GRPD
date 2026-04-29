@@ -17,7 +17,7 @@ Parts:
     Shape: "Box"
     Length: 10.0
     Width: 5.0
-    dx: 0.05
+    dx: 0.1
     Offset: [0.0, 0.0, 0.0]
 
 # 2. 材料赋予 (A36 结构钢, J2 等向强化)
@@ -29,45 +29,45 @@ Materials:
     YoungsModulus: 2.1e5
     PoissonsRatio: 0.3
     YieldStress: 100.0
-    HardeningModulus: 2.1e5
+    HardeningModulus: 1000.0
     HardeningType: "Isotropic"
     LargeDeformation: false
 
 PreCracks:
-  - Type: "QuadCrack"
-    V1: [-0.1, 2.5, -1.0]
-    V2: [5.0, 2.5, -1.0]
-    V3: [5.0, 2.5, 1.0]
-    V4: [-0.1, 2.5, 1.0]
+  # - Type: "QuadCrack"
+  #   V1: [-0.1, 2.5, -1.0]
+  #   V2: [5.0, 2.5, -1.0]
+  #   V3: [5.0, 2.5, 1.0]
+  #   V4: [-0.1, 2.5, 1.0]
 
 # 3. 边界施加
 BoundaryConditions:
-  # 固定底端 Y 方向 (3层粒子厚度)
+  # 固定左端 X 方向
   - Step: 0
     BcID: 1
-    Name: "Fix_Bottom_UY"
+    Name: "Fix_Left_UX"
     PartID: 1
-    Box: [-0.1, 10.1, -0.1, 0.16, -1.0, 1.0]
-    Type: "UY"
-    Value: 0.0
-
-  # 固定左下角 X 方向，防止刚体平移
-  - Step: 0
-    BcID: 2
-    Name: "Fix_BottomLeft_UX"
-    PartID: 1
-    Box: [-0.1, 0.16, -0.1, 0.16, -1.0, 1.0]
+    Box: [-0.1, 0.1, -0.1, 5.1, -1.0, 1.0]
     Type: "UX"
     Value: 0.0
 
-  # Step 1: 顶端整体施加 Y 方向拉伸位移
+  # 固定左下角 Y 方向 (防止刚体旋转)
+  - Step: 0
+    BcID: 2
+    Name: "Fix_Left_UY"
+    PartID: 1
+    Box: [-0.1, 0.1, -0.1, 5.1, -1.0, 1.0]
+    Type: "UY"
+    Value: 0.0
+
+  # Step 1: 右端施加 X 方向拉伸载荷 (进入塑性区)
   - Step: 1
     BcID: 3
-    Name: "Pull_Top_UY"
+    Name: "Pull_Right_PX"
     PartID: 1
-    Box: [-0.1, 10.1, 4.84, 5.1, -1.0, 1.0]
-    Type: "UY"
-    Value: 0.5
+    Box: [9.9, 10.1, -0.1, 5.1, -1.0, 1.0]
+    Type: "PX"
+    Value: 150.0
 
 # 4. 无接触对
 ContactPairs: []
@@ -81,9 +81,9 @@ Solver:
 
   DynamicShapeTensor: false
   KernelWeightType: "Gaussian"
-  ZeroEnergyG0: 10.0
+  ZeroEnergyG0: 0.1
   ZeroEnergyMethod: "Zhang"
-  Horizon: 0.15075
+  Horizon: 0.3015
   OMP_Threads: 16
   OutputInterval: 20000
 

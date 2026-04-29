@@ -109,6 +109,7 @@ private:
   std::vector<std::vector<double>> dispOld_;
   std::vector<std::vector<double>> dispBase_;
   std::vector<std::vector<double>> dispNROld_; ///< 外循环位移快照
+  std::vector<std::vector<double>> forceCorr_; ///< NR 外循环本构修正力（加速度单位），= a_true - a_frozen
   std::vector<double> nodalMass_; ///< 各粒子的真实物理质量
   bool isFirstExplicitTick_ = true;
   double kineticRatio_ = 0.0;
