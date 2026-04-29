@@ -83,17 +83,17 @@ Solver:
   OutputInterval: 20000
 
   MaxPseudoSteps: 20000
-  MassScaleFactor: 1.0e8
-  MaxNRSteps: 50
-  NRStateFrozen: false
+  MassScaleFactor: 1.0e10
+  MaxNRSteps: 100
+  NRStateFrozen: true
   NRDispTol: 5.0e-2
   NRForceTol: 5.0e-3
-  KineticTol: 1.0e-5
+  KineticTol: 1.0e-12
   MinRefForce: 1.0e-2
   # TimeStep_dt: 1.0e-3
   RampIters: 0
   RampWaveRatio: 5.0
-  DampingMethod: "HybridKinetic"
+  DampingMethod: "Viscous"
   Fracture_Strategy: "Strict"
 
   LoadSteps:

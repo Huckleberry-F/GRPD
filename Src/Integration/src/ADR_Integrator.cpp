@@ -12,8 +12,10 @@
 #include "StringUtils.h"
 #include "TimeIntegratorRegistry.h"
 #include "Timer.h"
+#include <Eigen/Dense>
 #include <cmath>
 #include <omp.h>
+
 
 namespace Src::Integration {
 
@@ -132,6 +134,7 @@ void ADR_Integrator::run(PDCommon::Core::PDContext &ctx,
 
   const double dt = dt_;
   initializeHistoryVariables();
+  initializeNodalMass(ctx);
 
   LOG_INFO("[ADR_Integrator] Starting Custom ADR: NumLoadSteps = " +
            std::to_string(loadStepConfigs_.size()) + ", MassScale = " +
@@ -164,6 +167,20 @@ void ADR_Integrator::run(PDCommon::Core::PDContext &ctx,
       saveBaseDisplacement();
 
       // =======================================================================
+      // 清空 Anderson 加速历史，因为外部载荷子步已更新，平衡方程发生变化
+      // =======================================================================
+      if (useAndersonAcceleration_) {
+        if (aaHistories_.size() != soTargets_.size()) {
+          aaHistories_.resize(soTargets_.size());
+        }
+        for (auto &hist : aaHistories_) {
+          hist.disp.clear();
+          hist.res.clear();
+        }
+        aaResidualNormHistory_.clear();
+      }
+
+      // =======================================================================
       // ADR 初始刚度法外循环 (Initial Stiffness Outer Loop)
       // 冻结非线性本构状态，让 ADR 在纯弹性系统中快速收敛，
       // 然后解冻做一次完整的非线性本构评估，检查残差是否满足容差。
@@ -188,7 +205,7 @@ void ADR_Integrator::run(PDCommon::Core::PDContext &ctx,
         int fracIter = 0;
         // Staggered 模式最多重启15次；FastInnerLoop 模式仅进行 1 次外层循环
         const int MAX_FRAC_ITERS = (fractureStrategy_ == "Staggered") ? 15 : 1;
-        
+
         bool innerConverged = false;
 
         while (!fractureStabilized && fracIter < MAX_FRAC_ITERS) {
@@ -259,7 +276,10 @@ void ADR_Integrator::run(PDCommon::Core::PDContext &ctx,
               double localSq = 0.0;
 #pragma omp parallel for reduction(+ : localSq) schedule(static)
               for (int i = 0; i < static_cast<int>(so.totalComponents); ++i) {
-                double f = so.aPtr[i] * massScaleFactor_;
+                int particle_idx = i / so.dimension;
+                double effective_mass =
+                    nodalMass_[particle_idx] * massScaleFactor_;
+                double f = so.aPtr[i] * effective_mass;
                 localSq += f * f;
               }
               currentSumFintSq += localSq;
@@ -283,6 +303,19 @@ void ADR_Integrator::run(PDCommon::Core::PDContext &ctx,
               }
             }
 
+            // 【显式准静态拓展】：若 NRStateFrozen 为 false，说明用户希望在 ADR
+            // 内部实时更新本构。 此时必须在每一微步 Commit
+            // State，让材料具备真实的卸载路径，避免势能平原漂移。 这本质上将
+            // ADR 退化成了纯正的显式动力学求解器（类似 Abaqus/Explicit）。
+            if (!NRStateFrozen_) {
+              ctx.getFieldManager().executeAllRegisteredSwaps();
+              for (auto &[matName, matPtr] :
+                   ctx.getMaterialManager().getMaterials()) {
+                if (matPtr)
+                  matPtr->commitState();
+              }
+            }
+
             double cn = computeAdaptiveDamping(dt); // 依据响应提取耗散系数
             updateKinematicsLeapfrog(cn, dt);       // 积分器速度/位移步进推演
 
@@ -300,8 +333,8 @@ void ADR_Integrator::run(PDCommon::Core::PDContext &ctx,
               bool criteria_converged =
                   (forceRatio_ <= NRForceTol_ && kineticRatio_ <= kineticTol_);
 
-              // 绝对静止防死锁兜底：系统动能彻底归零(1e-8)，即使存在数值底噪导致的残差，也强制退出
-              bool criteria_still = (kineticRatio_ < 1e-8);
+              // 绝对静止防死锁兜底：系统动能比例彻底归零(1e-16)，即使存在数值底噪导致的残差，也强制退出
+              bool criteria_still = (kineticRatio_ < 1e-16);
 
               if (criteria_converged || criteria_still) {
                 innerConverged = true;
@@ -399,8 +432,11 @@ void ADR_Integrator::run(PDCommon::Core::PDContext &ctx,
             for (auto &kernel : kernels) {
               kernel->postCompute(ctx);
             }
-          } else if (fractureStrategy_ == "ImplicitConverged" || fractureStrategy_ == "ImplicitState") {
-            // [ImplicitConverged / ImplicitState] 试探阶段完全绕过断裂物理更新，留到 NR 外循环收敛后再评估 (ImplicitState通过TrialDamage实时断开受力)
+          } else if (fractureStrategy_ == "ImplicitConverged" ||
+                     fractureStrategy_ == "ImplicitState") {
+            // [ImplicitConverged / ImplicitState]
+            // 试探阶段完全绕过断裂物理更新，留到 NR 外循环收敛后再评估
+            // (ImplicitState通过TrialDamage实时断开受力)
           }
 
           fracIter++;
@@ -434,7 +470,9 @@ void ADR_Integrator::run(PDCommon::Core::PDContext &ctx,
           double localSq = 0.0;
 #pragma omp parallel for reduction(+ : localSq) schedule(static)
           for (int i = 0; i < static_cast<int>(so.totalComponents); ++i) {
-            double f = so.aPtr[i] * massScaleFactor_;
+            int particle_idx = i / so.dimension;
+            double effective_mass = nodalMass_[particle_idx] * massScaleFactor_;
+            double f = so.aPtr[i] * effective_mass;
             localSq += f * f;
           }
           sumFintAllSq += localSq;
@@ -468,11 +506,12 @@ void ADR_Integrator::run(PDCommon::Core::PDContext &ctx,
         // 【核心修复】外循环收敛的绝对前提是：内循环本身必须已经收敛！
         // 如果内循环是因为跑满 MaxPseudoSteps 而超时的，说明动能并未彻底耗散，
         // 此时测到的极小残差可能是系统在振荡过程中恰好穿过平衡点造成的“假象”。
-        // 因此，如果 innerConverged == false，外循环绝对不能放行，必须强制触发下一轮
-        // NR 迭代。
+        // 因此，如果 innerConverged ==
+        // false，外循环绝对不能放行，必须强制触发下一轮 NR 迭代。
         if (innerConverged && (strictConverged || waiveDispConverged)) {
           // =====================================================================
-          // [ImplicitConverged 策略核心] 收敛后拦截，执行试探性断裂并决策是否重启 NR
+          // [ImplicitConverged 策略核心]
+          // 收敛后拦截，执行试探性断裂并决策是否重启 NR
           // =====================================================================
           if (fractureStrategy_ == "ImplicitConverged") {
             auto *activeStatusField =
@@ -499,9 +538,11 @@ void ADR_Integrator::run(PDCommon::Core::PDContext &ctx,
 
             if (healthAfter < healthBefore) {
               NRConverged = false;
-              LOG_INFO("    >> " + PDCommon::Utils::Colors::YELLOW + "[*FRACTURE*]" + PDCommon::Utils::Colors::RESET +
-                       " NR Converged, but " + std::to_string(healthBefore - healthAfter) + 
-                       " bonds broke! Topology changed, restarting NR iteration.");
+              LOG_INFO(
+                  "    >> " + PDCommon::Utils::Colors::YELLOW + "[*FRACTURE*]" +
+                  PDCommon::Utils::Colors::RESET + " NR Converged, but " +
+                  std::to_string(healthBefore - healthAfter) +
+                  " bonds broke! Topology changed, restarting NR iteration.");
               NRIter++;
               isFirstExplicitTick_ = true;
               continue;
@@ -527,6 +568,125 @@ void ADR_Integrator::run(PDCommon::Core::PDContext &ctx,
                    " (Total=" +
                    PDCommon::Utils::StringUtils::toScientific(fIntTotal) + ")");
         } else {
+          // =====================================================================
+          // [Anderson Acceleration 核心算法]
+          // 仅在隐式 Picard 迭代 (NRStateFrozen=true)
+          // 且未发生严重断裂退级时生效
+          // =====================================================================
+          if (useAndersonAcceleration_ && NRStateFrozen_) {
+            // 1. 计算当前全场残差 L2 范数，用于安全阀判定
+            double currentResNormSq = 0.0;
+            for (size_t k = 0; k < soTargets_.size(); ++k) {
+              const auto &so = soTargets_[k];
+              double localSq = 0.0;
+#pragma omp parallel for reduction(+ : localSq) schedule(static)
+              for (int i = 0; i < static_cast<int>(so.totalComponents); ++i) {
+                double res = so.uPtr[i] - dispNROld_[k][i];
+                localSq += res * res;
+              }
+              currentResNormSq += localSq;
+            }
+            double currentResNorm = std::sqrt(currentResNormSq);
+
+            // 2.
+            // 安全阀：如果残差剧烈放大，说明外推过头或非线性跳跃，放弃本次历史
+            bool restartAA = false;
+            if (!aaResidualNormHistory_.empty()) {
+              double prevResNorm = aaResidualNormHistory_.back();
+              if (currentResNorm > 5.0 * prevResNorm) {
+                restartAA = true;
+                LOG_INFO("    >> " + PDCommon::Utils::Colors::YELLOW +
+                         "[AA Restart]" + PDCommon::Utils::Colors::RESET +
+                         " Residual spiked (" + std::to_string(currentResNorm) +
+                         " > " + std::to_string(prevResNorm) +
+                         "). Clearing Anderson Acceleration history.");
+              }
+            }
+
+            if (restartAA) {
+              for (auto &hist : aaHistories_) {
+                hist.disp.clear();
+                hist.res.clear();
+              }
+              aaResidualNormHistory_.clear();
+            }
+
+            // 3. 记录当前历史 x_k = dispNROld_, f_k = so.uPtr - dispNROld_
+            aaResidualNormHistory_.push_back(currentResNorm);
+            for (size_t k = 0; k < soTargets_.size(); ++k) {
+              const auto &so = soTargets_[k];
+              std::vector<double> currentDisp(so.totalComponents);
+              std::vector<double> currentRes(so.totalComponents);
+#pragma omp parallel for schedule(static)
+              for (int i = 0; i < static_cast<int>(so.totalComponents); ++i) {
+                currentDisp[i] = dispNROld_[k][i];
+                currentRes[i] = so.uPtr[i] - dispNROld_[k][i];
+              }
+              aaHistories_[k].disp.push_back(currentDisp);
+              aaHistories_[k].res.push_back(currentRes);
+              // 维护固定深度
+              if (aaHistories_[k].disp.size() > static_cast<size_t>(aaDepth_)) {
+                aaHistories_[k].disp.erase(aaHistories_[k].disp.begin());
+                aaHistories_[k].res.erase(aaHistories_[k].res.begin());
+              }
+            }
+            if (aaResidualNormHistory_.size() > static_cast<size_t>(aaDepth_)) {
+              aaResidualNormHistory_.erase(aaResidualNormHistory_.begin());
+            }
+
+            // 4. 当历史积累 >= 2 步时，进行矩阵求逆与加速外推
+            int mk = aaHistories_[0].res.size();
+            if (mk > 1) {
+              Eigen::MatrixXd M = Eigen::MatrixXd::Zero(mk, mk);
+              for (int i = 0; i < mk; ++i) {
+                for (int j = i; j < mk; ++j) {
+                  double dotProduct = 0.0;
+                  for (size_t k = 0; k < soTargets_.size(); ++k) {
+                    const auto &so = soTargets_[k];
+                    double localDot = 0.0;
+#pragma omp parallel for reduction(+ : localDot) schedule(static)
+                    for (int idx = 0;
+                         idx < static_cast<int>(so.totalComponents); ++idx) {
+                      localDot += aaHistories_[k].res[i][idx] *
+                                  aaHistories_[k].res[j][idx];
+                    }
+                    dotProduct += localDot;
+                  }
+                  M(i, j) = dotProduct;
+                  M(j, i) = dotProduct;
+                }
+              }
+
+              // 求解 M * alpha = 1
+              Eigen::VectorXd ones = Eigen::VectorXd::Ones(mk);
+              Eigen::VectorXd alpha = M.colPivHouseholderQr().solve(ones);
+              double sumAlpha = alpha.sum();
+              if (std::abs(sumAlpha) > 1e-12) {
+                alpha /= sumAlpha; // 强制归一化 sum(alpha) = 1
+
+                // 更新位移 x_{k+1} = sum(alpha_i * (x_{k-i} + f_{k-i}))
+                for (size_t k = 0; k < soTargets_.size(); ++k) {
+                  const auto &so = soTargets_[k];
+#pragma omp parallel for schedule(static)
+                  for (int idx = 0; idx < static_cast<int>(so.totalComponents);
+                       ++idx) {
+                    double newDisp = 0.0;
+                    for (int i = 0; i < mk; ++i) {
+                      newDisp += alpha(i) * (aaHistories_[k].disp[i][idx] +
+                                             aaHistories_[k].res[i][idx]);
+                    }
+                    so.uPtr[idx] =
+                        newDisp; // 直接将加速后的位移写入，作为下一步的起点
+                  }
+                }
+                LOG_INFO("    " + PDCommon::Utils::Colors::CYAN +
+                         "[Anderson Acceleration]" +
+                         PDCommon::Utils::Colors::RESET +
+                         " Applied! Depth: " + std::to_string(mk));
+              }
+            }
+          }
+
           NRIter++;
           isFirstExplicitTick_ = true; // 重置以驱动下一轮 ADR 内循环
           LOG_INFO("    " + PDCommon::Utils::Colors::MAGENTA + "[NR]" +
@@ -551,11 +711,15 @@ void ADR_Integrator::run(PDCommon::Core::PDContext &ctx,
                     " iterations!");
 
         // =====================================================================
-        // [Auto-Switch 降级回滚保护] 
+        // [Auto-Switch 降级回滚保护]
         // =====================================================================
-        if (fractureStrategy_ == "ImplicitConverged" || fractureStrategy_ == "Staggered") {
-          LOG_WARNING("    >> " + PDCommon::Utils::Colors::RED + "[Auto-Switch]" + PDCommon::Utils::Colors::RESET +
-                      " Severe tearing detected! Rolling back substep and permanently switching to FastInnerLoop explicit dynamics...");
+        if (fractureStrategy_ == "ImplicitConverged" ||
+            fractureStrategy_ == "Staggered") {
+          LOG_WARNING(
+              "    >> " + PDCommon::Utils::Colors::RED + "[Auto-Switch]" +
+              PDCommon::Utils::Colors::RESET +
+              " Severe tearing detected! Rolling back substep and permanently "
+              "switching to FastInnerLoop explicit dynamics...");
 
           for (size_t k = 0; k < soTargets_.size(); ++k) {
             const auto &so = soTargets_[k];
@@ -689,8 +853,12 @@ double ADR_Integrator::computeAdaptiveDamping(double dt) {
         double dU_step = velHalfOld_[k][i] * dt;
         double da = so.aPtr[i] - aOld_[k][i]; // 对应的加速度变化率
 
-        local_cn1 -= dU_step * da;
-        local_cn2 += dU_step * dU_step;
+        int particle_idx = i / so.dimension;
+        double effective_mass = nodalMass_[particle_idx] * massScaleFactor_;
+
+        // 瑞利商积分同样引入质量权重，使其成为真实的能量差商
+        local_cn1 -= effective_mass * dU_step * da;
+        local_cn2 += effective_mass * dU_step * dU_step;
       }
       cn1 += local_cn1;
       cn2 += local_cn2;
@@ -805,13 +973,16 @@ void ADR_Integrator::computeConvergenceCriteria(double currentFRef) {
       double du_iter = so.uPtr[i] - dispOld_[k][i];
       double du_substep = so.uPtr[i] - dispBase_[k][i];
 
-      // 修正：将缩放的伪加速度还原为与外力等效的不平衡力加速率
-      double raw_acc = so.aPtr[i] * massScaleFactor_;
+      int particle_idx = i / so.dimension;
+      double effective_mass = nodalMass_[particle_idx] * massScaleFactor_;
+      double f_unbalanced = so.aPtr[i] * effective_mass;
 
-      local_tol1 += velHalfOld_[k][i] * velHalfOld_[k][i];
+      // 动能计算：真正的缩放质量焦耳能量 = 0.5 * m_eff * v^2
+      local_tol1 +=
+          0.5 * effective_mass * velHalfOld_[k][i] * velHalfOld_[k][i];
       local_tol2 += du_iter * du_iter;
       local_denom_tol2 += du_substep * du_substep;
-      local_tol3 += raw_acc * raw_acc;
+      local_tol3 += f_unbalanced * f_unbalanced;
     }
     kineticRatio_ += local_tol1;
     dispRatio_ += local_tol2;
@@ -819,13 +990,12 @@ void ADR_Integrator::computeConvergenceCriteria(double currentFRef) {
     forceRatio_ += local_tol3;
   }
 
-  double currentKinetic =
-      std::sqrt(kineticRatio_); // Actually the L2 norm of velocity
+  double currentKinetic = kineticRatio_; // 现在是真正的标量动能 (Joule)
   if (currentKinetic > maxKineticEnergy_) {
     maxKineticEnergy_ = currentKinetic;
   }
   // 如果 peak 极小，说明系统从一开始就没动过，避免除零
-  double effectiveMaxK = std::max(maxKineticEnergy_, 1.0e-12);
+  double effectiveMaxK = std::max(maxKineticEnergy_, 1.0e-24);
   kineticRatio_ = currentKinetic / effectiveMaxK;
 
   dispRatio_ = std::sqrt(dispRatio_);
@@ -833,7 +1003,7 @@ void ADR_Integrator::computeConvergenceCriteria(double currentFRef) {
   forceRatio_ = std::sqrt(forceRatio_);
 
   // 使用相对位移进行 TOL2 判定（防阶跃/静止状态微扰除零）
-  double effective_denom2 = std::max(denom_TOL2, 1.0e-5);
+  double effective_denom2 = std::max(denom_TOL2, 1.0e-8);
   dispRatio_ = dispRatio_ / effective_denom2;
 
   // [统一收敛架构]：直接使用实时的全场内力增量基准（currentFRef）计算真实的工程物理残差比
@@ -856,7 +1026,9 @@ void ADR_Integrator::computeNRConvergence(double fIntTotal,
     double localSq = 0.0;
 #pragma omp parallel for reduction(+ : localSq) schedule(static)
     for (int i = 0; i < static_cast<int>(so.totalComponents); ++i) {
-      double f = so.aPtr[i] * massScaleFactor_;
+      int particle_idx = i / so.dimension;
+      double effective_mass = nodalMass_[particle_idx] * massScaleFactor_;
+      double f = so.aPtr[i] * effective_mass;
       localSq += f * f;
     }
     sumResFreeSq += localSq;
@@ -887,6 +1059,27 @@ void ADR_Integrator::computeNRConvergence(double fIntTotal,
   }
   double denomDisp = std::max(std::sqrt(sumDuSubstepSq), 1.0e-30);
   macroDispRatio = std::sqrt(sumDuNRSq) / denomDisp;
+}
+
+void ADR_Integrator::initializeNodalMass(PDCommon::Core::PDContext &ctx) {
+  auto &pm = ctx.getParticleManager();
+  const auto &particles = pm.getAllParticles();
+  size_t numParticles = particles.size();
+  nodalMass_.assign(numParticles, 1.0);
+
+  auto *volumeField = ctx.getFieldManager().getFieldAs<double>("Volume");
+  const double *volumes = volumeField ? volumeField->dataPtr() : nullptr;
+
+  for (size_t i = 0; i < numParticles; ++i) {
+    double vol = volumes ? volumes[i] : 1.0;
+    double rho = 1.0;
+    auto *mat = dynamic_cast<PDCommon::Material::MechanicalMaterial *>(
+        particles[i].getMaterial());
+    if (mat) {
+      rho = mat->getDensity();
+    }
+    nodalMass_[i] = rho * vol;
+  }
 }
 
 } // namespace Src::Integration

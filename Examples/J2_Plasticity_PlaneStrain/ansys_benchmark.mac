@@ -70,7 +70,7 @@ NSEL,ALL
 ! 方法：选中右端线(Line)，施加面压力
 ! ANSYS 压力正方向为指向面内（压缩），负号代表拉伸
 LSEL,S,LOC,X,9.99,10.01
-SFL,ALL,PRES,-1000.0     ! -1000 MPa = 拉伸
+SFL,ALL,PRES,-150.0     ! -1000 MPa = 拉伸
 LSEL,ALL
 
 SOLVE

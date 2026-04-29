@@ -79,6 +79,18 @@ private:
   int maxNRIters_ = 10;        ///< 最大外循环迭代次数（默认 10）
   bool NRStateFrozen_ = true;  ///< 是否在外循环期间冻结非线性状态（初始刚度法），默认 true
 
+  // -----------------------------------------------------------------------
+  // Anderson Acceleration (AA) 参数与历史缓存
+  // -----------------------------------------------------------------------
+  bool useAndersonAcceleration_ = true; ///< 是否开启安德森加速
+  int aaDepth_ = 3;                     ///< AA 历史深度 m
+  struct AATargetHistory {
+    std::vector<std::vector<double>> disp; // [history_idx][component_idx]
+    std::vector<std::vector<double>> res;  // [history_idx][component_idx]
+  };
+  std::vector<AATargetHistory> aaHistories_; ///< 每个 Target 的 AA 历史
+  std::vector<double> aaResidualNormHistory_; ///< 记录每次 AA 前的残差范数，用于重启安全阀
+
   /// @brief 阻尼策略："Viscous"=Underwood粘性阻尼, "LocalKinetic"=局部动能阻尼
   std::string dampingMethod_ = "Viscous";
 
@@ -97,6 +109,7 @@ private:
   std::vector<std::vector<double>> dispOld_;
   std::vector<std::vector<double>> dispBase_;
   std::vector<std::vector<double>> dispNROld_; ///< 外循环位移快照
+  std::vector<double> nodalMass_; ///< 各粒子的真实物理质量
   bool isFirstExplicitTick_ = true;
   double kineticRatio_ = 0.0;
   double dispRatio_ = 0.0;
@@ -105,6 +118,7 @@ private:
   double lastValidCn_ = 0.0;
 
   void initializeHistoryVariables();
+  void initializeNodalMass(PDCommon::Core::PDContext &ctx);
   void saveBaseDisplacement();
   void saveOldDisplacement();
   void saveNROldDisplacement();  ///< 保存外循环开始时的位移
