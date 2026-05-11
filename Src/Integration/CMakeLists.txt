@@ -9,6 +9,7 @@ add_library(Integration_Obj OBJECT
     src/CentralDifference.cpp
     src/StaggeredIntegrator.cpp
     src/ADR_Integrator.cpp
+    src/MatrixFreeImplicitIntegrator.cpp
 )
 
 target_sources(Integration_Obj PRIVATE
@@ -18,6 +19,7 @@ target_sources(Integration_Obj PRIVATE
     include/CentralDifference.h
     include/StaggeredIntegrator.h
     include/ADR_Integrator.h
+    include/MatrixFreeImplicitIntegrator.h
 )
 
 target_include_directories(Integration_Obj PUBLIC include)

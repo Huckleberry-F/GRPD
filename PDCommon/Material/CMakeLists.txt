@@ -12,6 +12,7 @@ add_library(Material_Obj OBJECT
     src/LinearElasticMat.cpp
     src/J2PlasticityMat.cpp
     src/JCPlasticityMat.cpp
+    src/J2VoceLemaitreMat.cpp
 )
 
 # 2. Add header files to target
@@ -25,6 +26,7 @@ target_sources(Material_Obj PRIVATE
     include/LinearElasticMat.h
     include/J2PlasticityMat.h
     include/JCPlasticityMat.h
+    include/J2VoceLemaitreMat.h
 )
 
 # 3. Set header include paths for this module

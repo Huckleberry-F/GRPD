@@ -90,7 +90,7 @@ Solver:
   MaxPseudoSteps: 20000
   MassScaleFactor: 1.0e8
   MaxNRSteps: 100
-  NRStateFrozen: true
+  NRStateFrozen: false
   NRDispTol: 5.0e-2
   NRForceTol: 5.0e-3
   KineticTol: 1.0e-8
@@ -99,13 +99,14 @@ Solver:
   RampIters: 0
   RampWaveRatio: 5.0
   DampingMethod: "HybridKinetic"
-  Fracture_Strategy: "Strict"
+  Fracture_Strategy: "StrictNRFracture"
+  NRStiffnessType: "Initial"
 
   LoadSteps:
     - Step: 1
       Time: 1.0
       KBC: 0
-      NumSubsteps: 10
+      NumSubsteps: 50
 
 # 6. IO输出设置
 Writer:

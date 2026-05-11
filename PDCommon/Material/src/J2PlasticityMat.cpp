@@ -193,7 +193,31 @@ Eigen::Matrix3d J2PlasticityMat::ComputePK1Stress(const Eigen::Matrix3d &F,
         ps_ptr[idx9 + 7], ps_ptr[idx9 + 8];
         
     Eigen::Matrix3d eps_e = eps - eps_p_fixed;
-    Eigen::Matrix3d S_pred = ComputeEngineeringStress(eps_e);
+    
+    // [智能标量切线预测法 (Scalar Tangent Predictor)]
+    // 当 stateMode == 2 且当前粒子发生过塑性流动时，大幅削弱剪切刚度，以近似一致切线刚度矩阵的效果，极大地加速外层 NR 迭代。
+    double current_mu = mu_;
+    double current_lambda = lambda_;
+    
+    if (stateMode == 2) {
+       // 如果 Trial 塑性应变大于 Old 塑性应变，说明上一个 NR 迭代步发生了活跃的塑性屈服
+       if (eqPSTrial_[particleId] > eqPSOld_[particleId] + 1.0e-12) {
+           double H = hardeningModulus_;
+           // 剪切模量折减系数 (基于 1D 弹塑性切线近似)
+           double beta = H / (H + 3.0 * mu_);
+           // 为了防止刚度矩阵奇异导致内循环除零或发散，保留至少 5% 的剪切刚度
+           beta = std::max(beta, 0.05); 
+           
+           current_mu = mu_ * beta;
+           // 为了保持体积刚度 (Bulk Modulus) K 不变（塑性是纯偏斜的，不影响体积变形），反推等效的 lambda
+           double K_bulk = lambda_ + (2.0 / 3.0) * mu_;
+           current_lambda = K_bulk - (2.0 / 3.0) * current_mu;
+       }
+    }
+    
+    double e_trace = eps_e.trace();
+    Eigen::Matrix3d S_pred = 2.0 * current_mu * eps_e + current_lambda * e_trace * I;
+
     if (largeDeformation_) {
       return F * S_pred; // 将 PK2 应力推回 PK1 应力
     }

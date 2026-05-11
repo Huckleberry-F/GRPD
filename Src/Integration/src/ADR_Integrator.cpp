@@ -50,6 +50,8 @@ void ADR_Integrator::configure(const YAML::Node &solverNode) {
     maxNRIters_ = solverNode["MaxNRSteps"].as<int>();
   if (solverNode["NRStateFrozen"])
     NRStateFrozen_ = solverNode["NRStateFrozen"].as<bool>();
+  if (solverNode["NRStiffnessType"])
+    NRStiffnessType_ = solverNode["NRStiffnessType"].as<std::string>();
 }
 
 // ---------------------------------------------------------------------------
@@ -225,11 +227,13 @@ void ADR_Integrator::run(PDCommon::Core::PDContext &ctx,
             }
           }
 
-          // Step B: 冻结态力评估 → 获得初始刚度弹性加速度 a_frozen
-          // 【关键修复】强制 outerIter=0 → stateMode=1 → 读取 pSOld_（初始弹性基底）
-          // 而非被 Step A 写入的 pSTrial_，确保 forceCorr 代表真实的非线性偏差
+          // Step B: 冻结态力评估 → 获得初始刚度/切线刚度弹性加速度 a_frozen
           ctx.setStateFrozen(true);
-          ctx.setOuterIter(0);  // 强制读取 pSOld_ (stateMode=1)
+          if (NRStiffnessType_ == "Initial") {
+            ctx.setOuterIter(0);  // 强制读取 pSOld_ (stateMode=1)
+          } else if (NRStiffnessType_ == "Tangent") {
+            ctx.setOuterIter(NRIter); // 根据当前迭代决定 stateMode: 0次为1, 其余为2
+          }
           BC::applyConstraints(ctx.getBCManager(), corrActiveLF, stepConfig.stepId);
           evaluateForces(ctx, kernels, accFieldNames_, stepConfig.stepId, corrActiveLF);
           ctx.setOuterIter(NRIter);  // 恢复真实的外循环迭代计数
@@ -247,9 +251,13 @@ void ADR_Integrator::run(PDCommon::Core::PDContext &ctx,
                    PDCommon::Utils::Colors::RESET + " Computed forceCorr for NR iter " +
                    std::to_string(NRIter + 1));
 
-          // 恢复冻结态用于内循环（内循环也应使用 stateMode=1 读取 pSOld_）
+          // 恢复冻结态用于内循环（内循环弹性刚度基底应与上方评估修正力时保持一致）
           ctx.setStateFrozen(true);
-          ctx.setOuterIter(0);  // 内循环始终使用初始弹性刚度 (pSOld_)
+          if (NRStiffnessType_ == "Initial") {
+            ctx.setOuterIter(0);  
+          } else if (NRStiffnessType_ == "Tangent") {
+            ctx.setOuterIter(NRIter); 
+          }
         } else {
           // 纯显式模式：不需要修正力，清零 forceCorr_
           for (size_t k = 0; k < soTargets_.size(); ++k) {
@@ -503,11 +511,11 @@ void ADR_Integrator::run(PDCommon::Core::PDContext &ctx,
             for (auto &kernel : kernels) {
               kernel->postCompute(ctx);
             }
-          } else if (fractureStrategy_ == "ImplicitConverged" ||
-                     fractureStrategy_ == "ImplicitState") {
-            // [ImplicitConverged / ImplicitState]
+          } else if (fractureStrategy_ == "StrictNRFracture" ||
+                     fractureStrategy_ == "LaggedNRFracture") {
+            // [StrictNRFracture / LaggedNRFracture]
             // 试探阶段完全绕过断裂物理更新，留到 NR 外循环收敛后再评估
-            // (ImplicitState通过TrialDamage实时断开受力)
+            // (LaggedNRFracture通过TrialDamage实时断开受力)
           }
 
           fracIter++;
@@ -544,7 +552,7 @@ void ADR_Integrator::run(PDCommon::Core::PDContext &ctx,
             NRConverged = true;
             LOG_INFO("    " + PDCommon::Utils::Colors::MAGENTA + "[Explicit]" +
                      PDCommon::Utils::Colors::RESET +
-                     " Inner loop converged → substep done. (No outer NR needed)");
+                     " Inner loop converged -> substep done. (No outer NR needed)");
           } else {
             LOG_WARNING("    [Explicit] Inner loop did NOT converge within MaxPseudoSteps!");
             NRConverged = true; // 纯显式模式下不重试，接受当前结果
@@ -621,10 +629,10 @@ void ADR_Integrator::run(PDCommon::Core::PDContext &ctx,
         // false，外循环绝对不能放行，必须强制触发下一轮 NR 迭代。
         if (innerConverged && (strictConverged || waiveDispConverged)) {
           // =====================================================================
-          // [ImplicitConverged 策略核心]
+          // [StrictNRFracture 策略核心]
           // 收敛后拦截，执行试探性断裂并决策是否重启 NR
           // =====================================================================
-          if (fractureStrategy_ == "ImplicitConverged") {
+          if (fractureStrategy_ == "StrictNRFracture") {
             auto *activeStatusField =
                 ctx.getFieldManager().getFieldAs<int>("ActiveStatus");
             int healthBefore = 0;
@@ -658,9 +666,9 @@ void ADR_Integrator::run(PDCommon::Core::PDContext &ctx,
               isFirstExplicitTick_ = true;
               continue;
             }
-          } else if (fractureStrategy_ == "ImplicitState") {
+          } else if (fractureStrategy_ == "LaggedNRFracture") {
             // =====================================================================
-            // [ImplicitState 策略核心] 收敛后直接固化试探断裂，不重启 NR
+            // [LaggedNRFracture 策略核心] 收敛后直接固化试探断裂，不重启 NR
             // =====================================================================
             for (auto &kernel : kernels) {
               kernel->postCompute(ctx);
@@ -782,10 +790,11 @@ void ADR_Integrator::run(PDCommon::Core::PDContext &ctx,
 #pragma omp parallel for schedule(static)
                   for (int idx = 0; idx < static_cast<int>(so.totalComponents);
                        ++idx) {
+                    double beta_AA = 0.3; // [新增] AA松弛因子：控制外推步长，防止塑性屈服时严重过调 (0.2~0.5最佳)
                     double newDisp = 0.0;
                     for (int i = 0; i < mk; ++i) {
                       newDisp += alpha(i) * (aaHistories_[k].disp[i][idx] +
-                                             aaHistories_[k].res[i][idx]);
+                                             beta_AA * aaHistories_[k].res[i][idx]);
                     }
                     so.uPtr[idx] =
                         newDisp; // 直接将加速后的位移写入，作为下一步的起点
@@ -825,7 +834,8 @@ void ADR_Integrator::run(PDCommon::Core::PDContext &ctx,
         // =====================================================================
         // [Auto-Switch 降级回滚保护]
         // =====================================================================
-        if (fractureStrategy_ == "ImplicitConverged" ||
+        if (fractureStrategy_ == "StrictNRFracture" ||
+            fractureStrategy_ == "LaggedNRFracture" ||
             fractureStrategy_ == "Staggered") {
           LOG_WARNING(
               "    >> " + PDCommon::Utils::Colors::RED + "[Auto-Switch]" +

@@ -78,6 +78,7 @@ private:
   double NRDispTol_ = 5.0e-2;  ///< 外循环宏观位移残差收敛容差（ANSYS标准 5%）
   int maxNRIters_ = 10;        ///< 最大外循环迭代次数（默认 10）
   bool NRStateFrozen_ = true;  ///< 是否在外循环期间冻结非线性状态（初始刚度法），默认 true
+  std::string NRStiffnessType_ = "Initial"; ///< 冻结态刚度类型："Initial" (始终 stateMode=1) 或 "Tangent" (迭代激活 stateMode=2)
 
   // -----------------------------------------------------------------------
   // Anderson Acceleration (AA) 参数与历史缓存
