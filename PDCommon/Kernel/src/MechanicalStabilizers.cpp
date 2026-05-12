@@ -96,6 +96,10 @@ void MechanicalSillingStabilizer::applyPenalty(PDContext &ctx) {
   const double *omegaPtr = neighborList.getBondFieldPtr("InfluenceWeight");
   double *accPtr = fieldManager.getFieldAs<double>("Acceleration")->dataPtr();
 
+  // [新增] 获取塑性应变场用于动态软化
+  auto *eqPSField = fieldManager.getFieldAs<double>("EqPlasticStrain_Trial");
+  const double *eqPSPtr = eqPSField ? eqPSField->dataPtr() : nullptr;
+
 #pragma omp parallel for schedule(guided)
   for (int i = 0; i < static_cast<int>(numParticles); ++i) {
     double rho_i = rhoArr_[i];
@@ -155,9 +159,16 @@ void MechanicalSillingStabilizer::applyPenalty(PDContext &ctx) {
       force_z += omega * vj / horizon * (coeff_i * z_iz - coeff_j * z_jz);
     }
 
-    accPtr[i * 3] += force_x / rho_i;
-    accPtr[i * 3 + 1] += force_y / rho_i;
-    accPtr[i * 3 + 2] += force_z / rho_i;
+    // [新增] 动态塑性惩罚力软化
+    double plastic_softening = 1.0;
+    if (eqPSPtr) {
+      plastic_softening = std::exp(-100.0 * eqPSPtr[i]);
+      plastic_softening = std::max(plastic_softening, 0.01);
+    }
+
+    accPtr[i * 3] += (force_x * plastic_softening) / rho_i;
+    accPtr[i * 3 + 1] += (force_y * plastic_softening) / rho_i;
+    accPtr[i * 3 + 2] += (force_z * plastic_softening) / rho_i;
   }
 }
 
@@ -232,6 +243,10 @@ void MechanicalWanStabilizer::applyPenalty(PDContext &ctx) {
   const double *omegaPtr = neighborList.getBondFieldPtr("InfluenceWeight");
   double *accPtr = fieldManager.getFieldAs<double>("Acceleration")->dataPtr();
 
+  // [新增] 获取塑性应变场用于动态软化
+  auto *eqPSField = fieldManager.getFieldAs<double>("EqPlasticStrain_Trial");
+  const double *eqPSPtr = eqPSField ? eqPSField->dataPtr() : nullptr;
+
 #pragma omp parallel for schedule(guided)
   for (int i = 0; i < static_cast<int>(numParticles); ++i) {
     double rho_i = rhoArr_[i];
@@ -303,9 +318,16 @@ void MechanicalWanStabilizer::applyPenalty(PDContext &ctx) {
       force_z += omega * vj * (Ti_z - Tj_z);
     }
 
-    accPtr[i * 3] += force_x / rho_i;
-    accPtr[i * 3 + 1] += force_y / rho_i;
-    accPtr[i * 3 + 2] += force_z / rho_i;
+    // [新增] 动态塑性惩罚力软化
+    double plastic_softening = 1.0;
+    if (eqPSPtr) {
+      plastic_softening = std::exp(-100.0 * eqPSPtr[i]);
+      plastic_softening = std::max(plastic_softening, 0.01);
+    }
+
+    accPtr[i * 3] += (force_x * plastic_softening) / rho_i;
+    accPtr[i * 3 + 1] += (force_y * plastic_softening) / rho_i;
+    accPtr[i * 3 + 2] += (force_z * plastic_softening) / rho_i;
   }
 }
 
@@ -353,6 +375,10 @@ void MechanicalZhangStabilizer::applyPenalty(PDContext &ctx) {
       fieldManager.getFieldAs<double>("ShapeTensorInv")->dataPtr();
   const double *omegaPtr = neighborList.getBondFieldPtr("InfluenceWeight");
   double *accPtr = fieldManager.getFieldAs<double>("Acceleration")->dataPtr();
+
+  // [新增] 获取塑性应变场用于动态软化
+  auto *eqPSField = fieldManager.getFieldAs<double>("EqPlasticStrain_Trial");
+  const double *eqPSPtr = eqPSField ? eqPSField->dataPtr() : nullptr;
 
   // [维度修复]
   // 无需猜测系统维度以及厚度(由于厚度并未全局存储，导致 dx 解析报错)
@@ -460,9 +486,32 @@ void MechanicalZhangStabilizer::applyPenalty(PDContext &ctx) {
       force_z += g0_ * (t_iz - t_jz) * vj;
     }
 
-    accPtr[i * 3] += force_x / rho_i;
-    accPtr[i * 3 + 1] += force_y / rho_i;
-    accPtr[i * 3 + 2] += force_z / rho_i;
+    // [新增] 边界惩罚力削弱与调试
+    double reduction_factor = 1.0;
+
+    // vvPtr[i] (即 VHorizon): 内部点约为 1.0，表面点 > 1.2，角点 > 3.0
+    if (vvPtr[i] > 1.15) {
+      reduction_factor = 0.1; // 将边界的惩罚力砍掉 90%
+      
+      // 记录削弱前原本离谱的惩罚力，并做简单的数量级拦截输出（避免刷屏）
+      if (std::abs(force_x) > 1.0e8 || std::abs(force_y) > 1.0e8) {
+         // 可随时取消注释以进行排查
+         // printf(">> [Penalty Warning] Surface Node (vv=%.2f) original penalty: Fx=%.2e, Fy=%.2e\n", vvPtr[i], force_x, force_y);
+      }
+    }
+
+    // [新增] 动态塑性惩罚力软化
+    double plastic_softening = 1.0;
+    if (eqPSPtr) {
+      plastic_softening = std::exp(-100.0 * eqPSPtr[i]);
+      plastic_softening = std::max(plastic_softening, 0.01);
+    }
+
+    double final_reduction = reduction_factor * plastic_softening;
+
+    accPtr[i * 3] += (force_x * final_reduction) / rho_i;
+    accPtr[i * 3 + 1] += (force_y * final_reduction) / rho_i;
+    accPtr[i * 3 + 2] += (force_z * final_reduction) / rho_i;
   }
 }
 

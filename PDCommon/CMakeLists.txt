@@ -21,6 +21,7 @@ add_subdirectory(Core)
 add_subdirectory(Kernel)
 add_subdirectory(Fracture)
 add_subdirectory(Contact)
+add_subdirectory(PostProcessing)
 
 # 2. Create the final static library and bundle all submodule object files
 # $<TARGET_OBJECTS:target_name> is the standard CMake syntax for referencing object libraries
@@ -36,6 +37,7 @@ add_library(PDCommon STATIC
     $<TARGET_OBJECTS:Kernel_Obj>
     $<TARGET_OBJECTS:Fracture_Obj>
     $<TARGET_OBJECTS:Contact_Obj>
+    $<TARGET_OBJECTS:PostProcessing_Obj>
 )
 
 # 3. Propagate header file interfaces uniformly
@@ -52,6 +54,7 @@ target_link_libraries(PDCommon PUBLIC
     Kernel_Obj
     Fracture_Obj
     Contact_Obj
+    PostProcessing_Obj
     yaml-cpp
     OpenMP::OpenMP_CXX
 )

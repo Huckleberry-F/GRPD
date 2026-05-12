@@ -80,8 +80,8 @@ Solver:
   TimeIntegrator: "ADR"
 
   DynamicShapeTensor: false
-  KernelWeightType: "Gaussian"
-  ZeroEnergyG0: 0.1
+  KernelWeightType: "Linear"
+  ZeroEnergyG0: 1.0
   ZeroEnergyMethod: "Zhang"
   Horizon: 0.3015
   OMP_Threads: 16
@@ -106,9 +106,13 @@ Solver:
     - Step: 1
       Time: 1.0
       KBC: 0
-      NumSubsteps: 50
+      NumSubsteps: 10
 
-# 6. IO输出设置
+# 6. 后处理设置
+PostProcessing:
+  - Type: "ReactionForce"
+
+# 7. IO输出设置
 Writer:
   Type: "binary"
   Variables:
@@ -126,3 +130,5 @@ Writer:
       Dimension: 1
     - Name: "VonMisesStress"
       Dimension: 1
+    - Name: "ReactionForce"
+      Dimension: 3

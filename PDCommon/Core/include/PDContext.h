@@ -19,18 +19,22 @@
 #include <memory>
 #include <string>
 
+namespace PDCommon::PostProcessing {
+class PostProcessorManager;
+}
+
 namespace PDCommon::Core {
 
 class PDContext {
 public:
   /// @brief 默认构造函数
-  PDContext() = default;
+  PDContext();
 
   /// @brief 构造函数，初始化一个全新的仿真模型上下文
   /// @param name 模型名称，用于标识和日志输出
   explicit PDContext(const std::string &name);
 
-  ~PDContext() = default;
+  ~PDContext();
 
   // 禁用拷贝，允许移动（保持资源独占）
   PDContext(const PDContext &) = delete;
@@ -98,6 +102,17 @@ public:
   }
 
   // -----------------------------------------------------------------------
+  // 后处理管理器 (PostProcessorManager)
+  // -----------------------------------------------------------------------
+  PDCommon::PostProcessing::PostProcessorManager &getPostProcessorManager() {
+    return *postProcessorManager_;
+  }
+  const PDCommon::PostProcessing::PostProcessorManager &
+  getPostProcessorManager() const {
+    return *postProcessorManager_;
+  }
+
+  // -----------------------------------------------------------------------
   // 模型维度 (2D / 3D)
   // -----------------------------------------------------------------------
 
@@ -122,6 +137,12 @@ public:
 
   /// @brief 设置当前时间步长（由积分器在每步开头调用）
   void setCurrentDt(double dt) { currentDt_ = dt; }
+
+  // -----------------------------------------------------------------------
+  // 全局质量缩放因子 (MassScaleFactor)
+  // -----------------------------------------------------------------------
+  double getMassScaleFactor() const { return massScaleFactor_; }
+  void setMassScaleFactor(double sf) { massScaleFactor_ = sf; }
 
   // -----------------------------------------------------------------------
   // 增量步冻结标志 (用于接触法向与权重在准静态子步内的几何锚定)
@@ -161,10 +182,14 @@ private:
 
   PDCommon::BC::BCManager bcManager_;                ///< 边界条件管理器
   PDCommon::Contact::ContactManager contactManager_; ///< 接触系统管理器
+  std::unique_ptr<PDCommon::PostProcessing::PostProcessorManager>
+      postProcessorManager_;                         ///< 后处理算子管理器
+
   bool isIncrementStart_ =
       false; ///< 是否处于当前增量步（或物理物理时间步）的首个迭代
   bool stateFrozen_ = false; ///< 本构状态冻结标志（ADR 初始刚度法）
   int outerIter_ = 0;        ///< ADR 初始刚度法外循环迭代次数
+  double massScaleFactor_ = 1.0; ///< 全局质量缩放因子
 };
 
 } // namespace PDCommon::Core

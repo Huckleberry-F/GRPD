@@ -65,6 +65,12 @@ void InitPreCracks(PDCommon::Core::PDContext &ctx, const YAML::Node &config);
 /// @param config 模拟系统的 yaml 根配置
 void InitContact(PDCommon::Core::PDContext &ctx, const YAML::Node &config);
 
+/// @brief 初始化后处理挂载组件
+/// @details 根据 YAML 中 PostProcessing 节点加载用户自定义后处理算子，并送入 PostProcessorManager。
+/// @param ctx PD 全局上下文
+/// @param config 模拟系统的 yaml 根配置
+void InitPostProcessing(PDCommon::Core::PDContext &ctx, const YAML::Node &config);
+
 /// @brief 初始化微积分方程执行器与空间积分内核（多核版本）
 /// @details 在 L1 和 L2 的架构层组装出 TimeIntegrator（如 ExplicitEuler）和多个 PDKernel 内核。
 ///          支持 YAML 中的 Solver.Kernel（单核兼容）和 Solver.Kernels（多核列表）两种模式。

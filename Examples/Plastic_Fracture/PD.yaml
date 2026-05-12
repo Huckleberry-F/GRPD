@@ -15,7 +15,7 @@ Parts:
     Dimension: 2
     Source: "cylinder.stl"
     Offset: [0.0, 0.0, 0.0]
-    dx: 0.25
+    dx: 0.5
 
 # 3. 全局常驻边界（Step 0，永远生效）—— ANSYS APDL 单自由度风格
 BoundaryConditions:
@@ -33,7 +33,7 @@ LoadStep_Conditions:
         Name: "Grip_Top_Step1"
         Box: [-999.0, 999.0, 97.0, 101.0, -999.0, 999.0]
         Type: "UY"
-        Value: 2.0 # 第一阶段目标：Y 向拉伸至 2.0，X/Z 自由泊松收缩
+        Value: 0.5 # 第一阶段目标：Y 向拉伸至 2.0，X/Z 自由泊松收缩
 
   - Step: 2
     BoundaryConditions:
@@ -41,7 +41,7 @@ LoadStep_Conditions:
         Name: "Grip_Top_Step2"
         Box: [-999.0, 999.0, 97.0, 101.0, -999.0, 999.0]
         Type: "UY"
-        Value: 5.0 # 第二阶段目标：接续攀爬至 5.0
+        Value: 2.0 # 第二阶段目标：接续攀爬至 5.0
 
   - Step: 3
     BoundaryConditions:
@@ -101,11 +101,11 @@ Solver:
     - Step: 2
       Time: 5.0
       KBC: 0 # 第二段：继续维持斜坡平滑，探查塑性大变形
-      NumSubsteps: 10 # 第二段为了精细捕捉塑性屈服大点和断裂跌落阶段，子步非常密集
+      NumSubsteps: 50 # 第二段为了精细捕捉塑性屈服大点和断裂跌落阶段，子步非常密集
     - Step: 3
       Time: 10.0
-      KBC: 0 # 第二段：继续维持斜坡平滑，探查塑性大变形
-      NumSubsteps: 10 # 第二段为了精细捕捉塑性屈服大点和断裂跌落阶段，子步非常密集
+      KBC: 0 # 第三段：继续维持斜坡平滑，探查塑性大变形
+      NumSubsteps: 50 # 细化子步以捕捉缓慢断裂过程
 
   MaxPseudoSteps: 15000
   MassScaleFactor: 1.0e10
@@ -118,18 +118,22 @@ Solver:
   NRForceTol: 0.05 # 外层 NR 循环：宏观不平衡力残差比 (5%)
   NRDispTol: 0.05 # 外层 NR 循环：宏观位移进展比 (5%)
   MaxNRSteps: 20 # 每子步最大 NR 迭代次数
-  NRStateFrozen: false # 开启初始刚度法 (内循环维持纯弹性试探)
+  NRStateFrozen: true # 开启初始刚度法 (隐式NR，配合 StrictNRFracture 实现严格的静态断裂平衡)
 
   DispTol: 1.0e-5
   ForceTol: 1.0e-3
   OutputInterval: 1000
   OMP_Threads: 16
-  Horizon: 0.7545
-  KernelWeightType: "Gaussian"
-  ZeroEnergyG0: 0.2
-  ZeroEnergyMethod: "Silling"
+  Horizon: 1.5
+  KernelWeightType: "Linear"
+  ZeroEnergyG0: 1.0
+  ZeroEnergyMethod: "Zhang"
 
-# 8. 输出设置
+# 8. 后处理设置
+PostProcessing:
+  - Type: "ReactionForce"
+
+# 9. 输出设置
 Writer:
   Name: "Dogbone_Fracture_Result"
   Type: "binary"
@@ -152,5 +156,7 @@ Writer:
       Dimension: 1
     - Name: "ShapeTensorInv"
       Dimension: 9
+    - Name: "ReactionForce"
+      Dimension: 3
 
 # Updated for v3.1 project sync

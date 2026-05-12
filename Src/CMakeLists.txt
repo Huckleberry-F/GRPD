@@ -32,6 +32,7 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
     Integration_Obj
     Fracture_Obj
     Contact_Obj
+    PostProcessing_Obj
 )
 
 

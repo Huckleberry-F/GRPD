@@ -4,6 +4,7 @@
 
 #include "ADR_Integrator.h"
 #include "FieldManager.h"
+#include "PostProcessorManager.h"
 #include "Logger.h"
 #include "MaterialManager.h"
 #include "MechanicalMaterial.h"
@@ -137,6 +138,8 @@ void ADR_Integrator::run(PDCommon::Core::PDContext &ctx,
   const double dt = dt_;
   initializeHistoryVariables();
   initializeNodalMass(ctx);
+
+  ctx.setMassScaleFactor(massScaleFactor_);
 
   LOG_INFO("[ADR_Integrator] Starting Custom ADR: NumLoadSteps = " +
            std::to_string(loadStepConfigs_.size()) + ", MassScale = " +
@@ -512,8 +515,9 @@ void ADR_Integrator::run(PDCommon::Core::PDContext &ctx,
               kernel->postCompute(ctx);
             }
           } else if (fractureStrategy_ == "StrictNRFracture" ||
-                     fractureStrategy_ == "LaggedNRFracture") {
-            // [StrictNRFracture / LaggedNRFracture]
+                     fractureStrategy_ == "LaggedNRFracture" ||
+                     fractureStrategy_ == "SimpleNRFracture") {
+            // [StrictNR / LaggedNR / SimpleNR]
             // 试探阶段完全绕过断裂物理更新，留到 NR 外循环收敛后再评估
             // (LaggedNRFracture通过TrialDamage实时断开受力)
           }
@@ -527,23 +531,39 @@ void ADR_Integrator::run(PDCommon::Core::PDContext &ctx,
         // 无需外循环校验，直接宣布收敛。
         // =================================================================
         if (!NRStateFrozen_) {
-          if (innerConverged) {
-            // 计算全场内力范数供下一子步增量基准使用
-            double sumFintAllSq = 0.0;
-            for (size_t k = 0; k < soTargets_.size(); ++k) {
-              const auto &so = soTargets_[k];
-              double localSq = 0.0;
-              #pragma omp parallel for reduction(+ : localSq) schedule(static)
-              for (int i = 0; i < static_cast<int>(so.totalComponents); ++i) {
-                int particle_idx = i / so.dimension;
-                double effective_mass = nodalMass_[particle_idx] * massScaleFactor_;
-                double f = so.aPtr[i] * effective_mass;
-                localSq += f * f;
-              }
-              sumFintAllSq += localSq;
-            }
-            fIntTotal = std::sqrt(sumFintAllSq);
+          // =====================================================================
+          // [新增] 为了提取正确的全场内力（含支反力）以及运行 PostProcessor Hook
+          // 重新解冻并在无约束下评估一次力
+          // =====================================================================
+          double NRLocalLF = static_cast<double>(sub + 1) / currentNumSubsteps;
+          double NRActiveLF = (currentKbc == 1) ? 1.0 : NRLocalLF;
 
+          evaluateForces(ctx, kernels, accFieldNames_, stepConfig.stepId, NRActiveLF);
+
+          double prevPhysicalTime = (stepIdx == 0) ? 0.0 : loadStepConfigs_[stepIdx - 1].targetTime;
+          double currentPhysicalTime = prevPhysicalTime + NRLocalLF * (stepConfig.targetTime - prevPhysicalTime);
+          ctx.getPostProcessorManager().executePreBCHooks(ctx, currentPhysicalTime, stepConfig.stepId);
+
+          // 计算全场内力范数供下一子步增量基准使用
+          double sumFintAllSq = 0.0;
+          for (size_t k = 0; k < soTargets_.size(); ++k) {
+            const auto &so = soTargets_[k];
+            double localSq = 0.0;
+            #pragma omp parallel for reduction(+ : localSq) schedule(static)
+            for (int i = 0; i < static_cast<int>(so.totalComponents); ++i) {
+              int particle_idx = i / so.dimension;
+              double effective_mass = nodalMass_[particle_idx] * massScaleFactor_;
+              double f = so.aPtr[i] * effective_mass;
+              localSq += f * f;
+            }
+            sumFintAllSq += localSq;
+          }
+          fIntTotal = std::sqrt(sumFintAllSq);
+
+          // 重施约束：清零边界节点的加速度，为输出和下一子步做准备
+          BC::applyConstraints(ctx.getBCManager(), NRActiveLF, stepConfig.stepId);
+
+          if (innerConverged) {
             // 断裂处理（如有需要）
             for (auto &kernel : kernels) {
               kernel->postCompute(ctx);
@@ -601,6 +621,13 @@ void ADR_Integrator::run(PDCommon::Core::PDContext &ctx,
         // [关键] 使用本子步的内力增量作为参考基准，而非全场总内力
         // 避免载荷步越多、总力越大时判定过度宽松
         double fIntIncrement = std::abs(fIntTotal - fIntPrevSubstep_);
+
+        // =====================================================================
+        // [PostProcessing Hook] 在加速度被清零前，截获最原始的支反力等
+        // =====================================================================
+        double prevPhysicalTime = (stepIdx == 0) ? 0.0 : loadStepConfigs_[stepIdx - 1].targetTime;
+        double currentPhysicalTime = prevPhysicalTime + NRLocalLF * (stepConfig.targetTime - prevPhysicalTime);
+        ctx.getPostProcessorManager().executePreBCHooks(ctx, currentPhysicalTime, stepConfig.stepId);
 
         // 重施约束：清零边界节点的加速度，仅保留自由粒子残差
         BC::applyConstraints(ctx.getBCManager(), NRActiveLF, stepConfig.stepId);
@@ -666,9 +693,10 @@ void ADR_Integrator::run(PDCommon::Core::PDContext &ctx,
               isFirstExplicitTick_ = true;
               continue;
             }
-          } else if (fractureStrategy_ == "LaggedNRFracture") {
+          } else if (fractureStrategy_ == "LaggedNRFracture" || 
+                     fractureStrategy_ == "SimpleNRFracture") {
             // =====================================================================
-            // [LaggedNRFracture 策略核心] 收敛后直接固化试探断裂，不重启 NR
+            // [LaggedNR / SimpleNR 策略核心] 收敛后直接断裂并固化，不重启 NR，直接进入下一步
             // =====================================================================
             for (auto &kernel : kernels) {
               kernel->postCompute(ctx);
