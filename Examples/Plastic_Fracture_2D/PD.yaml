@@ -1,0 +1,133 @@
+#==============================================================================
+# GRPD 算例： 2D 双边缺口板拉伸断裂 (Double Edge Notched Tension, DENT)
+# 基于 Weldox 460 E 钢的经典准静态 JC 损伤模型 Benchmark
+#==============================================================================
+
+# 1. 全局设置
+Assembly: {}
+
+# 2. 几何模型：读取 50x100x1 的长方体平板
+Parts:
+  - PartID: 1
+    MatID: 1
+    Dimension: 2
+    Source: "box.stl"
+    Offset: [0.0, 0.0, 0.0]
+    dx: 0.5
+
+# 3. 预置裂纹 (在 Y=50 处从两侧各切入 15mm 深的缺口，诱导中心高三轴度)
+PreCracks:
+  - CrackID: 1
+    Type: "QuadCrack"
+    # 左侧缺口：切断 X 从 -25 到 -10
+    V1: [-26.0, 50.0, -2.0]
+    V2: [-26.0, 50.0, 2.0]
+    V3: [-10.0, 50.0, 2.0]
+    V4: [-10.0, 50.0, -2.0]
+  - CrackID: 2
+    Type: "QuadCrack"
+    # 右侧缺口：切断 X 从 10 到 25
+    V1: [10.0, 50.0, -2.0]
+    V2: [10.0, 50.0, 2.0]
+    V3: [26.0, 50.0, 2.0]
+    V4: [26.0, 50.0, -2.0]
+
+# 4. 全局常驻边界
+BoundaryConditions:
+  - BcID: 1
+    Name: "Bottom_Fixed"
+    Box: [-30.0, 30.0, -1.0, 4.0, -2.0, 2.0]
+    Type: "DISP"
+    Value: [0.0, 0.0, 0.0]
+
+# 5. 多级分步载荷配置 —— 拉伸 Y 向
+LoadStep_Conditions:
+  - Step: 1
+    BoundaryConditions:
+      - BcID: 2
+        Name: "Top_Tension"
+        Box: [-30.0, 30.0, 96.0, 101.0, -2.0, 2.0]
+        Type: "UY"
+        Value: 4.0 # 拉伸 4.0mm 足以使得缺口处断裂
+
+# 6. 材质物理属性 (参考 Weldox 460 E 钢)
+Materials:
+  - MatID: 1
+    Name: "Weldox460E_Steel_2D"
+    Type: "JCPlasticityMat"
+    Density: 7.85e-9          # tonne/mm³
+    YoungsModulus: 2.0e5      # 200,000 MPa (200 GPa)
+    PoissonsRatio: 0.33       # 泊松比
+    YieldStress: 490.0        # 初屈服应力 (MPa)
+    HardeningModulus: 1200.0  # 线性塑性硬化模量 (MPa)
+    HardeningType: "Isotropic"
+    LargeDeformation: false
+    # JC 断裂参数 (Børvik, 2001)
+    JC_D1: 0.056
+    JC_D2: 1.44
+    JC_D3: -2.12
+    Fracture:
+      Type: "DamageValueFracture"
+      Critical_Damage: 0.99
+
+# 7. 求解器与时间管理
+Solver:
+  Engine: "PD"
+  Type: "Mechanical"
+  Kernel: "NOSB_M"
+  TimeIntegrator: "ADR"
+  LoadSteps:
+    - Step: 1
+      Time: 10.0
+      KBC: 0
+      NumSubsteps: 100
+      
+  MaxPseudoSteps: 15000
+  MassScaleFactor: 1.0e10
+  RampWaveRatio: 10.0
+  DampingMethod: "HybridKinetic"
+  Fracture_Strategy: "StrictNRFracture"
+
+  # --- ADR 初始刚度法双层循环参数 ---
+  KineticTol: 1.0e-4 
+  NRForceTol: 0.05 
+  NRDispTol: 0.05 
+  MaxNRSteps: 20 
+  NRStateFrozen: true 
+
+  DispTol: 1.0e-5
+  ForceTol: 1.0e-3
+  OutputInterval: 1000
+  OMP_Threads: 16
+  Horizon: 1.5
+  KernelWeightType: "Linear"
+  ZeroEnergyG0: 1.0
+  ZeroEnergyMethod: "Zhang"
+
+# 8. 后处理设置
+PostProcessing:
+  - Type: "ReactionForce"
+
+# 9. 输出设置
+Writer:
+  Name: "DENT_Fracture_Result"
+  Type: "binary"
+  Variables:
+    - Name: "PartID"
+      Dimension: 1
+    - Name: "Volume"
+      Dimension: 1
+    - Name: "BondIntegrity"
+      Dimension: 1
+    - Name: "Displacement"
+      Dimension: 3
+    - Name: "PK1Stress"
+      Dimension: 9
+    - Name: "EqPlasticStrain_Old"
+      Dimension: 1
+    - Name: "VonMisesStress"
+      Dimension: 1
+    - Name: "Damage_Trial"
+      Dimension: 1
+    - Name: "ReactionForce"
+      Dimension: 3
