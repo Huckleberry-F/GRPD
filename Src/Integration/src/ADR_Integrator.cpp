@@ -360,12 +360,21 @@ void ADR_Integrator::run(PDCommon::Core::PDContext &ctx,
             // [内循环实时宏观力基准] 在约束斩断支反力之前，提取全场内部合力
             // =====================================================================
             double currentSumFintSq = 0.0;
+            auto *damageFieldInner = ctx.getFieldManager().getFieldAs<double>("Damage_Trial");
+            const double *damagePtrInner = damageFieldInner ? damageFieldInner->dataPtr() : nullptr;
+
             for (size_t iTarget = 0; iTarget < soTargets_.size(); ++iTarget) {
               const auto &so = soTargets_[iTarget];
               double localSq = 0.0;
 #pragma omp parallel for reduction(+ : localSq) schedule(static)
               for (int i = 0; i < static_cast<int>(so.totalComponents); ++i) {
                 int particle_idx = i / so.dimension;
+                
+                // [死点屏蔽]：若损伤极大，说明刚度丧失，其微弱波动不计入系统总承载力
+                if (damagePtrInner && damagePtrInner[particle_idx] > 0.99) {
+                  continue;
+                }
+
                 double effective_mass =
                     nodalMass_[particle_idx] * massScaleFactor_;
                 double f = so.aPtr[i] * effective_mass;
@@ -404,8 +413,11 @@ void ADR_Integrator::run(PDCommon::Core::PDContext &ctx,
             BC::applyConstraints(ctx.getBCManager(), activeLF,
                                  stepConfig.stepId); // 始终强制冻结位移边界
 
+            auto *damageFieldIter = ctx.getFieldManager().getFieldAs<double>("Damage_Trial");
+            const double *damagePtrIter = damageFieldIter ? damageFieldIter->dataPtr() : nullptr;
+
             computeConvergenceCriteria(
-                currentFRef); // 收集收敛 TOL 数据，使用真实的宏观工程残差比
+                currentFRef, damagePtrIter); // 收集收敛 TOL 数据，使用真实的宏观工程残差比
 
             timer.tock();
 
@@ -546,12 +558,20 @@ void ADR_Integrator::run(PDCommon::Core::PDContext &ctx,
 
           // 计算全场内力范数供下一子步增量基准使用
           double sumFintAllSq = 0.0;
+          auto *damageFieldExp = ctx.getFieldManager().getFieldAs<double>("Damage_Trial");
+          const double *damagePtrExp = damageFieldExp ? damageFieldExp->dataPtr() : nullptr;
+
           for (size_t k = 0; k < soTargets_.size(); ++k) {
             const auto &so = soTargets_[k];
             double localSq = 0.0;
             #pragma omp parallel for reduction(+ : localSq) schedule(static)
             for (int i = 0; i < static_cast<int>(so.totalComponents); ++i) {
               int particle_idx = i / so.dimension;
+              
+              if (damagePtrExp && damagePtrExp[particle_idx] > 0.99) {
+                continue;
+              }
+
               double effective_mass = nodalMass_[particle_idx] * massScaleFactor_;
               double f = so.aPtr[i] * effective_mass;
               localSq += f * f;
@@ -604,12 +624,20 @@ void ADR_Integrator::run(PDCommon::Core::PDContext &ctx,
         // 统计全场（含边界节点支反力）的力 L2 范数作为结构总承载力参考基准
         // =====================================================================
         double sumFintAllSq = 0.0;
+        auto *damageFieldNR = ctx.getFieldManager().getFieldAs<double>("Damage_Trial");
+        const double *damagePtrNR = damageFieldNR ? damageFieldNR->dataPtr() : nullptr;
+
         for (size_t k = 0; k < soTargets_.size(); ++k) {
           const auto &so = soTargets_[k];
           double localSq = 0.0;
 #pragma omp parallel for reduction(+ : localSq) schedule(static)
           for (int i = 0; i < static_cast<int>(so.totalComponents); ++i) {
             int particle_idx = i / so.dimension;
+            
+            if (damagePtrNR && damagePtrNR[particle_idx] > 0.99) {
+              continue;
+            }
+
             double effective_mass = nodalMass_[particle_idx] * massScaleFactor_;
             double f = so.aPtr[i] * effective_mass;
             localSq += f * f;
@@ -636,7 +664,7 @@ void ADR_Integrator::run(PDCommon::Core::PDContext &ctx,
         // [ANSYS 宏观力准则 Step 2] 计算宏观力残差比 + 宏观位移残差比
         // =====================================================================
         double macroForceRatio = 0.0, macroDispRatio = 0.0;
-        computeNRConvergence(fIntIncrement, macroForceRatio, macroDispRatio);
+        computeNRConvergence(fIntIncrement, macroForceRatio, macroDispRatio, damagePtrNR);
 
         bool forceConverged = (macroForceRatio <= NRForceTol_);
         bool dispConverged = (macroDispRatio <= NRDispTol_);
@@ -1107,7 +1135,7 @@ void ADR_Integrator::updateKinematicsLeapfrog(double cn, double dt) {
   }
 }
 
-void ADR_Integrator::computeConvergenceCriteria(double currentFRef) {
+void ADR_Integrator::computeConvergenceCriteria(double currentFRef, const double* damage) {
   kineticRatio_ = 0.0;
   dispRatio_ = 0.0;
   forceRatio_ = 0.0;
@@ -1122,10 +1150,16 @@ void ADR_Integrator::computeConvergenceCriteria(double currentFRef) {
 #pragma omp parallel for reduction(+ : local_tol1, local_tol2, local_tol3,     \
                                        local_denom_tol2) schedule(static)
     for (int i = 0; i < static_cast<int>(so.totalComponents); ++i) {
+      int particle_idx = i / so.dimension;
+
+      // [死点屏蔽]：若该点损伤过大，其位置波动和不平衡力对整体无影响，不纳入统计
+      if (damage && damage[particle_idx] > 0.99) {
+        continue;
+      }
+
       double du_iter = so.uPtr[i] - dispOld_[k][i];
       double du_substep = so.uPtr[i] - dispBase_[k][i];
 
-      int particle_idx = i / so.dimension;
       double effective_mass = nodalMass_[particle_idx] * massScaleFactor_;
       double f_unbalanced = so.aPtr[i] * effective_mass;
 
@@ -1169,7 +1203,8 @@ void ADR_Integrator::computeConvergenceCriteria(double currentFRef) {
 // ---------------------------------------------------------------------------
 void ADR_Integrator::computeNRConvergence(double fIntTotal,
                                           double &macroForceRatio,
-                                          double &macroDispRatio) {
+                                          double &macroDispRatio,
+                                          const double* damage) {
 
   // --- 力残差分子：自由粒子的不平衡力 L2 范数 ---
   double sumResFreeSq = 0.0;
@@ -1179,6 +1214,12 @@ void ADR_Integrator::computeNRConvergence(double fIntTotal,
 #pragma omp parallel for reduction(+ : localSq) schedule(static)
     for (int i = 0; i < static_cast<int>(so.totalComponents); ++i) {
       int particle_idx = i / so.dimension;
+
+      // [死点屏蔽]：若该点损伤过大，其位置波动和不平衡力对整体无影响，不纳入统计
+      if (damage && damage[particle_idx] > 0.99) {
+        continue;
+      }
+
       double effective_mass = nodalMass_[particle_idx] * massScaleFactor_;
       double f = so.aPtr[i] * effective_mass;
       localSq += f * f;

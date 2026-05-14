@@ -17312,3 +17312,743 @@
     | ==================================================
     | Outputting: PD
     | Post-processing Phase finished.
+
+[09:29:11] [INFO ] [EngineManager]
+    | ==================================================
+    | GRPD Solver Engine Initialized                 
+    | ==================================================
+
+[09:29:11] [INFO ] [EngineRegistry]
+    | Creating Engine instance: PD
+
+[09:29:11] [INFO ] [PDEngine]
+    | PD Engine instance created.
+    | ===============================================
+    | ========== Registered Types Summary ===========
+    | TimeIntegrator    : ADR, CentralDifference, Explicit, MatrixFreeImplicit, Staggered
+    | FieldRegistry     : DoubleField, IntField
+    | PhysicsFields     : Mechanical, Thermal
+    | BCRegistry        : AX, AY, AZ, CONV, FLUX, PX, PY, PZ, T, UX, UY, UZ, VX, VY, VZ
+    | ReaderRegistry    : .grpd, .inp
+    | StabilizerRegistry: Mechanical_Silling, Mechanical_Wan, Mechanical_Zhang, Thermal_Silling,
+    | Thermal_Wan, Thermal_Zhang
+    | ContactRegistry   : [Type] General, [ForceLaw] KinematicNormal, [ForceLaw] Nonlinear, [ForceLaw]
+    | Penalty, [ForceLaw] Silling, [ForceLaw] Viscous, [Evaluator] NTC, [Evaluator] NTN, [Evaluator] NTS,
+    | [FrictionLaw] ElasticStickSlip, [FrictionLaw] ExplicitImpulse, [FrictionLaw] TanhRegularized
+    | MaterialRegistry  : FourierThermalMat, J2PlasticityMat, J2VoceLemaitre, JCPlasticityMat,
+    | LinearElasticMat
+    | KernelRegistry    : NOSB_M, NOSB_T
+    | EngineRegistry    : PD
+    | ===============================================
+
+[09:29:11] [INFO ] [EngineManager]
+    | Initializing solver: PD
+
+[09:29:11] [INFO ] [PDEngine]
+    | Initializing PD simulation context...
+
+[09:29:11] [INFO ] [InitModel]
+    | ==================================================
+    | Model pre-processing...
+    | ==================================================
+    | grpd path: D:\Project_C++\GRPD\Examples\J2_Plasticity_PlaneStrain\J2_Plasticity_PlaneStrain.grpd
+    | model name: J2_Plasticity_PlaneStrain
+    | Found existing .grpd mesh file at:
+    | D:\Project_C++\GRPD\Examples\J2_Plasticity_PlaneStrain\J2_Plasticity_PlaneStrain.grpd. Skipping
+    | generation.
+
+[09:29:11] [INFO ] [Context Manager]
+    | Formalized model name to: J2_Plasticity_PlaneStrain
+    | Model dimension set to: 2D
+    | 2D thickness set to: 1.000000
+
+[09:29:11] [INFO ] [ReaderRegistry]
+    | Creating reader for: .grpd (name: J2_Plasticity_PlaneStrain)
+
+[09:29:11] [INFO ] [InitModel]
+    | Reading mesh file:
+    | D:\Project_C++\GRPD\Examples\J2_Plasticity_PlaneStrain\J2_Plasticity_PlaneStrain.grpd (reader:
+    | .grpd)
+
+[09:29:11] [INFO ] [GrpdMeshReader]
+    | Reading file: D:\Project_C++\GRPD\Examples\J2_Plasticity_PlaneStrain\J2_Plasticity_PlaneStrain.grpd
+    | Entering *PARTICLE section (Line 1)
+    | Pre-allocated memory for 5000 particles (Zero-Reallocation)
+    | Entering *LOAD section (Line 5004)
+    | ============================================
+    | File reading complete!
+    | Total particles: 5000
+    | Total load entries: 150
+    | ============================================
+
+[09:29:11] [INFO ] [ParticleManager]
+    | Pre-allocated memory for 5000 particles
+
+[09:29:11] [INFO ] [InitModel]
+    | Total particles loaded for model J2_Plasticity_PlaneStrain: 5000
+
+[09:29:11] [INFO ] [InitMaterial]
+    | ==================================================
+    | Entering Material Initialization Phase...
+    | ==================================================
+    | Instantiating material [1] of type: J2PlasticityMat
+
+[09:29:11] [INFO ] [MaterialRegistry]
+    | Using factory to create material: A36_Steel (type: J2PlasticityMat)
+
+[09:29:11] [INFO ] [J2PlasticityMat]
+    | Hardening Type: Isotropic
+
+[09:29:11] [INFO ] [MaterialManager]
+    | Successfully added material instance: A36_Steel
+
+[09:29:11] [INFO ] [InitMaterial]
+    | Successfully registered material ID 1 (A36_Steel)
+    | Assigning material pointers to particles...
+    | Successfully assigned materials to 5000 particles.
+
+[09:29:11] [INFO ] [InitFields]
+    | ==================================================
+    | Entering Field Registration Phase...
+    | ==================================================
+
+[09:29:11] [INFO ] [FieldManager]
+    | Added field 'Displacement'.
+    | Added field 'Velocity'.
+    | Added field 'Acceleration'.
+    | Added field 'ContactNormal'.
+    | Added field 'ContactGap'.
+    | Added field 'VirtualSurfacePos'.
+
+[09:29:11] [INFO ] [MechanicalFields]
+    | Core fields registered: Displacement, Velocity, Acceleration, ContactNormal, ContactGap,
+    | VirtualSurfacePos.
+
+[09:29:11] [INFO ] [InitFields]
+    | Auto-registered PhysicsFields module: Mechanical
+
+[09:29:11] [INFO ] [FieldManager]
+    | Added field 'ID'.
+    | Added field 'PartID'.
+    | Added field 'MatID'.
+    | Added field 'Coords'.
+    | Added field 'Volume'.
+    | Added field 'ActiveStatus'.
+
+[09:29:11] [INFO ] [InitFields]
+    | Global ActiveStatus field registered.
+
+[09:29:11] [INFO ] [FieldManager]
+    | Added field 'EqPlasticStrain_Old'.
+    | Added field 'EqPlasticStrain_Trial'.
+    | Registered swap pair: EqPlasticStrain_Old <-> EqPlasticStrain_Trial
+    | Added field 'PlasticStrain_Old'.
+    | Added field 'PlasticStrain_Trial'.
+    | Registered swap pair: PlasticStrain_Old <-> PlasticStrain_Trial
+    | Added field 'VonMisesStress'.
+    | Resized all 17 fields for 5000 particles.
+
+[09:29:11] [INFO ] [InitFields]
+    | ActiveStatus initialized to 1 for all particles.
+    | Binding high-speed material state pointers...
+
+[09:29:11] [INFO ] [MeshData]
+    | Populated particle geometry fields into FieldManager for 5000 particles.
+
+[09:29:11] [INFO ] [InitFields]
+    | All fields allocated for 5000 particles. Total fields: 17.
+
+[09:29:11] [INFO ] [InitConditions]
+    | ==================================================
+    | Entering Conditions Initialization Phase...
+    | ==================================================
+
+[09:29:11] [INFO ] [ReaderRegistry]
+    | Creating reader for: .grpd (name: LoadReader)
+
+[09:29:11] [INFO ] [GrpdMeshReader]
+    | Reading file: D:\Project_C++\GRPD\Examples\J2_Plasticity_PlaneStrain\J2_Plasticity_PlaneStrain.grpd
+    | Entering *PARTICLE section (Line 1)
+    | Pre-allocated memory for 5000 particles (Zero-Reallocation)
+    | Entering *LOAD section (Line 5004)
+    | ============================================
+    | File reading complete!
+    | Total particles: 5000
+    | Total load entries: 150
+    | ============================================
+
+[09:29:11] [INFO ] [InitConditions]
+    | Load statistics:
+    | - PX : 50
+    | - UX : 50
+    | - UY : 50
+    | Boundary conditions initialization complete.
+
+[09:29:11] [INFO ] [InitNeighbors]
+    | ==================================================
+    | Entering Neighbor Search Phase...
+    | ==================================================
+    | Horizon radius: 0.301500
+
+[09:29:11] [INFO ] [NeighborList]
+    | Starting full-flat CSR search for 5000 particles, horizon = 0.301500
+    | Cell grid: 33 x 17 x 1 = 561 cells
+    | Flat cell list built in 0.000000 ms
+    | Pass 1 (count) done in 1.999855 ms
+    | Total bonds: 134636, Memory: 1 MB
+    | Pass 2 (fill) done in 1.000166 ms
+    | Max neighbors: 28
+    | Total time: 3.000021 ms
+
+[09:29:11] [INFO ] [FieldManager]
+    | Added field 'NeighborCount'.
+
+[09:29:11] [INFO ] [InitNeighbors]
+    | NeighborCount field populated for 5000 particles.
+
+[09:29:11] [INFO ] [FieldManager]
+    | Added field 'BondIntegrity'.
+
+[09:29:11] [INFO ] [InitNeighbors]
+    | Global BondIntegrity scalar field properly initialized to 0.0
+
+[09:29:11] [INFO ] [FieldManager]
+    | Added field 'IsSurface'.
+
+[09:29:11] [INFO ] [SurfaceDetector]
+    | Volume Deficit check complete. Identified 308 surface particles out of 5000 (Threshold: 0.750000).
+
+[09:29:11] [INFO ] [InitNeighbors]
+    | Neighbor search phase complete.
+
+[09:29:11] [INFO ] [InitContact]
+    | ==================================================
+    | Entering Contact Initialization Phase...
+    | ==================================================
+    | Initializing Material-specific BondIntegrity Models...
+    | Material BondIntegrity Models initialized. Total Active Models: 0
+
+[09:29:11] [INFO ] [InitPreCracks]
+    | Detected PreCracks configuration. Initializing geometric cuts...
+
+[09:29:11] [INFO ] [InitSolverComponents]
+    | ==================================================
+    | Entering Solver Components Assembly Phase...
+    | ==================================================
+    | Building Time Integrator: ADR
+
+[09:29:11] [INFO ] [TimeIntegrator]
+    | Explicitly set OMP Threads to: 16
+
+[09:29:11] [INFO ] [InitSolverComponents]
+    | Time Integrator configured.
+    | Building Space Kernel: NOSB_M
+
+[09:29:11] [INFO ] [NOSB_Base]
+    | Applied KernelWeightType: Linear
+    | Applied ZeroEnergyG0: 1.000000
+    | Applied ZeroEnergyMethod string: Zhang
+    | Dynamic Shape Tensor update is set to: 0
+
+[09:29:11] [INFO ] [InitSolverComponents]
+    | Space Kernel 'NOSB_M' configured.
+    | Total kernels assembled: 1
+
+[09:29:11] [INFO ] [PDEngine::Init]
+    | Initializing PostProcessing modules...
+
+[09:29:11] [INFO ] [FieldManager]
+    | Added field 'ReactionForce'.
+
+[09:29:11] [INFO ] [ReactionForceExtractor]
+    | Initialized physical field 'ReactionForce'.
+
+[09:29:11] [INFO ] [PDEngine::Init]
+    | Registered PostProcessor: ReactionForce
+
+[09:29:11] [INFO ] [PDEngine]
+    | PD simulation context initialized successfully.
+
+[09:29:11] [INFO ] [EngineManager]
+    | All solvers initialized. Total: 1
+    | ==================================================
+    | Entering Main Solver Phase
+    | ==================================================
+    | Solving: PD
+
+[09:29:11] [INFO ] [PDEngine]
+    | Starting PD Engine Solve Phase...
+
+[09:29:11] [INFO ] [ADR]
+    | Identified 2nd-order ODE coupling: Displacement <- Velocity <- Acceleration
+
+[09:29:11] [INFO ] [FieldManager]
+    | Added field 'ShapeTensorInv'.
+    | Added field 'VHorizon'.
+    | Added field 'SumFac'.
+    | Added field 'SumOmegaRaw'.
+
+[09:29:11] [INFO ] [NOSB_Base]
+    | Computing InfluenceWeight + Shape Tensor Inverse (K^-1)...
+    | All NOSB base fields registered and Shape Tensor Inverse computed.
+
+[09:29:11] [INFO ] [FieldManager]
+    | Added field 'DeformationGradient'.
+    | Added field 'PK1Stress'.
+
+[09:29:11] [INFO ] [NOSB_M]
+    | Instantiated MechanicalStabilizer globally in Phase 0 using strategy: Zhang
+
+[09:29:11] [INFO ] [ADR]
+    | Material [A36_Steel]: WaveSpeed c = 5.188745e+02, Safe CFL dt = 1.541799e-04
+    | Computed safe CFL limit dt: 1.541799e-04 (dx = 1.000000e-01, c = 5.188745e+02)
+
+[09:29:11] [INFO ] [ADR_Integrator]
+    | Auto CFL enabled. Setting dt = 1.541799e-04
+    | Starting Custom ADR: NumLoadSteps = 1, MassScale = 1.000000e+08, DampingMethod = HybridKinetic, dt
+    | = 1.541799e-04
+    | === Load Step 1 / 1 | NumSubsteps: 10 | KBC: 0 ===
+    |     [Substep 1] Computed RampIters: 231
+    |     [Step 1 / Sub 1] Converged. Iter: 1012 | KineticRatio: 9.780523e-09 | DispRatio: 4.969280e-07 |
+    |     ForceRatio: 6.023055e-06
+    |     [35m[Explicit][0m Inner loop converged -> substep done. (No outer NR needed)
+    |     [Substep 2] Computed RampIters: 231
+    |     [Step 1 / Sub 2] Converged. Iter: 1011 | KineticRatio: 9.895807e-09 | DispRatio: 4.999117e-07 |
+    |     ForceRatio: 6.061016e-06
+    |     [35m[Explicit][0m Inner loop converged -> substep done. (No outer NR needed)
+    |     [Substep 3] Computed RampIters: 231
+    |     [Step 1 / Sub 3] Converged. Iter: 1011 | KineticRatio: 9.895744e-09 | DispRatio: 4.999100e-07 |
+    |     ForceRatio: 6.060995e-06
+    |     [35m[Explicit][0m Inner loop converged -> substep done. (No outer NR needed)
+    |     [Substep 4] Computed RampIters: 231
+    |     [Step 1 / Sub 4] Converged. Iter: 1011 | KineticRatio: 9.895744e-09 | DispRatio: 4.999100e-07 |
+    |     ForceRatio: 6.060995e-06
+    |     [35m[Explicit][0m Inner loop converged -> substep done. (No outer NR needed)
+    |     [Substep 5] Computed RampIters: 231
+    |     [Step 1 / Sub 5] Converged. Iter: 1012 | KineticRatio: 9.921754e-09 | DispRatio: 5.003998e-07 |
+    |     ForceRatio: 6.067136e-06
+    |     [35m[Explicit][0m Inner loop converged -> substep done. (No outer NR needed)
+    |     [Substep 6] Computed RampIters: 231
+    |     [Step 1 / Sub 6] Converged. Iter: 1015 | KineticRatio: 9.981542e-09 | DispRatio: 5.017992e-07 |
+    |     ForceRatio: 6.096237e-06
+    |     [35m[Explicit][0m Inner loop converged -> substep done. (No outer NR needed)
+    |     [Substep 7] Computed RampIters: 231
+    |     [Step 1 / Sub 7] Converged. Iter: 1032 | KineticRatio: 9.783976e-09 | DispRatio: 4.953253e-07 |
+    |     ForceRatio: 6.139044e-06
+    |     [35m[Explicit][0m Inner loop converged -> substep done. (No outer NR needed)
+    |     [Substep 8] Computed RampIters: 231
+
+[09:29:53] [INFO ] [EngineManager]
+    | ==================================================
+    | GRPD Solver Engine Initialized                 
+    | ==================================================
+
+[09:29:53] [INFO ] [EngineRegistry]
+    | Creating Engine instance: PD
+
+[09:29:53] [INFO ] [PDEngine]
+    | PD Engine instance created.
+    | ===============================================
+    | ========== Registered Types Summary ===========
+    | TimeIntegrator    : ADR, CentralDifference, Explicit, MatrixFreeImplicit, Staggered
+    | FieldRegistry     : DoubleField, IntField
+    | PhysicsFields     : Mechanical, Thermal
+    | BCRegistry        : AX, AY, AZ, CONV, FLUX, PX, PY, PZ, T, UX, UY, UZ, VX, VY, VZ
+    | ReaderRegistry    : .grpd, .inp
+    | StabilizerRegistry: Mechanical_Silling, Mechanical_Wan, Mechanical_Zhang, Thermal_Silling,
+    | Thermal_Wan, Thermal_Zhang
+    | ContactRegistry   : [Type] General, [ForceLaw] KinematicNormal, [ForceLaw] Nonlinear, [ForceLaw]
+    | Penalty, [ForceLaw] Silling, [ForceLaw] Viscous, [Evaluator] NTC, [Evaluator] NTN, [Evaluator] NTS,
+    | [FrictionLaw] ElasticStickSlip, [FrictionLaw] ExplicitImpulse, [FrictionLaw] TanhRegularized
+    | MaterialRegistry  : FourierThermalMat, J2PlasticityMat, J2VoceLemaitre, JCPlasticityMat,
+    | LinearElasticMat
+    | KernelRegistry    : NOSB_M, NOSB_T
+    | EngineRegistry    : PD
+    | ===============================================
+
+[09:29:53] [INFO ] [EngineManager]
+    | Initializing solver: PD
+
+[09:29:53] [INFO ] [PDEngine]
+    | Initializing PD simulation context...
+
+[09:29:53] [INFO ] [InitModel]
+    | ==================================================
+    | Model pre-processing...
+    | ==================================================
+    | grpd path: D:\Project_C++\GRPD\Examples\J2_Plasticity_PlaneStrain\J2_Plasticity_PlaneStrain.grpd
+    | model name: J2_Plasticity_PlaneStrain
+    | Found existing .grpd mesh file at:
+    | D:\Project_C++\GRPD\Examples\J2_Plasticity_PlaneStrain\J2_Plasticity_PlaneStrain.grpd. Skipping
+    | generation.
+
+[09:29:53] [INFO ] [Context Manager]
+    | Formalized model name to: J2_Plasticity_PlaneStrain
+    | Model dimension set to: 2D
+    | 2D thickness set to: 1.000000
+
+[09:29:53] [INFO ] [ReaderRegistry]
+    | Creating reader for: .grpd (name: J2_Plasticity_PlaneStrain)
+
+[09:29:53] [INFO ] [InitModel]
+    | Reading mesh file:
+    | D:\Project_C++\GRPD\Examples\J2_Plasticity_PlaneStrain\J2_Plasticity_PlaneStrain.grpd (reader:
+    | .grpd)
+
+[09:29:53] [INFO ] [GrpdMeshReader]
+    | Reading file: D:\Project_C++\GRPD\Examples\J2_Plasticity_PlaneStrain\J2_Plasticity_PlaneStrain.grpd
+    | Entering *PARTICLE section (Line 1)
+    | Pre-allocated memory for 5000 particles (Zero-Reallocation)
+    | Entering *LOAD section (Line 5004)
+    | ============================================
+    | File reading complete!
+    | Total particles: 5000
+    | Total load entries: 150
+    | ============================================
+
+[09:29:53] [INFO ] [ParticleManager]
+    | Pre-allocated memory for 5000 particles
+
+[09:29:53] [INFO ] [InitModel]
+    | Total particles loaded for model J2_Plasticity_PlaneStrain: 5000
+
+[09:29:53] [INFO ] [InitMaterial]
+    | ==================================================
+    | Entering Material Initialization Phase...
+    | ==================================================
+    | Instantiating material [1] of type: J2PlasticityMat
+
+[09:29:53] [INFO ] [MaterialRegistry]
+    | Using factory to create material: A36_Steel (type: J2PlasticityMat)
+
+[09:29:53] [INFO ] [J2PlasticityMat]
+    | Hardening Type: Isotropic
+
+[09:29:53] [INFO ] [MaterialManager]
+    | Successfully added material instance: A36_Steel
+
+[09:29:53] [INFO ] [InitMaterial]
+    | Successfully registered material ID 1 (A36_Steel)
+    | Assigning material pointers to particles...
+    | Successfully assigned materials to 5000 particles.
+
+[09:29:53] [INFO ] [InitFields]
+    | ==================================================
+    | Entering Field Registration Phase...
+    | ==================================================
+
+[09:29:53] [INFO ] [FieldManager]
+    | Added field 'Displacement'.
+    | Added field 'Velocity'.
+    | Added field 'Acceleration'.
+    | Added field 'ContactNormal'.
+    | Added field 'ContactGap'.
+    | Added field 'VirtualSurfacePos'.
+
+[09:29:53] [INFO ] [MechanicalFields]
+    | Core fields registered: Displacement, Velocity, Acceleration, ContactNormal, ContactGap,
+    | VirtualSurfacePos.
+
+[09:29:53] [INFO ] [InitFields]
+    | Auto-registered PhysicsFields module: Mechanical
+
+[09:29:53] [INFO ] [FieldManager]
+    | Added field 'ID'.
+    | Added field 'PartID'.
+    | Added field 'MatID'.
+    | Added field 'Coords'.
+    | Added field 'Volume'.
+    | Added field 'ActiveStatus'.
+
+[09:29:53] [INFO ] [InitFields]
+    | Global ActiveStatus field registered.
+
+[09:29:53] [INFO ] [FieldManager]
+    | Added field 'EqPlasticStrain_Old'.
+    | Added field 'EqPlasticStrain_Trial'.
+    | Registered swap pair: EqPlasticStrain_Old <-> EqPlasticStrain_Trial
+    | Added field 'PlasticStrain_Old'.
+    | Added field 'PlasticStrain_Trial'.
+    | Registered swap pair: PlasticStrain_Old <-> PlasticStrain_Trial
+    | Added field 'VonMisesStress'.
+    | Resized all 17 fields for 5000 particles.
+
+[09:29:53] [INFO ] [InitFields]
+    | ActiveStatus initialized to 1 for all particles.
+    | Binding high-speed material state pointers...
+
+[09:29:53] [INFO ] [MeshData]
+    | Populated particle geometry fields into FieldManager for 5000 particles.
+
+[09:29:53] [INFO ] [InitFields]
+    | All fields allocated for 5000 particles. Total fields: 17.
+
+[09:29:53] [INFO ] [InitConditions]
+    | ==================================================
+    | Entering Conditions Initialization Phase...
+    | ==================================================
+
+[09:29:53] [INFO ] [ReaderRegistry]
+    | Creating reader for: .grpd (name: LoadReader)
+
+[09:29:53] [INFO ] [GrpdMeshReader]
+    | Reading file: D:\Project_C++\GRPD\Examples\J2_Plasticity_PlaneStrain\J2_Plasticity_PlaneStrain.grpd
+    | Entering *PARTICLE section (Line 1)
+    | Pre-allocated memory for 5000 particles (Zero-Reallocation)
+    | Entering *LOAD section (Line 5004)
+    | ============================================
+    | File reading complete!
+    | Total particles: 5000
+    | Total load entries: 150
+    | ============================================
+
+[09:29:53] [INFO ] [InitConditions]
+    | Load statistics:
+    | - PX : 50
+    | - UX : 50
+    | - UY : 50
+    | Boundary conditions initialization complete.
+
+[09:29:53] [INFO ] [InitNeighbors]
+    | ==================================================
+    | Entering Neighbor Search Phase...
+    | ==================================================
+    | Horizon radius: 0.301500
+
+[09:29:53] [INFO ] [NeighborList]
+    | Starting full-flat CSR search for 5000 particles, horizon = 0.301500
+    | Cell grid: 33 x 17 x 1 = 561 cells
+    | Flat cell list built in 1.000166 ms
+    | Pass 1 (count) done in 0.999928 ms
+    | Total bonds: 134636, Memory: 1 MB
+    | Pass 2 (fill) done in 0.999928 ms
+    | Max neighbors: 28
+    | Total time: 3.000021 ms
+
+[09:29:53] [INFO ] [FieldManager]
+    | Added field 'NeighborCount'.
+
+[09:29:53] [INFO ] [InitNeighbors]
+    | NeighborCount field populated for 5000 particles.
+
+[09:29:53] [INFO ] [FieldManager]
+    | Added field 'BondIntegrity'.
+
+[09:29:53] [INFO ] [InitNeighbors]
+    | Global BondIntegrity scalar field properly initialized to 0.0
+
+[09:29:53] [INFO ] [FieldManager]
+    | Added field 'IsSurface'.
+
+[09:29:53] [INFO ] [SurfaceDetector]
+    | Volume Deficit check complete. Identified 308 surface particles out of 5000 (Threshold: 0.750000).
+
+[09:29:53] [INFO ] [InitNeighbors]
+    | Neighbor search phase complete.
+
+[09:29:53] [INFO ] [InitContact]
+    | ==================================================
+    | Entering Contact Initialization Phase...
+    | ==================================================
+    | Initializing Material-specific BondIntegrity Models...
+    | Material BondIntegrity Models initialized. Total Active Models: 0
+
+[09:29:53] [INFO ] [InitPreCracks]
+    | Detected PreCracks configuration. Initializing geometric cuts...
+
+[09:29:53] [INFO ] [InitSolverComponents]
+    | ==================================================
+    | Entering Solver Components Assembly Phase...
+    | ==================================================
+    | Building Time Integrator: ADR
+
+[09:29:53] [INFO ] [TimeIntegrator]
+    | Explicitly set OMP Threads to: 16
+
+[09:29:53] [INFO ] [InitSolverComponents]
+    | Time Integrator configured.
+    | Building Space Kernel: NOSB_M
+
+[09:29:53] [INFO ] [NOSB_Base]
+    | Applied KernelWeightType: Linear
+    | Applied ZeroEnergyG0: 1.000000
+    | Applied ZeroEnergyMethod string: Zhang
+    | Dynamic Shape Tensor update is set to: 0
+
+[09:29:53] [INFO ] [InitSolverComponents]
+    | Space Kernel 'NOSB_M' configured.
+    | Total kernels assembled: 1
+
+[09:29:53] [INFO ] [PDEngine::Init]
+    | Initializing PostProcessing modules...
+
+[09:29:53] [INFO ] [FieldManager]
+    | Added field 'ReactionForce'.
+
+[09:29:53] [INFO ] [ReactionForceExtractor]
+    | Initialized physical field 'ReactionForce'.
+
+[09:29:53] [INFO ] [PDEngine::Init]
+    | Registered PostProcessor: ReactionForce
+
+[09:29:53] [INFO ] [PDEngine]
+    | PD simulation context initialized successfully.
+
+[09:29:53] [INFO ] [EngineManager]
+    | All solvers initialized. Total: 1
+    | ==================================================
+    | Entering Main Solver Phase
+    | ==================================================
+    | Solving: PD
+
+[09:29:53] [INFO ] [PDEngine]
+    | Starting PD Engine Solve Phase...
+
+[09:29:53] [INFO ] [ADR]
+    | Identified 2nd-order ODE coupling: Displacement <- Velocity <- Acceleration
+
+[09:29:53] [INFO ] [FieldManager]
+    | Added field 'ShapeTensorInv'.
+    | Added field 'VHorizon'.
+    | Added field 'SumFac'.
+    | Added field 'SumOmegaRaw'.
+
+[09:29:53] [INFO ] [NOSB_Base]
+    | Computing InfluenceWeight + Shape Tensor Inverse (K^-1)...
+    | All NOSB base fields registered and Shape Tensor Inverse computed.
+
+[09:29:53] [INFO ] [FieldManager]
+    | Added field 'DeformationGradient'.
+    | Added field 'PK1Stress'.
+
+[09:29:53] [INFO ] [NOSB_M]
+    | Instantiated MechanicalStabilizer globally in Phase 0 using strategy: Zhang
+
+[09:29:53] [INFO ] [ADR]
+    | Material [A36_Steel]: WaveSpeed c = 5.188745e+02, Safe CFL dt = 1.541799e-04
+    | Computed safe CFL limit dt: 1.541799e-04 (dx = 1.000000e-01, c = 5.188745e+02)
+
+[09:29:53] [INFO ] [ADR_Integrator]
+    | Auto CFL enabled. Setting dt = 1.541799e-04
+    | Starting Custom ADR: NumLoadSteps = 1, MassScale = 1.000000e+08, DampingMethod = HybridKinetic, dt
+    | = 1.541799e-04
+    | === Load Step 1 / 1 | NumSubsteps: 10 | KBC: 0 ===
+    |     [36m[NR-Increment][0m Computed forceCorr for NR iter 1
+    |     [Substep 1] Computed RampIters: 231
+    |     [Step 1 / Sub 1] Converged. Iter: 1012 | KineticRatio: 9.780523e-09 | DispRatio: 4.969280e-07 |
+    |     ForceRatio: 6.023055e-06
+    |     [35m[NR][0m Converged at iter 1 | MacroForce: 5.954166e-06 | MacroDisp: 1.000000e+00 | dFref:
+    |     1.100233e+01 (Total=1.100233e+01)
+    |     [36m[NR-Increment][0m Computed forceCorr for NR iter 1
+    |     [Substep 2] Computed RampIters: 231
+    |     [Step 1 / Sub 2] Converged. Iter: 1011 | KineticRatio: 9.895807e-09 | DispRatio: 4.999117e-07 |
+    |     ForceRatio: 6.061016e-06
+    |     [35m[NR][0m Converged at iter 1 | MacroForce: 5.992136e-06 | MacroDisp: 1.000000e+00 | dFref:
+    |     1.100294e+01 (Total=2.200527e+01)
+    |     [36m[NR-Increment][0m Computed forceCorr for NR iter 1
+    |     [Substep 3] Computed RampIters: 231
+    |     [Step 1 / Sub 3] Converged. Iter: 1011 | KineticRatio: 9.895744e-09 | DispRatio: 4.999100e-07 |
+    |     ForceRatio: 6.060995e-06
+    |     [35m[NR][0m Converged at iter 1 | MacroForce: 5.992116e-06 | MacroDisp: 1.000000e+00 | dFref:
+    |     1.100294e+01 (Total=3.300821e+01)
+    |     [36m[NR-Increment][0m Computed forceCorr for NR iter 1
+    |     [Substep 4] Computed RampIters: 231
+    |     [Step 1 / Sub 4] Converged. Iter: 1011 | KineticRatio: 9.895744e-09 | DispRatio: 4.999100e-07 |
+    |     ForceRatio: 6.060995e-06
+    |     [35m[NR][0m Converged at iter 1 | MacroForce: 5.992116e-06 | MacroDisp: 1.000000e+00 | dFref:
+    |     1.100294e+01 (Total=4.401115e+01)
+    |     [36m[NR-Increment][0m Computed forceCorr for NR iter 1
+    |     [Substep 5] Computed RampIters: 231
+    |     [Step 1 / Sub 5] Converged. Iter: 1011 | KineticRatio: 9.895744e-09 | DispRatio: 4.999100e-07 |
+    |     ForceRatio: 6.060995e-06
+    |     [35m[NR][0m iter 1 / 100 | MacroForce: 1.397423e-02 (dFref=1.091811e+01) | MacroDisp:
+    |     1.000000e+00
+    |     [36m[NR-Increment][0m Computed forceCorr for NR iter 2
+    |     [Substep 5] Computed RampIters: 0
+    |     [Step 1 / Sub 5] Converged. Iter: 920 | KineticRatio: 9.941162e-09 | DispRatio: 1.149218e-09 |
+    |     ForceRatio: 1.328219e-08
+    |     [35m[NR][0m Converged at iter 2 | MacroForce: 2.729021e-03 | MacroDisp: 3.822120e-04 | dFref:
+    |     1.097961e+01 (Total=5.499076e+01)
+    |     [36m[NR-Increment][0m Computed forceCorr for NR iter 1
+    |     [Substep 6] Computed RampIters: 231
+    |     [Step 1 / Sub 6] Converged. Iter: 1012 | KineticRatio: 9.780308e-09 | DispRatio: 4.969554e-07 |
+    |     ForceRatio: 6.015373e-06
+    |     [35m[NR][0m iter 1 / 100 | MacroForce: 1.309956e-01 (dFref=1.066586e+01) | MacroDisp:
+    |     1.000000e+00
+    |     [36m[NR-Increment][0m Computed forceCorr for NR iter 2
+    |     [Substep 6] Computed RampIters: 0
+    |     [Step 1 / Sub 6] Converged. Iter: 862 | KineticRatio: 9.972561e-09 | DispRatio: 1.084204e-08 |
+    |     ForceRatio: 1.265161e-07
+    |     [36m[Anderson Acceleration][0m Applied! Depth: 2
+    |     [35m[NR][0m iter 2 / 100 | MacroForce: 8.752444e-02 (dFref=1.086931e+01) | MacroDisp:
+    |     1.893922e-03
+    |     [36m[NR-Increment][0m Computed forceCorr for NR iter 3
+    |     [Substep 6] Computed RampIters: 0
+    |     [Step 1 / Sub 6] Converged. Iter: 758 | KineticRatio: 9.815796e-09 | DispRatio: 9.716167e-09 |
+    |     ForceRatio: 1.171507e-07
+    |     [36m[Anderson Acceleration][0m Applied! Depth: 3
+    |     [35m[NR][0m iter 3 / 100 | MacroForce: 8.061797e-02 (dFref=1.089072e+01) | MacroDisp:
+    |     1.079728e-03
+    |     [36m[NR-Increment][0m Computed forceCorr for NR iter 4
+    |     [Substep 6] Computed RampIters: 0
+    |     [Step 1 / Sub 6] Converged. Iter: 523 | KineticRatio: 9.908343e-09 | DispRatio: 5.682137e-09 |
+    |     ForceRatio: 7.927335e-08
+    |     [36m[Anderson Acceleration][0m Applied! Depth: 3
+    |     [35m[NR][0m iter 4 / 100 | MacroForce: 4.951669e-02 (dFref=1.098019e+01) | MacroDisp:
+    |     4.582545e-04
+    |     [36m[NR-Increment][0m Computed forceCorr for NR iter 5
+    |     [Substep 6] Computed RampIters: 0
+    |     [Step 1 / Sub 6] Converged. Iter: 290 | KineticRatio: 9.475856e-09 | DispRatio: 5.061241e-09 |
+    |     ForceRatio: 1.801056e-07
+    |     [36m[Anderson Acceleration][0m Applied! Depth: 3
+    |     [35m[NR][0m iter 5 / 100 | MacroForce: 4.513896e-02 (dFref=1.098119e+01) | MacroDisp:
+    |     4.183701e-04
+    |     [36m[NR-Increment][0m Computed forceCorr for NR iter 6
+    |     [Substep 6] Computed RampIters: 0
+    |     [Step 1 / Sub 6] Converged. Iter: 695 | KineticRatio: 9.902637e-09 | DispRatio: 1.170903e-09 |
+    |     ForceRatio: 1.446347e-08
+    |     [36m[Anderson Acceleration][0m Applied! Depth: 3
+    |     [35m[NR][0m iter 6 / 100 | MacroForce: 8.695084e-03 (dFref=1.097848e+01) | MacroDisp:
+    |     1.322867e-04
+    |     [36m[NR-Increment][0m Computed forceCorr for NR iter 7
+    |     [Substep 6] Computed RampIters: 0
+    |     [Step 1 / Sub 6] Converged. Iter: 704 | KineticRatio: 9.791947e-09 | DispRatio: 7.776842e-10 |
+    |     ForceRatio: 9.503357e-09
+    |     [36m[Anderson Acceleration][0m Applied! Depth: 3
+    |     [35m[NR][0m iter 7 / 100 | MacroForce: 5.313415e-03 (dFref=1.097420e+01) | MacroDisp:
+    |     9.389895e-05
+    |     [36m[NR-Increment][0m Computed forceCorr for NR iter 8
+    |     [Substep 6] Computed RampIters: 0
+    |     [Step 1 / Sub 6] Converged. Iter: 690 | KineticRatio: 9.893922e-09 | DispRatio: 4.128289e-10 |
+    |     ForceRatio: 5.144688e-09
+    |     [35m[NR][0m Converged at iter 8 | MacroForce: 2.786723e-03 | MacroDisp: 5.085813e-05 | dFref:
+    |     1.096886e+01 (Total=6.595962e+01)
+    |     [36m[NR-Increment][0m Computed forceCorr for NR iter 1
+    |     [Substep 7] Computed RampIters: 231
+    |     [Step 1 / Sub 7] Converged. Iter: 1012 | KineticRatio: 9.871078e-09 | DispRatio: 4.995625e-07 |
+    |     ForceRatio: 6.054051e-06
+    |     [35m[NR][0m iter 1 / 100 | MacroForce: 2.350578e-01 (dFref=1.029587e+01) | MacroDisp:
+    |     1.000000e+00
+    |     [36m[NR-Increment][0m Computed forceCorr for NR iter 2
+    |     [Substep 7] Computed RampIters: 0
+    |     [Step 1 / Sub 7] Converged. Iter: 948 | KineticRatio: 9.844074e-09 | DispRatio: 1.601661e-08 |
+    |     ForceRatio: 1.882710e-07
+    |     [36m[Anderson Acceleration][0m Applied! Depth: 2
+    |     [35m[NR][0m iter 2 / 100 | MacroForce: 1.430784e-01 (dFref=1.063857e+01) | MacroDisp:
+    |     7.314413e-03
+    |     [36m[NR-Increment][0m Computed forceCorr for NR iter 3
+    |     [Substep 7] Computed RampIters: 0
+    |     [Step 1 / Sub 7] Converged. Iter: 860 | KineticRatio: 9.835629e-09 | DispRatio: 1.426824e-08 |
+    |     ForceRatio: 1.717379e-07
+    |     [36m[Anderson Acceleration][0m Applied! Depth: 3
+    |     [35m[NR][0m iter 3 / 100 | MacroForce: 1.303444e-01 (dFref=1.066181e+01) | MacroDisp:
+    |     3.396591e-03
+    |     [36m[NR-Increment][0m Computed forceCorr for NR iter 4
+    |     [Substep 7] Computed RampIters: 0
+    |     [Step 1 / Sub 7] Converged. Iter: 760 | KineticRatio: 9.921336e-09 | DispRatio: 7.733178e-09 |
+    |     ForceRatio: 9.521636e-08
+    |     [36m[Anderson Acceleration][0m Applied! Depth: 3
+    |     [35m[NR][0m iter 4 / 100 | MacroForce: 7.486679e-02 (dFref=1.075175e+01) | MacroDisp:
+    |     7.339500e-04
+    |     [36m[NR-Increment][0m Computed forceCorr for NR iter 5
+    |     [Substep 7] Computed RampIters: 0

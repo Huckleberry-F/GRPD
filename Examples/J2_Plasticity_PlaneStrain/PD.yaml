@@ -90,7 +90,7 @@ Solver:
   MaxPseudoSteps: 20000
   MassScaleFactor: 1.0e8
   MaxNRSteps: 100
-  NRStateFrozen: false
+  NRStateFrozen: true
   NRDispTol: 5.0e-2
   NRForceTol: 5.0e-3
   KineticTol: 1.0e-8

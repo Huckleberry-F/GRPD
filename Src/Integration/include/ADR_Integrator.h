@@ -126,12 +126,12 @@ private:
   void saveNROldDisplacement();  ///< 保存外循环开始时的位移
   double computeAdaptiveDamping(double dt);
   void updateKinematicsLeapfrog(double cn, double dt);
-  void computeConvergenceCriteria(double currentFRef);
+  void computeConvergenceCriteria(double currentFRef, const double* damage = nullptr);
 
   /// @brief 计算外循环宏观收敛准则（ANSYS风格）
   /// @param[out] macroForceRatio 宏观力残差比 = ||R_free|| / max(||F_int_all||, MINREF)
   /// @param[out] macroDispRatio  宏观位移残差比 = ||du_NR|| / ||du_substep||
-  void computeNRConvergence(double fIntTotal, double &macroForceRatio, double &macroDispRatio);
+  void computeNRConvergence(double fIntTotal, double &macroForceRatio, double &macroDispRatio, const double* damage = nullptr);
 };
 
 } // namespace Src::Integration
