@@ -25,22 +25,24 @@ BoundaryConditions:
     Box: [-0.5, 9.5, 19.9, 20.05, -1.0, 1.0]
     Type: "UY"
     Value: 0.5 # 顶部拉伸 1.15 mm
+  - Step: 1
     BcID: 2
     Name: "Bottom_Tension1"
-    Box: [-0.5, 9.5, -19.9, -20.05, -1.0, 1.0]
+    Box: [-0.5, 9.5, -20.05, -19.9, -1.0, 1.0]
     Type: "UY"
-    Value: -0.5 # 顶部拉伸 1.15 mm        
+    Value: -0.5 # 底部拉伸 -0.5 mm        
   - Step: 2
     BcID: 3
     Name: "Top_Tension2"
     Box: [-0.5, 9.5, 19.9, 20.05, -1.0, 1.0]
     Type: "UY"
     Value: 1.15 # 顶部拉伸 1.15 mm
+  - Step: 2
     BcID: 4
     Name: "Bottom_Tension2"
-    Box: [-0.5, 9.5, -19.9, -20.05, -1.0, 1.0]
+    Box: [-0.5, 9.5, -20.05, -19.9, -1.0, 1.0]
     Type: "UY"
-    Value: -1.15 # 顶部拉伸 1.15 mm
+    Value: -1.15 # 底部拉伸 -1.15 mm
 # 6. 材质物理属性
 Materials:
   - MatID: 1
