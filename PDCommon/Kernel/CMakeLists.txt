@@ -8,6 +8,7 @@ add_library(Kernel_Obj OBJECT
     src/NOSB_Base.cpp
     src/NOSB_T.cpp
     src/NOSB_M.cpp
+    src/NOSB_Axis.cpp
     src/ThermalStabilizers.cpp
     src/MechanicalStabilizers.cpp
     src/StabilizerRegistry.cpp
@@ -19,6 +20,7 @@ target_sources(Kernel_Obj PRIVATE
     include/NOSB_Base.h
     include/NOSB_T.h
     include/NOSB_M.h
+    include/NOSB_Axis.h
     include/ThermalStabilizers.h
     include/MechanicalStabilizers.h
     include/Stabilizer.h

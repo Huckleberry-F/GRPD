@@ -1,0 +1,64 @@
+! ==============================================================================
+! ANSYS APDL MACRO: Axisymmetric Ring Tension Validation
+! ==============================================================================
+FINISH
+/CLEAR, NOSTART
+/PREP7
+
+! 1. 单元类型设置：PLANE182，并开启轴对称选项
+ET, 1, PLANE182
+KEYOPT, 1, 3, 1    ! KEYOPT(3) = 1 代表 Axisymmetric (轴对称)
+
+! 2. 材料属性设置 (与 GRPD 对应)
+MP, EX, 1, 200000.0    ! 杨氏模量 (MPa)
+MP, PRXY, 1, 0.3       ! 泊松比
+
+! --- 如果您想验证塑性，请取消下面几行的注释 ---
+! ! GRPD的线性硬化模量 H = 500 MPa。ANSYS BISO 需要的是切线模量 Et。
+! ! 换算公式：Et = (E * H) / (E + H) = (200000 * 500) / 200500 = 498.75 MPa
+! TB, BISO, 1, 1, 2
+! TBDATA, 1, 400.0     ! 初始屈服应力 (MPa)
+! TBDATA, 2, 498.75    ! 切线模量 Et (MPa)
+
+! 3. 几何建模：创建矩形截面
+! X 对应径向 (R)，Y 对应轴向 (Z)
+! 对应 GRPD: Length=2.0, Offset X=0.5 -> X 从 0.5 到 2.5
+!            Width=5.0,  Offset Y=0.0 -> Y 从 0.0 到 5.0
+RECTNG, 0.5, 2.5, 0.0, 5.0
+
+! 4. 网格划分
+ESIZE, 0.05            ! 对应 GRPD 的 dx = 0.05
+MSHAPE, 0, 2D          ! 四边形网格
+MSHKEY, 1              ! 映射网格 (规则矩形网格)
+AMESH, ALL
+
+! 5. 施加边界条件
+! 底端固定 Y 方向
+NSEL, S, LOC, Y, 0.0
+D, ALL, UY, 0.0
+
+! 顶端施加 Y 方向拉伸位移
+NSEL, S, LOC, Y, 5.0
+D, ALL, UY, 0.5        ! 拉伸 0.5 (10% 应变)
+
+NSEL, ALL
+
+! 6. 求解设置
+FINISH
+/SOLU
+ANTYPE, 0              ! 静力学分析 (Static)
+NLGEOM, OFF            ! 几何大变形开关 (依据 GRPD 的 LargeDeformation 设置)
+
+! 分步加载设置
+NSUBST, 20, 20, 20     ! 对应 GRPD 的 NumSubsteps: 20
+OUTRES, ALL, ALL
+SOLVE
+
+FINISH
+
+! 7. 简单的后处理显示
+/POST1
+SET, LAST
+PLNSOL, U, Y           ! 显示 Y 向位移
+! PLNSOL, S, EQV       ! 显示 Von Mises 等效应力
+! PLNSOL, EPTO, EQV    ! 显示总等效应变

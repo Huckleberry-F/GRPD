@@ -270,17 +270,13 @@ Eigen::Matrix3d J2VoceLemaitreMat::ComputePK1Stress(const Eigen::Matrix3d &F,
       double W = Wn;
       double f2 = Y / lemaitreS_;
       double Y_term = std::pow(f2, lemaitre_s_) * dGamma;
-      
-      int it = 0;
-      while (it < 200) {
-        double res2 = W - Wn + Y_term / W;
-        if (std::abs(res2) < 1e-8) break;
-        double H22 = 1.0 - Y_term / (W * W);
-        if (std::abs(H22) < 1e-12) break; // 防止奇异
-        W -= res2 / H22;
-        it++;
+      double discriminant = Wn * Wn - 4.0 * Y_term;
+      if (discriminant >= 0.0) {
+        W = 0.5 * (Wn + std::sqrt(discriminant));
+      } else {
+        W = 0.001; // 物理意义：当前步损伤增量过大，导致材料完全破断
       }
-      
+
       if (W < 0.001) W = 0.001; // 防止完全破断导致的数值奇异
       damage_new = 1.0 - W;
     }
