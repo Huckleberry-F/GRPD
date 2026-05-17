@@ -76,9 +76,9 @@ Solver:
   Fracture_Strategy: "FastInnerLoop"
   NRStiffnessType: "Initial"
 
-  KineticTol: 1.0e-8
-  NRForceTol: 0.005
-  NRDispTol: 0.0005
+  KineticTol: 1.0e-16
+  NRForceTol: 1e-8
+  NRDispTol: 1e-8
   MaxNRSteps: 30
   NRStateFrozen: false
 
@@ -87,7 +87,7 @@ Solver:
   Horizon: 0.15075 # 3.015 * 0.05
   KernelWeightType: "Linear"
   ZeroEnergyG0: 1.0
-  ZeroEnergyMethod: "Zhang"
+  ZeroEnergyMethod: "Wan"
 
 # 8. IO 输出设置 (Writer)
 Writer:
