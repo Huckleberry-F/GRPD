@@ -29,7 +29,9 @@ public:
   Eigen::Matrix3d
   ComputeEngineeringStress(const Eigen::Matrix3d &strain) const override;
 
-  Eigen::Matrix3d ComputePK1Stress(const Eigen::Matrix3d &F, int particleId = -1, int stateMode = 0) const override;
+  Eigen::Matrix3d ComputePK1Stress(const Eigen::Matrix3d &F,
+                                   int particleId = -1,
+                                   int stateMode = 0) const override;
 
   // -----------------------------------------------------------------------
   // 实现 Material 基类虚函数
@@ -56,20 +58,21 @@ protected:
   double mu_{0.0};
   double bulkModulus_{0.0};
 
-  // 塑性属性 (Linear+Voce Hardening: sigma_y = sigma_0 + K1*p + R_inf * (1 - exp(-b*p)))
-  double yieldStress_{1e20}; // sigma_0
-  double linearHardening_{0.0}; // K1
-  double voceR_{0.0};        // R_inf
-  double voceB_{0.0};        // b
+  // 塑性属性 (Linear+Voce Hardening: sigma_y = sigma_0 + K1*p + R_inf * (1 -
+  // exp(-b*p)))
+  double yieldStress_{1e20};     // sigma_0
+  double linearHardening_{0.0};  // K1
+  double voceR_{0.0};            // R_inf
+  double voceB_{0.0};            // b
   bool largeDeformation_{false}; // 是否使用大变形极分解
 
   // 损伤属性 (Lemaitre)
-  double lemaitreS_{1.0};      // S
-  double lemaitre_s_{1.0};     // s
-  double damageThreshold_{0.0}; // p_D
-  double criticalDamage_{1.0};  // D_c
-  double damageAccelThreshold_{0.4}; // K4: 触发加速的损伤阈值
-  double damageAccelFactor_{10.0};   // 达到阈值后的 Y 放大倍数
+  double lemaitreS_{1.0};             // S
+  double lemaitre_s_{1.0};            // s
+  double damageThreshold_{0.0};       // p_D
+  double criticalDamage_{0.99};       // D_c
+  double damageAccelThreshold_{0.99}; // K4: 触发加速的损伤阈值
+  double damageAccelFactor_{10.0};    // 达到阈值后的 Y 放大倍数
 
   // 算法缓存：缓存所有材料辖区下的粒子数
   size_t numParticles_{0};

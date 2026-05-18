@@ -43,13 +43,13 @@ Materials:
     Density: 7.85e-9 # tonne/mm³ (7850 kg/m³)
     YoungsModulus: 200000.0 # 200 GPa
     PoissonsRatio: 0.3
-    YieldStress: 400000000.0 # 初始屈服应力 (MPa)
+    YieldStress: 400.0 # 初始屈服应力 (MPa)
     LinearHardening: 500.0 # 线性塑性硬化模量 (MPa)
-    VoceR: 100.0
-    VoceB: 10.0
+    VoceR: 0.0
+    VoceB: 0.0
     LargeDeformation: false
     # Lemaitre 断裂参数 (设置极高的阈值以观察纯塑性)
-    LemaitreS: 1.0
+    LemaitreS: 1.0e10
     Lemaitre_s: 1.0
     DamageThreshold: 100.0
     CriticalDamage: 0.99
@@ -69,7 +69,7 @@ Solver:
       KBC: 0
       NumSubsteps: 20
 
-  MaxPseudoSteps: 5000
+  MaxPseudoSteps: 15000
   MassScaleFactor: 1.0e8
   RampWaveRatio: 10.0
   DampingMethod: "HybridKinetic"
@@ -82,12 +82,12 @@ Solver:
   MaxNRSteps: 30
   NRStateFrozen: false
 
-  OutputInterval: 500
+  OutputInterval: 5000
   OMP_Threads: 8
   Horizon: 0.15075 # 3.015 * 0.05
   KernelWeightType: "Linear"
   ZeroEnergyG0: 1.0
-  ZeroEnergyMethod: "Wan"
+  ZeroEnergyMethod: "Silling"
 
 # 8. IO 输出设置 (Writer)
 Writer:

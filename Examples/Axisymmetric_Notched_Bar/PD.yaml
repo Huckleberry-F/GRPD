@@ -30,7 +30,7 @@ BoundaryConditions:
     Name: "Bottom_Tension1"
     Box: [-0.5, 9.5, -20.05, -19.9, -1.0, 1.0]
     Type: "UY"
-    Value: -0.5 # 底部拉伸 -0.5 mm        
+    Value: -0.5 # 底部拉伸 -0.5 mm
   - Step: 2
     BcID: 3
     Name: "Top_Tension2"
@@ -76,7 +76,6 @@ Solver:
       Time: 1.0
       KBC: 0
       NumSubsteps: 20
-  LoadSteps:
     - Step: 2
       Time: 2.0
       KBC: 0
@@ -84,9 +83,9 @@ Solver:
 
   MaxPseudoSteps: 20000
   MassScaleFactor: 1.0e8
-  RampWaveRatio: 100.0
+  RampWaveRatio: 50.0
   DampingMethod: "HybridKinetic"
-  Fracture_Strategy: "FastInnerLoop"
+  Fracture_Strategy: "SimpleNRFracture"
   NRStiffnessType: "Initial"
 
   KineticTol: 1.0e-12
@@ -118,9 +117,9 @@ Writer:
       Dimension: 3
     - Name: "Acceleration"
       Dimension: 3
-    - Name: "Damage_Trial"
+    - Name: "Damage_Old"
       Dimension: 1
-    - Name: "EqPlasticStrain_Trial"
+    - Name: "EqPlasticStrain_Old"
       Dimension: 1
     - Name: "VonMisesStress"
       Dimension: 1

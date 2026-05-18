@@ -14,11 +14,11 @@ MP, EX, 1, 200000.0    ! 杨氏模量 (MPa)
 MP, PRXY, 1, 0.3       ! 泊松比
 
 ! --- 如果您想验证塑性，请取消下面几行的注释 ---
-! ! GRPD的线性硬化模量 H = 500 MPa。ANSYS BISO 需要的是切线模量 Et。
-! ! 换算公式：Et = (E * H) / (E + H) = (200000 * 500) / 200500 = 498.75 MPa
-! TB, BISO, 1, 1, 2
-! TBDATA, 1, 400.0     ! 初始屈服应力 (MPa)
-! TBDATA, 2, 498.75    ! 切线模量 Et (MPa)
+! GRPD的线性硬化模量 H = 500 MPa。ANSYS BISO 需要的是切线模量 Et。
+! 换算公式：Et = (E * H) / (E + H) = (200000 * 500) / 200500 = 498.75 MPa
+TB, BISO, 1, 1, 2
+TBDATA, 1, 400.0     ! 初始屈服应力 (MPa)
+TBDATA, 2, 498.75    ! 切线模量 Et (MPa)
 
 ! 3. 几何建模：创建矩形截面
 ! X 对应径向 (R)，Y 对应轴向 (Z)
@@ -60,5 +60,5 @@ FINISH
 /POST1
 SET, LAST
 PLNSOL, U, Y           ! 显示 Y 向位移
-! PLNSOL, S, EQV       ! 显示 Von Mises 等效应力
-! PLNSOL, EPTO, EQV    ! 显示总等效应变
+PLNSOL, S, EQV       ! 显示 Von Mises 等效应力
+PLNSOL, EPTO, EQV    ! 显示总等效应变
