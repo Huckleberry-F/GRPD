@@ -1,0 +1,125 @@
+#==============================================================================
+# GRPD 算例： 轴对称圆柱缺口杆 (Axisymmetric Cylindrical Notched Bar)
+# 测试 NOSB_Axis 积分核及 J2VoceLemaitre 弹塑性损伤本构
+#==============================================================================
+
+# 1. 全局设置
+Assembly: {}
+
+# 2. 几何模型：读取由 Python 生成的截面网格
+Parts:
+  - PartID: 1
+    MatID: 1
+    Dimension: 2
+    Source: "notched_bar_mesh.txt"
+    Offset: [0.0, 0.0, 0.0]
+    dx: 0.1
+
+# 4. 全局常驻边界
+
+# 5. 多级分步载荷配置 —— 拉伸 Y 向
+BoundaryConditions:
+  - Step: 1
+    BcID: 1
+    Name: "Top_Tension1"
+    Box: [-0.5, 9.5, 19.9, 20.05, -1.0, 1.0]
+    Type: "UY"
+    Value: 0.5 # 顶部拉伸 1.15 mm
+  - Step: 1
+    BcID: 2
+    Name: "Bottom_Tension1"
+    Box: [-0.5, 9.5, -20.05, -19.9, -1.0, 1.0]
+    Type: "UY"
+    Value: -0.5 # 底部拉伸 -0.5 mm
+  - Step: 2
+    BcID: 3
+    Name: "Top_Tension2"
+    Box: [-0.5, 9.5, 19.9, 20.05, -1.0, 1.0]
+    Type: "UY"
+    Value: 1.15 # 顶部拉伸 1.15 mm
+  - Step: 2
+    BcID: 4
+    Name: "Bottom_Tension2"
+    Box: [-0.5, 9.5, -20.05, -19.9, -1.0, 1.0]
+    Type: "UY"
+    Value: -1.15 # 底部拉伸 -1.15 mm
+# 6. 材质物理属性
+Materials:
+  - MatID: 1
+    Name: "Steel_Notched"
+    Type: "J2VoceLemaitre"
+    Density: 7.85e-9 # tonne/mm³ (7850 kg/m³)
+    YoungsModulus: 210000.0 # 210 GPa
+    PoissonsRatio: 0.3
+    YieldStress: 620.0 # 初始屈服应力 (MPa)
+    LinearHardening: 0.0 # 无线性硬化
+    VoceR: 3300.0
+    VoceB: 0.4
+    LargeDeformation: false
+    # Lemaitre 断裂参数
+    LemaitreS: 3.5
+    Lemaitre_s: 1.0
+    DamageThreshold: 0.0
+    CriticalDamage: 0.99
+    Fracture:
+      Type: "DamageValueFracture"
+      Critical_Damage: 0.99
+
+# 7. 求解器与时间管理
+Solver:
+  Engine: "PD"
+  Type: "Mechanical"
+  Kernel: "NOSB_Axis"
+  TimeIntegrator: "ADR"
+  LoadSteps:
+    - Step: 1
+      Time: 1.0
+      KBC: 0
+      NumSubsteps: 20
+    - Step: 2
+      Time: 2.0
+      KBC: 0
+      NumSubsteps: 130
+
+  MaxPseudoSteps: 20000
+  MassScaleFactor: 1.0e8
+  RampWaveRatio: 50.0
+  DampingMethod: "HybridKinetic"
+  Fracture_Strategy: "SimpleNRFracture"
+  NRStiffnessType: "Initial"
+
+  KineticTol: 1.0e-12
+  NRForceTol: 1e-8
+  NRDispTol: 1e-6
+  MaxNRSteps: 30
+  NRStateFrozen: false
+
+  OutputInterval: 5000
+  OMP_Threads: 16
+  Horizon: 0.3015 # 3.015 * 0.1
+  KernelWeightType: "Linear"
+  ZeroEnergyG0: 1.0
+  ZeroEnergyMethod: "Wan"
+
+# 8. IO 输出设置 (Writer)
+Writer:
+  Type: "binary"
+  Variables:
+    - Name: "PartID"
+      Dimension: 1
+    - Name: "ActiveStatus"
+      Dimension: 1
+    - Name: "BondIntegrity"
+      Dimension: 1
+    - Name: "Displacement"
+      Dimension: 3
+    - Name: "Velocity"
+      Dimension: 3
+    - Name: "Acceleration"
+      Dimension: 3
+    - Name: "Damage_Old"
+      Dimension: 1
+    - Name: "EqPlasticStrain_Old"
+      Dimension: 1
+    - Name: "VonMisesStress"
+      Dimension: 1

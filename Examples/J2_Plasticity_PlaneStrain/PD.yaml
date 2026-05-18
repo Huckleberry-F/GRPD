@@ -29,11 +29,16 @@ Materials:
     YoungsModulus: 2.1e5
     PoissonsRatio: 0.3
     YieldStress: 100.0
-    HardeningModulus: 2.0e4
+    HardeningModulus: 1000.0
     HardeningType: "Isotropic"
     LargeDeformation: false
 
-PreCracks: []
+PreCracks:
+  # - Type: "QuadCrack"
+  #   V1: [-0.1, 2.5, -1.0]
+  #   V2: [5.0, 2.5, -1.0]
+  #   V3: [5.0, 2.5, 1.0]
+  #   V4: [-0.1, 2.5, 1.0]
 
 # 3. 边界施加
 BoundaryConditions:
@@ -55,10 +60,10 @@ BoundaryConditions:
     Type: "UY"
     Value: 0.0
 
-  # Step 1: 右端施加 X 方向拉伸位移 (进入塑性区)
+  # Step 1: 右端施加 X 方向拉伸载荷 (进入塑性区)
   - Step: 1
     BcID: 3
-    Name: "Pull_Right_UX"
+    Name: "Pull_Right_PX"
     PartID: 1
     Box: [9.9, 10.1, -0.1, 5.1, -1.0, 1.0]
     Type: "PX"
@@ -75,7 +80,7 @@ Solver:
   TimeIntegrator: "ADR"
 
   DynamicShapeTensor: false
-  KernelWeightType: "Gaussian"
+  KernelWeightType: "Linear"
   ZeroEnergyG0: 1.0
   ZeroEnergyMethod: "Zhang"
   Horizon: 0.3015
@@ -84,17 +89,18 @@ Solver:
 
   MaxPseudoSteps: 20000
   MassScaleFactor: 1.0e8
-  MaxNRSteps: 50
-  NRStateFrozen: false
+  MaxNRSteps: 100
+  NRStateFrozen: true
   NRDispTol: 5.0e-2
   NRForceTol: 5.0e-3
-  KineticTol: 1.0e-5
+  KineticTol: 1.0e-8
   MinRefForce: 1.0e-2
   # TimeStep_dt: 1.0e-3
   RampIters: 0
   RampWaveRatio: 5.0
   DampingMethod: "HybridKinetic"
-  Fracture_Strategy: "Strict"
+  Fracture_Strategy: "StrictNRFracture"
+  NRStiffnessType: "Initial"
 
   LoadSteps:
     - Step: 1
@@ -102,7 +108,11 @@ Solver:
       KBC: 0
       NumSubsteps: 10
 
-# 6. IO输出设置
+# 6. 后处理设置
+PostProcessing:
+  - Type: "ReactionForce"
+
+# 7. IO输出设置
 Writer:
   Type: "binary"
   Variables:
@@ -120,3 +130,5 @@ Writer:
       Dimension: 1
     - Name: "VonMisesStress"
       Dimension: 1
+    - Name: "ReactionForce"
+      Dimension: 3

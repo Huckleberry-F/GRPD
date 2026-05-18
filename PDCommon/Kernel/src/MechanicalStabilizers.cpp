@@ -4,6 +4,7 @@
 #include "NeighborList.h"
 #include "ParticleManager.h"
 #include "StabilizerRegistry.h"
+#include <algorithm>
 #include <cmath>
 #include <omp.h>
 
@@ -18,6 +19,20 @@ using namespace PDCommon::Material;
 REGISTER_STABILIZER(Mechanical_Silling, MechanicalSillingStabilizer)
 REGISTER_STABILIZER(Mechanical_Wan, MechanicalWanStabilizer)
 REGISTER_STABILIZER(Mechanical_Zhang, MechanicalZhangStabilizer)
+
+static constexpr double kPI = 3.14159265358979323846;
+static constexpr double kMinRadius = 1.0e-6;
+
+static inline double
+GetMechanicalIntegrationVolume(bool axisymmetricIntegration,
+                               const double *coords, const double *volumes,
+                               int index) {
+  if (!axisymmetricIntegration) {
+    return volumes[index];
+  }
+
+  return 2.0 * kPI * std::max(coords[index * 3], kMinRadius) * volumes[index];
+}
 
 // Helper: Compute z_i = Du - (F_i - I)*Dx
 static inline void ComputeNonAffineDisp(double du_x, double du_y, double du_z,
@@ -96,6 +111,10 @@ void MechanicalSillingStabilizer::applyPenalty(PDContext &ctx) {
   const double *omegaPtr = neighborList.getBondFieldPtr("InfluenceWeight");
   double *accPtr = fieldManager.getFieldAs<double>("Acceleration")->dataPtr();
 
+  // [新增] 获取塑性应变场用于动态软化
+  auto *eqPSField = fieldManager.getFieldAs<double>("EqPlasticStrain_Trial");
+  const double *eqPSPtr = eqPSField ? eqPSField->dataPtr() : nullptr;
+
 #pragma omp parallel for schedule(guided)
   for (int i = 0; i < static_cast<int>(numParticles); ++i) {
     double rho_i = rhoArr_[i];
@@ -137,7 +156,8 @@ void MechanicalSillingStabilizer::applyPenalty(PDContext &ctx) {
       double du_z = dispPtr[j * 3 + 2] - u_iz;
 
       double omega = omegaPtr[offset + k_nb];
-      double vj = volumes[j];
+      double vj = GetMechanicalIntegrationVolume(axisymmetricIntegration_,
+                                                 coords, volumes, j);
 
       double z_ix, z_iy, z_iz;
       ComputeNonAffineDisp(du_x, du_y, du_z, dx, dy, dz, Fi, z_ix, z_iy, z_iz);
@@ -155,9 +175,16 @@ void MechanicalSillingStabilizer::applyPenalty(PDContext &ctx) {
       force_z += omega * vj / horizon * (coeff_i * z_iz - coeff_j * z_jz);
     }
 
-    accPtr[i * 3] += force_x / rho_i;
-    accPtr[i * 3 + 1] += force_y / rho_i;
-    accPtr[i * 3 + 2] += force_z / rho_i;
+    // [新增] 动态塑性惩罚力软化
+    double plastic_softening = 1.0;
+    if (eqPSPtr) {
+      plastic_softening = std::exp(-100.0 * eqPSPtr[i]);
+      plastic_softening = std::max(plastic_softening, 0.01);
+    }
+
+    accPtr[i * 3] += (force_x * plastic_softening) / rho_i;
+    accPtr[i * 3 + 1] += (force_y * plastic_softening) / rho_i;
+    accPtr[i * 3 + 2] += (force_z * plastic_softening) / rho_i;
   }
 }
 
@@ -232,6 +259,10 @@ void MechanicalWanStabilizer::applyPenalty(PDContext &ctx) {
   const double *omegaPtr = neighborList.getBondFieldPtr("InfluenceWeight");
   double *accPtr = fieldManager.getFieldAs<double>("Acceleration")->dataPtr();
 
+  // [新增] 获取塑性应变场用于动态软化
+  auto *eqPSField = fieldManager.getFieldAs<double>("EqPlasticStrain_Trial");
+  const double *eqPSPtr = eqPSField ? eqPSField->dataPtr() : nullptr;
+
 #pragma omp parallel for schedule(guided)
   for (int i = 0; i < static_cast<int>(numParticles); ++i) {
     double rho_i = rhoArr_[i];
@@ -271,7 +302,8 @@ void MechanicalWanStabilizer::applyPenalty(PDContext &ctx) {
       double du_z = dispPtr[j * 3 + 2] - u_iz;
 
       double omega = omegaPtr[offset + k_nb];
-      double vj = volumes[j];
+      double vj = GetMechanicalIntegrationVolume(axisymmetricIntegration_,
+                                                 coords, volumes, j);
 
       double z_ix, z_iy, z_iz;
       ComputeNonAffineDisp(du_x, du_y, du_z, dx, dy, dz, Fi, z_ix, z_iy, z_iz);
@@ -303,9 +335,16 @@ void MechanicalWanStabilizer::applyPenalty(PDContext &ctx) {
       force_z += omega * vj * (Ti_z - Tj_z);
     }
 
-    accPtr[i * 3] += force_x / rho_i;
-    accPtr[i * 3 + 1] += force_y / rho_i;
-    accPtr[i * 3 + 2] += force_z / rho_i;
+    // [新增] 动态塑性惩罚力软化
+    double plastic_softening = 1.0;
+    if (eqPSPtr) {
+      plastic_softening = std::exp(-100.0 * eqPSPtr[i]);
+      plastic_softening = std::max(plastic_softening, 0.01);
+    }
+
+    accPtr[i * 3] += (force_x * plastic_softening) / rho_i;
+    accPtr[i * 3 + 1] += (force_y * plastic_softening) / rho_i;
+    accPtr[i * 3 + 2] += (force_z * plastic_softening) / rho_i;
   }
 }
 
@@ -354,6 +393,10 @@ void MechanicalZhangStabilizer::applyPenalty(PDContext &ctx) {
   const double *omegaPtr = neighborList.getBondFieldPtr("InfluenceWeight");
   double *accPtr = fieldManager.getFieldAs<double>("Acceleration")->dataPtr();
 
+  // [新增] 获取塑性应变场用于动态软化
+  auto *eqPSField = fieldManager.getFieldAs<double>("EqPlasticStrain_Trial");
+  const double *eqPSPtr = eqPSField ? eqPSField->dataPtr() : nullptr;
+
   // [维度修复]
   // 无需猜测系统维度以及厚度(由于厚度并未全局存储，导致 dx 解析报错)
   // 我们直接在后续的每一个节点内部，完美且精确地求取当前粒子的所有邻居真实体积之和！
@@ -387,7 +430,8 @@ void MechanicalZhangStabilizer::applyPenalty(PDContext &ctx) {
     // 粒子的真实物理几何体积，本质上就是它所有邻居节点的体积之和。
     // 这行简单的动态统计，自动包含了边界截断体积、自动适用 2D (面积*厚度) 和 3D
     // (球体积)。
-    double vi = volumes[i];
+    double vi = GetMechanicalIntegrationVolume(axisymmetricIntegration_, coords,
+                                               volumes, i);
 
 #pragma omp simd
     for (int k_nb = 0; k_nb < numNeighbors; ++k_nb) {
@@ -403,7 +447,8 @@ void MechanicalZhangStabilizer::applyPenalty(PDContext &ctx) {
       double du_y = dispPtr[j * 3 + 1] - u_iy;
       double du_z = dispPtr[j * 3 + 2] - u_iz;
 
-      double vj = volumes[j];
+      double vj = GetMechanicalIntegrationVolume(axisymmetricIntegration_,
+                                                 coords, volumes, j);
       double omega = omegaPtr[offset + k_nb];
 
       double z_ix, z_iy, z_iz;
@@ -460,9 +505,33 @@ void MechanicalZhangStabilizer::applyPenalty(PDContext &ctx) {
       force_z += g0_ * (t_iz - t_jz) * vj;
     }
 
-    accPtr[i * 3] += force_x / rho_i;
-    accPtr[i * 3 + 1] += force_y / rho_i;
-    accPtr[i * 3 + 2] += force_z / rho_i;
+    // [新增] 边界惩罚力削弱与调试
+    double reduction_factor = 1.0;
+
+    // vvPtr[i] (即 VHorizon): 内部点约为 1.0，表面点 > 1.2，角点 > 3.0
+    if (vvPtr[i] > 1.15) {
+      reduction_factor = 0.1; // 将边界的惩罚力砍掉 90%
+
+      // 记录削弱前原本离谱的惩罚力，并做简单的数量级拦截输出（避免刷屏）
+      if (std::abs(force_x) > 1.0e8 || std::abs(force_y) > 1.0e8) {
+        // 可随时取消注释以进行排查
+        // printf(">> [Penalty Warning] Surface Node (vv=%.2f) original penalty:
+        // Fx=%.2e, Fy=%.2e\n", vvPtr[i], force_x, force_y);
+      }
+    }
+
+    // [新增] 动态塑性惩罚力软化
+    double plastic_softening = 1.0;
+    if (eqPSPtr) {
+      plastic_softening = std::exp(-100.0 * eqPSPtr[i]);
+      plastic_softening = std::max(plastic_softening, 0.5);
+    }
+
+    double final_reduction = reduction_factor * plastic_softening;
+
+    accPtr[i * 3] += (force_x * final_reduction) / rho_i;
+    accPtr[i * 3 + 1] += (force_y * final_reduction) / rho_i;
+    accPtr[i * 3 + 2] += (force_z * final_reduction) / rho_i;
   }
 }
 

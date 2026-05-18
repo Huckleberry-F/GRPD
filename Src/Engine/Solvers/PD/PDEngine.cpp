@@ -92,6 +92,7 @@ void PDEngine::Initialize(const std::string &yamlPath) {
   Init::InitFractureModels(pdContext_, config);
   Init::InitPreCracks(pdContext_, config);
   Init::InitSolverComponents(config, integrator_, kernels_);
+  Init::InitPostProcessing(pdContext_, config);
 
   LOG_INFO("[PDEngine] PD simulation context initialized successfully.");
 }

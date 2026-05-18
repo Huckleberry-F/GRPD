@@ -11,26 +11,30 @@
 // ============================================================================
 
 #include "BCManager.h"
+#include "ContactManager.h"
 #include "FieldManager.h"
 #include "MaterialManager.h"
 #include "NeighborList.h"
 #include "ParticleManager.h"
-#include "ContactManager.h"
 #include <memory>
 #include <string>
+
+namespace PDCommon::PostProcessing {
+class PostProcessorManager;
+}
 
 namespace PDCommon::Core {
 
 class PDContext {
 public:
   /// @brief 默认构造函数
-  PDContext() = default;
+  PDContext();
 
   /// @brief 构造函数，初始化一个全新的仿真模型上下文
   /// @param name 模型名称，用于标识和日志输出
   explicit PDContext(const std::string &name);
 
-  ~PDContext() = default;
+  ~PDContext();
 
   // 禁用拷贝，允许移动（保持资源独占）
   PDContext(const PDContext &) = delete;
@@ -90,8 +94,23 @@ public:
   // -----------------------------------------------------------------------
   // 接触系统管理器 (ContactManager)
   // -----------------------------------------------------------------------
-  PDCommon::Contact::ContactManager &getContactManager() { return contactManager_; }
-  const PDCommon::Contact::ContactManager &getContactManager() const { return contactManager_; }
+  PDCommon::Contact::ContactManager &getContactManager() {
+    return contactManager_;
+  }
+  const PDCommon::Contact::ContactManager &getContactManager() const {
+    return contactManager_;
+  }
+
+  // -----------------------------------------------------------------------
+  // 后处理管理器 (PostProcessorManager)
+  // -----------------------------------------------------------------------
+  PDCommon::PostProcessing::PostProcessorManager &getPostProcessorManager() {
+    return *postProcessorManager_;
+  }
+  const PDCommon::PostProcessing::PostProcessorManager &
+  getPostProcessorManager() const {
+    return *postProcessorManager_;
+  }
 
   // -----------------------------------------------------------------------
   // 模型维度 (2D / 3D)
@@ -120,6 +139,12 @@ public:
   void setCurrentDt(double dt) { currentDt_ = dt; }
 
   // -----------------------------------------------------------------------
+  // 全局质量缩放因子 (MassScaleFactor)
+  // -----------------------------------------------------------------------
+  double getMassScaleFactor() const { return massScaleFactor_; }
+  void setMassScaleFactor(double sf) { massScaleFactor_ = sf; }
+
+  // -----------------------------------------------------------------------
   // 增量步冻结标志 (用于接触法向与权重在准静态子步内的几何锚定)
   // -----------------------------------------------------------------------
   bool isIncrementStart() const { return isIncrementStart_; }
@@ -144,10 +169,10 @@ public:
   void setOuterIter(int iter) { outerIter_ = iter; }
 
 private:
-  std::string name_;                                    ///< 模型名称
-  int dimension_ = 3;                                   ///< 模型维度 (默认 3D)
-  double thickness_ = 1.0;                               ///< 2D 模型厚度 (默认 1.0)
-  double currentDt_ = 1e-9;                               ///< 当前时间步长（由积分器每步更新）
+  std::string name_;        ///< 模型名称
+  int dimension_ = 3;       ///< 模型维度 (默认 3D)
+  double thickness_ = 1.0;  ///< 2D 模型厚度 (默认 1.0)
+  double currentDt_ = 1e-9; ///< 当前时间步长（由积分器每步更新）
   PDCommon::Model::ParticleManager particleManager_;    ///< 粒子管理器
   PDCommon::Material::MaterialManager materialManager_; ///< 材料管理器
   PDCommon::Field::FieldManager fieldManager_;          ///< 物理场管理器
@@ -155,11 +180,16 @@ private:
   std::unique_ptr<PDCommon::Neighbor::NeighborList>
       neighborList_; ///< 近邻列表（按需分配）
 
-  PDCommon::BC::BCManager bcManager_; ///< 边界条件管理器
+  PDCommon::BC::BCManager bcManager_;                ///< 边界条件管理器
   PDCommon::Contact::ContactManager contactManager_; ///< 接触系统管理器
-  bool isIncrementStart_ = false; ///< 是否处于当前增量步（或物理物理时间步）的首个迭代
-  bool stateFrozen_ = false;       ///< 本构状态冻结标志（ADR 初始刚度法）
-  int outerIter_ = 0;              ///< ADR 初始刚度法外循环迭代次数
+  std::unique_ptr<PDCommon::PostProcessing::PostProcessorManager>
+      postProcessorManager_;                         ///< 后处理算子管理器
+
+  bool isIncrementStart_ =
+      false; ///< 是否处于当前增量步（或物理物理时间步）的首个迭代
+  bool stateFrozen_ = false; ///< 本构状态冻结标志（ADR 初始刚度法）
+  int outerIter_ = 0;        ///< ADR 初始刚度法外循环迭代次数
+  double massScaleFactor_ = 1.0; ///< 全局质量缩放因子
 };
 
 } // namespace PDCommon::Core

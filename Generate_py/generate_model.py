@@ -67,6 +67,49 @@ def generate_from_yaml(yaml_path):
         print(f"[BUILD] Generating Part {part_id} with MatID {mat_id}...")
         
         if 'Source' in part:
+            source_path = part['Source']
+            # 支持相对于 YAML 文件的相对路径
+            if not os.path.isabs(source_path):
+                yaml_dir = os.path.dirname(os.path.abspath(yaml_path))
+                source_path = os.path.join(yaml_dir, source_path)
+                
+            # ============================================================
+            # 外部粒子点云直接导入路径 (.txt)
+            # ============================================================
+            if source_path.lower().endswith('.txt'):
+                print(f"[TXT]  Loading pre-generated point cloud from: {source_path}")
+                data = np.loadtxt(source_path)
+                x_flat = data[:, 0] + offset[0]
+                y_flat = data[:, 1] + offset[1]
+                z_flat = data[:, 2] + offset[2]
+                
+                if data.shape[1] >= 4:
+                    v_flat = data[:, 3]
+                else:
+                    v_flat = np.full(len(x_flat), dx*dx * part.get('Thickness', 1.0) if part.get('Dimension', 3) == 2 else dx*dx*dx)
+                
+                num_part_particles = len(x_flat)
+                mat_flat = np.full(num_part_particles, mat_id, dtype=int)
+                if 'MatRegions' in part:
+                    for region in part['MatRegions']:
+                        box = region['Box']
+                        r_mat = region.get('MatID', mat_id)
+                        mask = in_box(x_flat, y_flat, z_flat, box)
+                        mat_flat[mask] = r_mat
+                
+                for i in range(num_part_particles):
+                    global_particles.append({
+                        'ID': global_id,
+                        'PartID': part_id,
+                        'MatID': mat_flat[i],
+                        'X': x_flat[i],
+                        'Y': y_flat[i],
+                        'Z': z_flat[i],
+                        'Volume': v_flat[i]
+                    })
+                    global_id += 1
+                continue
+
             # ============================================================
             # STL/OBJ 体素化路径：从外部网格文件导入复杂几何
             # ============================================================
@@ -76,12 +119,6 @@ def generate_from_yaml(yaml_path):
                 print("[FATAL] 'open3d' package is required for STL import.")
                 print("        Install it with: pip install open3d")
                 exit(1)
-            
-            source_path = part['Source']
-            # 支持相对于 YAML 文件的相对路径
-            if not os.path.isabs(source_path):
-                yaml_dir = os.path.dirname(os.path.abspath(yaml_path))
-                source_path = os.path.join(yaml_dir, source_path)
             
             print(f"[STL]  Loading mesh from: {source_path}")
             mesh_o3d = o3d.io.read_triangle_mesh(source_path)

@@ -1,0 +1,111 @@
+#==============================================================================
+# GRPD 算例： 轴对称圆环拉伸塑性变形 (Axisymmetric Ring Tension)
+# 测试 NOSB_Axis 积分核及 J2 塑性本构
+#==============================================================================
+
+# 1. 全局设置
+Assembly: {}
+
+# 2. 几何模型：读取由 Python 生成的圆环截面网格
+Parts:
+  - PartID: 1
+    MatID: 1
+    Dimension: 2
+    Shape: "Box"
+    Length: 2.0
+    Width: 5.0
+    Offset: [0.5, 0.0, 0.0]
+    dx: 0.05
+
+# 4. 全局常驻边界
+BoundaryConditions:
+  - BcID: 1
+    Name: "Bottom_Fixed"
+    Box: [0.4, 2.6, -0.05, 0.05, -1.0, 1.0]
+    Type: "UY"
+    Value: 0.0
+
+# 5. 多级分步载荷配置 —— 拉伸 Y 向
+LoadStep_Conditions:
+  - Step: 1
+    BoundaryConditions:
+      - BcID: 2
+        Name: "Top_Tension"
+        Box: [0.4, 2.6, 4.95, 5.05, -1.0, 1.0]
+        Type: "UY"
+        Value: 0.5 # 相对高度 5.0 拉伸 10%
+
+# 6. 材质物理属性
+Materials:
+  - MatID: 1
+    Name: "Steel_Axis"
+    Type: "J2VoceLemaitre"
+    Density: 7.85e-9 # tonne/mm³ (7850 kg/m³)
+    YoungsModulus: 200000.0 # 200 GPa
+    PoissonsRatio: 0.3
+    YieldStress: 400.0 # 初始屈服应力 (MPa)
+    LinearHardening: 500.0 # 线性塑性硬化模量 (MPa)
+    VoceR: 0.0
+    VoceB: 0.0
+    LargeDeformation: false
+    # Lemaitre 断裂参数 (设置极高的阈值以观察纯塑性)
+    LemaitreS: 1.0e10
+    Lemaitre_s: 1.0
+    DamageThreshold: 100.0
+    CriticalDamage: 0.99
+    Fracture:
+      Type: "DamageValueFracture"
+      Critical_Damage: 0.99
+
+# 7. 求解器与时间管理
+Solver:
+  Engine: "PD"
+  Type: "Mechanical"
+  Kernel: "NOSB_Axis"
+  TimeIntegrator: "ADR"
+  LoadSteps:
+    - Step: 1
+      Time: 1.0
+      KBC: 0
+      NumSubsteps: 20
+
+  MaxPseudoSteps: 15000
+  MassScaleFactor: 1.0e8
+  RampWaveRatio: 10.0
+  DampingMethod: "HybridKinetic"
+  Fracture_Strategy: "FastInnerLoop"
+  NRStiffnessType: "Initial"
+
+  KineticTol: 1.0e-16
+  NRForceTol: 1e-8
+  NRDispTol: 1e-8
+  MaxNRSteps: 30
+  NRStateFrozen: false
+
+  OutputInterval: 5000
+  OMP_Threads: 8
+  Horizon: 0.15075 # 3.015 * 0.05
+  KernelWeightType: "Linear"
+  ZeroEnergyG0: 1.0
+  ZeroEnergyMethod: "Silling"
+
+# 8. IO 输出设置 (Writer)
+Writer:
+  Type: "binary"
+  Variables:
+    - Name: "PartID"
+      Dimension: 1
+    - Name: "ActiveStatus"
+      Dimension: 1
+    - Name: "Displacement"
+      Dimension: 3
+    - Name: "Velocity"
+      Dimension: 3
+    - Name: "Acceleration"
+      Dimension: 3
+    - Name: "Damage_Trial"
+      Dimension: 1
+    - Name: "EqPlasticStrain_Trial"
+      Dimension: 1
+    - Name: "VonMisesStress"
+      Dimension: 1

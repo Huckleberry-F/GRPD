@@ -115,15 +115,25 @@ Eigen::Matrix3d JCPlasticityMat::ComputePK1Stress(const Eigen::Matrix3d &F,
 
   // D = 1.0：完全破坏，应力归零
   if (newDamage >= 1.0) {
+    vonMises_[particleId] = 0.0; // 同步清零后处理 Mises 场
     return Eigen::Matrix3d::Zero();
   }
 
-  // D < 1.0：只退化偏应力，保留静水压（体积抵抗力）
-  // σ_eff = (1-D) * σ_dev + σ_hyd
+  // 同步退化后处理的 Mises 应力场（Mises 应力等价于偏应力的模量，
+  // 无论拉压，偏应力都等比例退化了 1-D，所以直接乘）
+  vonMises_[particleId] *= (1.0 - newDamage);
+
+  // D < 1.0：基于拉伸/压缩状态的分段退化策略
+  // 1. 如果是拉伸状态 (hydro > 0)，静水压和偏应力必须一起退化，否则断裂面无法卸载拉力
+  // 2. 如果是压缩状态 (hydro < 0)，只退化偏应力，保留静水压以防止负体积塌陷
   double hydro = stress.trace() / 3.0;
-  Eigen::Matrix3d hydroStress = hydro * Eigen::Matrix3d::Identity();
-  Eigen::Matrix3d devStress = stress - hydroStress;
-  return (1.0 - newDamage) * devStress + hydroStress;
+  if (hydro > 0.0) {
+    return (1.0 - newDamage) * stress; // 拉伸时全应力张量退化
+  } else {
+    Eigen::Matrix3d hydroStress = hydro * Eigen::Matrix3d::Identity();
+    Eigen::Matrix3d devStress = stress - hydroStress;
+    return (1.0 - newDamage) * devStress + hydroStress; // 压缩时保留静水压
+  }
 }
 
 } // namespace PDCommon::Material

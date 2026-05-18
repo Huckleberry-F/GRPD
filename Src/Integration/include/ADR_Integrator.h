@@ -78,6 +78,19 @@ private:
   double NRDispTol_ = 5.0e-2;  ///< 外循环宏观位移残差收敛容差（ANSYS标准 5%）
   int maxNRIters_ = 10;        ///< 最大外循环迭代次数（默认 10）
   bool NRStateFrozen_ = true;  ///< 是否在外循环期间冻结非线性状态（初始刚度法），默认 true
+  std::string NRStiffnessType_ = "Initial"; ///< 冻结态刚度类型："Initial" (始终 stateMode=1) 或 "Tangent" (迭代激活 stateMode=2)
+
+  // -----------------------------------------------------------------------
+  // Anderson Acceleration (AA) 参数与历史缓存
+  // -----------------------------------------------------------------------
+  bool useAndersonAcceleration_ = true; ///< 是否开启安德森加速
+  int aaDepth_ = 3;                     ///< AA 历史深度 m
+  struct AATargetHistory {
+    std::vector<std::vector<double>> disp; // [history_idx][component_idx]
+    std::vector<std::vector<double>> res;  // [history_idx][component_idx]
+  };
+  std::vector<AATargetHistory> aaHistories_; ///< 每个 Target 的 AA 历史
+  std::vector<double> aaResidualNormHistory_; ///< 记录每次 AA 前的残差范数，用于重启安全阀
 
   /// @brief 阻尼策略："Viscous"=Underwood粘性阻尼, "LocalKinetic"=局部动能阻尼
   std::string dampingMethod_ = "Viscous";
@@ -97,6 +110,8 @@ private:
   std::vector<std::vector<double>> dispOld_;
   std::vector<std::vector<double>> dispBase_;
   std::vector<std::vector<double>> dispNROld_; ///< 外循环位移快照
+  std::vector<std::vector<double>> forceCorr_; ///< NR 外循环本构修正力（加速度单位），= a_true - a_frozen
+  std::vector<double> nodalMass_; ///< 各粒子的真实物理质量
   bool isFirstExplicitTick_ = true;
   double kineticRatio_ = 0.0;
   double dispRatio_ = 0.0;
@@ -105,17 +120,18 @@ private:
   double lastValidCn_ = 0.0;
 
   void initializeHistoryVariables();
+  void initializeNodalMass(PDCommon::Core::PDContext &ctx);
   void saveBaseDisplacement();
   void saveOldDisplacement();
   void saveNROldDisplacement();  ///< 保存外循环开始时的位移
   double computeAdaptiveDamping(double dt);
   void updateKinematicsLeapfrog(double cn, double dt);
-  void computeConvergenceCriteria(double currentFRef);
+  void computeConvergenceCriteria(double currentFRef, const double* damage = nullptr);
 
   /// @brief 计算外循环宏观收敛准则（ANSYS风格）
   /// @param[out] macroForceRatio 宏观力残差比 = ||R_free|| / max(||F_int_all||, MINREF)
   /// @param[out] macroDispRatio  宏观位移残差比 = ||du_NR|| / ||du_substep||
-  void computeNRConvergence(double fIntTotal, double &macroForceRatio, double &macroDispRatio);
+  void computeNRConvergence(double fIntTotal, double &macroForceRatio, double &macroDispRatio, const double* damage = nullptr);
 };
 
 } // namespace Src::Integration

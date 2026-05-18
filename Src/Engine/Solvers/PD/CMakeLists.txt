@@ -13,6 +13,7 @@ add_library(PDSolve_Obj OBJECT
     Pre/src/InitFractureModels.cpp
     Pre/src/InitPreCracks.cpp
     Pre/src/InitSolverComponents.cpp
+    Pre/src/InitPostProcessing.cpp
     Run/src/PDEngineRun.cpp
     Post/src/PDEnginePost.cpp
 )
@@ -42,6 +43,7 @@ target_include_directories(PDSolve_Obj PRIVATE
     ${PROJECT_SOURCE_DIR}/PDCommon/Kernel/include
     ${PROJECT_SOURCE_DIR}/PDCommon/Fracture/include
     ${PROJECT_SOURCE_DIR}/PDCommon/Contact/include
+    ${PROJECT_SOURCE_DIR}/PDCommon/PostProcessing/include
 )
 
 target_link_libraries(PDSolve_Obj PRIVATE PDCommon Integration_Obj)

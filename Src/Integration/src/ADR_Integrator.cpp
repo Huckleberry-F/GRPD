@@ -4,6 +4,7 @@
 
 #include "ADR_Integrator.h"
 #include "FieldManager.h"
+#include "PostProcessorManager.h"
 #include "Logger.h"
 #include "MaterialManager.h"
 #include "MechanicalMaterial.h"
@@ -12,8 +13,10 @@
 #include "StringUtils.h"
 #include "TimeIntegratorRegistry.h"
 #include "Timer.h"
+#include <Eigen/Dense>
 #include <cmath>
 #include <omp.h>
+
 
 namespace Src::Integration {
 
@@ -48,6 +51,8 @@ void ADR_Integrator::configure(const YAML::Node &solverNode) {
     maxNRIters_ = solverNode["MaxNRSteps"].as<int>();
   if (solverNode["NRStateFrozen"])
     NRStateFrozen_ = solverNode["NRStateFrozen"].as<bool>();
+  if (solverNode["NRStiffnessType"])
+    NRStiffnessType_ = solverNode["NRStiffnessType"].as<std::string>();
 }
 
 // ---------------------------------------------------------------------------
@@ -132,6 +137,9 @@ void ADR_Integrator::run(PDCommon::Core::PDContext &ctx,
 
   const double dt = dt_;
   initializeHistoryVariables();
+  initializeNodalMass(ctx);
+
+  ctx.setMassScaleFactor(massScaleFactor_);
 
   LOG_INFO("[ADR_Integrator] Starting Custom ADR: NumLoadSteps = " +
            std::to_string(loadStepConfigs_.size()) + ", MassScale = " +
@@ -164,9 +172,24 @@ void ADR_Integrator::run(PDCommon::Core::PDContext &ctx,
       saveBaseDisplacement();
 
       // =======================================================================
-      // ADR 初始刚度法外循环 (Initial Stiffness Outer Loop)
-      // 冻结非线性本构状态，让 ADR 在纯弹性系统中快速收敛，
-      // 然后解冻做一次完整的非线性本构评估，检查残差是否满足容差。
+      // 清空 Anderson 加速历史，因为外部载荷子步已更新，平衡方程发生变化
+      // =======================================================================
+      if (useAndersonAcceleration_) {
+        if (aaHistories_.size() != soTargets_.size()) {
+          aaHistories_.resize(soTargets_.size());
+        }
+        for (auto &hist : aaHistories_) {
+          hist.disp.clear();
+          hist.res.clear();
+        }
+        aaResidualNormHistory_.clear();
+      }
+
+      // =======================================================================
+      // ADR 外循环 (支持两种模式)
+      // 模式 1 (NRStateFrozen=true):  增量 Modified NR —— 计算 forceCorr_
+      //         让内层 ADR 求解增量方程 K0*Δu = R_true
+      // 模式 2 (NRStateFrozen=false): 纯显式 ADR —— 直接用真实本构硬算
       // =======================================================================
       bool NRConverged = false;
       int NRIter = 0;
@@ -177,9 +200,77 @@ void ADR_Integrator::run(PDCommon::Core::PDContext &ctx,
         // [保存外循环位移快照] 用于宏观位移残差计算
         saveNROldDisplacement();
 
-        // [传递外循环状态并根据配置决定是否冻结]
+        // [传递外循环状态]
         ctx.setOuterIter(NRIter);
-        ctx.setStateFrozen(NRStateFrozen_);
+
+        // =================================================================
+        // [增量 Modified NR 核心] 计算本构修正力 forceCorr_
+        // forceCorr_[k][i] = a_true[i] - a_frozen[i]
+        // 在内循环中将其叠加到冻结态加速度上，使 ADR 等效于求解增量方程
+        // =================================================================
+        if (NRStateFrozen_) {
+          // 计算当前子步的加载因子
+          double corrLF_local = static_cast<double>(sub + 1) / currentNumSubsteps;
+          double corrActiveLF = (currentKbc == 1) ? 1.0 : corrLF_local;
+
+          // Step A: 解冻态力评估 → 获得真实的非线性加速度 a_true
+          // stateMode=0 → 完整的径向回退算法，写入 pSTrial_
+          ctx.setStateFrozen(false);
+          BC::applyConstraints(ctx.getBCManager(), corrActiveLF, stepConfig.stepId);
+          evaluateForces(ctx, kernels, accFieldNames_, stepConfig.stepId, corrActiveLF);
+
+          // 暂存真实加速度
+          std::vector<std::vector<double>> accTrue(soTargets_.size());
+          for (size_t k = 0; k < soTargets_.size(); ++k) {
+            const auto &so = soTargets_[k];
+            accTrue[k].resize(so.totalComponents);
+            #pragma omp parallel for schedule(static)
+            for (int i = 0; i < static_cast<int>(so.totalComponents); ++i) {
+              accTrue[k][i] = so.aPtr[i];
+            }
+          }
+
+          // Step B: 冻结态力评估 → 获得初始刚度/切线刚度弹性加速度 a_frozen
+          ctx.setStateFrozen(true);
+          if (NRStiffnessType_ == "Initial") {
+            ctx.setOuterIter(0);  // 强制读取 pSOld_ (stateMode=1)
+          } else if (NRStiffnessType_ == "Tangent") {
+            ctx.setOuterIter(NRIter); // 根据当前迭代决定 stateMode: 0次为1, 其余为2
+          }
+          BC::applyConstraints(ctx.getBCManager(), corrActiveLF, stepConfig.stepId);
+          evaluateForces(ctx, kernels, accFieldNames_, stepConfig.stepId, corrActiveLF);
+          ctx.setOuterIter(NRIter);  // 恢复真实的外循环迭代计数
+
+          // Step C: 计算修正力 = a_true - a_frozen
+          for (size_t k = 0; k < soTargets_.size(); ++k) {
+            const auto &so = soTargets_[k];
+            #pragma omp parallel for schedule(static)
+            for (int i = 0; i < static_cast<int>(so.totalComponents); ++i) {
+              forceCorr_[k][i] = accTrue[k][i] - so.aPtr[i];
+            }
+          }
+
+          LOG_INFO("    " + PDCommon::Utils::Colors::CYAN + "[NR-Increment]" +
+                   PDCommon::Utils::Colors::RESET + " Computed forceCorr for NR iter " +
+                   std::to_string(NRIter + 1));
+
+          // 恢复冻结态用于内循环（内循环弹性刚度基底应与上方评估修正力时保持一致）
+          ctx.setStateFrozen(true);
+          if (NRStiffnessType_ == "Initial") {
+            ctx.setOuterIter(0);  
+          } else if (NRStiffnessType_ == "Tangent") {
+            ctx.setOuterIter(NRIter); 
+          }
+        } else {
+          // 纯显式模式：不需要修正力，清零 forceCorr_
+          for (size_t k = 0; k < soTargets_.size(); ++k) {
+            #pragma omp parallel for schedule(static)
+            for (int i = 0; i < static_cast<int>(forceCorr_[k].size()); ++i) {
+              forceCorr_[k][i] = 0.0;
+            }
+          }
+          ctx.setStateFrozen(false);
+        }
 
         // =======================================================================
         // 断裂稳定化机制分支 (Dual-Strategy Fracture Logic)
@@ -188,7 +279,7 @@ void ADR_Integrator::run(PDCommon::Core::PDContext &ctx,
         int fracIter = 0;
         // Staggered 模式最多重启15次；FastInnerLoop 模式仅进行 1 次外层循环
         const int MAX_FRAC_ITERS = (fractureStrategy_ == "Staggered") ? 15 : 1;
-        
+
         bool innerConverged = false;
 
         while (!fractureStabilized && fracIter < MAX_FRAC_ITERS) {
@@ -250,16 +341,43 @@ void ADR_Integrator::run(PDCommon::Core::PDContext &ctx,
             evaluateForces(ctx, kernels, accFieldNames_, stepConfig.stepId,
                            activeLF);
 
+            // =============================================================
+            // [增量 Modified NR 核心] 叠加本构修正力 forceCorr_
+            // 使内循环从 "求解总位移" 变为 "求解残差增量"
+            // forceCorr_ 以加速度为单位，直接加到 aPtr 上即可
+            // =============================================================
+            if (NRStateFrozen_) {
+              for (size_t iTarget = 0; iTarget < soTargets_.size(); ++iTarget) {
+                const auto &so = soTargets_[iTarget];
+                #pragma omp parallel for schedule(static)
+                for (int ii = 0; ii < static_cast<int>(so.totalComponents); ++ii) {
+                  so.aPtr[ii] += forceCorr_[iTarget][ii];
+                }
+              }
+            }
+
             // =====================================================================
             // [内循环实时宏观力基准] 在约束斩断支反力之前，提取全场内部合力
             // =====================================================================
             double currentSumFintSq = 0.0;
+            auto *damageFieldInner = ctx.getFieldManager().getFieldAs<double>("Damage_Trial");
+            const double *damagePtrInner = damageFieldInner ? damageFieldInner->dataPtr() : nullptr;
+
             for (size_t iTarget = 0; iTarget < soTargets_.size(); ++iTarget) {
               const auto &so = soTargets_[iTarget];
               double localSq = 0.0;
 #pragma omp parallel for reduction(+ : localSq) schedule(static)
               for (int i = 0; i < static_cast<int>(so.totalComponents); ++i) {
-                double f = so.aPtr[i] * massScaleFactor_;
+                int particle_idx = i / so.dimension;
+                
+                // [死点屏蔽]：若损伤极大，说明刚度丧失，其微弱波动不计入系统总承载力
+                if (damagePtrInner && damagePtrInner[particle_idx] > 0.99) {
+                  continue;
+                }
+
+                double effective_mass =
+                    nodalMass_[particle_idx] * massScaleFactor_;
+                double f = so.aPtr[i] * effective_mass;
                 localSq += f * f;
               }
               currentSumFintSq += localSq;
@@ -283,14 +401,23 @@ void ADR_Integrator::run(PDCommon::Core::PDContext &ctx,
               }
             }
 
+            // 【显式准静态拓展】：若 NRStateFrozen 为 false，说明用户希望在 ADR
+            // 内部实时更新本构（Trial状态）。
+            // [修改]：不再在每一微步 Commit State。这意味着每次本构积分都以**上一个收敛子步的真实历史**为起点，
+            // 避免了内循环由于震荡产生虚假的塑性累积路径，从而保证了路径无关性。
+            // 真实的 commit 留到外循环（NR/Substep）彻底收敛后执行。
+
             double cn = computeAdaptiveDamping(dt); // 依据响应提取耗散系数
             updateKinematicsLeapfrog(cn, dt);       // 积分器速度/位移步进推演
 
             BC::applyConstraints(ctx.getBCManager(), activeLF,
                                  stepConfig.stepId); // 始终强制冻结位移边界
 
+            auto *damageFieldIter = ctx.getFieldManager().getFieldAs<double>("Damage_Trial");
+            const double *damagePtrIter = damageFieldIter ? damageFieldIter->dataPtr() : nullptr;
+
             computeConvergenceCriteria(
-                currentFRef); // 收集收敛 TOL 数据，使用真实的宏观工程残差比
+                currentFRef, damagePtrIter); // 收集收敛 TOL 数据，使用真实的宏观工程残差比
 
             timer.tock();
 
@@ -300,8 +427,8 @@ void ADR_Integrator::run(PDCommon::Core::PDContext &ctx,
               bool criteria_converged =
                   (forceRatio_ <= NRForceTol_ && kineticRatio_ <= kineticTol_);
 
-              // 绝对静止防死锁兜底：系统动能彻底归零(1e-8)，即使存在数值底噪导致的残差，也强制退出
-              bool criteria_still = (kineticRatio_ < 1e-8);
+              // 绝对静止防死锁兜底：系统动能比例彻底归零(1e-16)，即使存在数值底噪导致的残差，也强制退出
+              bool criteria_still = (kineticRatio_ < 1e-16);
 
               if (criteria_converged || criteria_still) {
                 innerConverged = true;
@@ -394,18 +521,88 @@ void ADR_Integrator::run(PDCommon::Core::PDContext &ctx,
 
               isFirstExplicitTick_ = true;
             }
-          } else {
+          } else if (fractureStrategy_ == "FastInnerLoop") {
             // FastInnerLoop: 外层仅走1次，此处做最后一次保底收尾
             for (auto &kernel : kernels) {
               kernel->postCompute(ctx);
             }
+          } else if (fractureStrategy_ == "StrictNRFracture" ||
+                     fractureStrategy_ == "LaggedNRFracture" ||
+                     fractureStrategy_ == "SimpleNRFracture") {
+            // [StrictNR / LaggedNR / SimpleNR]
+            // 试探阶段完全绕过断裂物理更新，留到 NR 外循环收敛后再评估
+            // (LaggedNRFracture通过TrialDamage实时断开受力)
           }
 
           fracIter++;
         } // 结束 Staggered / FastInner 外层循环
 
         // =================================================================
-        // [外循环修正] 解冻本构，做一次完整的非线性力评估
+        // [纯显式模式快速收敛] 如果 NRStateFrozen_ == false，
+        // 内循环已经用真实本构达到了稳态，即 F_ext - F_int_true = 0，
+        // 无需外循环校验，直接宣布收敛。
+        // =================================================================
+        if (!NRStateFrozen_) {
+          // =====================================================================
+          // [新增] 为了提取正确的全场内力（含支反力）以及运行 PostProcessor Hook
+          // 重新解冻并在无约束下评估一次力
+          // =====================================================================
+          double NRLocalLF = static_cast<double>(sub + 1) / currentNumSubsteps;
+          double NRActiveLF = (currentKbc == 1) ? 1.0 : NRLocalLF;
+
+          evaluateForces(ctx, kernels, accFieldNames_, stepConfig.stepId, NRActiveLF);
+
+          double prevPhysicalTime = (stepIdx == 0) ? 0.0 : loadStepConfigs_[stepIdx - 1].targetTime;
+          double currentPhysicalTime = prevPhysicalTime + NRLocalLF * (stepConfig.targetTime - prevPhysicalTime);
+          ctx.getPostProcessorManager().executePreBCHooks(ctx, currentPhysicalTime, stepConfig.stepId);
+
+          // 计算全场内力范数供下一子步增量基准使用
+          double sumFintAllSq = 0.0;
+          auto *damageFieldExp = ctx.getFieldManager().getFieldAs<double>("Damage_Trial");
+          const double *damagePtrExp = damageFieldExp ? damageFieldExp->dataPtr() : nullptr;
+
+          for (size_t k = 0; k < soTargets_.size(); ++k) {
+            const auto &so = soTargets_[k];
+            double localSq = 0.0;
+            #pragma omp parallel for reduction(+ : localSq) schedule(static)
+            for (int i = 0; i < static_cast<int>(so.totalComponents); ++i) {
+              int particle_idx = i / so.dimension;
+              
+              if (damagePtrExp && damagePtrExp[particle_idx] > 0.99) {
+                continue;
+              }
+
+              double effective_mass = nodalMass_[particle_idx] * massScaleFactor_;
+              double f = so.aPtr[i] * effective_mass;
+              localSq += f * f;
+            }
+            sumFintAllSq += localSq;
+          }
+          fIntTotal = std::sqrt(sumFintAllSq);
+
+          // 重施约束：清零边界节点的加速度，为输出和下一子步做准备
+          BC::applyConstraints(ctx.getBCManager(), NRActiveLF, stepConfig.stepId);
+
+          if (innerConverged) {
+            // 断裂处理（如有需要）
+            for (auto &kernel : kernels) {
+              kernel->postCompute(ctx);
+            }
+
+            NRConverged = true;
+            LOG_INFO("    " + PDCommon::Utils::Colors::MAGENTA + "[Explicit]" +
+                     PDCommon::Utils::Colors::RESET +
+                     " Inner loop converged -> substep done. (No outer NR needed)");
+          } else {
+            LOG_WARNING("    [Explicit] Inner loop did NOT converge within MaxPseudoSteps!");
+            NRConverged = true; // 纯显式模式下不重试，接受当前结果
+          }
+          NRIter++;
+          continue; // 跳过后续的 NR 外循环校验代码
+        }
+
+        // =================================================================
+        // [外循环修正] 解冻本构，做一次完整的非线性力评估（仅 NR 模式）
         // =================================================================
         ctx.setStateFrozen(false);
 
@@ -427,12 +624,22 @@ void ADR_Integrator::run(PDCommon::Core::PDContext &ctx,
         // 统计全场（含边界节点支反力）的力 L2 范数作为结构总承载力参考基准
         // =====================================================================
         double sumFintAllSq = 0.0;
+        auto *damageFieldNR = ctx.getFieldManager().getFieldAs<double>("Damage_Trial");
+        const double *damagePtrNR = damageFieldNR ? damageFieldNR->dataPtr() : nullptr;
+
         for (size_t k = 0; k < soTargets_.size(); ++k) {
           const auto &so = soTargets_[k];
           double localSq = 0.0;
 #pragma omp parallel for reduction(+ : localSq) schedule(static)
           for (int i = 0; i < static_cast<int>(so.totalComponents); ++i) {
-            double f = so.aPtr[i] * massScaleFactor_;
+            int particle_idx = i / so.dimension;
+            
+            if (damagePtrNR && damagePtrNR[particle_idx] > 0.99) {
+              continue;
+            }
+
+            double effective_mass = nodalMass_[particle_idx] * massScaleFactor_;
+            double f = so.aPtr[i] * effective_mass;
             localSq += f * f;
           }
           sumFintAllSq += localSq;
@@ -443,6 +650,13 @@ void ADR_Integrator::run(PDCommon::Core::PDContext &ctx,
         // 避免载荷步越多、总力越大时判定过度宽松
         double fIntIncrement = std::abs(fIntTotal - fIntPrevSubstep_);
 
+        // =====================================================================
+        // [PostProcessing Hook] 在加速度被清零前，截获最原始的支反力等
+        // =====================================================================
+        double prevPhysicalTime = (stepIdx == 0) ? 0.0 : loadStepConfigs_[stepIdx - 1].targetTime;
+        double currentPhysicalTime = prevPhysicalTime + NRLocalLF * (stepConfig.targetTime - prevPhysicalTime);
+        ctx.getPostProcessorManager().executePreBCHooks(ctx, currentPhysicalTime, stepConfig.stepId);
+
         // 重施约束：清零边界节点的加速度，仅保留自由粒子残差
         BC::applyConstraints(ctx.getBCManager(), NRActiveLF, stepConfig.stepId);
 
@@ -450,7 +664,7 @@ void ADR_Integrator::run(PDCommon::Core::PDContext &ctx,
         // [ANSYS 宏观力准则 Step 2] 计算宏观力残差比 + 宏观位移残差比
         // =====================================================================
         double macroForceRatio = 0.0, macroDispRatio = 0.0;
-        computeNRConvergence(fIntIncrement, macroForceRatio, macroDispRatio);
+        computeNRConvergence(fIntIncrement, macroForceRatio, macroDispRatio, damagePtrNR);
 
         bool forceConverged = (macroForceRatio <= NRForceTol_);
         bool dispConverged = (macroDispRatio <= NRDispTol_);
@@ -466,9 +680,57 @@ void ADR_Integrator::run(PDCommon::Core::PDContext &ctx,
         // 【核心修复】外循环收敛的绝对前提是：内循环本身必须已经收敛！
         // 如果内循环是因为跑满 MaxPseudoSteps 而超时的，说明动能并未彻底耗散，
         // 此时测到的极小残差可能是系统在振荡过程中恰好穿过平衡点造成的“假象”。
-        // 因此，如果 innerConverged == false，外循环绝对不能放行，必须强制触发下一轮
-        // NR 迭代。
+        // 因此，如果 innerConverged ==
+        // false，外循环绝对不能放行，必须强制触发下一轮 NR 迭代。
         if (innerConverged && (strictConverged || waiveDispConverged)) {
+          // =====================================================================
+          // [StrictNRFracture 策略核心]
+          // 收敛后拦截，执行试探性断裂并决策是否重启 NR
+          // =====================================================================
+          if (fractureStrategy_ == "StrictNRFracture") {
+            auto *activeStatusField =
+                ctx.getFieldManager().getFieldAs<int>("ActiveStatus");
+            int healthBefore = 0;
+            if (activeStatusField) {
+              const int *ptr = activeStatusField->dataPtr();
+              int numParticles = ctx.getParticleManager().getTotalParticles();
+              for (int i = 0; i < numParticles; ++i)
+                healthBefore += ptr[i];
+            }
+
+            for (auto &kernel : kernels) {
+              kernel->postCompute(ctx);
+            }
+
+            int healthAfter = 0;
+            if (activeStatusField) {
+              const int *ptr = activeStatusField->dataPtr();
+              int numParticles = ctx.getParticleManager().getTotalParticles();
+              for (int i = 0; i < numParticles; ++i)
+                healthAfter += ptr[i];
+            }
+
+            if (healthAfter < healthBefore) {
+              NRConverged = false;
+              LOG_INFO(
+                  "    >> " + PDCommon::Utils::Colors::YELLOW + "[*FRACTURE*]" +
+                  PDCommon::Utils::Colors::RESET + " NR Converged, but " +
+                  std::to_string(healthBefore - healthAfter) +
+                  " bonds broke! Topology changed, restarting NR iteration.");
+              NRIter++;
+              isFirstExplicitTick_ = true;
+              continue;
+            }
+          } else if (fractureStrategy_ == "LaggedNRFracture" || 
+                     fractureStrategy_ == "SimpleNRFracture") {
+            // =====================================================================
+            // [LaggedNR / SimpleNR 策略核心] 收敛后直接断裂并固化，不重启 NR，直接进入下一步
+            // =====================================================================
+            for (auto &kernel : kernels) {
+              kernel->postCompute(ctx);
+            }
+          }
+
           NRConverged = true;
           LOG_INFO("    " + PDCommon::Utils::Colors::MAGENTA + "[NR]" +
                    PDCommon::Utils::Colors::RESET + " Converged at iter " +
@@ -481,6 +743,127 @@ void ADR_Integrator::run(PDCommon::Core::PDContext &ctx,
                    " (Total=" +
                    PDCommon::Utils::StringUtils::toScientific(fIntTotal) + ")");
         } else {
+          // =====================================================================
+          // [Anderson Acceleration 核心算法]
+          // 仅在隐式 Picard 迭代 (NRStateFrozen=true)
+          // 且未发生严重断裂退级时生效
+          // =====================================================================
+          if (useAndersonAcceleration_ && NRStateFrozen_) {
+            // 1. 计算当前全场残差 L2 范数，用于安全阀判定
+            double currentResNormSq = 0.0;
+            for (size_t k = 0; k < soTargets_.size(); ++k) {
+              const auto &so = soTargets_[k];
+              double localSq = 0.0;
+#pragma omp parallel for reduction(+ : localSq) schedule(static)
+              for (int i = 0; i < static_cast<int>(so.totalComponents); ++i) {
+                double res = so.uPtr[i] - dispNROld_[k][i];
+                localSq += res * res;
+              }
+              currentResNormSq += localSq;
+            }
+            double currentResNorm = std::sqrt(currentResNormSq);
+
+            // 2.
+            // 安全阀：如果残差剧烈放大，说明外推过头或非线性跳跃，放弃本次历史
+            bool restartAA = false;
+            if (!aaResidualNormHistory_.empty()) {
+              double prevResNorm = aaResidualNormHistory_.back();
+              // [用户定制修改] 放宽残差激增的限制，强制不退回（原系数为 5.0）
+              if (currentResNorm > 1e10 * prevResNorm) {
+                restartAA = true;
+                LOG_INFO("    >> " + PDCommon::Utils::Colors::YELLOW +
+                         "[AA Restart]" + PDCommon::Utils::Colors::RESET +
+                         " Residual spiked (" + std::to_string(currentResNorm) +
+                         " > " + std::to_string(prevResNorm) +
+                         "). Clearing Anderson Acceleration history.");
+              }
+            }
+
+            if (restartAA) {
+              for (auto &hist : aaHistories_) {
+                hist.disp.clear();
+                hist.res.clear();
+              }
+              aaResidualNormHistory_.clear();
+            }
+
+            // 3. 记录当前历史 x_k = dispNROld_, f_k = so.uPtr - dispNROld_
+            aaResidualNormHistory_.push_back(currentResNorm);
+            for (size_t k = 0; k < soTargets_.size(); ++k) {
+              const auto &so = soTargets_[k];
+              std::vector<double> currentDisp(so.totalComponents);
+              std::vector<double> currentRes(so.totalComponents);
+#pragma omp parallel for schedule(static)
+              for (int i = 0; i < static_cast<int>(so.totalComponents); ++i) {
+                currentDisp[i] = dispNROld_[k][i];
+                currentRes[i] = so.uPtr[i] - dispNROld_[k][i];
+              }
+              aaHistories_[k].disp.push_back(currentDisp);
+              aaHistories_[k].res.push_back(currentRes);
+              // 维护固定深度
+              if (aaHistories_[k].disp.size() > static_cast<size_t>(aaDepth_)) {
+                aaHistories_[k].disp.erase(aaHistories_[k].disp.begin());
+                aaHistories_[k].res.erase(aaHistories_[k].res.begin());
+              }
+            }
+            if (aaResidualNormHistory_.size() > static_cast<size_t>(aaDepth_)) {
+              aaResidualNormHistory_.erase(aaResidualNormHistory_.begin());
+            }
+
+            // 4. 当历史积累 >= 2 步时，进行矩阵求逆与加速外推
+            int mk = aaHistories_[0].res.size();
+            if (mk > 1) {
+              Eigen::MatrixXd M = Eigen::MatrixXd::Zero(mk, mk);
+              for (int i = 0; i < mk; ++i) {
+                for (int j = i; j < mk; ++j) {
+                  double dotProduct = 0.0;
+                  for (size_t k = 0; k < soTargets_.size(); ++k) {
+                    const auto &so = soTargets_[k];
+                    double localDot = 0.0;
+#pragma omp parallel for reduction(+ : localDot) schedule(static)
+                    for (int idx = 0;
+                         idx < static_cast<int>(so.totalComponents); ++idx) {
+                      localDot += aaHistories_[k].res[i][idx] *
+                                  aaHistories_[k].res[j][idx];
+                    }
+                    dotProduct += localDot;
+                  }
+                  M(i, j) = dotProduct;
+                  M(j, i) = dotProduct;
+                }
+              }
+
+              // 求解 M * alpha = 1
+              Eigen::VectorXd ones = Eigen::VectorXd::Ones(mk);
+              Eigen::VectorXd alpha = M.colPivHouseholderQr().solve(ones);
+              double sumAlpha = alpha.sum();
+              if (std::abs(sumAlpha) > 1e-12) {
+                alpha /= sumAlpha; // 强制归一化 sum(alpha) = 1
+
+                // 更新位移 x_{k+1} = sum(alpha_i * (x_{k-i} + f_{k-i}))
+                for (size_t k = 0; k < soTargets_.size(); ++k) {
+                  const auto &so = soTargets_[k];
+#pragma omp parallel for schedule(static)
+                  for (int idx = 0; idx < static_cast<int>(so.totalComponents);
+                       ++idx) {
+                    double beta_AA = 0.3; // [新增] AA松弛因子：控制外推步长，防止塑性屈服时严重过调 (0.2~0.5最佳)
+                    double newDisp = 0.0;
+                    for (int i = 0; i < mk; ++i) {
+                      newDisp += alpha(i) * (aaHistories_[k].disp[i][idx] +
+                                             beta_AA * aaHistories_[k].res[i][idx]);
+                    }
+                    so.uPtr[idx] =
+                        newDisp; // 直接将加速后的位移写入，作为下一步的起点
+                  }
+                }
+                LOG_INFO("    " + PDCommon::Utils::Colors::CYAN +
+                         "[Anderson Acceleration]" +
+                         PDCommon::Utils::Colors::RESET +
+                         " Applied! Depth: " + std::to_string(mk));
+              }
+            }
+          }
+
           NRIter++;
           isFirstExplicitTick_ = true; // 重置以驱动下一轮 ADR 内循环
           LOG_INFO("    " + PDCommon::Utils::Colors::MAGENTA + "[NR]" +
@@ -503,6 +886,35 @@ void ADR_Integrator::run(PDCommon::Core::PDContext &ctx,
                     PDCommon::Utils::Colors::RESET +
                     " did NOT converge within " + std::to_string(maxNRIters_) +
                     " iterations!");
+
+        // =====================================================================
+        // [Auto-Switch 降级回滚保护]
+        // =====================================================================
+        if (fractureStrategy_ == "StrictNRFracture" ||
+            fractureStrategy_ == "LaggedNRFracture" ||
+            fractureStrategy_ == "Staggered") {
+          LOG_WARNING(
+              "    >> " + PDCommon::Utils::Colors::RED + "[Auto-Switch]" +
+              PDCommon::Utils::Colors::RESET +
+              " Severe tearing detected! Rolling back substep and permanently "
+              "switching to FastInnerLoop explicit dynamics...");
+
+          for (size_t k = 0; k < soTargets_.size(); ++k) {
+            const auto &so = soTargets_[k];
+#pragma omp parallel for schedule(static)
+            for (int i = 0; i < static_cast<int>(so.totalComponents); ++i) {
+              so.uPtr[i] = dispBase_[k][i];
+              so.vPtr[i] = 0.0;
+              so.aPtr[i] = 0.0;
+            }
+          }
+          isFirstExplicitTick_ = true;
+          maxNRIters_ = 1;
+          NRStateFrozen_ = false;
+          fractureStrategy_ = "FastInnerLoop";
+          sub--; // 重做当前子步
+          continue;
+        }
       }
 
       // [状态递进]
@@ -553,6 +965,7 @@ void ADR_Integrator::initializeHistoryVariables() {
   dispOld_.resize(soTargets_.size());
   dispBase_.resize(soTargets_.size());
   dispNROld_.resize(soTargets_.size());
+  forceCorr_.resize(soTargets_.size());
 
   for (size_t k = 0; k < soTargets_.size(); ++k) {
     velHalfOld_[k].assign(soTargets_[k].totalComponents, 0.0);
@@ -560,6 +973,7 @@ void ADR_Integrator::initializeHistoryVariables() {
     dispOld_[k].assign(soTargets_[k].totalComponents, 0.0);
     dispBase_[k].assign(soTargets_[k].totalComponents, 0.0);
     dispNROld_[k].assign(soTargets_[k].totalComponents, 0.0);
+    forceCorr_[k].assign(soTargets_[k].totalComponents, 0.0);
   }
   isFirstExplicitTick_ = true;
 }
@@ -619,8 +1033,12 @@ double ADR_Integrator::computeAdaptiveDamping(double dt) {
         double dU_step = velHalfOld_[k][i] * dt;
         double da = so.aPtr[i] - aOld_[k][i]; // 对应的加速度变化率
 
-        local_cn1 -= dU_step * da;
-        local_cn2 += dU_step * dU_step;
+        int particle_idx = i / so.dimension;
+        double effective_mass = nodalMass_[particle_idx] * massScaleFactor_;
+
+        // 瑞利商积分同样引入质量权重，使其成为真实的能量差商
+        local_cn1 -= effective_mass * dU_step * da;
+        local_cn2 += effective_mass * dU_step * dU_step;
       }
       cn1 += local_cn1;
       cn2 += local_cn2;
@@ -717,7 +1135,7 @@ void ADR_Integrator::updateKinematicsLeapfrog(double cn, double dt) {
   }
 }
 
-void ADR_Integrator::computeConvergenceCriteria(double currentFRef) {
+void ADR_Integrator::computeConvergenceCriteria(double currentFRef, const double* damage) {
   kineticRatio_ = 0.0;
   dispRatio_ = 0.0;
   forceRatio_ = 0.0;
@@ -732,16 +1150,25 @@ void ADR_Integrator::computeConvergenceCriteria(double currentFRef) {
 #pragma omp parallel for reduction(+ : local_tol1, local_tol2, local_tol3,     \
                                        local_denom_tol2) schedule(static)
     for (int i = 0; i < static_cast<int>(so.totalComponents); ++i) {
+      int particle_idx = i / so.dimension;
+
+      // [死点屏蔽]：若该点损伤过大，其位置波动和不平衡力对整体无影响，不纳入统计
+      if (damage && damage[particle_idx] > 0.99) {
+        continue;
+      }
+
       double du_iter = so.uPtr[i] - dispOld_[k][i];
       double du_substep = so.uPtr[i] - dispBase_[k][i];
 
-      // 修正：将缩放的伪加速度还原为与外力等效的不平衡力加速率
-      double raw_acc = so.aPtr[i] * massScaleFactor_;
+      double effective_mass = nodalMass_[particle_idx] * massScaleFactor_;
+      double f_unbalanced = so.aPtr[i] * effective_mass;
 
-      local_tol1 += velHalfOld_[k][i] * velHalfOld_[k][i];
+      // 动能计算：真正的缩放质量焦耳能量 = 0.5 * m_eff * v^2
+      local_tol1 +=
+          0.5 * effective_mass * velHalfOld_[k][i] * velHalfOld_[k][i];
       local_tol2 += du_iter * du_iter;
       local_denom_tol2 += du_substep * du_substep;
-      local_tol3 += raw_acc * raw_acc;
+      local_tol3 += f_unbalanced * f_unbalanced;
     }
     kineticRatio_ += local_tol1;
     dispRatio_ += local_tol2;
@@ -749,13 +1176,12 @@ void ADR_Integrator::computeConvergenceCriteria(double currentFRef) {
     forceRatio_ += local_tol3;
   }
 
-  double currentKinetic =
-      std::sqrt(kineticRatio_); // Actually the L2 norm of velocity
+  double currentKinetic = kineticRatio_; // 现在是真正的标量动能 (Joule)
   if (currentKinetic > maxKineticEnergy_) {
     maxKineticEnergy_ = currentKinetic;
   }
   // 如果 peak 极小，说明系统从一开始就没动过，避免除零
-  double effectiveMaxK = std::max(maxKineticEnergy_, 1.0e-12);
+  double effectiveMaxK = std::max(maxKineticEnergy_, 1.0e-24);
   kineticRatio_ = currentKinetic / effectiveMaxK;
 
   dispRatio_ = std::sqrt(dispRatio_);
@@ -763,7 +1189,7 @@ void ADR_Integrator::computeConvergenceCriteria(double currentFRef) {
   forceRatio_ = std::sqrt(forceRatio_);
 
   // 使用相对位移进行 TOL2 判定（防阶跃/静止状态微扰除零）
-  double effective_denom2 = std::max(denom_TOL2, 1.0e-5);
+  double effective_denom2 = std::max(denom_TOL2, 1.0e-8);
   dispRatio_ = dispRatio_ / effective_denom2;
 
   // [统一收敛架构]：直接使用实时的全场内力增量基准（currentFRef）计算真实的工程物理残差比
@@ -777,7 +1203,8 @@ void ADR_Integrator::computeConvergenceCriteria(double currentFRef) {
 // ---------------------------------------------------------------------------
 void ADR_Integrator::computeNRConvergence(double fIntTotal,
                                           double &macroForceRatio,
-                                          double &macroDispRatio) {
+                                          double &macroDispRatio,
+                                          const double* damage) {
 
   // --- 力残差分子：自由粒子的不平衡力 L2 范数 ---
   double sumResFreeSq = 0.0;
@@ -786,7 +1213,15 @@ void ADR_Integrator::computeNRConvergence(double fIntTotal,
     double localSq = 0.0;
 #pragma omp parallel for reduction(+ : localSq) schedule(static)
     for (int i = 0; i < static_cast<int>(so.totalComponents); ++i) {
-      double f = so.aPtr[i] * massScaleFactor_;
+      int particle_idx = i / so.dimension;
+
+      // [死点屏蔽]：若该点损伤过大，其位置波动和不平衡力对整体无影响，不纳入统计
+      if (damage && damage[particle_idx] > 0.99) {
+        continue;
+      }
+
+      double effective_mass = nodalMass_[particle_idx] * massScaleFactor_;
+      double f = so.aPtr[i] * effective_mass;
       localSq += f * f;
     }
     sumResFreeSq += localSq;
@@ -817,6 +1252,27 @@ void ADR_Integrator::computeNRConvergence(double fIntTotal,
   }
   double denomDisp = std::max(std::sqrt(sumDuSubstepSq), 1.0e-30);
   macroDispRatio = std::sqrt(sumDuNRSq) / denomDisp;
+}
+
+void ADR_Integrator::initializeNodalMass(PDCommon::Core::PDContext &ctx) {
+  auto &pm = ctx.getParticleManager();
+  const auto &particles = pm.getAllParticles();
+  size_t numParticles = particles.size();
+  nodalMass_.assign(numParticles, 1.0);
+
+  auto *volumeField = ctx.getFieldManager().getFieldAs<double>("Volume");
+  const double *volumes = volumeField ? volumeField->dataPtr() : nullptr;
+
+  for (size_t i = 0; i < numParticles; ++i) {
+    double vol = volumes ? volumes[i] : 1.0;
+    double rho = 1.0;
+    auto *mat = dynamic_cast<PDCommon::Material::MechanicalMaterial *>(
+        particles[i].getMaterial());
+    if (mat) {
+      rho = mat->getDensity();
+    }
+    nodalMass_[i] = rho * vol;
+  }
 }
 
 } // namespace Src::Integration

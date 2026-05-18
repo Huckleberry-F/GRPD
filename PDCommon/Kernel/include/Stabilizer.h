@@ -31,6 +31,10 @@ public:
   /// @brief 设置质量缩放因子（与主 Kernel 保持一致）
   void setMassScaleFactor(double factor) { massScaleFactor_ = factor; }
 
+  void setAxisymmetricIntegration(bool enabled) {
+    axisymmetricIntegration_ = enabled;
+  }
+
   /// @brief 获取稳定器名称
   const std::string &getName() const { return name_; }
   void setName(const std::string &name) { name_ = name; }
@@ -39,6 +43,7 @@ protected:
   std::string name_;              ///< 稳定器注册名
   double g0_{1.0};                ///< 零能修正缩放系数 G0
   double massScaleFactor_{1.0};   ///< 质量缩放因子（与主 Kernel 同步）
+  bool axisymmetricIntegration_{false};
 };
 
 } // namespace PDCommon::Kernel

@@ -1,0 +1,127 @@
+#==============================================================================
+# GRPD 算例： 2D 双边缺口板拉伸断裂 (Double Edge Notched Tension, DENT)
+# 基于 Weldox 460 E 钢的经典准静态 JC 损伤模型 Benchmark
+#==============================================================================
+
+# 1. 全局设置
+Assembly: {}
+
+# 2. 几何模型：读取由 Python 生成的真实带圆弧缺口的 DENT 试样
+Parts:
+  - PartID: 1
+    MatID: 1
+    Dimension: 2
+    Source: "DENT.txt"
+    Offset: [0.0, 0.0, 0.0]
+    dx: 0.5
+
+# 4. 全局常驻边界
+BoundaryConditions:
+  - BcID: 1
+    Name: "Bottom_Fixed"
+    Box: [-15.0, 15.0, -51.0, -48.0, -2.0, 2.0]
+    Type: "UY"
+    Value: 0.0
+
+# 5. 多级分步载荷配置 —— 拉伸 Y 向
+LoadStep_Conditions:
+  - Step: 1
+    BoundaryConditions:
+      - BcID: 2
+        Name: "Top_Tension"
+        Box: [-15.0, 15.0, 48.0, 51.0, -2.0, 2.0]
+        Type: "UY"
+        Value: 0.6 # 拉伸 2.0mm 足以使得缺口处断裂
+  - Step: 2
+    BoundaryConditions:
+      - BcID: 3
+        Name: "Top_Tension"
+        Box: [-15.0, 15.0, 48.0, 51.0, -2.0, 2.0]
+        Type: "UY"
+        Value: 0.8 # 拉伸 2.0mm 足以使得缺口处断裂
+# 6. 材质物理属性 (参考 Al 2024-T3 铝合金 Buyuk 标定)
+Materials:
+  - MatID: 1
+    Name: "Al2024_T3_2D"
+    Type: "JCPlasticityMat"
+    Density: 2.78e-9 # tonne/mm³ (2780 kg/m³)
+    YoungsModulus: 73100.0 # 73.1 GPa
+    PoissonsRatio: 0.33 # 泊松比
+    YieldStress: 352.0 # 初始屈服应力 (MPa)
+    HardeningModulus: 440.0 # 线性塑性硬化模量 (MPa)
+    HardeningType: "Isotropic"
+    LargeDeformation: false
+    # JC 断裂参数 (Buyuk, 2007)
+    JC_D1: 0.13
+    JC_D2: 0.13
+    JC_D3: -1.5
+    Fracture:
+      Type: "DamageValueFracture"
+      Critical_Damage: 0.99
+
+# 7. 求解器与时间管理
+Solver:
+  Engine: "PD"
+  Type: "Mechanical"
+  Kernel: "NOSB_M"
+  TimeIntegrator: "ADR"
+  LoadSteps:
+    - Step: 1
+      Time: 1.0
+      KBC: 0
+      NumSubsteps: 20
+    - Step: 2
+      Time: 2.0
+      KBC: 0
+      NumSubsteps: 50
+
+  MaxPseudoSteps: 20000
+  MassScaleFactor: 1.0e8
+  RampWaveRatio: 10.0
+  DampingMethod: "HybridKinetic"
+  Fracture_Strategy: "FastInnerLoop"
+  NRStiffnessType: "Initial"
+
+  # --- ADR 初始刚度法双层循环参数 ---
+  KineticTol: 1.0e-6
+  NRForceTol: 0.01
+  NRDispTol: 0.005
+  MaxNRSteps: 50
+  NRStateFrozen: false
+
+  OutputInterval: 1000
+  OMP_Threads: 22
+  Horizon: 1.5015
+  KernelWeightType: "Gaussian"
+  ZeroEnergyG0: 1.0
+  ZeroEnergyMethod: "Zhang"
+
+# 8. 后处理设置
+PostProcessing:
+  - Type: "ReactionForce"
+
+# 9. 输出设置
+Writer:
+  Name: "DENT_Fracture_Result"
+  Type: "binary"
+  Variables:
+    - Name: "PartID"
+      Dimension: 1
+    - Name: "Volume"
+      Dimension: 1
+    - Name: "BondIntegrity"
+      Dimension: 1
+    - Name: "Displacement"
+      Dimension: 3
+    - Name: "Velocity"
+      Dimension: 3
+    - Name: "PK1Stress"
+      Dimension: 9
+    - Name: "EqPlasticStrain_Old"
+      Dimension: 1
+    - Name: "VonMisesStress"
+      Dimension: 1
+    - Name: "Damage_Trial"
+      Dimension: 1
+    - Name: "ReactionForce"
+      Dimension: 3
