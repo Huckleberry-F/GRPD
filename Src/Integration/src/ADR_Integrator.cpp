@@ -595,6 +595,9 @@ void ADR_Integrator::run(PDCommon::Core::PDContext &ctx,
                      " Inner loop converged -> substep done. (No outer NR needed)");
           } else {
             LOG_WARNING("    [Explicit] Inner loop did NOT converge within MaxPseudoSteps!");
+            for (auto &kernel : kernels) {
+              kernel->postCompute(ctx);
+            }
             NRConverged = true; // 纯显式模式下不重试，接受当前结果
           }
           NRIter++;

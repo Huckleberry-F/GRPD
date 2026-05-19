@@ -83,7 +83,7 @@ Solver:
 
   MaxPseudoSteps: 20000
   MassScaleFactor: 1.0e8
-  RampWaveRatio: 50.0
+  RampWaveRatio: 10.0
   DampingMethod: "HybridKinetic"
   Fracture_Strategy: "SimpleNRFracture"
   NRStiffnessType: "Initial"
@@ -95,7 +95,7 @@ Solver:
   NRStateFrozen: false
 
   OutputInterval: 5000
-  OMP_Threads: 16
+  OMP_Threads: 22
   Horizon: 0.3015 # 3.015 * 0.1
   KernelWeightType: "Linear"
   ZeroEnergyG0: 1.0
@@ -119,7 +119,15 @@ Writer:
       Dimension: 3
     - Name: "Damage_Old"
       Dimension: 1
+    - Name: "Damage_Trial"
+      Dimension: 1
     - Name: "EqPlasticStrain_Old"
+      Dimension: 1
+    - Name: "EqPlasticStrain_Trial"
+      Dimension: 1
+    - Name: "RealEqPlasticStrain_Old"
+      Dimension: 1
+    - Name: "RealEqPlasticStrain_Trial"
       Dimension: 1
     - Name: "VonMisesStress"
       Dimension: 1

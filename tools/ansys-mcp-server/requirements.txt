@@ -1,0 +1,3 @@
+# ANSYS MCP Server 依赖
+mcp[cli]>=1.0.0
+pyyaml>=6.0

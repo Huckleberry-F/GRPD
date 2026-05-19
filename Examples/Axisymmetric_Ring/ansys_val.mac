@@ -54,11 +54,44 @@ NSUBST, 20, 20, 20     ! 对应 GRPD 的 NumSubsteps: 20
 OUTRES, ALL, ALL
 SOLVE
 
+SAVE, ansys_val, db    ! 保存数据库以便在 GUI 中打开
+
 FINISH
 
-! 7. 简单的后处理显示
+! 7. 导出给 MCP 服务器读取的文本结果
 /POST1
 SET, LAST
-PLNSOL, U, Y           ! 显示 Y 向位移
-PLNSOL, S, EQV       ! 显示 Von Mises 等效应力
-PLNSOL, EPTO, EQV    ! 显示总等效应变
+
+! 沿中心轴提取 Y 向位移和等效应力
+! --- MCP 动态传参支持 ---
+*GET, chk_start_x, PARM, START_X, TYPE
+*IF, chk_start_x, NE, 0, THEN
+    START_X = 0.5
+*ENDIF
+
+*GET, chk_start_y, PARM, START_Y, TYPE
+*IF, chk_start_y, NE, 0, THEN
+    START_Y = 0.0
+*ENDIF
+
+*GET, chk_end_x, PARM, END_X, TYPE
+*IF, chk_end_x, NE, 0, THEN
+    END_X = 0.5
+*ENDIF
+
+*GET, chk_end_y, PARM, END_Y, TYPE
+*IF, chk_end_y, NE, 0, THEN
+    END_Y = 5.0
+*ENDIF
+
+PATH, MyPath, 2, 30, 10
+PPATH, 1, 0, START_X, START_Y, 0.0
+PPATH, 2, 0, END_X, END_Y, 0.0
+
+PDEF, UY_ANSYS, U, Y
+PDEF, SEQV_ANSYS, S, EQV
+
+! 将数据输出到一个 .txt 文件，MCP 会自动抓取这个文件
+/OUTPUT, ansys_val_results, txt
+PRPATH, UY_ANSYS, SEQV_ANSYS
+/OUTPUT
