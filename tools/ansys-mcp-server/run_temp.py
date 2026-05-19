@@ -1,11 +1,10 @@
 import sys
-sys.path.append('D:/Project_C++/GRPD/tools/ansys-mcp-server')
+sys.path.append('D:/C++pro/GRPD/tools/ansys-mcp-server')
 from ansys_runner import AnsysRunner
 import yaml
 import pprint
-import os
 
-with open('D:/Project_C++/GRPD/tools/ansys-mcp-server/config.yaml', 'r', encoding='utf-8') as f:
+with open('D:/C++pro/GRPD/tools/ansys-mcp-server/config.yaml', 'r', encoding='utf-8') as f:
     config = yaml.safe_load(f)
 
 runner = AnsysRunner(
@@ -15,7 +14,7 @@ runner = AnsysRunner(
     timeout_seconds=3600
 )
 
-mac_file = r'D:\Project_C++\GRPD\Examples\Axisymmetric_Ring\ansys_val.mac'
+mac_file = r'D:\C++pro\GRPD\Examples\Axisymmetric_Ring\ansys_val.mac'
 work_dir = r'D:\ANSYS_Project\GRPD_AXIS'
 
 print('--- 开始运行 ANSYS 计算 ---')

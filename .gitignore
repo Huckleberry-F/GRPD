@@ -8,6 +8,8 @@ Output/
 *.avi
 *.vtu
 Result_*
+!tools/ansys-mcp-server/result_parser.py
+!tools/path-comparison-mcp-server/result_parser.py
 *.grpd
 *.pvd
 *.vtk
