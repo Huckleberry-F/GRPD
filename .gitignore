@@ -18,7 +18,9 @@ Result_*
 *.grpd
 *.pvd
 *.vtk
-.gemini/
+.agent/
+.agents/
+.gemini/settings.json
 outputs/
 *.zip
 *.xlsx
