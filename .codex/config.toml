@@ -2,25 +2,41 @@
 # This file is intentionally scoped to this repository.
 
 [mcp_servers.ansys-server]
-command = "python"
-args = ["D:\\C++pro\\GRPD\\tools\\ansys-mcp-server\\server.py"]
-cwd = "D:\\C++pro\\GRPD\\tools\\ansys-mcp-server"
+command = "c:\\Users\\zhanghanbo\\AppData\\Local\\Programs\\Python\\Python312\\python.exe"
+args = ["D:\\Project_C++\\GRPD\\tools\\ansys-mcp-server\\server.py"]
+cwd = "D:\\Project_C++\\GRPD\\tools\\ansys-mcp-server"
 startup_timeout_sec = 20
 tool_timeout_sec = 3600
 default_tools_approval_mode = "prompt"
 
 [mcp_servers.path-comparison-server]
-command = "python"
-args = ["D:\\C++pro\\GRPD\\tools\\path-comparison-mcp-server\\server.py"]
-cwd = "D:\\C++pro\\GRPD\\tools\\path-comparison-mcp-server"
+command = "c:\\Users\\zhanghanbo\\AppData\\Local\\Programs\\Python\\Python312\\python.exe"
+args = ["D:\\Project_C++\\GRPD\\tools\\path-comparison-mcp-server\\server.py"]
+cwd = "D:\\Project_C++\\GRPD\\tools\\path-comparison-mcp-server"
+startup_timeout_sec = 20
+tool_timeout_sec = 600
+default_tools_approval_mode = "prompt"
+
+[mcp_servers.grpd-server]
+command = "c:\\Users\\zhanghanbo\\AppData\\Local\\Programs\\Python\\Python312\\python.exe"
+args = ["D:\\Project_C++\\GRPD\\tools\\grpd-mcp-server\\server.py"]
+cwd = "D:\\Project_C++\\GRPD\\tools\\grpd-mcp-server"
+startup_timeout_sec = 20
+tool_timeout_sec = 3600
+default_tools_approval_mode = "prompt"
+
+[mcp_servers.grpd-experiment-server]
+command = "c:\\Users\\zhanghanbo\\AppData\\Local\\Programs\\Python\\Python312\\python.exe"
+args = ["D:\\Project_C++\\GRPD\\tools\\grpd-experiment-mcp-server\\server.py"]
+cwd = "D:\\Project_C++\\GRPD\\tools\\grpd-experiment-mcp-server"
 startup_timeout_sec = 20
 tool_timeout_sec = 600
 default_tools_approval_mode = "prompt"
 
 [mcp_servers.point-integration-matlab-server]
-command = "python"
-args = ["D:\\C++pro\\GRPD\\tools\\point-integration-matlab-mcp-server\\server.py"]
-cwd = "D:\\C++pro\\GRPD\\tools\\point-integration-matlab-mcp-server"
+command = "c:\\Users\\zhanghanbo\\AppData\\Local\\Programs\\Python\\Python312\\python.exe"
+args = ["D:\\Project_C++\\GRPD\\tools\\point-integration-matlab-mcp-server\\server.py"]
+cwd = "D:\\Project_C++\\GRPD\\tools\\point-integration-matlab-mcp-server"
 startup_timeout_sec = 20
 tool_timeout_sec = 600
 default_tools_approval_mode = "prompt"

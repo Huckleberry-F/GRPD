@@ -10,9 +10,9 @@ description: "GRPD YAML 输入专项入口。用于生成、检查或修复 PD.y
 ## 必做流程
 
 1. 读取 `../grpd-cae-toolkit/references/input-output-schema.md`。
-2. 对目标输入文件运行 `python .agent/skills/grpd-cae-toolkit/scripts/validate_pd_yaml_basic.py <PD.yaml>`。
-3. 如涉及输出字段，运行 `python .agent/skills/grpd-cae-toolkit/scripts/inspect_writer_variables.py . --yaml <PD.yaml>`。
-4. 如涉及注册名，运行 `python .agent/skills/grpd-cae-toolkit/scripts/list_registry_macros.py .`。
+2. 对目标输入文件运行 `python .gemini/skills/grpd-cae-toolkit/scripts/validate_pd_yaml_basic.py <PD.yaml>`。
+3. 如涉及输出字段，运行 `python .gemini/skills/grpd-cae-toolkit/scripts/inspect_writer_variables.py . --yaml <PD.yaml>`。
+4. 如涉及注册名，运行 `python .gemini/skills/grpd-cae-toolkit/scripts/list_registry_macros.py .`。
 
 ## 判断重点
 

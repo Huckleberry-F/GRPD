@@ -15,7 +15,8 @@
 #include <string>
 #include <vector>
 
-// 前置声明，避免在基类头文件引入具体依赖
+// 前置声明，避免在基类头文件引入具体依赖。
+
 namespace PDCommon::Field {
 class FieldManager;
 }

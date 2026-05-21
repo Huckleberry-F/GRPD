@@ -10,8 +10,8 @@ description: "GRPD 后处理专项入口。用于新增或评审 Writer.Variable
 ## 必做流程
 
 1. 读取 `../grpd-cae-toolkit/references/input-output-schema.md`。
-2. 运行 `python .agent/skills/grpd-cae-toolkit/scripts/check_field_references.py .`。
-3. 对目标 YAML 运行 `python .agent/skills/grpd-cae-toolkit/scripts/inspect_writer_variables.py . --yaml <PD.yaml>`。
+2. 运行 `python .gemini/skills/grpd-cae-toolkit/scripts/check_field_references.py .`。
+3. 对目标 YAML 运行 `python .gemini/skills/grpd-cae-toolkit/scripts/inspect_writer_variables.py . --yaml <PD.yaml>`。
 
 ## 判断重点
 

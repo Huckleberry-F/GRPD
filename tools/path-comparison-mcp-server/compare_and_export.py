@@ -74,8 +74,12 @@ def compare_grpd_and_ansys(
     # 计算误差
     error_uy = np.abs(grpd_uy_aligned - ansys_uy)
     error_seqv = np.abs(grpd_seqv_aligned - ansys_seqv)
-    # 相对误差 (为防止除零，加一个极小值)
-    rel_error_uy = error_uy / (np.abs(ansys_uy) + 1e-8) * 100.0
+    # 相对误差 (对于位移，使用全局最大值归一化，避免固定端 0.0 位移导致误差爆炸；对于应力，使用点对点误差)
+    max_ansys_uy = np.max(np.abs(ansys_uy))
+    if max_ansys_uy > 1e-5:
+        rel_error_uy = error_uy / max_ansys_uy * 100.0
+    else:
+        rel_error_uy = error_uy / (np.abs(ansys_uy) + 1e-8) * 100.0
     rel_error_seqv = error_seqv / (np.abs(ansys_seqv) + 1e-8) * 100.0
 
     print("4. 正在导出 Excel 对比报告...")
@@ -117,12 +121,40 @@ def compare_grpd_and_ansys(
     plt.savefig(plot_path, dpi=300)
     plt.close()
 
+    max_error_uy = float(np.max(rel_error_uy))
+    max_error_seqv = float(np.max(rel_error_seqv))
+
+    # 生成 summary JSON
+    import json
+    summary_data = {
+        "success": True,
+        "vtk_file": vtk_file,
+        "ansys_txt_file": ansys_txt_file,
+        "excel_path": excel_path,
+        "plot_path": plot_path,
+        "max_error_uy_percent": max_error_uy,
+        "max_error_seqv_percent": max_error_seqv
+    }
+    summary_path = os.path.join(output_dir, "Comparison_Summary.json")
+    with open(summary_path, "w", encoding="utf-8") as f:
+        json.dump(summary_data, f, indent=4, ensure_ascii=False)
+
+    # 生成 zip 打包文件
+    import zipfile
+    zip_path = os.path.join(output_dir, "Comparison_Output.zip")
+    with zipfile.ZipFile(zip_path, "w") as zipf:
+        zipf.write(excel_path, os.path.basename(excel_path))
+        zipf.write(plot_path, os.path.basename(plot_path))
+        zipf.write(summary_path, os.path.basename(summary_path))
+
     return {
         "success": True,
         "excel_path": excel_path,
         "plot_path": plot_path,
-        "max_error_uy_percent": float(np.max(rel_error_uy)),
-        "max_error_seqv_percent": float(np.max(rel_error_seqv))
+        "summary_path": summary_path,
+        "zip_path": zip_path,
+        "max_error_uy_percent": max_error_uy,
+        "max_error_seqv_percent": max_error_seqv
     }
 
 if __name__ == "__main__":

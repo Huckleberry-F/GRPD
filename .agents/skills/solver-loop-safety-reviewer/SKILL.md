@@ -11,7 +11,7 @@ description: "GRPD 求解循环专项入口。用于评审 PDEngine 初始化顺
 
 1. 读取 `../grpd-cae-toolkit/references/architecture.md`。
 2. 读取 `../grpd-cae-toolkit/references/solver-loop.md`。
-3. 若涉及字段状态，运行 `python .agent/skills/grpd-cae-toolkit/scripts/check_field_references.py .`。
+3. 若涉及字段状态，运行 `python .gemini/skills/grpd-cae-toolkit/scripts/check_field_references.py .`。
 
 ## 判断重点
 

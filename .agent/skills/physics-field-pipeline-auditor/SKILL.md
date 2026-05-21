@@ -11,8 +11,8 @@ description: "GRPD 物理场链路专项入口。用于检查或扩展 PhysicsFi
 
 1. 读取 `../grpd-cae-toolkit/references/field-pipeline.md`。
 2. 读取 `../grpd-cae-toolkit/references/architecture.md`。
-3. 运行 `python .agent/skills/grpd-cae-toolkit/scripts/check_field_references.py .`。
-4. 如涉及注册宏，运行 `python .agent/skills/grpd-cae-toolkit/scripts/list_registry_macros.py .`。
+3. 运行 `python .gemini/skills/grpd-cae-toolkit/scripts/check_field_references.py .`。
+4. 如涉及注册宏，运行 `python .gemini/skills/grpd-cae-toolkit/scripts/list_registry_macros.py .`。
 
 ## 判断重点
 

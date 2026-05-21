@@ -11,8 +11,8 @@ description: "GRPD 材料本构专项入口。用于新增、修改或评审 Mat
 
 1. 读取 `../grpd-cae-toolkit/references/material-state.md`。
 2. 读取 `../grpd-cae-toolkit/references/registry-factory.md`。
-3. 若新增 `.cpp`，运行 `python .agent/skills/grpd-cae-toolkit/scripts/check_cmake_sources.py .`。
-4. 若涉及字段或状态变量，运行 `python .agent/skills/grpd-cae-toolkit/scripts/check_field_references.py .`。
+3. 若新增 `.cpp`，运行 `python .gemini/skills/grpd-cae-toolkit/scripts/check_cmake_sources.py .`。
+4. 若涉及字段或状态变量，运行 `python .gemini/skills/grpd-cae-toolkit/scripts/check_field_references.py .`。
 
 ## 判断重点
 

@@ -1,10 +1,15 @@
-﻿build/
+build/
 bin/
 lib/
 .cache/
 .qtcreator/
 .vscode/
 Output/
+__pycache__/
+*.py[cod]
+*.sqlite
+*.sqlite-shm
+*.sqlite-wal
 *.avi
 *.vtu
 Result_*
@@ -13,3 +18,13 @@ Result_*
 *.grpd
 *.pvd
 *.vtk
+.gemini/
+outputs/
+*.zip
+*.xlsx
+*.png
+*.gif
+*.mp4
+*.prproj
+Adobe Premiere Pro Audio Previews/
+Adobe Premiere Pro Auto-Save/

@@ -11,7 +11,7 @@ description: "GRPD 网格邻域专项入口。用于评审粒子/网格数据、
 
 1. 读取 `references/mesh-neighbor-contact.md`。
 2. 如涉及 OpenMP 热循环或并行邻域遍历，读取 `../openmp-kernel-optimizer/references/performance-openmp.md`。
-3. 如涉及字段，运行 `python .agent/skills/grpd-cae-toolkit/scripts/check_field_references.py .`。
+3. 如涉及字段，运行 `python .gemini/skills/grpd-cae-toolkit/scripts/check_field_references.py .`。
 
 ## 判断重点
 

@@ -2,7 +2,9 @@
 ! ANSYS APDL MACRO: Axisymmetric Ring Tension Validation
 ! ==============================================================================
 FINISH
+PARSAV, ALL, mcp_params, txt
 /CLEAR, NOSTART
+PARRES, CHANGE, mcp_params, txt
 /PREP7
 
 ! 1. 单元类型设置：PLANE182，并开启轴对称选项
@@ -60,7 +62,12 @@ FINISH
 
 ! 7. 导出给 MCP 服务器读取的文本结果
 /POST1
-SET, LAST
+*GET, chk_substep, PARM, MY_SUBSTEP, TYPE
+*IF, chk_substep, EQ, 0, THEN
+    SET, 1, MY_SUBSTEP
+*ELSE
+    SET, LAST
+*ENDIF
 
 ! 沿中心轴提取 Y 向位移和等效应力
 ! --- MCP 动态传参支持 ---

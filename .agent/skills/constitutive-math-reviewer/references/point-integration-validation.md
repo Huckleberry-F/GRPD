@@ -24,3 +24,5 @@
 - Voigt 顺序：`[xx, yy, zz, xy, yz, zx]`。
 - 剪切分量：tensor strain，不是 engineering shear strain。
 - 当前 MCP 第一版内置 J2 线性各向同性硬化参考；复杂 JC、损伤或有限变形模型应先补充参考实现，再做自动结论。
+- 对于包含 Voce 非线性硬化、Lemaitre 损伤等高度耦合的复杂模型，若 MATLAB MCP 暂未内置，可基于 Python 快速编写 Backward Euler 隐式返回映射的独立求解器进行对标。对标要求达到双精度机器误差极限（如 $10^{-11} \sim 10^{-12}$）。
+- 对标完成后，应绘制应力、等效塑性应变和损伤演化随加载步的变化曲线（如 `Comparison_Plot.png`），保存至 `artifacts` 目录并在 `walkthrough.md` 中进行可视化展示。

@@ -10358,3 +10358,556 @@
     |     | ForceRatio: 1.651850e-07
     |     [35m[Explicit][0m Inner loop converged -> substep done. (No outer NR needed)
     |     [Substep 41] Computed RampIters: 869
+    |     > Sub 41 Iter 5000 | Time: 1.315385e+00 | KineticRatio: 9.059624e-11 | DispRatio: 1.494948e-08
+    |     | ForceRatio: 8.051398e-07 | Speed: 128 steps/s
+    |     [Step 2 / Sub 41] Converged. Iter: 7941 | KineticRatio: 9.756715e-17 | DispRatio: 1.551341e-11
+    |     | ForceRatio: 9.018305e-08
+    |     [35m[Explicit][0m Inner loop converged -> substep done. (No outer NR needed)
+    |     [Substep 42] Computed RampIters: 869
+    |     > Sub 42 Iter 5000 | Time: 1.323077e+00 | KineticRatio: 2.595663e-11 | DispRatio: 1.103345e-08
+    |     | ForceRatio: 2.324661e-06 | Speed: 127 steps/s
+    |     [Step 2 / Sub 42] Converged. Iter: 7675 | KineticRatio: 1.982149e-14 | DispRatio: 3.049040e-10
+    |     | ForceRatio: 9.718596e-09
+    |     [35m[Explicit][0m Inner loop converged -> substep done. (No outer NR needed)
+    |     [Substep 43] Computed RampIters: 869
+    |     > Sub 43 Iter 5000 | Time: 1.330769e+00 | KineticRatio: 5.567038e-11 | DispRatio: 1.207950e-08
+    |     | ForceRatio: 1.579781e-06 | Speed: 127 steps/s
+    |     [Step 2 / Sub 43] Converged. Iter: 7225 | KineticRatio: 1.392931e-13 | DispRatio: 6.042400e-10
+    |     | ForceRatio: 9.820297e-09
+    |     [35m[Explicit][0m Inner loop converged -> substep done. (No outer NR needed)
+    |     [Substep 44] Computed RampIters: 869
+    |     > Sub 44 Iter 5000 | Time: 1.338462e+00 | KineticRatio: 3.248205e-11 | DispRatio: 8.610575e-09
+    |     | ForceRatio: 3.535556e-06 | Speed: 128 steps/s
+    |     [Step 2 / Sub 44] Converged. Iter: 7627 | KineticRatio: 4.336066e-14 | DispRatio: 3.146328e-10
+    |     | ForceRatio: 9.666247e-09
+    |     [35m[Explicit][0m Inner loop converged -> substep done. (No outer NR needed)
+    |     [Substep 45] Computed RampIters: 869
+    |     > Sub 45 Iter 5000 | Time: 1.346154e+00 | KineticRatio: 4.621654e-11 | DispRatio: 1.037879e-08
+    |     | ForceRatio: 2.781610e-06 | Speed: 128 steps/s
+    |     [Step 2 / Sub 45] Converged. Iter: 7662 | KineticRatio: 4.052025e-14 | DispRatio: 3.073175e-10
+    |     | ForceRatio: 9.707894e-09
+    |     [35m[Explicit][0m Inner loop converged -> substep done. (No outer NR needed)
+    |     [Substep 46] Computed RampIters: 869
+    |     > Sub 46 Iter 5000 | Time: 1.353846e+00 | KineticRatio: 6.292385e-11 | DispRatio: 1.326469e-08
+    |     | ForceRatio: 1.031320e-06 | Speed: 128 steps/s
+    |     [Step 2 / Sub 46] Converged. Iter: 7238 | KineticRatio: 1.355149e-13 | DispRatio: 6.156010e-10
+    |     | ForceRatio: 9.822444e-09
+    |     [35m[Explicit][0m Inner loop converged -> substep done. (No outer NR needed)
+    |     [Substep 47] Computed RampIters: 869
+    |     > Sub 47 Iter 5000 | Time: 1.361538e+00 | KineticRatio: 6.869103e-11 | DispRatio: 1.315402e-08
+    |     | ForceRatio: 1.605031e-06 | Speed: 128 steps/s
+    |     [Step 2 / Sub 47] Converged. Iter: 7716 | KineticRatio: 3.481131e-14 | DispRatio: 2.961626e-10
+    |     | ForceRatio: 9.806577e-09
+    |     [35m[Explicit][0m Inner loop converged -> substep done. (No outer NR needed)
+    |     [Substep 48] Computed RampIters: 869
+    |     > Sub 48 Iter 5000 | Time: 1.369231e+00 | KineticRatio: 5.201015e-11 | DispRatio: 1.120084e-08
+    |     | ForceRatio: 2.098683e-06 | Speed: 128 steps/s
+    |     [Step 2 / Sub 48] Converged. Iter: 7675 | KineticRatio: 3.888614e-14 | DispRatio: 3.062495e-10
+    |     | ForceRatio: 9.698809e-09
+    |     [35m[Explicit][0m Inner loop converged -> substep done. (No outer NR needed)
+    |     [Substep 49] Computed RampIters: 869
+    |     > Sub 49 Iter 5000 | Time: 1.376923e+00 | KineticRatio: 6.786248e-11 | DispRatio: 1.369288e-08
+    |     | ForceRatio: 9.764080e-07 | Speed: 128 steps/s
+    |     [Step 2 / Sub 49] Converged. Iter: 7704 | KineticRatio: 3.600789e-14 | DispRatio: 3.154579e-10
+    |     | ForceRatio: 9.643979e-09
+    |     [35m[Explicit][0m Inner loop converged -> substep done. (No outer NR needed)
+    |     [Substep 50] Computed RampIters: 869
+    |     > Sub 50 Iter 5000 | Time: 1.384615e+00 | KineticRatio: 3.527457e-11 | DispRatio: 1.100699e-08
+    |     | ForceRatio: 1.914113e-06 | Speed: 128 steps/s
+    |     [Step 2 / Sub 50] Converged. Iter: 7221 | KineticRatio: 9.748547e-14 | DispRatio: 5.786126e-10
+    |     | ForceRatio: 9.834748e-09
+    |     [35m[Explicit][0m Inner loop converged -> substep done. (No outer NR needed)
+    |     [Substep 51] Computed RampIters: 869
+    |     > Sub 51 Iter 5000 | Time: 1.392308e+00 | KineticRatio: 1.833079e-11 | DispRatio: 1.112121e-08
+    |     | ForceRatio: 1.934952e-06 | Speed: 128 steps/s
+    |     [Step 2 / Sub 51] Converged. Iter: 7222 | KineticRatio: 4.971488e-14 | DispRatio: 5.792103e-10
+    |     | ForceRatio: 9.741137e-09
+    |     [35m[Explicit][0m Inner loop converged -> substep done. (No outer NR needed)
+    |     [Substep 52] Computed RampIters: 869
+    |     > Sub 52 Iter 5000 | Time: 1.400000e+00 | KineticRatio: 4.445948e-11 | DispRatio: 1.235127e-08
+    |     | ForceRatio: 2.087452e-06 | Speed: 128 steps/s
+    |     [Step 2 / Sub 52] Converged. Iter: 7447 | KineticRatio: 9.978991e-17 | DispRatio: 1.850403e-11
+    |     | ForceRatio: 2.116705e-07
+    |     [35m[Explicit][0m Inner loop converged -> substep done. (No outer NR needed)
+    |     [Substep 53] Computed RampIters: 869
+    |     > Sub 53 Iter 5000 | Time: 1.407692e+00 | KineticRatio: 5.513879e-11 | DispRatio: 1.100837e-08
+    |     | ForceRatio: 4.510284e-06 | Speed: 128 steps/s
+    |     [Step 2 / Sub 53] Converged. Iter: 7888 | KineticRatio: 9.017397e-17 | DispRatio: 1.407795e-11
+    |     | ForceRatio: 1.931930e-07
+    |     [35m[Explicit][0m Inner loop converged -> substep done. (No outer NR needed)
+    |     [Substep 54] Computed RampIters: 869
+    |     > Sub 54 Iter 5000 | Time: 1.415385e+00 | KineticRatio: 1.273477e-11 | DispRatio: 1.090222e-08
+    |     | ForceRatio: 1.948881e-06 | Speed: 129 steps/s
+    |     [Step 2 / Sub 54] Converged. Iter: 6959 | KineticRatio: 9.764703e-17 | DispRatio: 3.019242e-11
+    |     | ForceRatio: 2.580435e-07
+    |     [35m[Explicit][0m Inner loop converged -> substep done. (No outer NR needed)
+    |     [Substep 55] Computed RampIters: 869
+    |     > Sub 55 Iter 5000 | Time: 1.423077e+00 | KineticRatio: 4.601930e-11 | DispRatio: 1.013319e-08
+    |     | ForceRatio: 2.249160e-06 | Speed: 129 steps/s
+    |     [Step 2 / Sub 55] Converged. Iter: 7647 | KineticRatio: 4.498120e-14 | DispRatio: 3.167887e-10
+    |     | ForceRatio: 9.561783e-09
+    |     [35m[Explicit][0m Inner loop converged -> substep done. (No outer NR needed)
+    |     [Substep 56] Computed RampIters: 869
+    |     > Sub 56 Iter 5000 | Time: 1.430769e+00 | KineticRatio: 2.691422e-11 | DispRatio: 1.045538e-08
+    |     | ForceRatio: 1.682241e-06 | Speed: 129 steps/s
+    |     [Step 2 / Sub 56] Converged. Iter: 7202 | KineticRatio: 8.889652e-14 | DispRatio: 6.008852e-10
+    |     | ForceRatio: 9.462227e-09
+    |     [35m[Explicit][0m Inner loop converged -> substep done. (No outer NR needed)
+    |     [Substep 57] Computed RampIters: 869
+    |     > Sub 57 Iter 5000 | Time: 1.438462e+00 | KineticRatio: 4.874127e-11 | DispRatio: 1.049663e-08
+    |     | ForceRatio: 2.929482e-06 | Speed: 129 steps/s
+    |     [Step 2 / Sub 57] Converged. Iter: 7675 | KineticRatio: 3.824733e-14 | DispRatio: 2.940312e-10
+    |     | ForceRatio: 9.899733e-09
+    |     [35m[Explicit][0m Inner loop converged -> substep done. (No outer NR needed)
+    |     [Substep 58] Computed RampIters: 869
+    |     > Sub 58 Iter 5000 | Time: 1.446154e+00 | KineticRatio: 5.535183e-11 | DispRatio: 1.117260e-08
+    |     | ForceRatio: 3.560423e-06 | Speed: 129 steps/s
+    |     [Step 2 / Sub 58] Converged. Iter: 7886 | KineticRatio: 8.964682e-17 | DispRatio: 1.421852e-11
+    |     | ForceRatio: 1.554758e-07
+    |     [35m[Explicit][0m Inner loop converged -> substep done. (No outer NR needed)
+    |     [Substep 59] Computed RampIters: 869
+    |     > Sub 59 Iter 5000 | Time: 1.453846e+00 | KineticRatio: 5.650496e-11 | DispRatio: 1.116931e-08
+    |     | ForceRatio: 4.862842e-06 | Speed: 129 steps/s
+    |     [Step 2 / Sub 59] Converged. Iter: 7893 | KineticRatio: 9.030120e-17 | DispRatio: 1.411958e-11
+    |     | ForceRatio: 2.202646e-07
+    |     [35m[Explicit][0m Inner loop converged -> substep done. (No outer NR needed)
+    |     [Substep 60] Computed RampIters: 869
+    |     > Sub 60 Iter 5000 | Time: 1.461538e+00 | KineticRatio: 3.405055e-11 | DispRatio: 1.087464e-08
+    |     | ForceRatio: 1.609697e-06 | Speed: 129 steps/s
+    |     [Step 2 / Sub 60] Converged. Iter: 7211 | KineticRatio: 1.008586e-13 | DispRatio: 5.918560e-10
+    |     | ForceRatio: 9.820325e-09
+    |     [35m[Explicit][0m Inner loop converged -> substep done. (No outer NR needed)
+    |     [Substep 61] Computed RampIters: 869
+    |     > Sub 61 Iter 5000 | Time: 1.469231e+00 | KineticRatio: 7.586969e-11 | DispRatio: 1.246701e-08
+    |     | ForceRatio: 2.486168e-06 | Speed: 129 steps/s
+    |     [Step 2 / Sub 61] Converged. Iter: 7908 | KineticRatio: 9.457519e-17 | DispRatio: 1.391887e-11
+    |     | ForceRatio: 1.540230e-07
+    |     [35m[Explicit][0m Inner loop converged -> substep done. (No outer NR needed)
+    |     [Substep 62] Computed RampIters: 869
+    |     > Sub 62 Iter 5000 | Time: 1.476923e+00 | KineticRatio: 5.507433e-11 | DispRatio: 1.137163e-08
+    |     | ForceRatio: 2.294048e-06 | Speed: 129 steps/s
+    |     [Step 2 / Sub 62] Converged. Iter: 7691 | KineticRatio: 3.644851e-14 | DispRatio: 2.925471e-10
+    |     | ForceRatio: 9.604171e-09
+    |     [35m[Explicit][0m Inner loop converged -> substep done. (No outer NR needed)
+    |     [Substep 63] Computed RampIters: 869
+    |     > Sub 63 Iter 5000 | Time: 1.484615e+00 | KineticRatio: 6.825281e-11 | DispRatio: 1.322212e-08
+    |     | ForceRatio: 1.484828e-06 | Speed: 129 steps/s
+    |     [Step 2 / Sub 63] Converged. Iter: 7922 | KineticRatio: 9.317319e-17 | DispRatio: 1.544925e-11
+    |     | ForceRatio: 1.310687e-07
+    |     [35m[Explicit][0m Inner loop converged -> substep done. (No outer NR needed)
+    |     [Substep 64] Computed RampIters: 869
+    |     > Sub 64 Iter 5000 | Time: 1.492308e+00 | KineticRatio: 4.437050e-11 | DispRatio: 1.202209e-08
+    |     | ForceRatio: 2.591619e-06 | Speed: 129 steps/s
+    |     [Step 2 / Sub 64] Converged. Iter: 7899 | KineticRatio: 9.061098e-17 | DispRatio: 1.717908e-11
+    |     | ForceRatio: 1.383999e-07
+    |     [35m[Explicit][0m Inner loop converged -> substep done. (No outer NR needed)
+    |     [Substep 65] Computed RampIters: 869
+    |     > Sub 65 Iter 5000 | Time: 1.500000e+00 | KineticRatio: 4.216149e-11 | DispRatio: 1.190680e-08
+    |     | ForceRatio: 2.095651e-06 | Speed: 130 steps/s
+    |     [Step 2 / Sub 65] Converged. Iter: 7687 | KineticRatio: 2.672476e-14 | DispRatio: 2.997631e-10
+    |     | ForceRatio: 9.684311e-09
+    |     [35m[Explicit][0m Inner loop converged -> substep done. (No outer NR needed)
+    |     [Substep 66] Computed RampIters: 869
+    |     > Sub 66 Iter 5000 | Time: 1.507692e+00 | KineticRatio: 4.492646e-11 | DispRatio: 1.018038e-08
+    |     | ForceRatio: 2.490558e-06 | Speed: 130 steps/s
+    |     [Step 2 / Sub 66] Converged. Iter: 7675 | KineticRatio: 3.492925e-14 | DispRatio: 2.838682e-10
+    |     | ForceRatio: 9.545521e-09
+    |     [35m[Explicit][0m Inner loop converged -> substep done. (No outer NR needed)
+    |     [Substep 67] Computed RampIters: 869
+    |     > Sub 67 Iter 5000 | Time: 1.515385e+00 | KineticRatio: 4.895033e-11 | DispRatio: 1.065186e-08
+    |     | ForceRatio: 2.372450e-06 | Speed: 130 steps/s
+    |     [Step 2 / Sub 67] Converged. Iter: 7670 | KineticRatio: 3.901061e-14 | DispRatio: 3.007012e-10
+    |     | ForceRatio: 9.995642e-09
+    |     [35m[Explicit][0m Inner loop converged -> substep done. (No outer NR needed)
+    |     [Substep 68] Computed RampIters: 869
+    |     > Sub 68 Iter 5000 | Time: 1.523077e+00 | KineticRatio: 4.799847e-11 | DispRatio: 1.035477e-08
+    |     | ForceRatio: 2.096827e-06 | Speed: 130 steps/s
+    |     [Step 2 / Sub 68] Converged. Iter: 7662 | KineticRatio: 4.164141e-14 | DispRatio: 3.049747e-10
+    |     | ForceRatio: 9.970334e-09
+    |     [35m[Explicit][0m Inner loop converged -> substep done. (No outer NR needed)
+    |     [Substep 69] Computed RampIters: 869
+    |     > Sub 69 Iter 5000 | Time: 1.530769e+00 | KineticRatio: 5.841555e-11 | DispRatio: 1.154028e-08
+    |     | ForceRatio: 2.639761e-06 | Speed: 130 steps/s
+    |     [Step 2 / Sub 69] Converged. Iter: 7888 | KineticRatio: 9.103198e-17 | DispRatio: 1.440631e-11
+    |     | ForceRatio: 1.214739e-07
+    |     [35m[Explicit][0m Inner loop converged -> substep done. (No outer NR needed)
+    |     [Substep 70] Computed RampIters: 869
+    |     > Sub 70 Iter 5000 | Time: 1.538462e+00 | KineticRatio: 5.645942e-11 | DispRatio: 1.152202e-08
+    |     | ForceRatio: 1.804346e-06 | Speed: 130 steps/s
+    |     [Step 2 / Sub 70] Converged. Iter: 7687 | KineticRatio: 3.629554e-14 | DispRatio: 2.921374e-10
+    |     | ForceRatio: 9.741930e-09
+    |     [35m[Explicit][0m Inner loop converged -> substep done. (No outer NR needed)
+    |     [Substep 71] Computed RampIters: 869
+    |     > Sub 71 Iter 5000 | Time: 1.546154e+00 | KineticRatio: 5.351454e-11 | DispRatio: 1.097515e-08
+    |     | ForceRatio: 2.409177e-06 | Speed: 130 steps/s
+    |     [Step 2 / Sub 71] Converged. Iter: 7686 | KineticRatio: 3.612820e-14 | DispRatio: 2.851623e-10
+    |     | ForceRatio: 9.586885e-09
+    |     [35m[Explicit][0m Inner loop converged -> substep done. (No outer NR needed)
+    |     [Substep 72] Computed RampIters: 869
+    |     > Sub 72 Iter 5000 | Time: 1.553846e+00 | KineticRatio: 5.981319e-11 | DispRatio: 1.180830e-08
+    |     | ForceRatio: 3.037138e-06 | Speed: 130 steps/s
+    |     [Step 2 / Sub 72] Converged. Iter: 7906 | KineticRatio: 9.545061e-17 | DispRatio: 1.491676e-11
+    |     | ForceRatio: 1.642672e-07
+    |     [35m[Explicit][0m Inner loop converged -> substep done. (No outer NR needed)
+    |     [Substep 73] Computed RampIters: 869
+    |     > Sub 73 Iter 5000 | Time: 1.561538e+00 | KineticRatio: 5.771969e-11 | DispRatio: 1.168141e-08
+    |     | ForceRatio: 2.193603e-06 | Speed: 130 steps/s
+    |     [Step 2 / Sub 73] Converged. Iter: 7702 | KineticRatio: 3.340511e-14 | DispRatio: 2.810198e-10
+    |     | ForceRatio: 9.879606e-09
+    |     [35m[Explicit][0m Inner loop converged -> substep done. (No outer NR needed)
+    |     [Substep 74] Computed RampIters: 869
+    |     > Sub 74 Iter 5000 | Time: 1.569231e+00 | KineticRatio: 6.412050e-11 | DispRatio: 1.216441e-08
+    |     | ForceRatio: 2.251557e-06 | Speed: 130 steps/s
+    |     [Step 2 / Sub 74] Converged. Iter: 7910 | KineticRatio: 9.134334e-17 | DispRatio: 1.451880e-11
+    |     | ForceRatio: 1.345401e-07
+    |     [35m[Explicit][0m Inner loop converged -> substep done. (No outer NR needed)
+    |     [Substep 75] Computed RampIters: 869
+    |     > Sub 75 Iter 5000 | Time: 1.576923e+00 | KineticRatio: 5.425407e-11 | DispRatio: 1.100832e-08
+    |     | ForceRatio: 5.305765e-06 | Speed: 130 steps/s
+    |     [Step 2 / Sub 75] Converged. Iter: 7902 | KineticRatio: 9.091820e-17 | DispRatio: 1.425037e-11
+    |     | ForceRatio: 2.497560e-07
+    |     [35m[Explicit][0m Inner loop converged -> substep done. (No outer NR needed)
+    |     [Substep 76] Computed RampIters: 869
+    |     > Sub 76 Iter 5000 | Time: 1.584615e+00 | KineticRatio: 5.632247e-11 | DispRatio: 1.164711e-08
+    |     | ForceRatio: 1.624256e-06 | Speed: 130 steps/s
+    |     [Step 2 / Sub 76] Converged. Iter: 7687 | KineticRatio: 3.561679e-14 | DispRatio: 2.928886e-10
+    |     | ForceRatio: 9.850911e-09
+    |     [35m[Explicit][0m Inner loop converged -> substep done. (No outer NR needed)
+    |     [Substep 77] Computed RampIters: 869
+    |     > Sub 77 Iter 5000 | Time: 1.592308e+00 | KineticRatio: 5.960008e-11 | DispRatio: 1.158639e-08
+    |     | ForceRatio: 3.161839e-06 | Speed: 131 steps/s
+    |     [Step 2 / Sub 77] Converged. Iter: 7903 | KineticRatio: 9.225634e-17 | DispRatio: 1.441514e-11
+    |     | ForceRatio: 1.607118e-07
+    |     [35m[Explicit][0m Inner loop converged -> substep done. (No outer NR needed)
+    |     [Substep 78] Computed RampIters: 869
+    |     > Sub 78 Iter 5000 | Time: 1.600000e+00 | KineticRatio: 6.250322e-11 | DispRatio: 1.204038e-08
+    |     | ForceRatio: 2.033625e-06 | Speed: 131 steps/s
+    |     [Step 2 / Sub 78] Converged. Iter: 7715 | KineticRatio: 3.288452e-14 | DispRatio: 2.761721e-10
+    |     | ForceRatio: 9.596927e-09
+    |     [35m[Explicit][0m Inner loop converged -> substep done. (No outer NR needed)
+    |     [Substep 79] Computed RampIters: 869
+    |     > Sub 79 Iter 5000 | Time: 1.607692e+00 | KineticRatio: 5.495220e-11 | DispRatio: 1.125559e-08
+    |     | ForceRatio: 2.447181e-06 | Speed: 131 steps/s
+    |     [Step 2 / Sub 79] Converged. Iter: 7691 | KineticRatio: 3.482208e-14 | DispRatio: 2.833413e-10
+    |     | ForceRatio: 9.896801e-09
+    |     [35m[Explicit][0m Inner loop converged -> substep done. (No outer NR needed)
+    |     [Substep 80] Computed RampIters: 869
+    |     > Sub 80 Iter 5000 | Time: 1.615385e+00 | KineticRatio: 5.910062e-11 | DispRatio: 1.149808e-08
+    |     | ForceRatio: 5.955308e-06 | Speed: 131 steps/s
+    |     [Step 2 / Sub 80] Converged. Iter: 7907 | KineticRatio: 9.134497e-17 | DispRatio: 1.429460e-11
+    |     | ForceRatio: 3.123496e-07
+    |     [35m[Explicit][0m Inner loop converged -> substep done. (No outer NR needed)
+    |     [Substep 81] Computed RampIters: 869
+    |     > Sub 81 Iter 5000 | Time: 1.623077e+00 | KineticRatio: 6.135847e-11 | DispRatio: 1.155102e-08
+    |     | ForceRatio: 2.730391e-06 | Speed: 131 steps/s
+    |     [Step 2 / Sub 81] Converged. Iter: 7906 | KineticRatio: 9.515486e-17 | DispRatio: 1.438478e-11
+    |     | ForceRatio: 1.399318e-07
+    |     [35m[Explicit][0m Inner loop converged -> substep done. (No outer NR needed)
+    |     [Substep 82] Computed RampIters: 869
+    |     > Sub 82 Iter 5000 | Time: 1.630769e+00 | KineticRatio: 4.057949e-11 | DispRatio: 1.031755e-08
+    |     | ForceRatio: 1.766473e-06 | Speed: 131 steps/s
+    |     [Step 2 / Sub 82] Converged. Iter: 7656 | KineticRatio: 3.450216e-14 | DispRatio: 3.008397e-10
+    |     | ForceRatio: 9.832069e-09
+    |     [35m[Explicit][0m Inner loop converged -> substep done. (No outer NR needed)
+    |     [Substep 83] Computed RampIters: 869
+    |     > Sub 83 Iter 5000 | Time: 1.638462e+00 | KineticRatio: 3.658521e-11 | DispRatio: 9.216370e-09
+    |     | ForceRatio: 2.439534e-06 | Speed: 131 steps/s
+    |     [Step 2 / Sub 83] Converged. Iter: 7640 | KineticRatio: 3.852949e-14 | DispRatio: 2.991031e-10
+    |     | ForceRatio: 9.812313e-09
+    |     [35m[Explicit][0m Inner loop converged -> substep done. (No outer NR needed)
+    |     [Substep 84] Computed RampIters: 869
+    |     > Sub 84 Iter 5000 | Time: 1.646154e+00 | KineticRatio: 3.638680e-11 | DispRatio: 1.051222e-08
+    |     | ForceRatio: 2.333420e-06 | Speed: 131 steps/s
+    |     [Step 2 / Sub 84] Converged. Iter: 8115 | KineticRatio: 8.479298e-15 | DispRatio: 1.604670e-10
+    |     | ForceRatio: 9.867787e-09
+    |     [35m[Explicit][0m Inner loop converged -> substep done. (No outer NR needed)
+    |     [Substep 85] Computed RampIters: 869
+    |     > Sub 85 Iter 5000 | Time: 1.653846e+00 | KineticRatio: 4.847460e-11 | DispRatio: 1.046008e-08
+    |     | ForceRatio: 4.446917e-06 | Speed: 131 steps/s
+    |     [Step 2 / Sub 85] Converged. Iter: 8340 | KineticRatio: 9.922831e-17 | DispRatio: 1.496554e-11
+    |     | ForceRatio: 9.027865e-08
+    |     [35m[Explicit][0m Inner loop converged -> substep done. (No outer NR needed)
+    |     [Substep 86] Computed RampIters: 869
+    |     > Sub 86 Iter 5000 | Time: 1.661538e+00 | KineticRatio: 7.251331e-11 | DispRatio: 1.320167e-08
+    |     | ForceRatio: 2.112180e-06 | Speed: 131 steps/s
+    |     [Step 2 / Sub 86] Converged. Iter: 8809 | KineticRatio: 9.830481e-17 | DispRatio: 1.537179e-11
+    |     | ForceRatio: 5.644991e-08
+    |     [35m[Explicit][0m Inner loop converged -> substep done. (No outer NR needed)
+    |     [Substep 87] Computed RampIters: 869
+    |     > Sub 87 Iter 5000 | Time: 1.669231e+00 | KineticRatio: 1.627306e-11 | DispRatio: 1.141062e-08
+    |     | ForceRatio: 3.286718e-06 | Speed: 131 steps/s
+    |     [Step 2 / Sub 87] Converged. Iter: 7886 | KineticRatio: 9.455744e-17 | DispRatio: 2.750474e-11
+    |     | ForceRatio: 1.573084e-07
+    |     [35m[Explicit][0m Inner loop converged -> substep done. (No outer NR needed)
+    |     [Substep 88] Computed RampIters: 869
+    |     > Sub 88 Iter 5000 | Time: 1.676923e+00 | KineticRatio: 4.850252e-11 | DispRatio: 1.063720e-08
+    |     | ForceRatio: 2.411451e-06 | Speed: 131 steps/s
+    |     [Step 2 / Sub 88] Converged. Iter: 8126 | KineticRatio: 1.046169e-14 | DispRatio: 1.562244e-10
+    |     | ForceRatio: 9.991711e-09
+    |     [35m[Explicit][0m Inner loop converged -> substep done. (No outer NR needed)
+    |     [Substep 89] Computed RampIters: 869
+    |     > Sub 89 Iter 5000 | Time: 1.684615e+00 | KineticRatio: 4.706924e-11 | DispRatio: 1.052735e-08
+    |     | ForceRatio: 2.811377e-06 | Speed: 131 steps/s
+    |     [Step 2 / Sub 89] Converged. Iter: 8125 | KineticRatio: 1.028949e-14 | DispRatio: 1.556406e-10
+    |     | ForceRatio: 9.814145e-09
+    |     [35m[Explicit][0m Inner loop converged -> substep done. (No outer NR needed)
+    |     [Substep 90] Computed RampIters: 869
+    |     > Sub 90 Iter 5000 | Time: 1.692308e+00 | KineticRatio: 5.228372e-11 | DispRatio: 1.100127e-08
+    |     | ForceRatio: 3.909897e-06 | Speed: 131 steps/s
+    |     [Step 2 / Sub 90] Converged. Iter: 8590 | KineticRatio: 2.648907e-15 | DispRatio: 7.830461e-11
+    |     | ForceRatio: 9.789188e-09
+    |     [35m[Explicit][0m Inner loop converged -> substep done. (No outer NR needed)
+    |     [Substep 91] Computed RampIters: 869
+    |     > Sub 91 Iter 5000 | Time: 1.700000e+00 | KineticRatio: 2.495867e-11 | DispRatio: 9.072936e-09
+    |     | ForceRatio: 2.384407e-06 | Speed: 131 steps/s
+    |     [Step 2 / Sub 91] Converged. Iter: 8499 | KineticRatio: 2.277415e-15 | DispRatio: 8.667803e-11
+    |     | ForceRatio: 9.922146e-09
+    |     [35m[Explicit][0m Inner loop converged -> substep done. (No outer NR needed)
+    |     [Substep 92] Computed RampIters: 869
+    |     > Sub 92 Iter 5000 | Time: 1.707692e+00 | KineticRatio: 2.110818e-11 | DispRatio: 9.148873e-09
+    |     | ForceRatio: 2.053181e-06 | Speed: 131 steps/s
+    |     [Step 2 / Sub 92] Converged. Iter: 8495 | KineticRatio: 1.886058e-15 | DispRatio: 8.648462e-11
+    |     | ForceRatio: 9.996808e-09
+    |     [35m[Explicit][0m Inner loop converged -> substep done. (No outer NR needed)
+    |     [Substep 93] Computed RampIters: 869
+    |     > Sub 93 Iter 5000 | Time: 1.715385e+00 | KineticRatio: 3.052079e-11 | DispRatio: 8.500579e-09
+    |     | ForceRatio: 4.302971e-06 | Speed: 131 steps/s
+    |     [Step 2 / Sub 93] Converged. Iter: 8951 | KineticRatio: 8.492233e-16 | DispRatio: 4.483856e-11
+    |     | ForceRatio: 9.937894e-09
+    |     [35m[Explicit][0m Inner loop converged -> substep done. (No outer NR needed)
+    |     [Substep 94] Computed RampIters: 869
+    |     > Sub 94 Iter 5000 | Time: 1.723077e+00 | KineticRatio: 3.698091e-11 | DispRatio: 9.432775e-09
+    |     | ForceRatio: 6.465853e-06 | Speed: 131 steps/s
+    |     [Step 2 / Sub 94] Converged. Iter: 9171 | KineticRatio: 9.946254e-17 | DispRatio: 1.547022e-11
+    |     | ForceRatio: 2.853501e-08
+    |     [35m[Explicit][0m Inner loop converged -> substep done. (No outer NR needed)
+    |     [Substep 95] Computed RampIters: 869
+    |     > Sub 95 Iter 5000 | Time: 1.730769e+00 | KineticRatio: 1.384970e-12 | DispRatio: 8.695938e-09
+    |     | ForceRatio: 3.174316e-06 | Speed: 131 steps/s
+    |     [Step 2 / Sub 95] Converged. Iter: 8206 | KineticRatio: 9.880054e-17 | DispRatio: 7.344665e-11
+    |     | ForceRatio: 4.288467e-08
+    |     [35m[Explicit][0m Inner loop converged -> substep done. (No outer NR needed)
+    |     [Substep 96] Computed RampIters: 869
+    |     > Sub 96 Iter 5000 | Time: 1.738462e+00 | KineticRatio: 1.239638e-12 | DispRatio: 1.219985e-08
+    |     | ForceRatio: 1.219730e-06 | Speed: 132 steps/s
+    |     [Step 2 / Sub 96] Converged. Iter: 7854 | KineticRatio: 9.862613e-17 | DispRatio: 1.088213e-10
+    |     | ForceRatio: 4.888809e-08
+    |     [35m[Explicit][0m Inner loop converged -> substep done. (No outer NR needed)
+    |     [Substep 97] Computed RampIters: 869
+    |     > Sub 97 Iter 5000 | Time: 1.746154e+00 | KineticRatio: 2.564970e-12 | DispRatio: 1.313396e-08
+    |     | ForceRatio: 2.154709e-06 | Speed: 132 steps/s
+    |     [Step 2 / Sub 97] Converged. Iter: 7923 | KineticRatio: 9.996018e-17 | DispRatio: 8.198323e-11
+    |     | ForceRatio: 1.219761e-07
+    |     [35m[Explicit][0m Inner loop converged -> substep done. (No outer NR needed)
+    |     [Substep 98] Computed RampIters: 869
+    |     > Sub 98 Iter 5000 | Time: 1.753846e+00 | KineticRatio: 3.644694e-12 | DispRatio: 1.350517e-08
+    |     | ForceRatio: 2.080622e-06 | Speed: 132 steps/s
+    |     [Step 2 / Sub 98] Converged. Iter: 8356 | KineticRatio: 9.877244e-17 | DispRatio: 7.030509e-11
+    |     | ForceRatio: 6.303086e-08
+    |     [35m[Explicit][0m Inner loop converged -> substep done. (No outer NR needed)
+    |     [Substep 99] Computed RampIters: 869
+    |     > Sub 99 Iter 5000 | Time: 1.761538e+00 | KineticRatio: 8.317356e-12 | DispRatio: 1.320348e-08
+    |     | ForceRatio: 4.407740e-06 | Speed: 132 steps/s
+    |     [Step 2 / Sub 99] Converged. Iter: 8419 | KineticRatio: 9.982137e-17 | DispRatio: 4.574055e-11
+    |     | ForceRatio: 1.425635e-07
+    |     [35m[Explicit][0m Inner loop converged -> substep done. (No outer NR needed)
+    |     [Substep 100] Computed RampIters: 869
+    |     > Sub 100 Iter 5000 | Time: 1.769231e+00 | KineticRatio: 6.169982e-11 | DispRatio: 1.352038e-08
+    |     | ForceRatio: 7.413800e-06 | Speed: 132 steps/s
+    |     [Step 2 / Sub 100] Converged. Iter: 9318 | KineticRatio: 9.910337e-17 | DispRatio: 1.713569e-11
+    |     | ForceRatio: 6.433480e-08
+    |     [35m[Explicit][0m Inner loop converged -> substep done. (No outer NR needed)
+    |     [Substep 101] Computed RampIters: 869
+    |     > Sub 101 Iter 5000 | Time: 1.776923e+00 | KineticRatio: 1.547072e-12 | DispRatio: 1.517764e-08
+    |     | ForceRatio: 2.240217e-05 | Speed: 132 steps/s
+    |     [Step 2 / Sub 101] Converged. Iter: 7603 | KineticRatio: 9.987214e-17 | DispRatio: 1.219469e-10
+    |     | ForceRatio: 9.976296e-07
+    |     [35m[Explicit][0m Inner loop converged -> substep done. (No outer NR needed)
+    |     [Substep 102] Computed RampIters: 869
+    |     > Sub 102 Iter 5000 | Time: 1.784615e+00 | KineticRatio: 6.371804e-11 | DispRatio: 1.381106e-08
+    |     | ForceRatio: 1.297411e-04 | Speed: 132 steps/s
+    |     [Step 2 / Sub 102] Converged. Iter: 9337 | KineticRatio: 9.939989e-17 | DispRatio: 1.724976e-11
+    |     | ForceRatio: 1.023725e-06
+    |     [35m[Explicit][0m Inner loop converged -> substep done. (No outer NR needed)
+    |     [Substep 103] Computed RampIters: 869
+    |     > Sub 103 Iter 5000 | Time: 1.792308e+00 | KineticRatio: 7.440579e-11 | DispRatio: 1.313639e-08
+    |     | ForceRatio: 1.283924e-04 | Speed: 132 steps/s
+    |     [Step 2 / Sub 103] Converged. Iter: 9337 | KineticRatio: 9.917139e-17 | DispRatio: 1.516551e-11
+    |     | ForceRatio: 1.234748e-06
+    |     [35m[Explicit][0m Inner loop converged -> substep done. (No outer NR needed)
+    |     [Substep 104] Computed RampIters: 869
+    |     > Sub 104 Iter 5000 | Time: 1.800000e+00 | KineticRatio: 7.539291e-11 | DispRatio: 1.383909e-08
+    |     | ForceRatio: 7.001087e-03 | Speed: 132 steps/s
+    |     [Step 2 / Sub 104] Converged. Iter: 9354 | KineticRatio: 9.957809e-17 | DispRatio: 1.590483e-11
+    |     | ForceRatio: 5.105974e-05
+    |     [35m[Explicit][0m Inner loop converged -> substep done. (No outer NR needed)
+    |     [Substep 105] Computed RampIters: 869
+    |     > Sub 105 Iter 5000 | Time: 1.807692e+00 | KineticRatio: 4.130304e-13 | DispRatio: 1.460853e-08
+    |     | ForceRatio: 1.164019e-04 | Speed: 132 steps/s
+    |     [Step 2 / Sub 105] Converged. Iter: 7098 | KineticRatio: 9.947295e-17 | DispRatio: 2.267085e-10
+    |     | ForceRatio: 1.264345e-05
+    |     [35m[Explicit][0m Inner loop converged -> substep done. (No outer NR needed)
+    |     [Substep 106] Computed RampIters: 869
+    |     > Sub 106 Iter 5000 | Time: 1.815385e+00 | KineticRatio: 7.694179e-11 | DispRatio: 1.338739e-08
+    |     | ForceRatio: 2.013469e-04 | Speed: 132 steps/s
+    |     [Step 2 / Sub 106] Converged. Iter: 9347 | KineticRatio: 9.932084e-17 | DispRatio: 1.521023e-11
+    |     | ForceRatio: 1.858162e-06
+    |     [35m[Explicit][0m Inner loop converged -> substep done. (No outer NR needed)
+    |     [Substep 107] Computed RampIters: 869
+    |     > Sub 107 Iter 5000 | Time: 1.823077e+00 | KineticRatio: 7.608177e-11 | DispRatio: 1.328212e-08
+    |     | ForceRatio: 1.605560e-04 | Speed: 132 steps/s
+    |     [Step 2 / Sub 107] Converged. Iter: 9346 | KineticRatio: 9.924182e-17 | DispRatio: 1.516979e-11
+    |     | ForceRatio: 1.473409e-06
+    |     [35m[Explicit][0m Inner loop converged -> substep done. (No outer NR needed)
+    |     [Substep 108] Computed RampIters: 869
+    |     > Sub 108 Iter 5000 | Time: 1.830769e+00 | KineticRatio: 2.708016e-11 | DispRatio: 1.380815e-08
+    |     | ForceRatio: 1.517726e-04 | Speed: 132 steps/s
+    |     [Step 2 / Sub 108] Converged. Iter: 8895 | KineticRatio: 9.895475e-17 | DispRatio: 2.639591e-11
+    |     | ForceRatio: 2.111012e-06
+    |     [35m[Explicit][0m Inner loop converged -> substep done. (No outer NR needed)
+    |     [Substep 109] Computed RampIters: 869
+    |     > Sub 109 Iter 5000 | Time: 1.838462e+00 | KineticRatio: 7.687273e-11 | DispRatio: 1.349540e-08
+    |     | ForceRatio: 6.564088e-04 | Speed: 132 steps/s
+    |     [Step 2 / Sub 109] Converged. Iter: 9353 | KineticRatio: 9.893320e-17 | DispRatio: 1.530990e-11
+    |     | ForceRatio: 5.586493e-06
+    |     [35m[Explicit][0m Inner loop converged -> substep done. (No outer NR needed)
+    |     [Substep 110] Computed RampIters: 869
+    |     > Sub 110 Iter 5000 | Time: 1.846154e+00 | KineticRatio: 1.256600e-11 | DispRatio: 1.380821e-08
+    |     | ForceRatio: 1.369795e-04 | Speed: 132 steps/s
+    |     [Step 2 / Sub 110] Converged. Iter: 8472 | KineticRatio: 9.945559e-17 | DispRatio: 3.884730e-11
+    |     | ForceRatio: 3.790536e-06
+    |     [35m[Explicit][0m Inner loop converged -> substep done. (No outer NR needed)
+    |     [Substep 111] Computed RampIters: 869
+    |     > Sub 111 Iter 5000 | Time: 1.853846e+00 | KineticRatio: 7.717157e-11 | DispRatio: 1.343622e-08
+    |     | ForceRatio: 7.388837e-04 | Speed: 132 steps/s
+    |     [Step 2 / Sub 111] Converged. Iter: 9353 | KineticRatio: 9.930144e-17 | DispRatio: 1.524151e-11
+    |     | ForceRatio: 6.405964e-06
+    |     [35m[Explicit][0m Inner loop converged -> substep done. (No outer NR needed)
+    |     [Substep 112] Computed RampIters: 869
+    |     > Sub 112 Iter 5000 | Time: 1.861538e+00 | KineticRatio: 7.688268e-11 | DispRatio: 1.339691e-08
+    |     | ForceRatio: 2.578257e-04 | Speed: 132 steps/s
+    |     [Step 2 / Sub 112] Converged. Iter: 9352 | KineticRatio: 9.844143e-17 | DispRatio: 1.515923e-11
+    |     | ForceRatio: 2.262511e-06
+    |     [35m[Explicit][0m Inner loop converged -> substep done. (No outer NR needed)
+    |     [Substep 113] Computed RampIters: 869
+    |     > Sub 113 Iter 5000 | Time: 1.869231e+00 | KineticRatio: 1.329829e-11 | DispRatio: 1.376774e-08
+    |     | ForceRatio: 1.556549e-04 | Speed: 132 steps/s
+    |     [Step 2 / Sub 113] Converged. Iter: 8478 | KineticRatio: 9.903022e-17 | DispRatio: 3.757026e-11
+    |     | ForceRatio: 4.319423e-06
+    |     [35m[Explicit][0m Inner loop converged -> substep done. (No outer NR needed)
+    |     [Substep 114] Computed RampIters: 869
+    |     > Sub 114 Iter 5000 | Time: 1.876923e+00 | KineticRatio: 1.411714e-11 | DispRatio: 1.388788e-08
+    |     | ForceRatio: 4.793484e-05 | Speed: 132 steps/s
+    |     [Step 2 / Sub 114] Converged. Iter: 8489 | KineticRatio: 9.942199e-17 | DispRatio: 3.685705e-11
+    |     | ForceRatio: 1.274636e-06
+    |     [35m[Explicit][0m Inner loop converged -> substep done. (No outer NR needed)
+    |     [Substep 115] Computed RampIters: 869
+    |     > Sub 115 Iter 5000 | Time: 1.884615e+00 | KineticRatio: 7.771357e-11 | DispRatio: 1.359051e-08
+    |     | ForceRatio: 2.399254e-04 | Speed: 132 steps/s
+    |     [Step 2 / Sub 115] Converged. Iter: 9360 | KineticRatio: 9.928644e-17 | DispRatio: 1.536145e-11
+    |     | ForceRatio: 1.894328e-06
+    |     [35m[Explicit][0m Inner loop converged -> substep done. (No outer NR needed)
+    |     [Substep 116] Computed RampIters: 869
+    |     > Sub 116 Iter 5000 | Time: 1.892308e+00 | KineticRatio: 7.727956e-11 | DispRatio: 1.338620e-08
+    |     | ForceRatio: 1.349172e-04 | Speed: 132 steps/s
+    |     [Step 2 / Sub 116] Converged. Iter: 9354 | KineticRatio: 9.884218e-17 | DispRatio: 1.513875e-11
+    |     | ForceRatio: 1.176064e-06
+    |     [35m[Explicit][0m Inner loop converged -> substep done. (No outer NR needed)
+    |     [Substep 117] Computed RampIters: 869
+    |     > Sub 117 Iter 5000 | Time: 1.900000e+00 | KineticRatio: 7.746820e-11 | DispRatio: 1.350531e-08
+    |     | ForceRatio: 4.563044e-03 | Speed: 132 steps/s
+    |     [Step 2 / Sub 117] Converged. Iter: 9358 | KineticRatio: 9.886567e-17 | DispRatio: 1.525702e-11
+    |     | ForceRatio: 3.723366e-05
+    |     [35m[Explicit][0m Inner loop converged -> substep done. (No outer NR needed)
+    |     [Substep 118] Computed RampIters: 869
+    |     > Sub 118 Iter 5000 | Time: 1.907692e+00 | KineticRatio: 2.905503e-11 | DispRatio: 1.401264e-08
+    |     | ForceRatio: 3.047930e-05 | Speed: 132 steps/s
+    |     [Step 2 / Sub 118] Converged. Iter: 8909 | KineticRatio: 9.988605e-17 | DispRatio: 2.598132e-11
+    |     | ForceRatio: 3.630513e-07
+    |     [35m[Explicit][0m Inner loop converged -> substep done. (No outer NR needed)
+    |     [Substep 119] Computed RampIters: 869
+    |     > Sub 119 Iter 5000 | Time: 1.915385e+00 | KineticRatio: 7.782134e-11 | DispRatio: 1.343117e-08
+    |     | ForceRatio: 1.962608e-04 | Speed: 132 steps/s
+    |     [Step 2 / Sub 119] Converged. Iter: 9358 | KineticRatio: 9.900739e-17 | DispRatio: 1.514964e-11
+    |     | ForceRatio: 1.602790e-06
+    |     [35m[Explicit][0m Inner loop converged -> substep done. (No outer NR needed)
+    |     [Substep 120] Computed RampIters: 869
+    |     > Sub 120 Iter 5000 | Time: 1.923077e+00 | KineticRatio: 7.774415e-11 | DispRatio: 1.342580e-08
+    |     | ForceRatio: 1.455401e-04 | Speed: 132 steps/s
+    |     [Step 2 / Sub 120] Converged. Iter: 9357 | KineticRatio: 9.893468e-17 | DispRatio: 1.514541e-11
+    |     | ForceRatio: 1.238367e-06
+    |     [35m[Explicit][0m Inner loop converged -> substep done. (No outer NR needed)
+    |     [Substep 121] Computed RampIters: 869
+    |     > Sub 121 Iter 5000 | Time: 1.930769e+00 | KineticRatio: 7.773790e-11 | DispRatio: 1.342547e-08
+    |     | ForceRatio: 1.510251e-04 | Speed: 132 steps/s
+    |     [Step 2 / Sub 121] Converged. Iter: 9357 | KineticRatio: 9.892613e-17 | DispRatio: 1.514501e-11
+    |     | ForceRatio: 1.286237e-06
+    |     [35m[Explicit][0m Inner loop converged -> substep done. (No outer NR needed)
+    |     [Substep 122] Computed RampIters: 869
+    |     > Sub 122 Iter 5000 | Time: 1.938462e+00 | KineticRatio: 7.773401e-11 | DispRatio: 1.342514e-08
+    |     | ForceRatio: 1.567714e-04 | Speed: 132 steps/s
+    |     [Step 2 / Sub 122] Converged. Iter: 9357 | KineticRatio: 9.895344e-17 | DispRatio: 1.514693e-11
+    |     | ForceRatio: 1.332516e-06
+    |     [35m[Explicit][0m Inner loop converged -> substep done. (No outer NR needed)
+    |     [Substep 123] Computed RampIters: 869
+    |     > Sub 123 Iter 5000 | Time: 1.946154e+00 | KineticRatio: 7.779508e-11 | DispRatio: 1.342844e-08
+    |     | ForceRatio: 1.628751e-04 | Speed: 133 steps/s
+    |     [Step 2 / Sub 123] Converged. Iter: 9357 | KineticRatio: 9.912463e-17 | DispRatio: 1.515792e-11
+    |     | ForceRatio: 1.383910e-06
+    |     [35m[Explicit][0m Inner loop converged -> substep done. (No outer NR needed)
+    |     [Substep 124] Computed RampIters: 869
+    |     > Sub 124 Iter 5000 | Time: 1.953846e+00 | KineticRatio: 7.773486e-11 | DispRatio: 1.342557e-08
+    |     | ForceRatio: 1.693001e-04 | Speed: 133 steps/s
+    |     [Step 2 / Sub 124] Converged. Iter: 9357 | KineticRatio: 9.894846e-17 | DispRatio: 1.514706e-11
+    |     | ForceRatio: 1.440047e-06
+    |     [35m[Explicit][0m Inner loop converged -> substep done. (No outer NR needed)
+    |     [Substep 125] Computed RampIters: 869
+    |     > Sub 125 Iter 5000 | Time: 1.961538e+00 | KineticRatio: 7.773427e-11 | DispRatio: 1.342557e-08
+    |     | ForceRatio: 1.765451e-04 | Speed: 133 steps/s
+    |     [Step 2 / Sub 125] Converged. Iter: 9357 | KineticRatio: 9.895409e-17 | DispRatio: 1.514760e-11
+    |     | ForceRatio: 1.501022e-06
+    |     [35m[Explicit][0m Inner loop converged -> substep done. (No outer NR needed)
+    |     [Substep 126] Computed RampIters: 869
+    |     > Sub 126 Iter 5000 | Time: 1.969231e+00 | KineticRatio: 7.773792e-11 | DispRatio: 1.342545e-08
+    |     | ForceRatio: 1.845401e-04 | Speed: 133 steps/s
+    |     [Step 2 / Sub 126] Converged. Iter: 9357 | KineticRatio: 9.897021e-17 | DispRatio: 1.514834e-11
+    |     | ForceRatio: 1.568417e-06
+    |     [35m[Explicit][0m Inner loop converged -> substep done. (No outer NR needed)
+    |     [Substep 127] Computed RampIters: 869
+    |     > Sub 127 Iter 5000 | Time: 1.976923e+00 | KineticRatio: 7.779626e-11 | DispRatio: 1.343045e-08
+    |     | ForceRatio: 3.701215e-04 | Speed: 133 steps/s
+    |     [Step 2 / Sub 127] Converged. Iter: 9357 | KineticRatio: 9.976503e-17 | DispRatio: 1.520890e-11
+    |     | ForceRatio: 1.766043e-06
+    |     [35m[Explicit][0m Inner loop converged -> substep done. (No outer NR needed)
+    |     [Substep 128] Computed RampIters: 869
+    |     > Sub 128 Iter 5000 | Time: 1.984615e+00 | KineticRatio: 7.773074e-11 | DispRatio: 1.342442e-08
+    |     | ForceRatio: 2.171182e-04 | Speed: 133 steps/s
+    |     [Step 2 / Sub 128] Converged. Iter: 9357 | KineticRatio: 9.949851e-17 | DispRatio: 1.518826e-11
+    |     | ForceRatio: 1.728685e-06
+    |     [35m[Explicit][0m Inner loop converged -> substep done. (No outer NR needed)
+    |     [Substep 129] Computed RampIters: 869
+    |     > Sub 129 Iter 5000 | Time: 1.992308e+00 | KineticRatio: 7.774415e-11 | DispRatio: 1.342568e-08
+    |     | ForceRatio: 2.141882e-04 | Speed: 133 steps/s
+    |     [Step 2 / Sub 129] Converged. Iter: 9357 | KineticRatio: 9.954009e-17 | DispRatio: 1.519137e-11
+    |     | ForceRatio: 1.813688e-06
+    |     [35m[Explicit][0m Inner loop converged -> substep done. (No outer NR needed)
+    |     [Substep 130] Computed RampIters: 869
+    |     > Sub 130 Iter 5000 | Time: 2.000000e+00 | KineticRatio: 7.776968e-11 | DispRatio: 1.342736e-08
+    |     | ForceRatio: 2.259660e-04 | Speed: 133 steps/s
+    |     [Step 2 / Sub 130] Converged. Iter: 9357 | KineticRatio: 9.955007e-17 | DispRatio: 1.519167e-11
+    |     | ForceRatio: 1.919227e-06
+    |     [35m[Explicit][0m Inner loop converged -> substep done. (No outer NR needed)
+    | --- ADR Complete | Total Substeps: 150  |  Pure Compute: 8.110941e+03s  |  Total: 8.390653e+03s  | 
+    | Speed: 133 steps/s
+    | Finished. Total: 8390.652725s  |  Pure Compute avg: 0.007502 s/step
+
+[19:22:35] [INFO ] [PDEngine]
+    | PD Engine Solve Phase Finished.
+
+[19:22:35] [INFO ] [EngineManager]
+    | Main Solver Phase finished.
+    | ==================================================
+    | Entering Post-processing Phase
+    | ==================================================
+    | Outputting: PD
+    | Post-processing Phase finished.

@@ -11,7 +11,7 @@ description: "GRPD OpenMP/Kernel 性能专项入口。用于优化或评审 Open
 
 1. 读取 `references/performance-openmp.md`。
 2. 读取 `../mesh-and-neighbor-reviewer/references/mesh-neighbor-contact.md`。
-3. 若新增/移动源文件，运行 `python .agent/skills/grpd-cae-toolkit/scripts/check_cmake_sources.py .`。
+3. 若新增/移动源文件，运行 `python .gemini/skills/grpd-cae-toolkit/scripts/check_cmake_sources.py .`。
 
 ## 判断重点
 

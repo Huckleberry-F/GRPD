@@ -24,5 +24,5 @@ defaults:
 # 允许的工作目录 (安全白名单，防止意外操作到系统目录)
 allowed_directories:
   - "D:\\ANSYS_Project"
-  - "D:\\C++pro\\GRPD\\Examples"
-  - "D:\\C++pro\\GRPD\\build"
+  - "D:\\Project_C++\\GRPD\\Examples"
+  - "D:\\Project_C++\\GRPD\\build"

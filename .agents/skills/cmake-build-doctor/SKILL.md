@@ -10,8 +10,8 @@ description: "GRPD CMake 构建专项入口。用于诊断或维护 C++17、Open
 ## 必做流程
 
 1. 读取 `references/cmake-layout.md`。
-2. 运行 `python .agent/skills/grpd-cae-toolkit/scripts/check_cmake_sources.py .`。
-3. 如涉及注册宏，运行 `python .agent/skills/grpd-cae-toolkit/scripts/list_registry_macros.py .`。
+2. 运行 `python .gemini/skills/grpd-cae-toolkit/scripts/check_cmake_sources.py .`。
+3. 如涉及注册宏，运行 `python .gemini/skills/grpd-cae-toolkit/scripts/list_registry_macros.py .`。
 
 ## 判断重点
 
