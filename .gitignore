@@ -10,6 +10,7 @@ __pycache__/
 *.sqlite
 *.sqlite-shm
 *.sqlite-wal
+*.db
 *.avi
 *.vtu
 Result_*
@@ -22,6 +23,8 @@ Result_*
 .agents/
 .gemini/settings.json
 outputs/
+tools/ansys-mcp-server/work_dir/
+tools/matlab-mcp-server/work_dir/
 *.zip
 *.xlsx
 *.png

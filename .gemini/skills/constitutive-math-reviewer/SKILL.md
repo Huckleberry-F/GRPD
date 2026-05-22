@@ -1,23 +1,17 @@
 ---
 name: constitutive-math-reviewer
-description: "GRPD 本构数学专项入口。用于评审连续介质力学公式、近场动力学应力更新、Voigt/张量约定、J2/JC 塑性、热传导、PK1/PK2/Cauchy 应力、切线刚度、平面应力/平面应变/轴对称公式、Eigen 实现，以及通过 point-integration-matlab-server 做材料单点积分参考验证。"
+description: "GRPD 本构数学专项入口。用于评审连续介质力学公式、近场动力学应力更新、Voigt/张量约定、J2/JC 塑性、热传导、PK1/PK2/Cauchy 应力、切线刚度、平面应�?平面应变/轴对称公式、Eigen 实现，以及通过 point-integration-matlab-server 做材料单点积分参考验证�?
 ---
 
-# GRPD 本构数学入口
+# GRPD 本构数学与单点积分联合校验手�?
+本技能提供了一套全自动、解耦的材料本构联合校验工作流。由 `matlab-mcp-server` 提供，利�?FastMCP 工具 `run_constitutive_validation` 驱动双端进行等效加载，实�?C++ 求解器与 MATLAB 解析解的无偏对标�?
+## 一键执行对标校�?
+你可以通过调用 `PointIntegrationMatlabServer` MCP 服务的工具：
+- **`run_constitutive_validation(parameters, F_path, work_dir)`**：一键执行本构对标校验。它会自动完�?C++ 端的增量编译与运行、MATLAB 积分脚本的生成与求解，以及双端结果误差比对和绘图�?
 
-使用中心工具包：`../grpd-cae-toolkit`。
-
-## 必做流程
-
-1. 读取 `../grpd-cae-toolkit/references/material-state.md`。
-2. 如需要设计最小验证算例，读取 `../numerical-test-generator/references/validation-playbook.md`。
-3. 如改动涉及 Kernel 热循环，再读取 `../openmp-kernel-optimizer/references/performance-openmp.md`。
-4. 如任务涉及材料单点积分、返回映射、状态变量更新或 C++/参考解对比，读取 `references/point-integration-validation.md`，并优先调用 `point-integration-matlab-server`。
-
-## 判断重点
-
-- 先写出代码实现的数学表达式，再判断公式是否正确。
-- 明确应变定义、应力类型、张量/Voigt 顺序和剪切因子。
-- 对 J2/JC 检查屈服函数、返回映射、硬化项、状态变量和输出量。
-- 不要只凭公式印象判断本构积分；构造最小 total strain path，调用 `point-integration-matlab-server.run_j2_uniaxial_path` 或 `run_j2_strain_path` 得到参考响应，再对比 C++ 的 stress、eqp、damage 或其他状态变量。
-- 对比失败时，优先检查 Voigt 顺序、剪切因子、应变增量/总应变、屈服函数符号、塑性乘子分母、状态变量 commit 顺序和单位。
+## 校验工作流机�?
+1. **变形梯度驱动**：双端直接接收指定的变形梯度路径 `F_path`�?N \times 9$ 行优先矩阵）进行力学求解�?2. **大变形模式下**�?   - 采用 Green-Lagrange 应变�?\boldsymbol{E} = 0.5(\boldsymbol{F}^T \boldsymbol{F} - \boldsymbol{I})$
+   - 提取并转�?Cauchy 应力为第一�?Piola-Kirchhoff (PK1) 应力�?\boldsymbol{P} = \boldsymbol{F} \boldsymbol{\sigma}$
+   - 双端�?PK1 应力上进行比对�?3. **小变形模式下**�?   - 采用小应变：$\boldsymbol{\epsilon} = 0.5(\boldsymbol{F} + \boldsymbol{F}^T) - \boldsymbol{I}$
+   - 双端直接�?Cauchy 应力 $\boldsymbol{\sigma}$ 上进行比对�?4. **误差要求**�?   - 应力绝对误差阈值限制为 $1.0 \times 10^{-5}$ Pa（处理大应力下的尾数浮点抖动）�?   - 塑性与损伤等状态变量误差限制为 $1.0 \times 10^{-10}$ （要求机器双精度匹配）�?
+## 关键参考文�?- 详细物理与约定说明：[point-integration-validation.md](file:///d:/Project_C++/GRPD/.gemini/skills/constitutive-math-reviewer/references/point-integration-validation.md)

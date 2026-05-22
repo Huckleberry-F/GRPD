@@ -1,28 +1,32 @@
-# 本构单点积分验证
+# 本构单点积分验证标准手册
 
 ## 目标
 
-用 `point-integration-matlab-server` 为 GRPD 材料模型提供独立参考响应，优先验证小变形 J2 返回映射、硬化律、状态变量提交和 Voigt 约定。
-
+通过解耦的 MATLAB MCP 服务通用接口�?C++ 测试桩，双端传入相同的变形梯度路径进行独立积分求解，比对力学响应以验证本构算法的正确性�?
 ## MCP 工具
 
-- `point-integration-matlab-server.check_matlab_available`：确认 MATLAB 是否在当前机器可用。
-- `point-integration-matlab-server.run_j2_uniaxial_path`：对 xx 单轴 total strain path 做 J2 线性各向同性硬化积分。
-- `point-integration-matlab-server.run_j2_strain_path`：对 6 分量 total strain path 做 J2 线性各向同性硬化积分。
+- **`PointIntegrationMatlabServer.run_constitutive_validation`**：一键执�?C++ 本构�?MATLAB 参考解析解的单点联合对标校验（推荐）�?- **`PointIntegrationMatlabServer.run_custom_script`**：运行自定义的任�?MATLAB 脚本，并自动读回指定的输�?JSON 结果�?  - **解耦设�?*：任何复杂的材料本构算法均应�?Python 校验脚本侧维护其 MATLAB 算法模板字符串。运行期直接通过该通用接口发送至 MATLAB 运行。底层服务中不再硬编码具体材料的力学公式�?
+## 推荐校验流程 (JSON-Driven Dual-End Pipeline)
 
-## 推荐流程
+```mermaid
+graph TD
+    A[PointIntegrationMatlabServer] -->|1. Generate F_path & params| B(input_path.json)
+    A -->|2. Generate MATLAB script & send| C[run_custom_script]
+    C -->|3. Execute| D[MATLAB Executable]
+    B -->|4. Read Input| E[C++ Test Program]
+    E -->|5. Execute Integration| F(cpp_results.json)
+    D -->|6. Write output.json| G[Error Compare & Plotting]
+    F -->|7. Load Stress/EqPS/Damage| G
+```
 
-1. 阅读目标 C++ 材料类，确认 stress 类型、Voigt 顺序、剪切分量约定、材料参数和状态变量名称。
-2. 构造最小 strain path，先用弹性步确认弹性矩阵，再增加越过屈服的塑性步。
-3. 调用 `point-integration-matlab-server` 得到参考结果。
-4. 将参考结果与 C++ 单点测试、最小算例输出或调试日志中的 stress/state 对比。
-5. 若误差出现于弹性段，优先检查单位、Lamé 常数、剪切因子和 Voigt 顺序。
-6. 若误差只出现于塑性段，优先检查屈服函数、返回映射分母、硬化项、等效塑性应变增量和状态变量提交。
+1. **构造测试载�?*：设计变形梯度历史序�?`F_path`�?N \times 9$，行优先排列）。对于涉�?Lemaitre 损伤的材料，确保最大拉伸应变足够大以越过屈服面及损伤阈值，使损伤演化到其理论上�?$0.999$（或 $1.0$），观测应力退化全过程�?2. **执行联合对标工具**：直接调�?`PointIntegrationMatlabServer.run_constitutive_validation`�?3. **自动编译并运�?C++ 测试�?*：C++ 单点程序 `test_constitutive.exe` 增量编译并运行，输出包含每步 PK1 应力、等效塑性应变和损伤�?`cpp_results.json`�?4. **自动运行 MATLAB 校验�?*：动态生�?MATLAB 积分脚本并调用本�?MATLAB 运行，输出包含参考求解结果的 `output.json`�?5. **精度对比**：读�?C++ �?MATLAB �?stress、eqp、damage，计算绝对误差：
+   - **对标阈�?*：应力对标绝对误差限制为 $1.0 \times 10^{-5}$ Pa，状态变量（EqPS，Damage）保持严格的机器双精�?$1.0 \times 10^{-10}$ 阈值�?6. **曲线绘制与成果固�?*：绘�?PK1 应力-应变、损�?应变曲线并保存为 `Comparison_Plot.png`，将最大对标误差返回�?
 
-## 当前约定
-
-- Voigt 顺序：`[xx, yy, zz, xy, yz, zx]`。
-- 剪切分量：tensor strain，不是 engineering shear strain。
-- 当前 MCP 第一版内置 J2 线性各向同性硬化参考；复杂 JC、损伤或有限变形模型应先补充参考实现，再做自动结论。
-- 对于包含 Voce 非线性硬化、Lemaitre 损伤等高度耦合的复杂模型，若 MATLAB MCP 暂未内置，可基于 Python 快速编写 Backward Euler 隐式返回映射的独立求解器进行对标。对标要求达到双精度机器误差极限（如 $10^{-11} \sim 10^{-12}$）。
-- 对标完成后，应绘制应力、等效塑性应变和损伤演化随加载步的变化曲线（如 `Comparison_Plot.png`），保存至 `artifacts` 目录并在 `walkthrough.md` 中进行可视化展示。
+## GRPD 物理与数学约�?
+### 1. 变形梯度与应变转�?- **大变形模�?(`LargeDeformation = true`)**�?  - Green-Lagrange 应变张量�?    $$\boldsymbol{E} = \frac{1}{2}(\boldsymbol{F}^T \boldsymbol{F} - \boldsymbol{I})$$
+  - 第一�?Piola-Kirchhoff (PK1) 应力 $\boldsymbol{P}$ �?Cauchy 应力 $\boldsymbol{\sigma}$ 转换而来�?    $$\boldsymbol{P} = \boldsymbol{F} \boldsymbol{\sigma}$$
+  - 双端输出对标 PK1 应力（Voigt 形式为非对称 `[P_xx, P_yy, P_zz, P_xy, P_yz, P_zx]`）�?- **小变形模�?(`LargeDeformation = false`)**�?  - 小应变张量：
+    $$\boldsymbol{\epsilon} = \frac{1}{2}(\boldsymbol{F} + \boldsymbol{F}^T) - \boldsymbol{I}$$
+  - 应力直接对标 Cauchy 应力 $\boldsymbol{\sigma}$�?
+### 2. 张量 Voigt 顺序
+- **应力/应变 Voigt 顺序**：`[xx, yy, zz, xy, yz, zx]`�?- **剪切分量**：必须采�?tensor strain $\epsilon_{ij}$，不能采用工程剪切应�?$\gamma_{ij}$。因此剪切分量不乘以 2�?

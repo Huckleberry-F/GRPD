@@ -7,15 +7,15 @@ from scipy.interpolate import interp1d
 from result_parser import ResultParser
 
 def compare_grpd_and_ansys(
-    vtk_file: str, 
-    ansys_txt_file: str, 
-    output_dir: str, 
-    line_start: tuple = (0.5, 0.0, 0.0), 
+    vtk_file: str,
+    ansys_txt_file: str,
+    output_dir: str,
+    line_start: tuple = (0.5, 0.0, 0.0),
     line_end: tuple = (0.5, 5.0, 0.0),
     resolution: int = 100
 ):
     """
-    自动融合 GRPD 的 VTK 结果与 ANSYS 的 TXT 结果，生成 Excel 对比报告和 PNG 曲线图。
+    自动融合 GRPD �?VTK 结果�?ANSYS �?TXT 结果，生�?Excel 对比报告�?PNG 曲线图�?
     """
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
@@ -23,8 +23,8 @@ def compare_grpd_and_ansys(
     print(f"1. 正在读取 ANSYS 数据: {ansys_txt_file}")
     ansys_data = ResultParser.parse_prvar_output(ansys_txt_file)
     if 'data' not in ansys_data:
-        raise ValueError("未能从 ANSYS 结果中提取到有效数据。")
-    
+        raise ValueError("未能�?ANSYS 结果中提取到有效数据�?)
+
     # ANSYS 数据格式约定：[Y, UY, SEQV]
     raw_ansys = np.array(ansys_data['data'])
     ansys_y = raw_ansys[:, 0]
@@ -33,38 +33,38 @@ def compare_grpd_and_ansys(
 
     print(f"2. 正在读取 GRPD 数据: {vtk_file}")
     mesh = pv.read(vtk_file)
-    
-    # GRPD 往往输出无拓扑的点云 (Particles)，无法直接用 pyvista.sample 进行插值。
-    # 我们采用直接过滤坐标的方式提取特定路径上的粒子。
+
+    # GRPD 往往输出无拓扑的点云 (Particles)，无法直接用 pyvista.sample 进行插值�?
+    # 我们采用直接过滤坐标的方式提取特定路径上的粒子�?
     pts = mesh.points
     tol = 0.03  # 搜索容差 (假设粒子间距 ~0.05)
-    
+
     target_x = line_start[0]
     mask = (np.abs(pts[:, 0] - target_x) < tol) & \
            (pts[:, 1] >= min(line_start[1], line_end[1]) - tol) & \
            (pts[:, 1] <= max(line_start[1], line_end[1]) + tol)
-           
+
     if np.sum(mask) == 0:
-        raise ValueError(f"在 X={target_x} 的路径上未能找到任何粒子！请检查坐标。")
-        
+        raise ValueError(f"�?X={target_x} 的路径上未能找到任何粒子！请检查坐标�?)
+
     grpd_y = pts[mask, 1]
     grpd_uy = mesh.point_data['Displacement'][mask, 1]
     grpd_seqv = mesh.point_data['VonMisesStress'][mask]
 
-    # 必须对坐标进行排序，否则 interp1d 会报错，且 plot 出来的线是乱码
+    # 必须对坐标进行排序，否则 interp1d 会报错，�?plot 出来的线是乱�?
     sort_idx = np.argsort(grpd_y)
     grpd_y = grpd_y[sort_idx]
     grpd_uy = grpd_uy[sort_idx]
     grpd_seqv = grpd_seqv[sort_idx]
 
-    # 剔除重复的 Y 坐标（极小容差），防止 interp1d 报除零错误
+    # 剔除重复�?Y 坐标（极小容差），防�?interp1d 报除零错�?
     unique_idx = np.concatenate(([True], np.diff(grpd_y) > 1e-6))
     grpd_y = grpd_y[unique_idx]
     grpd_uy = grpd_uy[unique_idx]
     grpd_seqv = grpd_seqv[unique_idx]
 
     print("3. 正在进行空间插值与误差计算...")
-    # 对 GRPD 数据进行插值，使其与 ANSYS 的坐标对齐
+    # �?GRPD 数据进行插值，使其�?ANSYS 的坐标对�?
     f_uy = interp1d(grpd_y, grpd_uy, kind='linear', fill_value='extrapolate')
     f_seqv = interp1d(grpd_y, grpd_seqv, kind='linear', fill_value='extrapolate')
 
@@ -74,7 +74,7 @@ def compare_grpd_and_ansys(
     # 计算误差
     error_uy = np.abs(grpd_uy_aligned - ansys_uy)
     error_seqv = np.abs(grpd_seqv_aligned - ansys_seqv)
-    # 相对误差 (对于位移，使用全局最大值归一化，避免固定端 0.0 位移导致误差爆炸；对于应力，使用点对点误差)
+    # 相对误差 (对于位移，使用全局最大值归一化，避免固定�?0.0 位移导致误差爆炸；对于应力，使用点对点误�?
     max_ansys_uy = np.max(np.abs(ansys_uy))
     if max_ansys_uy > 1e-5:
         rel_error_uy = error_uy / max_ansys_uy * 100.0
@@ -158,7 +158,7 @@ def compare_grpd_and_ansys(
     }
 
 if __name__ == "__main__":
-    # 作为脚本直接运行时执行测试
+    # 作为脚本直接运行时执行测�?
     res = compare_grpd_and_ansys(
         vtk_file=r"D:\Project_C++\GRPD\Examples\Axisymmetric_Ring\Result_20260518_090026\Axisymmetric_Ring_step00006_t0.3000.vtk",
         ansys_txt_file=r"D:\ANSYS_Project\GRPD_AXIS\ansys_val_results.txt",
@@ -166,5 +166,5 @@ if __name__ == "__main__":
         line_start=(0.5, 0.0, 0.0),
         line_end=(0.5, 5.0, 0.0)
     )
-    print("生成完毕！")
+    print("生成完毕�?)
     print(res)

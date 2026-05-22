@@ -193,7 +193,7 @@ Eigen::Matrix3d J2VoceLemaitreMat::ComputePK1Stress(const Eigen::Matrix3d &F,
 
   Eigen::Matrix3d eps = Eigen::Matrix3d::Zero();
   if (largeDeformation_) {
-    eps = 0.5 * (F.transpose() * F) - I;
+    eps = 0.5 * (F.transpose() * F - I);
   } else {
     eps = 0.5 * (F + F.transpose()) - I;
   }
@@ -234,13 +234,15 @@ Eigen::Matrix3d J2VoceLemaitreMat::ComputePK1Stress(const Eigen::Matrix3d &F,
     return sigma;
   };
 
+  // 退化应力计算：偏应力分量乘 W，静水压在拉伸时也乘 W
+  // 注意：return 必须 .eval() 强制求值为 Matrix3d�?  // 否则惰性表达式模板会持有对已析构局部变量的悬垂引用
   auto degradedStress = [&](const Eigen::Matrix3d &sDev, double sM,
-                            double W) {
+                            double W) -> Eigen::Matrix3d {
     const double p = (sM >= 0.0) ? W * sM : sM;
-    return W * sDev + p * I;
+    return (W * sDev + p * I).eval();
   };
 
-  auto degradedElasticStress = [&](const Eigen::Matrix3d &epsE, double W) {
+  auto degradedElasticStress = [&](const Eigen::Matrix3d &epsE, double W) -> Eigen::Matrix3d {
     Eigen::Matrix3d sTrial = ComputeEngineeringStress(epsE);
     const double sM = sTrial.trace() / 3.0;
     Eigen::Matrix3d sDev = sTrial - sM * I;
@@ -358,11 +360,11 @@ Eigen::Matrix3d J2VoceLemaitreMat::ComputePK1Stress(const Eigen::Matrix3d &F,
             break;
           }
           W += -res2 / H22;
+          if (W < minW) {
+            W = minW;
+            break;
+          }
           ++iter;
-        }
-
-        if (W < minW) {
-          W = minW;
         }
       }
     }

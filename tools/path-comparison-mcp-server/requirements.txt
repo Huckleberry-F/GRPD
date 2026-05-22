@@ -1,8 +1,0 @@
-# Path Comparison MCP Server 依赖
-mcp[cli]>=1.0.0
-numpy>=1.26
-pandas>=2.0
-matplotlib>=3.8
-scipy>=1.11
-pyvista>=0.43
-openpyxl>=3.1
