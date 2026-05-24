@@ -1,3 +1,6 @@
 # Point Integration MATLAB MCP Server 依赖
 mcp[cli]>=1.0.0
 pyyaml>=6.0
+numpy>=1.26
+matplotlib>=3.8
+sympy>=1.12

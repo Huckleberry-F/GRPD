@@ -337,7 +337,7 @@ Eigen::Matrix3d J2VoceLemaitreMat::ComputePK1Stress(const Eigen::Matrix3d &F,
           ((sM >= 0.0) ? p / (3.0 * Wn * bulkModulus_)
                        : p / (3.0 * bulkModulus_)) *
               I;
-      epsPNew = epsPOld + epsE - epsENew;
+      epsPNew = eps - epsENew;
       mises = q;
 
       if (realEqNew > damageThreshold_) {

@@ -8,18 +8,21 @@ import sympy as sp
 
 def derive_constitutive_elements(parameters_or_spec: dict) -> dict:
     r"""
-    使用 SymPy 符号库自动推导本构积分方程的各个代数项，并输出对应的 MATLAB 代码表达式�?    支持输入参数字典或结构化的材料规�?IR 字典�?
+    使用 SymPy 符号库自动推导本构积分方程的各个代数项，并输出对应的 MATLAB 代码表达式。
+    支持输入参数字典或结构化的材料规格 IR 字典。
+
     返回字典包含:
-    - sy_expr: 屈服强化应力表达�?\sigma_y(alpha)
-    - slope_expr: 屈服强化斜率表达�?d\sigma_y/d\alpha
+    - sy_expr: 屈服强化应力表达式 \sigma_y(alpha)
+    - slope_expr: 屈服强化斜率表达式 d\sigma_y/d\alpha
     """
     # 声明等效塑性应变符号自变量 alpha
     alpha = sp.Symbol('alpha')
 
-    # 动态生成屈服应力强化公�?    sigma0 = sp.Symbol('sigma0')
+    # 动态生成屈服应力强化公式
+    sigma0 = sp.Symbol('sigma0')
     hardening_expr = sigma0
 
-    # 检测是 Spec (YAML) 结构还是扁平�?parameters 结构
+    # 检测是 Spec (YAML) 结构还是扁平的 parameters 结构
     is_spec = "yield_function" in parameters_or_spec
 
     if is_spec:

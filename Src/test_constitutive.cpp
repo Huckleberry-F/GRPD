@@ -33,16 +33,18 @@ int main(int argc, char* argv[]) {
         return 1;
     }
 
-    // 2. 初始化本构参�?    YAML::Node matNode = inputNode["parameters"];
+    // 2. Initialize constitutive parameters
+    YAML::Node matNode = inputNode["parameters"];
     auto mat = std::make_unique<PDCommon::Material::J2VoceLemaitreMat>("Steel_Notched");
     mat->initialize(matNode);
 
-    // 3. 初始�?FieldManager 空间并绑�?    PDCommon::Field::FieldManager fm;
+    // 3. Initialize FieldManager and bind variables
+    PDCommon::Field::FieldManager fm;
     mat->allocateStateVariables(fm);
     fm.resizeAll(1);
     mat->bindStateVariables(fm);
 
-    // 4. 解析加载路径 (优先 F_path，其�?strain_path)
+    // 4. Parse loading path (F_path or strain_path)
     bool useFPath = false;
     size_t numSteps = 0;
     YAML::Node FPathNode;
@@ -70,7 +72,7 @@ int main(int argc, char* argv[]) {
 
     outFile << "{\n  \"steps\": [\n";
 
-    // 预先解析大变形标识（仅需读取一次）
+    // Parse large deformation flag
     bool isLarge = false;
     if (matNode["LargeDeformation"]) {
         isLarge = matNode["LargeDeformation"].as<bool>();
@@ -78,7 +80,6 @@ int main(int argc, char* argv[]) {
 
     for (size_t step = 0; step < numSteps; ++step) {
         Eigen::Matrix3d F = Eigen::Matrix3d::Identity();
-        // 应变张量统一提升到循环顶层，保证两种输入路径均可写入 9 分量
         Eigen::Matrix3d epsMat = Eigen::Matrix3d::Zero();
 
         if (useFPath) {
@@ -91,7 +92,8 @@ int main(int argc, char* argv[]) {
                  stepF[3].as<double>(), stepF[4].as<double>(), stepF[5].as<double>(),
                  stepF[6].as<double>(), stepF[7].as<double>(), stepF[8].as<double>();
 
-            // 根据大变形配置反推应变张�?            if (isLarge) {
+            // Compute strain tensor based on large deformation flag
+            if (isLarge) {
                 epsMat = 0.5 * (F.transpose() * F - Eigen::Matrix3d::Identity());
             } else {
                 epsMat = 0.5 * (F + F.transpose() - 2.0 * Eigen::Matrix3d::Identity());
@@ -103,7 +105,7 @@ int main(int argc, char* argv[]) {
                 return 1;
             }
 
-            // �?6 分量 Voigt 输入重建对称 3x3 应变张量
+            // Reconstruct 3x3 strain tensor from 6-component Voigt input
             epsMat(0, 0) = stepStrain[0].as<double>();
             epsMat(1, 1) = stepStrain[1].as<double>();
             epsMat(2, 2) = stepStrain[2].as<double>();
@@ -114,33 +116,36 @@ int main(int argc, char* argv[]) {
             F = Eigen::Matrix3d::Identity() + epsMat;
         }
 
-        // 计算应力。stateMode �?0 表示正常更新状态的模式�?        Eigen::Matrix3d PK1 = mat->ComputePK1Stress(F, 0, 0);
+        // Compute stress. stateMode=0 updates state.
+        Eigen::Matrix3d PK1 = mat->ComputePK1Stress(F, 0, 0);
 
-        // 提取状态变�?        double damage = fm.getFieldAs<double>("Damage_Trial")->dataPtr()[0];
+        // Extract state variables
+        double damage = fm.getFieldAs<double>("Damage_Trial")->dataPtr()[0];
         double eqps = fm.getFieldAs<double>("EqPlasticStrain_Trial")->dataPtr()[0];
         double vonMises = fm.getFieldAs<double>("VonMisesStress")->dataPtr()[0];
 
-        // 提交状�?        fm.executeAllRegisteredSwaps();
+        // Commit state
+        fm.executeAllRegisteredSwaps();
         mat->commitState();
 
-        // 写入 JSON
+        // Write to JSON
         outFile << "    {\n";
         outFile << "      \"step\": " << step << ",\n";
-        // 应变张量 9 分量行主序输�? [ε₁₁, ε₁₂, ε₁₃, ε₂₁, ε₂₂, ε₂₃, ε₃₁, ε₃₂, ε₃₃]
+        // Output strain tensor as 9-component row-major
         outFile << "      \"strain\": ["
-                << std::scientific << std::setprecision(12)
+                << std::scientific << std::setprecision(17)
                 << epsMat(0,0) << ", " << epsMat(0,1) << ", " << epsMat(0,2) << ", "
                 << epsMat(1,0) << ", " << epsMat(1,1) << ", " << epsMat(1,2) << ", "
                 << epsMat(2,0) << ", " << epsMat(2,1) << ", " << epsMat(2,2) << "],\n";
-        // 应力张量 9 分量行主序输�? [σ₁₁, σ₁₂, σ₁₃, σ₂₁, σ₂₂, σ₂₃, σ₃₁, σ₃₂, σ₃₃]
+        // Output stress tensor as 9-component row-major
         outFile << "      \"stress\": ["
-                << std::scientific << std::setprecision(12)
+                << std::scientific << std::setprecision(17)
                 << PK1(0,0) << ", " << PK1(0,1) << ", " << PK1(0,2) << ", "
                 << PK1(1,0) << ", " << PK1(1,1) << ", " << PK1(1,2) << ", "
                 << PK1(2,0) << ", " << PK1(2,1) << ", " << PK1(2,2) << "],\n";
-        outFile << "      \"von_mises\": " << vonMises << ",\n";
-        outFile << "      \"eqp\": " << eqps << ",\n";
-        outFile << "      \"damage\": " << damage << "\n";
+        outFile << "      \"von_mises\": " << std::setprecision(17) << vonMises << ",\n";
+        outFile << "      \"eqp\": " << std::setprecision(17) << eqps << ",\n";
+        outFile << "      \"damage\": " << std::setprecision(17) << damage << "\n";
         if (step + 1 < numSteps) {
             outFile << "    },\n";
         } else {

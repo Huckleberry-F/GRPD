@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-server.py - 用于近场动力学材料本构单点联合校验的 MATLAB MCP 服务端�?"""
+server.py - 用于近场动力学材料本构单点联合校验的 MATLAB MCP 服务端。"""
 
 from __future__ import annotations
 
@@ -31,7 +31,7 @@ import sqlite3
 DB_FILE = os.path.join(os.path.dirname(__file__), "validation_history.db")
 
 def get_next_work_dir(base_dir: str, prefix: str = "run_") -> str:
-    """�?base_dir 下寻找下一个递增编号的文件夹路径"""
+    """在 base_dir 下寻找下一个递增编号的文件夹路径"""
     os.makedirs(base_dir, exist_ok=True)
     existing_folders = [f for f in os.listdir(base_dir) if os.path.isdir(os.path.join(base_dir, f))]
 
@@ -50,7 +50,7 @@ def get_next_work_dir(base_dir: str, prefix: str = "run_") -> str:
 
 
 def save_matlab_validation_to_db(db_path: str, parameters: dict, comparison_res: dict):
-    """将对标校验结果记录写�?SQLite 数据�?""
+    """将对标校验结果记录写入 SQLite 数据库"""
     conn = sqlite3.connect(db_path)
     cursor = conn.cursor()
     cursor.execute("""
@@ -104,10 +104,10 @@ mcp = FastMCP("PointIntegrationMatlabServer")
 
 
 def compile_and_locate_cpp_test(root_dir: str) -> str:
-    """自动编译 C++ test_constitutive 并定位其可执行文件路�?""
+    """自动编译 C++ test_constitutive 并定位其可执行文件路径"""
     build_dir = os.path.join(root_dir, "build")
     if not os.path.exists(build_dir):
-        raise FileNotFoundError(f"未找�?CMake 构建目录: {build_dir}。请先运�?cmake 配置�?)
+        raise FileNotFoundError(f"未找到 CMake 构建目录: {build_dir}。请先运行 cmake 配置！")
 
     # 编译 test_constitutive
     cmd = ["cmake", "--build", build_dir, "--config", "Release", "--target", "test_constitutive"]
@@ -125,12 +125,12 @@ def compile_and_locate_cpp_test(root_dir: str) -> str:
     for path in possible_paths:
         if os.path.exists(path):
             return path
-    raise FileNotFoundError("在编译成功后未找�?test_constitutive.exe 可执行文件！")
+    raise FileNotFoundError("在编译成功后未找到 test_constitutive.exe 可执行文件！")
 
 
 @mcp.tool()
 def check_matlab_available() -> dict[str, Any]:
-    """检�?MATLAB 可执行文件是否可用�?""
+    """检查 MATLAB 可执行文件是否可用"""
     return matlab_available(MATLAB_EXECUTABLE)
 
 
@@ -141,11 +141,12 @@ def run_constitutive_validation(
     work_dir: str = "",
 ) -> dict[str, Any]:
     """
-    一键执�?GRPD C++ 材料本构�?MATLAB 参考解析解的单点联合对标校验�?    自动完成 C++ 编译、运行、生�?MATLAB 积分脚本与求解，以及双端结果误差比对和绘图�?
+    一键执行 GRPD C++ 材料本构与 MATLAB 参考解析解的单点联合对标校验。
+    自动完成 C++ 编译、运行、生成 MATLAB 积分脚本与求解，以及双端结果误差比对和绘图。
     参数:
     - parameters: 材料参数字典 (必须包含 model 等，例如 "model": "J2VoceLemaitre")
-    - F_path: 9分量变形梯度路径序列，步�?x 9。例�?[[F11, F12, F13, F21, F22, F23, F31, F32, F33], ...]
-    - work_dir: 可选，校验工作目录。若不指定，默认�?<project_root>/tools/matlab-mcp-server/work_dir
+    - F_path: 9分量变形梯度路径序列，步数 x 9。例如: [[F11, F12, F13, F21, F22, F23, F31, F32, F33], ...]
+    - work_dir: 可选，校验工作目录。若不指定，默认为 <project_root>/tools/matlab-mcp-server/work_dir
     """
     # 1. 确定工作目录
     base_work_dir = os.path.join(os.path.dirname(__file__), "work_dir")
@@ -156,9 +157,10 @@ def run_constitutive_validation(
     os.makedirs(work_dir, exist_ok=True)
 
     try:
-        # 2. 编译并定�?C++ 可执行文�?        exe_path = compile_and_locate_cpp_test(PROJECT_ROOT)
+        # 2. 编译并定位 C++ 可执行文件
+        exe_path = compile_and_locate_cpp_test(PROJECT_ROOT)
 
-        # 3. 将输入数据写�?input_path.json
+        # 3. 将输入数据写入 input_path.json
         input_data = {
             "parameters": parameters,
             "F_path": F_path
@@ -167,7 +169,7 @@ def run_constitutive_validation(
         with open(input_json_path, "w", encoding="utf-8") as f:
             json.dump(input_data, f, indent=2)
 
-        # 4. 运行 C++ 求解器生�?cpp_results.json
+        # 4. 运行 C++ 求解器生成 cpp_results.json
         cmd = [exe_path, input_json_path]
         cpp_run_res = subprocess.run(cmd, cwd=work_dir, capture_output=True, text=True)
         if cpp_run_res.returncode != 0:
@@ -176,7 +178,7 @@ def run_constitutive_validation(
                 "message": f"C++ 校验程序运行崩溃!\nStdout: {cpp_run_res.stdout}\nStderr: {cpp_run_res.stderr}"
             }
 
-        # 5. 动态生�?MATLAB 积分脚本
+        # 5. 动态生成 MATLAB 积分脚本
         matlab_script = generate_matlab_constitutive_script(
             parameters=parameters,
             input_json_name="input.json",
@@ -207,7 +209,7 @@ def run_constitutive_validation(
         matlab_json_path = os.path.join(work_dir, "output.json")
         output_plot_path = os.path.join(work_dir, "Comparison_Plot.png")
 
-        # 容差约束：应力最大绝对误差容差设�?1.0e-5 Pa，损伤度与等效塑性应变设�?1.0e-10
+        # 容差约束：应力最大绝对误差容差设置为 1.0e-5 Pa，损伤度与等效塑性应变设置为 1.0e-10
         tol_stress = 1.0e-5
         tol_state = 1.0e-10
 
@@ -219,12 +221,13 @@ def run_constitutive_validation(
             tol_state=tol_state
         )
 
-        # 将工作目录和结果等一并回�?        comparison_res["work_dir"] = work_dir
+        # 将工作目录和结果等一并回传
+        comparison_res["work_dir"] = work_dir
         comparison_res["cpp_results_file"] = cpp_json_path
         comparison_res["matlab_results_file"] = matlab_json_path
         comparison_res["plot_file"] = output_plot_path
 
-        # 合并 MATLAB 生成�?XLSX、参�?plot �?ZIP 路径
+        # 合并 MATLAB 生成的 XLSX、参考 plot 与 ZIP 路径
         if isinstance(matlab_res, dict):
             if "xlsx_path" in matlab_res:
                 comparison_res["xlsx_file"] = matlab_res["xlsx_path"]
@@ -233,17 +236,18 @@ def run_constitutive_validation(
             if "zip_path" in matlab_res:
                 comparison_res["zip_file"] = matlab_res["zip_path"]
 
-        # 将校验结果存�?SQLite 数据�?        try:
+        # 将校验结果存入 SQLite 数据库
+        try:
             save_matlab_validation_to_db(DB_FILE, parameters, comparison_res)
         except Exception as db_err:
-            comparison_res["db_warning"] = f"写入 SQLite 数据库失�? {str(db_err)}"
+            comparison_res["db_warning"] = f"写入 SQLite 数据库失败: {str(db_err)}"
 
         return comparison_res
 
     except Exception as e:
         return {
             "success": False,
-            "message": f"校验管道发生未捕获异�? {str(e)}"
+            "message": f"校验管道发生未捕获异常: {str(e)}"
         }
 
 
@@ -255,7 +259,9 @@ def run_custom_script(
     output_filename: str = "output.json",
 ) -> dict[str, Any]:
     """
-    运行自定义的任意 MATLAB 脚本，并自动读回指定的输�?JSON 结果�?    用于完全通用的本构及其他物理过程�?MATLAB 联合校验�?    """
+    运行自定义的任意 MATLAB 脚本，并自动读回指定的输出 JSON 结果。
+    用于完全通用的本构及其他物理过程的 MATLAB 联合校验。
+    """
     if not work_dir:
         base_work_dir = os.path.join(os.path.dirname(__file__), "work_dir")
         work_dir = get_next_work_dir(base_work_dir)

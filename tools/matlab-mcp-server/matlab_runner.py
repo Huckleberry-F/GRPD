@@ -30,7 +30,8 @@ def run_custom_matlab_script(
     keep_temp_files: bool = False,
 ) -> dict[str, Any]:
     """
-    运行自定义的 MATLAB 脚本，并自动读回指定输出 JSON 的内容�?    """
+    运行自定义的 MATLAB 脚本，并自动读回指定输出 JSON 的内容。
+    """
     availability = matlab_available(matlab_executable)
     if not availability["available"]:
         return {"success": False, "message": "MATLAB executable not found.", "availability": availability}

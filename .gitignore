@@ -21,7 +21,6 @@ Result_*
 *.vtk
 .agent/
 .agents/
-.gemini/settings.json
 outputs/
 tools/ansys-mcp-server/work_dir/
 tools/matlab-mcp-server/work_dir/

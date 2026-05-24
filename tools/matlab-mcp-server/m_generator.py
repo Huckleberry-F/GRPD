@@ -39,20 +39,22 @@ function [dg, converged] = solve_plastic_multiplier(J2, alphaOld, Wn, G, params)
     dg = (J2 - eval_yield_stress(alphaOld, params)) * Wn / (3.0 * G);
     dg = max(0.0, dg);
     converged = false;
+    res = 1.0;
+    iter = 1;
 
-    for iter = 1:maxIter
+    while abs(res) > tol && iter <= maxIter
         alpha = alphaOld + dg;
         SY = eval_yield_stress(alpha, params);
         res = J2 - 3.0 * G * dg / Wn - SY;
         if abs(res) < tol
             converged = true;
-            break;
         end
         H11 = -3.0 * G / Wn - eval_hardening_slope(alpha, params);
         if abs(H11) < tiny
             break;
         end
         dg = dg - res / H11;
+        iter = iter + 1;
     end
 end
 
@@ -64,12 +66,13 @@ function [W, converged] = solve_damage_factor(Wn, f2s, dg, params)
 
     W = Wn;
     converged = false;
+    res = 1.0;
+    iter = 1;
 
-    for iter = 1:maxIter
+    while abs(res) > tol && iter <= maxIter
         res = W - Wn + f2s * dg / W;
         if abs(res) < tol
             converged = true;
-            break;
         end
         H22 = 1.0 - f2s * dg / (W * W);
         if abs(H22) < tiny
@@ -80,6 +83,7 @@ function [W, converged] = solve_damage_factor(Wn, f2s, dg, params)
             W = minW;
             break;
         end
+        iter = iter + 1;
     end
 end
 """
@@ -147,7 +151,8 @@ def generate_matlab_constitutive_script(parameters: dict, input_json_name: str =
     # 5. 生成需要注入的局部物理核函数定义
     local_functions_code = generate_local_functions(sym["sy_expr"], sym["slope_expr"])
 
-    # 6. 执行插值填�?    rendered = template_content
+    # 6. Perform template interpolation
+    rendered = template_content
     rendered = rendered.replace("{INPUT_JSON_NAME}", input_json_name)
     rendered = rendered.replace("{OUTPUT_JSON_NAME}", output_json_name)
     rendered = rendered.replace("{HAS_DAMAGE}", has_damage_str)

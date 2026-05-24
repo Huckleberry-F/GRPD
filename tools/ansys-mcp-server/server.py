@@ -11,10 +11,11 @@ from ansys_runner import AnsysRunner
 from result_parser import ResultParser
 from compare_and_export import compare_grpd_and_ansys
 
-# SQLite 数据库文件路�?DB_FILE = os.path.join(os.path.dirname(__file__), "validation_history.db")
+# SQLite 数据库文件路径
+DB_FILE = os.path.join(os.path.dirname(__file__), "validation_history.db")
 
 def save_ansys_comparison_to_db(db_path: str, vtk_file: str, ansys_txt_file: str, max_error_uy_percent: float, max_error_seqv_percent: float, output_dir: str, excel_path: str, plot_path: str, zip_path: str):
-    """�?ANSYS �?GRPD 的路径对比结果存�?SQLite 数据�?""
+    """将 ANSYS 与 GRPD 的路径对比结果存入 SQLite 数据库"""
     conn = sqlite3.connect(db_path)
     cursor = conn.cursor()
     cursor.execute("""
@@ -50,7 +51,7 @@ def save_ansys_comparison_to_db(db_path: str, vtk_file: str, ansys_txt_file: str
 
 
 def get_next_work_dir(base_dir: str, prefix: str = "run_") -> str:
-    """�?base_dir 下寻找下一个递增编号的文件夹路径"""
+    """在 base_dir 下寻找下一个递增编号的文件夹路径"""
     os.makedirs(base_dir, exist_ok=True)
     existing_folders = [f for f in os.listdir(base_dir) if os.path.isdir(os.path.join(base_dir, f))]
 
@@ -68,7 +69,7 @@ def get_next_work_dir(base_dir: str, prefix: str = "run_") -> str:
     return os.path.join(base_dir, f"{prefix}{next_idx:04d}")
 
 def save_ansys_validation_to_db(db_path: str, run_res: dict, yaml_file: str, substep: int, job_name: str):
-    """�?ANSYS 校验结果存入 SQLite 数据�?""
+    """将 ANSYS 校验结果存入 SQLite 数据库"""
     conn = sqlite3.connect(db_path)
     cursor = conn.cursor()
     cursor.execute("""
@@ -311,7 +312,8 @@ def generate_comparison_report(
         line_end=line_end
     )
 
-    # 写入 SQLite 数据�?    try:
+    # 写入 SQLite 数据库
+    try:
         save_ansys_comparison_to_db(
             db_path=DB_FILE,
             vtk_file=vtk_file,
