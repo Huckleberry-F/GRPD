@@ -7,7 +7,8 @@
 #include <yaml-cpp/yaml.h>
 #include <Eigen/Dense>
 
-#include "J2VoceLemaitreMat.h"
+#include "MaterialRegistry.h"
+#include "MechanicalMaterial.h"
 #include "FieldManager.h"
 #include "FieldRegistry.h"
 
@@ -35,7 +36,17 @@ int main(int argc, char* argv[]) {
 
     // 2. Initialize constitutive parameters
     YAML::Node matNode = inputNode["parameters"];
-    auto mat = std::make_unique<PDCommon::Material::J2VoceLemaitreMat>("Steel_Notched");
+    std::string matType = matNode["Type"] ? matNode["Type"].as<std::string>() : "J2VoceLemaitre";
+    auto matBase = PDCommon::Material::MaterialRegistry::getInstance().createMaterial(matType, "Steel_Notched");
+    if (!matBase) {
+        std::cerr << "Failed to create material of type: " << matType << std::endl;
+        return 1;
+    }
+    auto mat = dynamic_cast<PDCommon::Material::MechanicalMaterial*>(matBase.get());
+    if (!mat) {
+        std::cerr << "Material of type: " << matType << " is not a MechanicalMaterial!" << std::endl;
+        return 1;
+    }
     mat->initialize(matNode);
 
     // 3. Initialize FieldManager and bind variables
@@ -119,10 +130,10 @@ int main(int argc, char* argv[]) {
         // Compute stress. stateMode=0 updates state.
         Eigen::Matrix3d PK1 = mat->ComputePK1Stress(F, 0, 0);
 
-        // Extract state variables
-        double damage = fm.getFieldAs<double>("Damage_Trial")->dataPtr()[0];
-        double eqps = fm.getFieldAs<double>("EqPlasticStrain_Trial")->dataPtr()[0];
-        double vonMises = fm.getFieldAs<double>("VonMisesStress")->dataPtr()[0];
+        // Extract state variables dynamically
+        double damage = fm.hasField("Damage_Trial") ? fm.getFieldAs<double>("Damage_Trial")->dataPtr()[0] : 0.0;
+        double eqps = fm.hasField("EqPlasticStrain_Trial") ? fm.getFieldAs<double>("EqPlasticStrain_Trial")->dataPtr()[0] : 0.0;
+        double vonMises = fm.hasField("VonMisesStress") ? fm.getFieldAs<double>("VonMisesStress")->dataPtr()[0] : 0.0;
 
         // Commit state
         fm.executeAllRegisteredSwaps();

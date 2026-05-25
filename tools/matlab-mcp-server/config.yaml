@@ -9,6 +9,6 @@ defaults:
   keep_temp_files: false
 
 allowed_work_dirs:
-  - "D:\\C++pro\\GRPD\\tools\\matlab-mcp-server"
-  - "D:\\C++pro\\GRPD\\Examples"
-  - "D:\\C++pro\\GRPD\\build"
+  - "D:\\Project_C++\\GRPD\\tools\\matlab-mcp-server"
+  - "D:\\Project_C++\\GRPD\\Examples"
+  - "D:\\Project_C++\\GRPD\\build"
