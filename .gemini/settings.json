@@ -3,33 +3,33 @@
     "ansys-server": {
       "command": "python",
       "args": [
-        "d:\\C++pro\\GRPD\\tools\\ansys-mcp-server\\server.py"
+        "D:\\Project_C++\\GRPD\\tools\\ansys-mcp-server\\server.py"
       ],
-      "cwd": "d:\\C++pro\\GRPD\\tools\\ansys-mcp-server",
+      "cwd": "D:\\Project_C++\\GRPD\\tools\\ansys-mcp-server",
       "timeout": 3600000
     },
     "grpd-server": {
       "command": "python",
       "args": [
-        "d:\\C++pro\\GRPD\\tools\\grpd-mcp-server\\server.py"
+        "D:\\Project_C++\\GRPD\\tools\\grpd-mcp-server\\server.py"
       ],
-      "cwd": "d:\\C++pro\\GRPD\\tools\\grpd-mcp-server",
+      "cwd": "D:\\Project_C++\\GRPD\\tools\\grpd-mcp-server",
       "timeout": 3600000
     },
     "grpd-experiment-server": {
       "command": "python",
       "args": [
-        "d:\\C++pro\\GRPD\\tools\\grpd-experiment-mcp-server\\server.py"
+        "D:\\Project_C++\\GRPD\\tools\\grpd-experiment-mcp-server\\server.py"
       ],
-      "cwd": "d:\\C++pro\\GRPD\\tools\\grpd-experiment-mcp-server",
+      "cwd": "D:\\Project_C++\\GRPD\\tools\\grpd-experiment-mcp-server",
       "timeout": 600000
     },
     "matlab-server": {
       "command": "python",
       "args": [
-        "d:\\C++pro\\GRPD\\tools\\matlab-mcp-server\\server.py"
+        "D:\\Project_C++\\GRPD\\tools\\matlab-mcp-server\\server.py"
       ],
-      "cwd": "d:\\C++pro\\GRPD\\tools\\matlab-mcp-server",
+      "cwd": "D:\\Project_C++\\GRPD\\tools\\matlab-mcp-server",
       "timeout": 600000
     }
   }
