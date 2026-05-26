@@ -1,0 +1,3 @@
+Repository: https://github.com/obra/superpowers
+Commit: f2cbfbefebbfef77321e4c9abc9e949826bea9d7
+Imported: 2026-05-26
