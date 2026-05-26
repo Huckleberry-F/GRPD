@@ -68,3 +68,32 @@ target_link_libraries(test_constitutive PRIVATE
     Contact_Obj
     PostProcessing_Obj
 )
+
+# 5. Add test_math_utils target
+add_executable(test_math_utils test_math_utils.cpp)
+target_include_directories(test_math_utils PRIVATE
+    ${PROJECT_SOURCE_DIR}/PDCommon/Utils/include
+    ${PROJECT_SOURCE_DIR}/PDCommon/Material/include
+    ${PROJECT_SOURCE_DIR}/PDCommon/BC/include
+    ${PROJECT_SOURCE_DIR}/PDCommon/Core/include
+    ${PROJECT_SOURCE_DIR}/Src
+    ${PROJECT_SOURCE_DIR}/Src/Engine/include
+)
+target_link_libraries(test_math_utils PRIVATE
+    PDCommon
+    Engine_Obj
+    PDSolve_Obj
+    Material_Obj
+    BC_Obj
+    IO_Obj
+    Model_Obj
+    Neighbor_Obj
+    Core_Obj
+    Field_Obj
+    Kernel_Obj
+    Integration_Obj
+    Fracture_Obj
+    Contact_Obj
+    PostProcessing_Obj
+)
+
