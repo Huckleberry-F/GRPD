@@ -7,7 +7,7 @@
 namespace PDCommon::Material {
 
 // ---------------------------------------------------------------------------
-// 向工厂注册材料类�?
+// 向工厂注册材料类型
 // ---------------------------------------------------------------------------
 REGISTER_MATERIAL_TYPE(J2PlasticityMat, [](const std::string &name) {
   return std::make_unique<PDCommon::Material::J2PlasticityMat>(name);
@@ -68,9 +68,9 @@ void J2PlasticityMat::computeLameParameters() {
 
 void J2PlasticityMat::allocateStateVariables(
     PDCommon::Field::FieldManager &fm) {
-  // 获取当前最大的粒子总数（因为所有的场最终都�?SOA 平铺数组�?
-  // 虽然材料�?allocation 通常发生在具体粒子分配之前，但是 FieldManager
-  // 注册是依靠类型名�?
+  // 获取当前最大的粒子总数（因为所有的场最终都是 SOA 平铺数组）
+  // 虽然材料的 allocation 通常发生在具体粒子分配之前，但是 FieldManager
+  // 注册是依靠类型名的
   auto &reg = PDCommon::Field::FieldRegistry::getInstance();
 
   fm.addField(reg.createField("DoubleField", "EqPlasticStrain_Old", 1));
@@ -90,8 +90,8 @@ void J2PlasticityMat::allocateStateVariables(
     fm.registerSwapPair("BackStress_Old", "BackStress_Trial");
   }
 
-  // 注意：真实分配是在所有类型申请完后统一进行的，因此�?allocate
-  // 阶段无法取回裸指针�?
+  // 注意：真实分配是在所有类型申请完后统一进行的，因此在 allocate
+  // 阶段无法取回裸指针。
 }
 
 void J2PlasticityMat::bindStateVariables(PDCommon::Field::FieldManager &fm) {
@@ -122,14 +122,14 @@ void J2PlasticityMat::bindStateVariables(PDCommon::Field::FieldManager &fm) {
 size_t J2PlasticityMat::getNumStateVariables() const { return 0; }
 
 void J2PlasticityMat::evaluate() {
-  // 不使用标�?evaluate，采�?ComputePK1Stress 显式调用
+  // 不使用标准 evaluate，采用 ComputePK1Stress 显式调用
 }
 
 void J2PlasticityMat::commitState() {
   if (!fieldEqPSOld_ || !fieldEqPSTrial_ || !fieldPSOld_ || !fieldPSTrial_)
     return;
 
-  // 物理内存的实质翻转已�?CentralDifference 回合末调�?fm.executeAllRegisteredSwaps() 统一�?O(1) 内完�?
+  // 物理内存的实质翻转已由 CentralDifference 回合末调用 fm.executeAllRegisteredSwaps() 统一在 O(1) 内完成
   // 此处材料仅需执行指针的同步刷新，彻底解耦物理计算与内存排布
   eqPSOld_ = fieldEqPSOld_->dataPtr();
   eqPSTrial_ = fieldEqPSTrial_->dataPtr();
@@ -146,7 +146,7 @@ void J2PlasticityMat::commitState() {
 // 纯无状态辅助函数：计算工程应力
 // ---------------------------------------------------------------------------
 Eigen::Matrix3d
-J2PlasticityMat::ComputeEngineeringStress(const Eigen::Matrix3d &strain) const {
+J2PlasticityMat::ComputeEngineeringStress(const Eigen::Matrix3d &strain, PDCommon::Core::PDContext *ctx) const {
   // 这里属于纯线性胡克定律回退
   double e_trace = strain.trace();
   Eigen::Matrix3d stress =
@@ -155,12 +155,13 @@ J2PlasticityMat::ComputeEngineeringStress(const Eigen::Matrix3d &strain) const {
 }
 
 // ---------------------------------------------------------------------------
-// 核心状态相关本构算法：包含小变形下的径向返�?
+// 核心状态相关本构算法：包含小变形下的径向返回
 // ---------------------------------------------------------------------------
 Eigen::Matrix3d J2PlasticityMat::ComputePK1Stress(const Eigen::Matrix3d &F,
-                                                  int particleId, int stateMode) const {
+                                                  int particleId,
+                                                  int stateMode, PDCommon::Core::PDContext *ctx) const {
   if (particleId < 0 || eqPSOld_ == nullptr) {
-    // 降级为纯弹�?
+    // 降级为纯弹性
     Eigen::Matrix3d strain =
         0.5 * (F + F.transpose()) - Eigen::Matrix3d::Identity();
     return ComputeEngineeringStress(strain);
@@ -170,7 +171,7 @@ Eigen::Matrix3d J2PlasticityMat::ComputePK1Stress(const Eigen::Matrix3d &F,
   Eigen::Matrix3d eps = Eigen::Matrix3d::Zero();
 
   if (largeDeformation_) {
-    // [大变形修复]：采�?Green-Lagrange 应变 E = 0.5 * (F^T * F - I)
+    // [大变形修复]：采用 Green-Lagrange 应变 E = 0.5 * (F^T * F - I)
     // 此公式计算极快（无需极分解），且具有绝对的旋转客观性！
     // 能够彻底消除在巨大应力（大硬化模量）下，裂纹尖端因刚体大转动引发的虚假畸变应变！
     eps = 0.5 * (F.transpose() * F - I);
@@ -183,8 +184,8 @@ Eigen::Matrix3d J2PlasticityMat::ComputePK1Stress(const Eigen::Matrix3d &F,
 
   if (stateMode == 1 || stateMode == 2) {
     // [ADR 初始刚度法核心逻辑]
-    // stateMode == 1: outerIter=0的冻结态，读取Old�?上一个载荷子步的塑性历�?
-    // stateMode == 2: outerIter>0的冻结态，读取Trial�?上一次外循环本构试探更新后的最新塑性场)
+    // stateMode == 1: outerIter=0的冻结态，读取Old（上一个载荷子步的塑性历史）
+    // stateMode == 2: outerIter>0的冻结态，读取Trial（上一次外循环本构试探更新后的最新塑性场）
     Eigen::Matrix3d eps_p_fixed = Eigen::Matrix3d::Zero();
     const double* ps_ptr = (stateMode == 1) ? pSOld_ : pSTrial_;
 
@@ -194,22 +195,22 @@ Eigen::Matrix3d J2PlasticityMat::ComputePK1Stress(const Eigen::Matrix3d &F,
 
     Eigen::Matrix3d eps_e = eps - eps_p_fixed;
 
-    // [智能标量切线预测�?(Scalar Tangent Predictor)]
-    // �?stateMode == 2 且当前粒子发生过塑性流动时，大幅削弱剪切刚度，以近似一致切线刚度矩阵的效果，极大地加速外�?NR 迭代�?
+    // [智能标量切线预测器 (Scalar Tangent Predictor)]
+    // 当 stateMode == 2 且当前粒子发生过塑性流动时，大幅削弱剪切刚度，以近似一致切线刚度矩阵的效果，极大地加速外层 NR 迭代。
     double current_mu = mu_;
     double current_lambda = lambda_;
 
     if (stateMode == 2) {
-       // 如果 Trial 塑性应变大�?Old 塑性应变，说明上一�?NR 迭代步发生了活跃的塑性屈�?
+       // 如果 Trial 塑性应变大于 Old 塑性应变，说明上一轮 NR 迭代步发生了活跃的塑性屈服
        if (eqPSTrial_[particleId] > eqPSOld_[particleId] + 1.0e-12) {
            double H = hardeningModulus_;
-           // 剪切模量折减系数 (基于 1D 弹塑性切线近�?
+           // 剪切模量折减系数 (基于 1D 弹塑性切线近似)
            double beta = H / (H + 3.0 * mu_);
-           // 为了防止刚度矩阵奇异导致内循环除零或发散，保留至�?5% 的剪切刚�?
+           // 为了防止刚度矩阵奇异导致内循环除零或发散，保留至少 5% 的剪切刚度
            beta = std::max(beta, 0.05);
 
            current_mu = mu_ * beta;
-           // 为了保持体积刚度 (Bulk Modulus) K 不变（塑性是纯偏斜的，不影响体积变形），反推等效�?lambda
+           // 为了保持体积刚度 (Bulk Modulus) K 不变（塑性是纯偏斜的，不影响体积变形），反推等效的 lambda
            double K_bulk = lambda_ + (2.0 / 3.0) * mu_;
            current_lambda = K_bulk - (2.0 / 3.0) * current_mu;
        }
@@ -219,12 +220,12 @@ Eigen::Matrix3d J2PlasticityMat::ComputePK1Stress(const Eigen::Matrix3d &F,
     Eigen::Matrix3d S_pred = 2.0 * current_mu * eps_e + current_lambda * e_trace * I;
 
     if (largeDeformation_) {
-      return F * S_pred; // �?PK2 应力推回 PK1 应力
+      return F * S_pred; // 从 PK2 应力推回 PK1 应力
     }
-    return S_pred; // 直接返回刚度预测，不更新塑性参�?
+    return S_pred; // 直接返回刚度预测，不更新塑性参数
   }
 
-  // 以下为正常本构计�?(stateMode == 0)
+  // 以下为正常本构计算 (stateMode == 0)
   Eigen::Matrix3d eps_p_old = Eigen::Matrix3d::Zero();
   eps_p_old << pSOld_[idx9], pSOld_[idx9 + 1], pSOld_[idx9 + 2],
       pSOld_[idx9 + 3], pSOld_[idx9 + 4], pSOld_[idx9 + 5], pSOld_[idx9 + 6],
@@ -232,14 +233,14 @@ Eigen::Matrix3d J2PlasticityMat::ComputePK1Stress(const Eigen::Matrix3d &F,
 
   double alpha_old = eqPSOld_[particleId];
 
-  // 试探弹性应�?
+  // 试探弹性应变
   Eigen::Matrix3d eps_e_trial = eps - eps_p_old;
   double tr_eps_e = eps_e_trial.trace();
 
-  // 偏试探应�?e
+  // 偏试探应变 e
   Eigen::Matrix3d e_e_trial = eps_e_trial - (tr_eps_e / 3.0) * I;
 
-  // 试探偏应�?S
+  // 试探偏应力 S
   Eigen::Matrix3d S_trial = 2.0 * mu_ * e_e_trial;
 
   double hydro_stress = bulkModulus_ * tr_eps_e;
@@ -248,11 +249,11 @@ Eigen::Matrix3d J2PlasticityMat::ComputePK1Stress(const Eigen::Matrix3d &F,
   double norm_S = std::sqrt((S_trial.cwiseProduct(S_trial)).sum());
   double q_trial = std::sqrt(1.5) * norm_S;
 
-  // 当前屈服�?
+  // 当前屈服面
   double R = yieldStress_ + hardeningModulus_ * alpha_old;
   double f = q_trial - R;
 
-  // --- 方案 C 性能优化：无分支向量�?(Branchless Vectorization) ---
+  // --- 方案 C 性能优化：无分支向量化 (Branchless Vectorization) ---
   // 彻底抹除导致 AVX/SSE 崩溃退化的 if-else
   bool isYielding = (f > 1e-8 * yieldStress_);
   double dGamma = isYielding ? (f / (3.0 * mu_ + hardeningModulus_)) : 0.0;
@@ -269,7 +270,7 @@ Eigen::Matrix3d J2PlasticityMat::ComputePK1Stress(const Eigen::Matrix3d &F,
   Eigen::Matrix3d S_new = S_trial - 2.0 * mu_ * dEps_p;
   Eigen::Matrix3d sigma = S_new + hydro_stress * I;
 
-  // 记录�?Trial 缓冲
+  // 记录到 Trial 缓冲
   eqPSTrial_[particleId] = alpha_new;
   pSTrial_[idx9] = eps_p_new(0, 0);
   pSTrial_[idx9 + 1] = eps_p_new(0, 1);
@@ -285,11 +286,11 @@ Eigen::Matrix3d J2PlasticityMat::ComputePK1Stress(const Eigen::Matrix3d &F,
   vonMises_[particleId] =
       isYielding ? (yieldStress_ + hardeningModulus_ * alpha_new) : q_trial;
 
-  // 第一�?P-K 应力在大转动下应满足 P = F * S�?
+  // 第一类 P-K 应力在大转动下应满足 P = F * S。
   Eigen::Matrix3d P1 = sigma;
   if (largeDeformation_) {
-    // 此时�?sigma 实际上是在初始构型下的第二类 P-K 应力 (PK2)�?
-    // 必须将其推前 (Push-forward) 为第一�?P-K 应力 (PK1) 返回给引擎�?
+    // 此时的 sigma 实际上是在初始构型下的第二类 P-K 应力 (PK2)。
+    // 必须将其推前 (Push-forward) 为第一类 P-K 应力 (PK1) 返回给引擎。
     P1 = F * sigma;
   }
 

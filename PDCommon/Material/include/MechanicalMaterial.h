@@ -16,6 +16,8 @@
 #include "Material.h"
 #include <Eigen/Dense>
 
+namespace PDCommon::Core { class PDContext; }
+
 namespace PDCommon::Material {
 
 class MechanicalMaterial : public Material {
@@ -32,14 +34,14 @@ public:
   /// @param strain 应变张量
   /// @return 应力张量
   virtual Eigen::Matrix3d
-  ComputeEngineeringStress(const Eigen::Matrix3d &strain) const = 0;
+  ComputeEngineeringStress(const Eigen::Matrix3d &strain, PDCommon::Core::PDContext *ctx = nullptr) const = 0;
 
   /// @brief 计算第一类 Piola-Kirchhoff 应力 P (NOSB中用于力态积分)
   /// @param F 变形梯度张量 (Deformation Gradient)
   /// @param particleId 发生变形物态的粒子全域编号，供路径依赖材料调用历史内变量（如果需要）
   /// @param stateMode 本构计算模式 (0: 正常, 1: 冻结并读取Old, 2: 冻结并读取Trial)
   /// @return 第一类 P-K 应力张量 P
-  virtual Eigen::Matrix3d ComputePK1Stress(const Eigen::Matrix3d &F, int particleId = -1, int stateMode = 0) const = 0;
+  virtual Eigen::Matrix3d ComputePK1Stress(const Eigen::Matrix3d &F, int particleId = -1, int stateMode = 0, PDCommon::Core::PDContext *ctx = nullptr) const = 0;
 
   // -----------------------------------------------------------------------
   // 材料物理参数纯虚接口

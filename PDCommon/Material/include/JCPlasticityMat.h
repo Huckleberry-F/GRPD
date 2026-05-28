@@ -25,7 +25,7 @@ public:
   void bindStateVariables(PDCommon::Field::FieldManager &fm) override;
   void commitState() override;
 
-  Eigen::Matrix3d ComputePK1Stress(const Eigen::Matrix3d &F, int particleId = -1, int stateMode = 0) const override;
+  Eigen::Matrix3d ComputePK1Stress(const Eigen::Matrix3d &F, int particleId = -1, int stateMode = 0, PDCommon::Core::PDContext *ctx = nullptr) const override;
 
 private:
   // JC 损伤参数

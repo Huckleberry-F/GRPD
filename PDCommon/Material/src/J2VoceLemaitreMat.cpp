@@ -164,14 +164,14 @@ void J2VoceLemaitreMat::commitState() {
 }
 
 Eigen::Matrix3d J2VoceLemaitreMat::ComputeEngineeringStress(
-    const Eigen::Matrix3d &strain) const {
+    const Eigen::Matrix3d &strain, PDCommon::Core::PDContext *ctx) const {
   return 2.0 * mu_ * strain +
          lambda_ * strain.trace() * Eigen::Matrix3d::Identity();
 }
 
 Eigen::Matrix3d J2VoceLemaitreMat::ComputePK1Stress(const Eigen::Matrix3d &F,
                                                     int particleId,
-                                                    int stateMode) const {
+                                                    int stateMode, PDCommon::Core::PDContext *ctx) const {
   if (!F.allFinite()) {
     return Eigen::Matrix3d::Zero();
   }
@@ -235,7 +235,8 @@ Eigen::Matrix3d J2VoceLemaitreMat::ComputePK1Stress(const Eigen::Matrix3d &F,
   };
 
   // 退化应力计算：偏应力分量乘 W，静水压在拉伸时也乘 W
-  // 注意：return 必须 .eval() 强制求值为 Matrix3d�?  // 否则惰性表达式模板会持有对已析构局部变量的悬垂引用
+  // 注意：return 必须 .eval() 强制求值为 Matrix3d，
+  // 否则惰性表达式模板会持有对已析构局部变量的悬垂引用
   auto degradedStress = [&](const Eigen::Matrix3d &sDev, double sM,
                             double W) -> Eigen::Matrix3d {
     const double p = (sM >= 0.0) ? W * sM : sM;

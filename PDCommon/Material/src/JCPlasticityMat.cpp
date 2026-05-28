@@ -76,7 +76,7 @@ void JCPlasticityMat::commitState() {
 }
 
 Eigen::Matrix3d JCPlasticityMat::ComputePK1Stress(const Eigen::Matrix3d &F,
-                                                  int particleId, int stateMode) const {
+                                                  int particleId, int stateMode, PDCommon::Core::PDContext *ctx) const {
   // 先通过基类求得应力和 J2 塑性应变 Trial 态
   Eigen::Matrix3d stress = J2PlasticityMat::ComputePK1Stress(F, particleId, stateMode);
 

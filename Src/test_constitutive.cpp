@@ -128,7 +128,7 @@ int main(int argc, char* argv[]) {
         }
 
         // Compute stress. stateMode=0 updates state.
-        Eigen::Matrix3d PK1 = mat->ComputePK1Stress(F, 0, 0);
+        Eigen::Matrix3d PK1 = mat->ComputePK1Stress(F, 0, 0, nullptr);
 
         // Extract state variables dynamically
         double damage = fm.hasField("Damage_Trial") ? fm.getFieldAs<double>("Damage_Trial")->dataPtr()[0] : 0.0;
