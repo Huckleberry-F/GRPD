@@ -155,7 +155,7 @@
 - 每次回答完核心问题后，给出下一步的工程建议。
 - 代码修改后，必须说明在哪个文件哪一行进行了修改，并用 `+` `-` 红绿标明（使用 diff 格式块展示修改细节）。
 
-## 本地技能激活与使用纪律（C方案）
+## 本地技能激活与使用纪律
 
 - 针对本仓库定义的本地技能（如 `brainstorming`、`using-superpowers`、`constitutive-math-reviewer` 等，存储于 `.gemini/skills/` 目录），鉴于当前 Antigravity 宿主没有暴露物理的 `activate_skill` 工具调用，统一采用本项目的“C方案”进行激活约束：
   - 当接收到具有挑战性或属于对应子技能管辖范围的任务时，AI 代理在会话的前置思考和工具调用中，**必须**主动使用 `view_file` 物理读取对应的 `SKILL.md` 文件（如 [brainstorming](file:///d:/Project_C++/GRPD/.gemini/skills/superpowers/skills/brainstorming/SKILL.md)）。

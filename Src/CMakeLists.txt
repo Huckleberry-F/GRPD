@@ -5,6 +5,7 @@
 # 1. Define executable target
 aux_source_directory(${CMAKE_CURRENT_SOURCE_DIR} DIR_SRCS)
 list(REMOVE_ITEM DIR_SRCS "${CMAKE_CURRENT_SOURCE_DIR}/test_constitutive.cpp")
+list(REMOVE_ITEM DIR_SRCS "${CMAKE_CURRENT_SOURCE_DIR}/test_math_utils.cpp")
 add_executable(${PROJECT_NAME} ${DIR_SRCS})
 
 # Add include directories for PDCommon components
