@@ -139,6 +139,16 @@ public:
   void setCurrentDt(double dt) { currentDt_ = dt; }
 
   // -----------------------------------------------------------------------
+  // 当前物理总时间
+  // -----------------------------------------------------------------------
+
+  /// @brief 获取当前物理总时间
+  double getCurrentTime() const { return currentTime_; }
+
+  /// @brief 设置当前物理总时间（由积分器在每步开头或推进时更新）
+  void setCurrentTime(double t) { currentTime_ = t; }
+
+  // -----------------------------------------------------------------------
   // 全局质量缩放因子 (MassScaleFactor)
   // -----------------------------------------------------------------------
   double getMassScaleFactor() const { return massScaleFactor_; }
@@ -173,6 +183,7 @@ private:
   int dimension_ = 3;       ///< 模型维度 (默认 3D)
   double thickness_ = 1.0;  ///< 2D 模型厚度 (默认 1.0)
   double currentDt_ = 1e-9; ///< 当前时间步长（由积分器每步更新）
+  double currentTime_ = 0.0;///< 当前物理总时间
   PDCommon::Model::ParticleManager particleManager_;    ///< 粒子管理器
   PDCommon::Material::MaterialManager materialManager_; ///< 材料管理器
   PDCommon::Field::FieldManager fieldManager_;          ///< 物理场管理器
