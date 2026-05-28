@@ -11,6 +11,7 @@
 #include "MechanicalMaterial.h"
 #include "FieldManager.h"
 #include "FieldRegistry.h"
+#include "PDContext.h"
 
 int main(int argc, char* argv[]) {
     std::cout << "[test_constitutive] Starting single point JSON-driven test..." << std::endl;
@@ -127,8 +128,13 @@ int main(int argc, char* argv[]) {
             F = Eigen::Matrix3d::Identity() + epsMat;
         }
 
+        // Create and update a dummy PDContext for creep and time-dependent materials
+        PDCommon::Core::PDContext ctx;
+        ctx.setCurrentDt(0.1);
+        ctx.setCurrentTime(step * 0.1);
+
         // Compute stress. stateMode=0 updates state.
-        Eigen::Matrix3d PK1 = mat->ComputePK1Stress(F, 0, 0, nullptr);
+        Eigen::Matrix3d PK1 = mat->ComputePK1Stress(F, 0, 0, &ctx);
 
         // Extract state variables dynamically
         double damage = fm.hasField("Damage_Trial") ? fm.getFieldAs<double>("Damage_Trial")->dataPtr()[0] : 0.0;
