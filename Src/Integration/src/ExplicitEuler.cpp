@@ -130,6 +130,7 @@ void ExplicitEuler::run(PDCommon::Core::PDContext &ctx,
       // 显式欧拉每一步都是真实的物理时间推进，拓扑必须实时更新
       ctx.setIncrementStart(true);
       ctx.setCurrentDt(currentDt); // 同步真实 dt 给接触模块
+      ctx.setCurrentTime(currentTime); // 同步真实总时间给材料模块
       evaluateForces(ctx, kernels, rateFieldNames_, config.stepId, activeLF);
 
       updateKinematicsEuler(currentDt);

@@ -338,6 +338,9 @@ void ADR_Integrator::run(PDCommon::Core::PDContext &ctx,
             BC::applyConstraints(ctx.getBCManager(), activeLF,
                                  stepConfig.stepId);
             ctx.setCurrentDt(dt); // 同步真实 dt 给接触模块
+            double prevPhysicalTime_ADR = (stepIdx == 0) ? 0.0 : loadStepConfigs_[stepIdx - 1].targetTime;
+            double currentPhysicalTime_ADR = prevPhysicalTime_ADR + currentLocalLF * (stepConfig.targetTime - prevPhysicalTime_ADR);
+            ctx.setCurrentTime(currentPhysicalTime_ADR); // 同步准静态进程物理总时间
             evaluateForces(ctx, kernels, accFieldNames_, stepConfig.stepId,
                            activeLF);
 
