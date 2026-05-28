@@ -566,6 +566,9 @@ void NOSB_Axis::preCompute(PDCommon::Core::PDContext &ctx) {
   if (stabilizer_) {
     stabilizer_->setG0(zeroEnergyG0_);
     stabilizer_->setMassScaleFactor(massScaleFactor_);
+    stabilizer_->setPlasticSofteningFloor(zeroEnergyPlasticFloor_);
+    stabilizer_->setPlasticSofteningRate(zeroEnergyPlasticRate_);
+    stabilizer_->setDamageCoupling(zeroEnergyDamageCoupling_);
     stabilizer_->setAxisymmetricIntegration(true);
     stabilizer_->preCompute(ctx);
     LOG_INFO("[NOSB_Axis] Instantiated MechanicalStabilizer using strategy: " +

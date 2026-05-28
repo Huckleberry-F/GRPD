@@ -24,6 +24,9 @@ public:
 protected:
   std::string zeroEnergyMethodStr_{}; // 延迟初始化，由派生类在 configure 中设置
   double zeroEnergyG0_{1.0};
+  double zeroEnergyPlasticFloor_{-1.0};
+  double zeroEnergyPlasticRate_{-1.0};
+  bool zeroEnergyDamageCoupling_{true};
   bool dynamicShapeTensor_{true};
 
   /// @brief 计算物质点部分体积截断修正因子
