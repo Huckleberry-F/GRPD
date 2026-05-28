@@ -14,6 +14,9 @@ add_library(Material_Obj OBJECT
     src/JCPlasticityMat.cpp
     src/J2VoceLemaitreMat.cpp
     src/CreepMaterialBase.cpp
+    src/NortonBaileyCreepMat.cpp
+    src/TimeHardeningCreepMat.cpp
+    src/StrainHardeningCreepMat.cpp
 )
 
 # 2. Add header files to target
@@ -29,6 +32,9 @@ target_sources(Material_Obj PRIVATE
     include/JCPlasticityMat.h
     include/J2VoceLemaitreMat.h
     include/CreepMaterialBase.h
+    include/NortonBaileyCreepMat.h
+    include/TimeHardeningCreepMat.h
+    include/StrainHardeningCreepMat.h
 )
 
 # 3. Set header include paths for this module
