@@ -44,7 +44,7 @@ ansys-server.run_ansys_yaml_case(
 ansys-server.generate_comparison_report(
     vtk_file="<GRPD_VTK>",
     ansys_txt_file="<ANSYS_TXT>",
-    output_dir="<Comparison_Output_Dir>",
+    output_dir="<Ansys_Work_Dir>",  # 必须传入上一步返回的 work_dir，将计算文件与对比结果保存在同一个目录下
     start_x=<Start_X_Coordinate>,
     start_y=<Start_Y_Coordinate>,
     start_z=<Start_Z_Coordinate>,
