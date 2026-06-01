@@ -1,0 +1,44 @@
+{
+  "mcpServers": {
+    "ansys-server": {
+      "command": "python",
+      "args": [
+        "<GRPD_PROJECT_ROOT_PATH>\\.agents\\mcp\\ansys-mcp-server\\server.py"
+      ],
+      "cwd": "<GRPD_PROJECT_ROOT_PATH>\\.agents\\mcp\\ansys-mcp-server",
+      "timeout": 3600000
+    },
+    "grpd-server": {
+      "command": "python",
+      "args": [
+        "<GRPD_PROJECT_ROOT_PATH>\\.agents\\mcp\\grpd-mcp-server\\server.py"
+      ],
+      "cwd": "<GRPD_PROJECT_ROOT_PATH>\\.agents\\mcp\\grpd-mcp-server",
+      "timeout": 3600000
+    },
+    "grpd-experiment-server": {
+      "command": "python",
+      "args": [
+        "<GRPD_PROJECT_ROOT_PATH>\\.agents\\mcp\\grpd-experiment-mcp-server\\server.py"
+      ],
+      "cwd": "<GRPD_PROJECT_ROOT_PATH>\\.agents\\mcp\\grpd-experiment-mcp-server",
+      "timeout": 600000
+    },
+    "grpd-validation-server": {
+      "command": "python",
+      "args": [
+        "<GRPD_PROJECT_ROOT_PATH>\\.agents\\mcp\\grpd-validation-mcp-server\\server.py"
+      ],
+      "cwd": "<GRPD_PROJECT_ROOT_PATH>\\.agents\\mcp\\grpd-validation-mcp-server",
+      "timeout": 600000
+    },
+    "matlab-server": {
+      "command": "python",
+      "args": [
+        "<GRPD_PROJECT_ROOT_PATH>\\.agents\\mcp\\matlab-mcp-server\\server.py"
+      ],
+      "cwd": "<GRPD_PROJECT_ROOT_PATH>\\.agents\\mcp\\matlab-mcp-server",
+      "timeout": 600000
+    }
+  }
+}

@@ -157,10 +157,17 @@
 
 ## 本地技能激活与使用纪律
 
-- 针对本仓库定义的本地技能（如 `brainstorming`、`using-superpowers`、`constitutive-math-reviewer` 等，存储于 `.gemini/skills/` 目录），鉴于当前 Antigravity 宿主没有暴露物理的 `activate_skill` 工具调用，统一采用本项目的“C方案”进行激活约束：
+- 针对本仓库定义的本地技能（如 `brainstorming`、`using-superpowers`、`superCAE/skills/constitutive-math-reviewer` 等，存储于 `.gemini/skills/` 目录），鉴于当前 Antigravity 宿主没有暴露物理的 `activate_skill` 工具调用，统一采用本项目的“C方案”进行激活约束：
   - 当接收到具有挑战性或属于对应子技能管辖范围的任务时，AI 代理在会话的前置思考和工具调用中，**必须**主动使用 `view_file` 物理读取对应的 `SKILL.md` 文件（如 [brainstorming](file:///d:/Project_C++/GRPD/.gemini/skills/superpowers/skills/brainstorming/SKILL.md)）。
   - 在接下来的输出正文头部，必须显式宣告 `[Active Skill: <技能名称>]`，向用户宣告该规约已载入。
   - 在后续的分析与代码生成中，必须严格遵循该技能所约定的 Checklist。
+
+## 架构隔离与 MCP 管线强制约束规约
+
+- 本项目核心计算逻辑已通过 `ansys-mcp-server`、`grpd-mcp-server` 等进行了微服务化封装。
+- AI 代理在处理计算、验证、出图等工作流时，**必须优先调用注入的 MCP Native Tools**。
+- **【降级铁律】**：如果 AI 在上下文中发现 MCP 工具未被成功注入或无法调用，**严禁**直接通过终端裸跑底层组件脚本或创建持久化 Python Entry 中转脚本。
+- 此时必须报告 MCP 注入缺失或工具不可用的阻塞状态；只有在正式 MCP 入口可用时，才允许继续执行计算、验证、出图或实验记录流程。
 
 ## ⚠️ 终极工作流拦截机制 (Anti-Planning-Mode)
 

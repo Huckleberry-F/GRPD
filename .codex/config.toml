@@ -3,32 +3,40 @@
 
 [mcp_servers.ansys-server]
 command = "c:\\Users\\zhanghanbo\\AppData\\Local\\Programs\\Python\\Python312\\python.exe"
-args = ["D:\\Project_C++\\GRPD\\tools\\ansys-mcp-server\\server.py"]
-cwd = "D:\\Project_C++\\GRPD\\tools\\ansys-mcp-server"
+args = ["D:\\Project_C++\\GRPD\\.agents\\mcp\\ansys-mcp-server\\server.py"]
+cwd = "D:\\Project_C++\\GRPD\\.agents\\mcp\\ansys-mcp-server"
 startup_timeout_sec = 20
 tool_timeout_sec = 3600
 default_tools_approval_mode = "prompt"
 
 [mcp_servers.grpd-server]
 command = "c:\\Users\\zhanghanbo\\AppData\\Local\\Programs\\Python\\Python312\\python.exe"
-args = ["D:\\Project_C++\\GRPD\\tools\\grpd-mcp-server\\server.py"]
-cwd = "D:\\Project_C++\\GRPD\\tools\\grpd-mcp-server"
+args = ["D:\\Project_C++\\GRPD\\.agents\\mcp\\grpd-mcp-server\\server.py"]
+cwd = "D:\\Project_C++\\GRPD\\.agents\\mcp\\grpd-mcp-server"
 startup_timeout_sec = 20
 tool_timeout_sec = 3600
 default_tools_approval_mode = "prompt"
 
 [mcp_servers.grpd-experiment-server]
 command = "c:\\Users\\zhanghanbo\\AppData\\Local\\Programs\\Python\\Python312\\python.exe"
-args = ["D:\\Project_C++\\GRPD\\tools\\grpd-experiment-mcp-server\\server.py"]
-cwd = "D:\\Project_C++\\GRPD\\tools\\grpd-experiment-mcp-server"
+args = ["D:\\Project_C++\\GRPD\\.agents\\mcp\\grpd-experiment-mcp-server\\server.py"]
+cwd = "D:\\Project_C++\\GRPD\\.agents\\mcp\\grpd-experiment-mcp-server"
+startup_timeout_sec = 20
+tool_timeout_sec = 600
+default_tools_approval_mode = "prompt"
+
+[mcp_servers.grpd-validation-server]
+command = "c:\\Users\\zhanghanbo\\AppData\\Local\\Programs\\Python\\Python312\\python.exe"
+args = ["D:\\Project_C++\\GRPD\\.agents\\mcp\\grpd-validation-mcp-server\\server.py"]
+cwd = "D:\\Project_C++\\GRPD\\.agents\\mcp\\grpd-validation-mcp-server"
 startup_timeout_sec = 20
 tool_timeout_sec = 600
 default_tools_approval_mode = "prompt"
 
 [mcp_servers.matlab-server]
 command = "c:\\Users\\zhanghanbo\\AppData\\Local\\Programs\\Python\\Python312\\python.exe"
-args = ["D:\\Project_C++\\GRPD\\tools\\matlab-mcp-server\\server.py"]
-cwd = "D:\\Project_C++\\GRPD\\tools\\matlab-mcp-server"
+args = ["D:\\Project_C++\\GRPD\\.agents\\mcp\\matlab-mcp-server\\server.py"]
+cwd = "D:\\Project_C++\\GRPD\\.agents\\mcp\\matlab-mcp-server"
 startup_timeout_sec = 20
 tool_timeout_sec = 600
 default_tools_approval_mode = "prompt"

@@ -4,10 +4,10 @@
 保证 GRPD 的 C++ 计算核心（如本构模型更新、断裂准则修正、积分核优化）在经历修改后，仍然能在基础 Benchmark (如轴对称拉伸、断裂测试) 上输出与 ANSYS 商业软件对标的精确结果。
 
 ## 工具流转
-自动化冒烟测试强依赖于 `grpd-server` 与 `ansys-server` 两个 MCP 服务器的联合，其中对比分析入口已收敛到 `ansys-server.generate_comparison_report`：
+自动化冒烟测试强依赖于 `grpd-server`、`ansys-server` 与 `grpd-validation-server` 三个 MCP 服务器的联合，其中对比分析入口已收敛到 `grpd-validation-server.compare_grpd_vtk_with_ansys_txt`：
 1. **GRPD 模块 (`grpd-server`)**：构建/运行 GRPD 并定位 `.vtk`；如果用户指定既有 `.vtk`，则跳过运行。
 2. **验证模块 (`ansys-server`)**：根据 `PD.yaml` 生成 APDL、运行 ANSYS、导出 txt，并保存 `.db` 数据库文件供人工复查。
-3. **分析模块 (`ansys-server.generate_comparison_report`)**：自动滤除无用点云，对齐坐标系，进行插值对比，并生成结果文件夹。
+3. **分析模块 (`grpd-validation-server.compare_grpd_vtk_with_ansys_txt`)**：自动滤除无用点云，对齐坐标系，进行插值对比，并生成结果文件夹。
 
 ## 快速执行规则
 - 不要为冒烟测试临时生成 Python runner、workflow 脚本或批处理脚本。
@@ -17,7 +17,7 @@
 
 ## 注意事项
 - **文件锁定**：GRPD 的输出是带时间戳的文件夹 `Result_YYYYMMDD_HHMMSS`。测试脚本必须能自适应寻址最新的目录和 `.vtk` 文件。
-- **坐标提取边界**：点云数据切片由于没有拓扑关系，在 `ansys-server.generate_comparison_report` 底层封装的对比逻辑中通过容差过滤（如 `abs(x - target_x) < tol`）。务必确保截取路径在几何范围内。
+- **坐标提取边界**：点云数据切片由于没有拓扑关系，在 `grpd-validation-server.compare_grpd_vtk_with_ansys_txt` 底层封装的对比逻辑中通过容差过滤（如 `abs(x - target_x) < tol`）。务必确保截取路径在几何范围内。
 - **验证判定标准**：
   - 弹性段位移/应力误差应极小 (`< 0.1%`)。
   - 塑性段应力误差由于积分方式不同，通常容忍度为 `< 5%`。
@@ -41,10 +41,10 @@ ansys-server.run_ansys_yaml_case(
     substep=<Substep_Num>
 )
 
-ansys-server.generate_comparison_report(
+grpd-validation-server.compare_grpd_vtk_with_ansys_txt(
     vtk_file="<GRPD_VTK>",
     ansys_txt_file="<ANSYS_TXT>",
-    output_dir="<Ansys_Work_Dir>",  # 必须传入上一步返回的 work_dir，将计算文件与对比结果保存在同一个目录下
+    output_dir="<Validation_Work_Dir>",
     start_x=<Start_X_Coordinate>,
     start_y=<Start_Y_Coordinate>,
     start_z=<Start_Z_Coordinate>,
