@@ -45,7 +45,7 @@ def run_ansys_mac(
     mac_file: str,
     work_dir: str = "",
     job_name: str = "",
-    parameters: dict = None,
+    parameters: dict | None = None,
 ) -> dict:
     """
     运行 ANSYS MAPDL 批处理任务。支持动态向 APDL 注入参数。
@@ -62,6 +62,7 @@ def generate_ansys_apdl_from_yaml(
     yaml_file: str,
     output_mac: str,
     substep: int = 0,
+    time: float = 0.0,
     job_name: str = "ansys_smoke_test",
     start_x: float = 0.0,
     end_x: float = 0.0,
@@ -76,6 +77,7 @@ def generate_ansys_apdl_from_yaml(
         yaml_file,
         output_mac,
         substep,
+        time,
         job_name,
         start_x,
         end_x,
@@ -89,22 +91,26 @@ def run_ansys_yaml_case(
     yaml_file: str,
     work_dir: str = "",
     substep: int = 0,
+    time: float = 0.0,
     start_x: float = 1.0,
     end_x: float = 1.0,
     start_y: float = 0.0,
     end_y: float = 0.0,
     job_name: str = "ansys_smoke_test",
+    template_name: str = "",
 ) -> dict:
     """由 GRPD PD.yaml 生成 APDL，运行 ANSYS，并返回 txt/db/out/err 等结果路径。"""
     return _run_ansys_yaml_case(
         yaml_file,
         work_dir,
         substep,
+        time,
         start_x,
         end_x,
         start_y,
         end_y,
         job_name,
+        template_name,
     )
 
 

@@ -1,4 +1,4 @@
-﻿"""Service-level operations behind the ANSYS MCP facade."""
+"""Service-level operations behind the ANSYS MCP facade."""
 
 from __future__ import annotations
 
@@ -55,6 +55,7 @@ def generate_ansys_apdl_from_yaml(
     yaml_file: str,
     output_mac: str,
     substep: int = 0,
+    time: float = 0.0,
     job_name: str = "ansys_smoke_test",
     start_x: float = 0.0,
     end_x: float = 0.0,
@@ -67,16 +68,19 @@ def generate_ansys_apdl_from_yaml(
         output_mac,
         job_name=job_name,
         result_substep=substep,
+        result_time=time,
         default_start_x=start_x,
         default_end_x=end_x if end_x != 0.0 else start_x,
         default_start_y=start_y,
         default_end_y=end_y if end_y != 0.0 else None,
     )
+    suffix = f"_t{time}" if time > 0.0 else (f"_sub{substep}" if substep else "")
     result["ansys_txt_file"] = os.path.join(
         os.path.dirname(os.path.abspath(output_mac)),
-        f"ansys_val_results_sub{substep}.txt" if substep else "ansys_val_results.txt",
+        f"ansys_val_results{suffix}.txt",
     )
     result["substep"] = substep
+    result["time"] = time
     return result
 
 
@@ -84,13 +88,15 @@ def run_ansys_yaml_case(
     yaml_file: str,
     work_dir: str = "",
     substep: int = 0,
+    time: float = 0.0,
     start_x: float = 1.0,
     end_x: float = 1.0,
     start_y: float = 0.0,
     end_y: float = 0.0,
     job_name: str = "ansys_smoke_test",
+    template_name: str = "",
 ) -> dict:
-    """Generate APDL from GRPD YAML, run ANSYS, and return result paths."""
+    """Generate APDL from GRPD YAML or templates, run ANSYS, and return result paths."""
     if not work_dir:
         work_dir = get_next_work_dir(default_work_dir_base())
     else:
@@ -98,16 +104,77 @@ def run_ansys_yaml_case(
     os.makedirs(work_dir, exist_ok=True)
 
     mac_file = os.path.join(work_dir, f"{job_name}.mac")
-    _generate_apdl_from_yaml(
-        yaml_file,
-        mac_file,
-        job_name=job_name,
-        result_substep=substep,
-        default_start_x=start_x,
-        default_end_x=end_x,
-        default_start_y=start_y,
-        default_end_y=end_y if end_y != 0.0 else None,
-    )
+    
+    # 内置模板加载路径
+    templates_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "templates")
+    template_path = os.path.join(templates_dir, f"{template_name}.mac") if template_name else ""
+
+    if template_name and os.path.isfile(template_path):
+        import sys
+        print(f"[Ansys Service] Using built-in APDL template: {template_path}", file=sys.stderr)
+        # 解析 YAML 并填入模板参数
+        import yaml
+        with open(yaml_file, "r", encoding="utf-8") as f:
+            yaml_data = yaml.safe_load(f) or {}
+        
+        part = yaml_data.get("Parts", [{}])[0]
+        material = yaml_data.get("Materials", [{}])[0]
+        solver = yaml_data.get("Solver", {})
+        bcs = yaml_data.get("BoundaryConditions", [])
+        
+        # 热源参数提取
+        flux_bc = next((bc for bc in bcs if bc.get("Type", "").upper() == "FLUX"), {})
+        temp_bc = next((bc for bc in bcs if bc.get("Type", "").upper() in {"T", "TEMP"}), {})
+        
+        flux_box = flux_bc.get("Box", [0,0,0,0,0,0])
+        temp_box = temp_bc.get("Box", [0,0,0,0,0,0])
+        
+        load_steps = solver.get("LoadSteps", [{}])
+        num_substeps = load_steps[0].get("NumSubsteps", 20) if load_steps else 20
+        
+        with open(template_path, "r", encoding="utf-8") as ft:
+            macro_content = ft.read()
+            
+        # 参数替换
+        replacements = {
+            "MAT_K": str(material.get("Conductivity", 45.0)),
+            "MAT_RHO": str(material.get("Density", 7.85e-9)),
+            "MAT_C": str(material.get("HeatCapacity", 4.6e8)),
+            "PART_X1": "0.0",
+            "PART_X2": str(part.get("Length", 5.0)),
+            "PART_Y1": "0.0",
+            "PART_Y2": str(part.get("Width", 10.0)),
+            "PART_DX": str(part.get("dx", 0.1)),
+            "BC_FLUX_XMIN": str(flux_box[0]),
+            "BC_FLUX_XMAX": str(flux_box[1]),
+            "BC_FLUX_VAL": str(flux_bc.get("Value", 100.0)),
+            "BC_TEMP_XMIN": str(temp_box[0]),
+            "BC_TEMP_XMAX": str(temp_box[1]),
+            "BC_TEMP_VAL": str(temp_bc.get("Value", 100.0)),
+            "SOL_SUBSTEPS": str(num_substeps),
+            "SAMPLE_START_X": str(start_x),
+            "SAMPLE_START_Y": str(start_y),
+            "SAMPLE_END_X": str(end_x),
+            "SAMPLE_END_Y": str(end_y),
+        }
+        
+        for k, v in replacements.items():
+            macro_content = macro_content.replace(k, v)
+            
+        with open(mac_file, "w", encoding="utf-8") as fm:
+            fm.write(macro_content)
+    else:
+        _generate_apdl_from_yaml(
+            yaml_file,
+            mac_file,
+            job_name=job_name,
+            result_substep=substep,
+            result_time=time,
+            default_start_x=start_x,
+            default_end_x=end_x,
+            default_start_y=start_y,
+            default_end_y=end_y if end_y != 0.0 else None,
+        )
 
     parameters: dict[str, Any] = {"START_X": start_x, "END_X": end_x}
     if start_y != 0.0:
@@ -116,12 +183,12 @@ def run_ansys_yaml_case(
         parameters["END_Y"] = end_y
     if substep:
         parameters["SUBSTEP"] = substep
+    if time > 0.0:
+        parameters["TIME"] = time
 
     result = RUNNER.run_mac_file(mac_file, work_dir, job_name, parameters=parameters)
-    ansys_txt_file = os.path.join(
-        work_dir,
-        f"ansys_val_results_sub{substep}.txt" if substep else "ansys_val_results.txt",
-    )
+    suffix = f"_t{time}" if time > 0.0 else (f"_sub{substep}" if substep else "")
+    ansys_txt_file = os.path.join(work_dir, f"ansys_val_results{suffix}.txt")
     db_file = os.path.join(work_dir, f"{job_name}.db")
     out_file = os.path.join(work_dir, f"{job_name}.out")
     err_file = os.path.join(work_dir, f"{job_name}.err")
