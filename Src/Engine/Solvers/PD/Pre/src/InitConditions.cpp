@@ -107,7 +107,7 @@ void InitConditions(PDCommon::Core::PDContext &ctx, const YAML::Node &config) {
           density = mat->getDensity();
       }
       // 将底层缩放因子注入给支持的面压换算高阶 BC
-      bc->setScalingFactors(dx, density, massScale);
+      bc->setScalingFactors(dx, density, massScale, ctx.getDimension(), ctx.getThickness());
 
       bcStats[entry.type]++;
       bcManager.addBC(std::move(bc), entry.step);

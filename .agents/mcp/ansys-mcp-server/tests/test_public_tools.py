@@ -4,7 +4,9 @@ from pathlib import Path
 
 SERVER_FILE = Path(__file__).resolve().parents[1] / "server.py"
 SPEC = importlib.util.spec_from_file_location("ansys_server_under_test", SERVER_FILE)
+assert SPEC is not None
 server = importlib.util.module_from_spec(SPEC)
+assert SPEC.loader is not None
 SPEC.loader.exec_module(server)
 
 

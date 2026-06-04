@@ -69,7 +69,8 @@ private:
                                        std::vector<std::unique_ptr<PDKernel>> &kernels, 
                                        const std::vector<double>& u,
                                        int currentStep,
-                                       double activeLF);
+                                       double activeLF,
+                                       bool frozen = false);
 
   /// @brief 线搜索 (Backtracking Line Search)
   double lineSearch(PDCommon::Core::PDContext &ctx, 

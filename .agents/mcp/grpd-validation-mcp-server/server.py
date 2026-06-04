@@ -1,4 +1,4 @@
-﻿"""FastMCP facade for GRPD validation post-processing tools."""
+"""FastMCP facade for GRPD validation post-processing tools."""
 
 from __future__ import annotations
 
@@ -52,7 +52,9 @@ def compare_grpd_vtk_with_ansys_txt(
     tol: float | None = None,
 ) -> dict:
     """
-    璇诲彇 GRPD VTK 涓?ANSYS TXT锛屾部涓夌淮閲囨牱绾垮榻愬苟鐢熸垚璇樊鎶ュ憡銆?    鏈伐鍏锋槸 GRPD/ANSYS 瀵规爣鎶ュ憡鍞竴鍏ュ彛锛汚NSYS MCP 涓嶅啀鍏紑瀵规瘮鎶ュ憡宸ュ叿銆?    """
+    读取 GRPD VTK 与 ANSYS TXT，沿三维采样线对齐并生成误差报告。
+    本工具是 GRPD/ANSYS 对标报告唯一入口，ANSYS MCP 不再公开对比报告工具。
+    """
     return _compare_grpd_vtk_with_ansys_txt(
         vtk_file,
         ansys_txt_file,

@@ -1,4 +1,4 @@
-﻿"""Service-level operations behind the GRPD validation MCP facade."""
+"""Service-level operations behind the GRPD validation MCP facade."""
 
 from __future__ import annotations
 

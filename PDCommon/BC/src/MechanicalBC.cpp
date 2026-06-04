@@ -163,6 +163,11 @@ void PressureBC::initialize(PDCommon::Field::FieldManager &fieldManager,
   acceleration_ = fieldManager.getFieldAs<double>("Acceleration");
   particleId_ = particleId;
 
+  auto *volField = fieldManager.getFieldAs<double>("Volume");
+  if (volField) {
+    vol_ = volField->get(particleId_);
+  }
+
   if (!values.empty()) {
     pressVal_ = values[0];
   }
@@ -172,7 +177,7 @@ void PressureBC::apply() {
   if (!acceleration_)
     return;
   // 转换宏观面压 (MPa) 为隐式动力学底层的等效单点加速度
-  double equivalentAcc = pressVal_ / (dx_ * density_ * massScale_);
+  double equivalentAcc = pressVal_ / (local_dx_ * density_ * massScale_);
   acceleration_->add(particleId_, equivalentAcc, axis_);
 }
 
@@ -181,7 +186,7 @@ void PressureBC::apply(double loadFactor) {
     return;
   // 按比例施加 Neumann 源项压强：P = prevVal_ + (pressVal_ - prevVal_) * loadFactor
   double activeVal = prevVal_ + (pressVal_ - prevVal_) * loadFactor;
-  double equivalentAcc = activeVal / (dx_ * density_ * massScale_);
+  double equivalentAcc = activeVal / (local_dx_ * density_ * massScale_);
   acceleration_->add(particleId_, equivalentAcc, axis_);
 }
 

@@ -97,7 +97,7 @@ void CentralDifference::run(PDCommon::Core::PDContext &ctx,
              " | dt: " + PDCommon::Utils::StringUtils::toScientific(currentDt) +
              " | KBC: " + std::to_string(currentKbc) + " ===");
 
-    while (currentTime < targetTime - 1e-12) {
+    while (currentTime < targetTime - 1e-5 * currentDt) {
       if (globalStepCounter % outputInterval == 0) {
         LOG_INFO(
             "--- Step " + std::to_string(globalStepCounter) + " | Time: " +

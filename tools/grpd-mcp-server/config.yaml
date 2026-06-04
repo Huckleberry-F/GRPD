@@ -1,4 +1,0 @@
-# GRPD MCP server configuration placeholder.
-defaults:
-  build_config: Release
-  substep: 20

@@ -6,7 +6,7 @@
 #include "ReaderRegistry.h"
 #include <cstdlib>
 #include <filesystem>
-
+#include <string>
 
 namespace Src::Engine::Solvers::PD::Init {
 
@@ -34,11 +34,14 @@ void InitModel(PDCommon::Core::PDContext &ctx, const YAML::Node &config,
     LOG_INFO(
         "[InitModel] Calling Python pre-processor to generate .grpd mesh...");
 
-    auto &ioMgr = PDCommon::IO::IOManager::getInstance();
     std::filesystem::path scriptPath = ioMgr.getScriptPath("generate_model.py");
 
+    // 直接使用裸命令 python，从 PATH 自然发现解释器。
+    // 由于命令不以双引号开头，Windows cmd.exe 不会触发引号剥离，
+    // 路径参数用简单双引号即可安全处理空格。
     std::string pythonCommand =
         "python \"" + scriptPath.string() + "\" \"" + yamlPath + "\"";
+    LOG_INFO("[InitModel] Executing: " + pythonCommand);
     int pyStatus = std::system(pythonCommand.c_str());
 
     if (pyStatus != 0) {

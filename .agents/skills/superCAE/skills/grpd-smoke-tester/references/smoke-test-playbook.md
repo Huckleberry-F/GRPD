@@ -27,6 +27,15 @@
 当 AI (Codex) 执行测试任务时，按 MCP 职责顺序调用：
 ```text
 grpd-server.get_grpd_vtk_result(
+- **验证判定标准**：
+  - 弹性段位移/应力误差应极小 (`< 0.1%`)。
+  - 塑性段应力误差由于积分方式不同，通常容忍度为 `< 5%`。
+  - 断裂段判定应观察应力是否突降。
+
+## 一键脚本调用示例
+当 AI (Codex) 执行测试任务时，按 MCP 职责顺序调用：
+```text
+grpd-server.get_grpd_vtk_result(
     case_dir="<GRPD_Case_Dir>",
     vtk_file="<Optional_Existing_VTK>",
     build_dir="<Optional_GRPD_Build_Dir>",
@@ -35,7 +44,7 @@ grpd-server.get_grpd_vtk_result(
 
 ansys-server.run_ansys_yaml_case(
     yaml_file="<GRPD_Case_Dir>/PD.yaml",
-    work_dir="<Ansys_Work_Dir>",
+    work_dir="",  # 留空以自动分配递增的隔离工作目录
     start_x=<Start_X_Coordinate>,
     end_x=<End_X_Coordinate>,
     substep=<Substep_Num>

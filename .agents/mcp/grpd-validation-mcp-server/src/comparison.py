@@ -103,12 +103,31 @@ def compare_grpd_and_ansys(
             raise ValueError(f"GRPD VTK 中不包含该物理场: {field_name}")
 
         grpd_raw = mesh.point_data[field_name][mask]
-        grpd_values = grpd_raw[:, field_dim] if field_dim is not None else grpd_raw
-        grpd_values_final = grpd_values[sort_idx][unique_idx]
+        grpd_values_filtered = grpd_raw[:, field_dim] if field_dim is not None else grpd_raw
+
+        # 计算每一个 ANSYS 采样点在真实 3D 空间中的坐标
+        ansys_coords = p_start + np.outer(ansys_dist, u_line)  # shape: (M, 3)
+
+        # 过滤后的 GRPD 粒子坐标
+        grpd_pts_filtered = pts[mask]  # shape: (N, 3)
+
+        # 计算距离矩阵 dists shape: (M, N)
+        diff = ansys_coords[:, np.newaxis, :] - grpd_pts_filtered[np.newaxis, :, :]
+        dists = np.linalg.norm(diff, axis=2)
+
+        # 对每个采样点，取最近的 K 个邻近粒子进行空间反距离加权插值 (IDW)
+        M, N = dists.shape
+        K = min(4, N)
+        grpd_aligned = np.zeros(M)
+        for j in range(M):
+            idx = np.argsort(dists[j])[:K]
+            d = dists[j, idx]
+            val = grpd_values_filtered[idx]
+            w = 1.0 / (d + 1e-6) ** 2
+            grpd_aligned[j] = np.sum(w * val) / np.sum(w)
 
         ansys_col_idx = _ansys_column_index(component, physics_type, raw_ansys.shape[1])
         ansys_values = raw_ansys[:, ansys_col_idx]
-        grpd_aligned = np.interp(ansys_dist, grpd_proj_dist_final, grpd_values_final)
 
         abs_err = np.abs(grpd_aligned - ansys_values)
         max_ansys = float(np.max(np.abs(ansys_values)))
@@ -123,8 +142,8 @@ def compare_grpd_and_ansys(
 
         summary_data[f"max_error_{component.lower()}_percent"] = float(np.max(rel_err))
         plot_data[component] = (
-            grpd_proj_dist_final,
-            grpd_values_final,
+            ansys_dist,
+            grpd_aligned,
             ansys_dist,
             ansys_values,
             label,

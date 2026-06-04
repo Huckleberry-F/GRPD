@@ -3,17 +3,15 @@
 // ============================================================================
 
 #include "ExplicitEuler.h"
-#include "BCManager.h"
 #include "FieldManager.h"
 #include "Logger.h"
-#include "StringUtils.h"
 #include "MaterialManager.h"
 #include "PDKernel.h"
+#include "StringUtils.h"
 #include "ThermalMaterial.h"
 #include "Timer.h"
 #include <cmath>
 #include <omp.h>
-
 
 namespace Src::Integration {
 
@@ -42,11 +40,14 @@ void ExplicitEuler::run(PDCommon::Core::PDContext &ctx,
   double limitDt = computeCFLTimestep(ctx);
   if (autoCalcDt_) {
     dt_ = limitDt;
-    LOG_INFO("[ExplicitEuler] Auto CFL enabled. Setting dt = " + PDCommon::Utils::StringUtils::toScientific(dt_));
+    LOG_INFO("[ExplicitEuler] Auto CFL enabled. Setting dt = " +
+             PDCommon::Utils::StringUtils::toScientific(dt_));
   } else {
     if (dt_ > limitDt) {
-      LOG_WARNING("[ExplicitEuler] Global TimeStep_dt (" + PDCommon::Utils::StringUtils::toScientific(dt_) + 
-                  ") EXCEEDS safe CFL limit (" + PDCommon::Utils::StringUtils::toScientific(limitDt) + 
+      LOG_WARNING("[ExplicitEuler] Global TimeStep_dt (" +
+                  PDCommon::Utils::StringUtils::toScientific(dt_) +
+                  ") EXCEEDS safe CFL limit (" +
+                  PDCommon::Utils::StringUtils::toScientific(limitDt) +
                   ")! Auto-clamping global dt to the safe limit.");
       dt_ = limitDt;
     }
@@ -55,8 +56,9 @@ void ExplicitEuler::run(PDCommon::Core::PDContext &ctx,
   // Verify inner load steps dt as well
   for (auto &config : loadStepConfigs_) {
     if (config.userDt > limitDt) {
-      LOG_WARNING("[ExplicitEuler] LoadStep " + std::to_string(config.stepId) + 
-                  " TimeStep_dt (" + PDCommon::Utils::StringUtils::toScientific(config.userDt) + 
+      LOG_WARNING("[ExplicitEuler] LoadStep " + std::to_string(config.stepId) +
+                  " TimeStep_dt (" +
+                  PDCommon::Utils::StringUtils::toScientific(config.userDt) +
                   ") EXCEEDS safe CFL limit! Auto-clamping to safe limit.");
       config.userDt = limitDt;
     }
@@ -64,7 +66,8 @@ void ExplicitEuler::run(PDCommon::Core::PDContext &ctx,
 
   LOG_INFO("[ExplicitEuler] Starting Explicit Loop with " +
            std::to_string(loadStepConfigs_.size()) +
-           " LoadStep(s). Default dt = " + PDCommon::Utils::StringUtils::toScientific(dt_));
+           " LoadStep(s). Default dt = " +
+           PDCommon::Utils::StringUtils::toScientific(dt_));
 
   int initialStepId = loadStepConfigs_.empty() ? 0 : loadStepConfigs_[0].stepId;
   int initKbc =
@@ -88,19 +91,22 @@ void ExplicitEuler::run(PDCommon::Core::PDContext &ctx,
     int currentKbc = (config.kbc >= 0) ? config.kbc : kbc_;
 
     LOG_INFO("=== Load Step " + std::to_string(config.stepId) + " / " +
-             std::to_string(loadStepConfigs_.size()) +
-             " | TargetTime: " + PDCommon::Utils::StringUtils::toScientific(targetTime) +
+             std::to_string(loadStepConfigs_.size()) + " | TargetTime: " +
+             PDCommon::Utils::StringUtils::toScientific(targetTime) +
              " | dt: " + PDCommon::Utils::StringUtils::toScientific(currentDt) +
              " | KBC: " + std::to_string(currentKbc) + " ===");
 
-    while (currentTime < targetTime - 1e-12) {
+    while (currentTime < targetTime - 1e-5 * currentDt) {
       if (globalStepCounter % outputInterval == 0) {
         LOG_INFO(
-            "--- Step " + std::to_string(globalStepCounter) +
-            " | Time: " + PDCommon::Utils::StringUtils::toScientific(currentTime) +
-            "  |  Pure Compute: " + PDCommon::Utils::StringUtils::toScientific(timer.pureComputeTime()) +
-            "s" + "  |  Total: " + PDCommon::Utils::StringUtils::toScientific(timer.totalElapsed()) + "s" +
-            "  |  Speed: " +
+            "--- Step " + std::to_string(globalStepCounter) + " | Time: " +
+            PDCommon::Utils::StringUtils::toScientific(currentTime) +
+            "  |  Pure Compute: " +
+            PDCommon::Utils::StringUtils::toScientific(
+                timer.pureComputeTime()) +
+            "s" + "  |  Total: " +
+            PDCommon::Utils::StringUtils::toScientific(timer.totalElapsed()) +
+            "s" + "  |  Speed: " +
             std::to_string(static_cast<int>(timer.pureSpeed())) + " steps/s");
 
         if (outputCallback)
@@ -129,7 +135,7 @@ void ExplicitEuler::run(PDCommon::Core::PDContext &ctx,
 
       // 显式欧拉每一步都是真实的物理时间推进，拓扑必须实时更新
       ctx.setIncrementStart(true);
-      ctx.setCurrentDt(currentDt); // 同步真实 dt 给接触模块
+      ctx.setCurrentDt(currentDt);     // 同步真实 dt 给接触模块
       ctx.setCurrentTime(currentTime); // 同步真实总时间给材料模块
       evaluateForces(ctx, kernels, rateFieldNames_, config.stepId, activeLF);
 
@@ -163,10 +169,12 @@ void ExplicitEuler::run(PDCommon::Core::PDContext &ctx,
   LOG_INFO(
       "--- Step " + std::to_string(globalStepCounter) +
       " | Time: " + PDCommon::Utils::StringUtils::toScientific(currentTime) +
-      "  |  Pure Compute: " + PDCommon::Utils::StringUtils::toScientific(timer.pureComputeTime()) +
-      "s" + "  |  Total: " + PDCommon::Utils::StringUtils::toScientific(timer.totalElapsed()) + "s" +
-      "  |  Speed: " +
-      std::to_string(static_cast<int>(timer.pureSpeed())) + " steps/s");
+      "  |  Pure Compute: " +
+      PDCommon::Utils::StringUtils::toScientific(timer.pureComputeTime()) +
+      "s" + "  |  Total: " +
+      PDCommon::Utils::StringUtils::toScientific(timer.totalElapsed()) + "s" +
+      "  |  Speed: " + std::to_string(static_cast<int>(timer.pureSpeed())) +
+      " steps/s");
   if (outputCallback) {
     outputCallback(globalStepCounter, currentTime);
   }
@@ -184,7 +192,8 @@ void ExplicitEuler::updateKinematicsEuler(double dt) {
 }
 
 double ExplicitEuler::computeCFLTimestep(PDCommon::Core::PDContext &ctx,
-                                         double massScale, double safetyFactor) {
+                                         double massScale,
+                                         double safetyFactor) {
   auto &matManager = ctx.getMaterialManager();
   auto &fieldManager = ctx.getFieldManager();
 
@@ -227,8 +236,11 @@ double ExplicitEuler::computeCFLTimestep(PDCommon::Core::PDContext &ctx,
 
   if (foundThermal) {
     double limitDt = safetyFactor * minDt;
-    LOG_INFO("[" + getName() + "] Computed safe Thermal limit dt: " + PDCommon::Utils::StringUtils::toScientific(limitDt) +
-             " (dx = " + PDCommon::Utils::StringUtils::toScientific(dx) + ", minDt = " + PDCommon::Utils::StringUtils::toScientific(minDt) + ")");
+    LOG_INFO("[" + getName() + "] Computed safe Thermal limit dt: " +
+             PDCommon::Utils::StringUtils::toScientific(limitDt) +
+             " (dx = " + PDCommon::Utils::StringUtils::toScientific(dx) +
+             ", minDt = " + PDCommon::Utils::StringUtils::toScientific(minDt) +
+             ")");
     return limitDt;
   } else {
     // 如果没有热场且运行了 ExplicitEuler（比如耗散性的力学阻尼问题），

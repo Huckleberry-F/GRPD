@@ -10,6 +10,8 @@
 
 namespace Src::Integration {
 
+using PDCommon::BC::BC;
+
 void MatrixFreeImplicitIntegrator::configure(const YAML::Node &solverNode) {
   TimeIntegrator::configure(solverNode);
   
@@ -48,13 +50,19 @@ std::vector<double> MatrixFreeImplicitIntegrator::evaluateResidual(
     PDCommon::Core::PDContext &ctx, 
     std::vector<std::unique_ptr<PDKernel>> &kernels, 
     const std::vector<double>& u,
-    int currentStep, double activeLF) {
+    int currentStep, double activeLF,
+    bool frozen) {
   
   auto u_backup = flattenDisplacement();
   unflattenDisplacement(u);
   
-  // 核心：强制重置状态并使用 stateMode=0 计算真实的物理内力
-  ctx.setStateFrozen(false);
+  // 核心：设置状态冻结标志及外循环迭代次数，从而对应材料的 stateMode
+  ctx.setStateFrozen(frozen);
+  if (frozen) {
+    ctx.setOuterIter(1); // stateMode = 2 (切线刚度/弹性试探模式)
+  } else {
+    ctx.setOuterIter(0); // stateMode = 0 (真实返回映射更新状态)
+  }
   evaluateForces(ctx, kernels, accFieldNames_, currentStep, activeLF);
   
   size_t totalSize = 0;
@@ -106,7 +114,7 @@ std::vector<double> MatrixFreeImplicitIntegrator::solveJFNK(
     std::vector<double> u_temp(N, 0.0);
     for (size_t i=0; i<N; ++i) u_temp[i] = u_k[i] + fdEpsilon_ * V[k][i];
     
-    std::vector<double> R_temp = evaluateResidual(ctx, kernels, u_temp, currentStep, activeLF);
+    std::vector<double> R_temp = evaluateResidual(ctx, kernels, u_temp, currentStep, activeLF, true);
     
     std::vector<double> w(N, 0.0);
     for (size_t i=0; i<N; ++i) {
@@ -290,7 +298,7 @@ void MatrixFreeImplicitIntegrator::run(PDCommon::Core::PDContext &ctx,
         
         // 如果是 L-BFGS，准备计算 y_k
         if (algorithm_ == "L-BFGS") {
-          auto R_new = evaluateResidual(ctx, kernels, u_new, config.stepId, activeLF);
+          auto R_new = evaluateResidual(ctx, kernels, u_new, config.stepId, activeLF, true);
           std::vector<double> s_k(u_k.size());
           std::vector<double> y_k(R_k.size());
           double dot_sy = 0.0;
@@ -320,10 +328,20 @@ void MatrixFreeImplicitIntegrator::run(PDCommon::Core::PDContext &ctx,
       
       if (!converged) {
          LOG_WARNING("[MatrixFreeImplicit] Substep did not converge within MaxNRIters.");
+      } else {
+         // 子步收敛后，正式执行物理场缓存的 Swap 并调用每个材料实例的 commitState()
+         ctx.getFieldManager().executeAllRegisteredSwaps();
+         for (auto &[matName, matPtr] : ctx.getMaterialManager().getMaterials()) {
+           if (matPtr) {
+             matPtr->commitState();
+           }
+         }
       }
       
       outputCallback(config.stepId, activeLF);
     }
+    // 载荷步结束，固化边界条件起点
+    BC::commitEndStep(ctx.getBCManager(), config.stepId);
     prevTargetTime = config.targetTime;
   }
 }
