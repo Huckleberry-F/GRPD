@@ -36,6 +36,9 @@ def run_ansys_mac(
     parameters: dict | None = None,
 ) -> dict:
     """Run an ANSYS MAPDL macro file and return JSON-safe metadata."""
+    config = load_config()
+    RUNNER.executable = config.get("ansys_executable", RUNNER.executable)
+    RUNNER.allowed_directories = allowed_directories_from_config(config)
     if not work_dir:
         work_dir = os.path.dirname(mac_file)
     result = RUNNER.run_mac_file(mac_file, work_dir, job_name, parameters=parameters)
@@ -97,6 +100,9 @@ def run_ansys_yaml_case(
     template_name: str = "",
 ) -> dict:
     """Generate APDL from GRPD YAML or templates, run ANSYS, and return result paths."""
+    config = load_config()
+    RUNNER.executable = config.get("ansys_executable", RUNNER.executable)
+    RUNNER.allowed_directories = allowed_directories_from_config(config)
     if not work_dir:
         work_dir = get_next_work_dir(default_work_dir_base())
     else:
@@ -130,7 +136,9 @@ def run_ansys_yaml_case(
         temp_box = temp_bc.get("Box", [0,0,0,0,0,0])
         
         load_steps = solver.get("LoadSteps", [{}])
-        num_substeps = load_steps[0].get("NumSubsteps", 20) if load_steps else 20
+        raw_substeps = load_steps[0].get("NumSubsteps", 20) if load_steps else 20
+        # 优化隐式求解步数，避免跟随 GRPD 显式细密步长
+        num_substeps = min(100, raw_substeps) if raw_substeps > 100 else raw_substeps
         
         with open(template_path, "r", encoding="utf-8") as ft:
             macro_content = ft.read()

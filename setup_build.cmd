@@ -5,32 +5,24 @@ echo GRPD One-Click Setup and Build Script (Windows)
 echo ==============================================================
 
 echo.
-echo [1/4] Checking Python Dependencies for High-Performance Voxelization...
-python -m pip install open3d numpy pyyaml pydantic
-if %ERRORLEVEL% neq 0 (
-    echo [ERROR] Failed to install Python dependencies. Please make sure Python 3.10-3.12 is installed and added to PATH.
-    pause
-    exit /b 1
-)
-
-echo.
-echo [2/4] Checking C++ Compiler (GCC) and CMake...
+echo [1/4] Checking Environment Setup...
 where gcc >nul 2>nul
 if %ERRORLEVEL% neq 0 (
-    echo [ERROR] GCC compiler not found in PATH!
-    echo =^> Opening TDM-GCC download page... Please download, install it, and ensure you check "Add to PATH".
-    start https://jmeubank.github.io/tdm-gcc/download/
-    pause
-    exit /b 1
+    echo [WARNING] GCC compiler not found in PATH! Attempting to launch env auto-setup...
+    call setup_env.cmd
 )
 
 where cmake >nul 2>nul
 if %ERRORLEVEL% neq 0 (
-    echo [ERROR] CMake not found in PATH!
-    echo =^> Opening CMake download page... Please install it and check "Add to PATH for all users".
-    start https://cmake.org/download/
-    pause
-    exit /b 1
+    echo [WARNING] CMake not found in PATH! Attempting to launch env auto-setup...
+    call setup_env.cmd
+)
+
+:: 确保 Python 依赖等项运行
+python -c "import open3d, numpy, yaml, pydantic" 2>nul
+if %ERRORLEVEL% neq 0 (
+    echo [WARNING] Missing python dependencies! Attempting to launch env auto-setup...
+    call setup_env.cmd
 )
 
 echo.

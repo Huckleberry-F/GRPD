@@ -1,0 +1,3021 @@
+
+[00:44:23] [INFO ] [EngineManager]
+    | ==================================================
+    | GRPD Solver Engine Initialized                 
+    | ==================================================
+
+[00:44:23] [INFO ] [EngineRegistry]
+    | Creating Engine instance: PD
+
+[00:44:23] [INFO ] [PDEngine]
+    | PD Engine instance created.
+    | ===============================================
+    | ========== Registered Types Summary ===========
+    | TimeIntegrator    : ADR, CentralDifference, Explicit, MatrixFreeImplicit, Staggered
+    | FieldRegistry     : DoubleField, IntField
+    | PhysicsFields     : Mechanical, Thermal
+    | BCRegistry        : AX, AY, AZ, CONV, FLUX, PX, PY, PZ, T, UX, UY, UZ, VX, VY, VZ
+    | ReaderRegistry    : .grpd, .inp
+    | StabilizerRegistry: Mechanical_Silling, Mechanical_Wan, Mechanical_Zhang, Thermal_Silling,
+    | Thermal_Wan, Thermal_Zhang
+    | ContactRegistry   : [Type] General, [ForceLaw] KinematicNormal, [ForceLaw] Nonlinear, [ForceLaw]
+    | Penalty, [ForceLaw] Silling, [ForceLaw] Viscous, [Evaluator] NTC, [Evaluator] NTN, [Evaluator] NTS,
+    | [FrictionLaw] ElasticStickSlip, [FrictionLaw] ExplicitImpulse, [FrictionLaw] TanhRegularized
+    | MaterialRegistry  : FourierThermalMat, J2PlasticityMat, J2VoceLemaitre, JCPlasticityMat,
+    | LinearElasticMat, NortonBaileyCreepMat, StrainHardeningCreepMat, TimeHardeningCreepMat
+    | KernelRegistry    : NOSB_Axis, NOSB_M, NOSB_T
+    | EngineRegistry    : PD
+    | ===============================================
+
+[00:44:23] [INFO ] [EngineManager]
+    | Initializing solver: PD
+
+[00:44:23] [INFO ] [PDEngine]
+    | Initializing PD simulation context...
+
+[00:44:23] [INFO ] [InitModel]
+    | ==================================================
+    | Model pre-processing...
+    | ==================================================
+    | grpd path: d:\C++pro\GRPD\Examples\Thermal_Validation_5x10\Thermal_Validation_5x10.grpd
+    | model name: Thermal_Validation_5x10
+    | Calling Python pre-processor to generate .grpd mesh...
+    | Executing: python "D:\C++pro\GRPD\Generate_py\generate_model.py"
+    | "d:\C++pro\GRPD\Examples\Thermal_Validation_5x10\PD.yaml"
+    | Mesh generated successfully by Python.
+
+[00:44:24] [INFO ] [Context Manager]
+    | Formalized model name to: Thermal_Validation_5x10
+    | Model dimension set to: 2D
+    | 2D thickness set to: 1.000000
+
+[00:44:24] [INFO ] [ReaderRegistry]
+    | Creating reader for: .grpd (name: Thermal_Validation_5x10)
+
+[00:44:24] [INFO ] [InitModel]
+    | Reading mesh file: d:\C++pro\GRPD\Examples\Thermal_Validation_5x10\Thermal_Validation_5x10.grpd
+    | (reader: .grpd)
+
+[00:44:24] [INFO ] [GrpdMeshReader]
+    | Reading file: d:\C++pro\GRPD\Examples\Thermal_Validation_5x10\Thermal_Validation_5x10.grpd
+    | Entering *PARTICLE section (Line 1)
+    | Pre-allocated memory for 5000 particles (Zero-Reallocation)
+    | Entering *LOAD section (Line 5004)
+    | ============================================
+    | File reading complete!
+    | Total particles: 5000
+    | Total load entries: 200
+    | ============================================
+
+[00:44:24] [INFO ] [ParticleManager]
+    | Pre-allocated memory for 5000 particles
+
+[00:44:24] [INFO ] [InitModel]
+    | Total particles loaded for model Thermal_Validation_5x10: 5000
+
+[00:44:24] [INFO ] [InitMaterial]
+    | ==================================================
+    | Entering Material Initialization Phase...
+    | ==================================================
+    | Instantiating material [1] of type: FourierThermalMat
+
+[00:44:24] [INFO ] [MaterialRegistry]
+    | Using factory to create material: Stable_Thermal_Mat (type: FourierThermalMat)
+
+[00:44:24] [INFO ] [FourierThermalMat]
+    | Material 'Stable_Thermal_Mat' is initialized. Conductivity = 1.000000, HeatCapacity = 1.000000,
+    | Density = 1.000000
+
+[00:44:24] [INFO ] [MaterialManager]
+    | Successfully added material instance: Stable_Thermal_Mat
+
+[00:44:24] [INFO ] [InitMaterial]
+    | Successfully registered material ID 1 (Stable_Thermal_Mat)
+    | Assigning material pointers to particles...
+    | Successfully assigned materials to 5000 particles.
+
+[00:44:24] [INFO ] [InitFields]
+    | ==================================================
+    | Entering Field Registration Phase...
+    | ==================================================
+
+[00:44:24] [INFO ] [FieldManager]
+    | Added field 'Temperature'.
+    | Added field 'TempRate'.
+    | Added field 'HeatFlux'.
+
+[00:44:24] [INFO ] [ThermalFields]
+    | Core fields registered: Temperature, TempRate, HeatFlux.
+
+[00:44:24] [INFO ] [InitFields]
+    | Auto-registered PhysicsFields module: Thermal
+
+[00:44:24] [INFO ] [FieldManager]
+    | Added field 'ID'.
+    | Added field 'PartID'.
+    | Added field 'MatID'.
+    | Added field 'Coords'.
+    | Added field 'Volume'.
+    | Added field 'ActiveStatus'.
+
+[00:44:24] [INFO ] [InitFields]
+    | Global ActiveStatus field registered.
+
+[00:44:24] [INFO ] [FieldManager]
+    | Resized all 9 fields for 5000 particles.
+
+[00:44:24] [INFO ] [InitFields]
+    | ActiveStatus initialized to 1 for all particles.
+    | Binding high-speed material state pointers...
+
+[00:44:24] [INFO ] [MeshData]
+    | Populated particle geometry fields into FieldManager for 5000 particles.
+
+[00:44:24] [INFO ] [InitFields]
+    | All fields allocated for 5000 particles. Total fields: 9.
+
+[00:44:24] [INFO ] [InitConditions]
+    | ==================================================
+    | Entering Conditions Initialization Phase...
+    | ==================================================
+
+[00:44:24] [INFO ] [ReaderRegistry]
+    | Creating reader for: .grpd (name: LoadReader)
+
+[00:44:24] [INFO ] [GrpdMeshReader]
+    | Reading file: d:\C++pro\GRPD\Examples\Thermal_Validation_5x10\Thermal_Validation_5x10.grpd
+    | Entering *PARTICLE section (Line 1)
+    | Pre-allocated memory for 5000 particles (Zero-Reallocation)
+    | Entering *LOAD section (Line 5004)
+    | ============================================
+    | File reading complete!
+    | Total particles: 5000
+    | Total load entries: 200
+    | ============================================
+
+[00:44:24] [INFO ] [InitConditions]
+    | Load statistics:
+    | - FLUX : 100
+    | - T : 100
+    | Boundary conditions initialization complete.
+
+[00:44:24] [INFO ] [InitNeighbors]
+    | ==================================================
+    | Entering Neighbor Search Phase...
+    | ==================================================
+    | Horizon radius: 0.301500
+
+[00:44:24] [INFO ] [NeighborList]
+    | Starting full-flat CSR search for 5000 particles, horizon = 0.301500
+    | Cell grid: 17 x 33 x 1 = 561 cells
+    | Flat cell list built in 0.999928 ms
+    | Pass 1 (count) done in 0.000000 ms
+    | Total bonds: 134636, Memory: 1 MB
+    | Pass 2 (fill) done in 1.999855 ms
+    | Max neighbors: 28
+    | Total time: 2.999783 ms
+
+[00:44:24] [INFO ] [FieldManager]
+    | Added field 'NeighborCount'.
+
+[00:44:24] [INFO ] [InitNeighbors]
+    | NeighborCount field populated for 5000 particles.
+
+[00:44:24] [INFO ] [FieldManager]
+    | Added field 'BondIntegrity'.
+
+[00:44:24] [INFO ] [InitNeighbors]
+    | Global BondIntegrity scalar field properly initialized to 0.0
+
+[00:44:24] [INFO ] [FieldManager]
+    | Added field 'IsSurface'.
+
+[00:44:24] [INFO ] [SurfaceDetector]
+    | Volume Deficit check complete. Identified 308 surface particles out of 5000 (Threshold: 0.750000).
+
+[00:44:24] [INFO ] [InitNeighbors]
+    | Neighbor search phase complete.
+
+[00:44:24] [INFO ] [InitContact]
+    | ==================================================
+    | Entering Contact Initialization Phase...
+    | ==================================================
+    | No explicit ContactPairs defined in YAML. Contact engine skipping.
+    | Initializing Material-specific BondIntegrity Models...
+    | Material BondIntegrity Models initialized. Total Active Models: 0
+
+[00:44:24] [INFO ] [InitSolverComponents]
+    | ==================================================
+    | Entering Solver Components Assembly Phase...
+    | ==================================================
+    | Building Time Integrator: Explicit
+
+[00:44:24] [INFO ] [TimeIntegrator]
+    | Explicitly set OMP Threads to: 8
+
+[00:44:24] [INFO ] [InitSolverComponents]
+    | Time Integrator configured.
+    | Building Space Kernel: NOSB_T
+
+[00:44:24] [INFO ] [NOSB_Base]
+    | Applied KernelWeightType: Linear
+    | Applied ZeroEnergyG0: 0.100000
+    | Applied ZeroEnergyMethod string: Zhang
+
+[00:44:24] [INFO ] [InitSolverComponents]
+    | Space Kernel 'NOSB_T' configured.
+    | Total kernels assembled: 1
+
+[00:44:24] [INFO ] [PDEngine]
+    | PD simulation context initialized successfully.
+
+[00:44:24] [INFO ] [EngineManager]
+    | All solvers initialized. Total: 1
+    | ==================================================
+    | Entering Main Solver Phase
+    | ==================================================
+    | Solving: PD
+
+[00:44:24] [INFO ] [PDEngine]
+    | Starting PD Engine Solve Phase...
+
+[00:44:24] [INFO ] [ExplicitEuler]
+    | Identified 1st-order ODE integration target: Temperature <- TempRate
+
+[00:44:24] [INFO ] [FieldManager]
+    | Added field 'ShapeTensorInv'.
+    | Added field 'VHorizon'.
+    | Added field 'SumFac'.
+    | Added field 'SumOmegaRaw'.
+
+[00:44:24] [INFO ] [NOSB_Base]
+    | Computing InfluenceWeight + Shape Tensor Inverse (K^-1)...
+    | All NOSB base fields registered and Shape Tensor Inverse computed.
+
+[00:44:24] [INFO ] [FieldManager]
+    | Added field 'TempGradient'.
+    | Added field 'HeatFluxVec'.
+
+[00:44:24] [INFO ] [NOSB_T]
+    | Instantiated ThermalStabilizer globally in Phase 0 using strategy: Zhang
+
+[00:44:24] [INFO ] [ExplicitEuler]
+    | Computed safe Thermal limit dt: 1.333333e-03 (dx = 1.000000e-01, minDt = 1.666667e-03)
+    | Starting Explicit Loop with 1 LoadStep(s). Default dt = 5.000000e-04
+    | === Load Step 1 / 1 | TargetTime: 1.000000e+01 | dt: 5.000000e-04 | KBC: 0 ===
+    | --- Step 0 | Time: 0.000000e+00  |  Pure Compute: 0.000000e+00s  |  Total: 0.000000e+00s  |  Speed:
+    | 0 steps/s
+    | --- Step 4000 | Time: 2.000000e+00  |  Pure Compute: 5.681637e+00s  |  Total: 5.699595e+00s  | 
+    | Speed: 704 steps/s
+    | --- Step 8000 | Time: 4.000000e+00  |  Pure Compute: 1.146018e+01s  |  Total: 1.148113e+01s  | 
+    | Speed: 698 steps/s
+    | --- Step 12000 | Time: 6.000000e+00  |  Pure Compute: 1.703884e+01s  |  Total: 1.706478e+01s  | 
+    | Speed: 704 steps/s
+    | --- Step 16000 | Time: 8.000000e+00  |  Pure Compute: 2.245176e+01s  |  Total: 2.248161e+01s  | 
+    | Speed: 712 steps/s
+    | --- Step 20000 | Time: 1.000000e+01  |  Pure Compute: 2.758213e+01s  |  Total: 2.761596e+01s  | 
+    | Speed: 725 steps/s
+    | Finished. Total: 27.617953s  |  Pure Compute avg: 0.001379 s/step
+
+[00:44:52] [INFO ] [PDEngine]
+    | PD Engine Solve Phase Finished.
+
+[00:44:52] [INFO ] [EngineManager]
+    | Main Solver Phase finished.
+    | ==================================================
+    | Entering Post-processing Phase
+    | ==================================================
+    | Outputting: PD
+    | Post-processing Phase finished.
+
+[11:47:19] [INFO ] [EngineManager]
+    | ==================================================
+    | GRPD Solver Engine Initialized                 
+    | ==================================================
+
+[11:47:19] [INFO ] [EngineRegistry]
+    | Creating Engine instance: PD
+
+[11:47:19] [INFO ] [PDEngine]
+    | PD Engine instance created.
+    | ===============================================
+    | ========== Registered Types Summary ===========
+    | TimeIntegrator    : ADR, CentralDifference, Explicit, MatrixFreeImplicit, Staggered
+    | FieldRegistry     : DoubleField, IntField
+    | PhysicsFields     : Mechanical, Thermal
+    | BCRegistry        : AX, AY, AZ, CONV, FLUX, PX, PY, PZ, T, UX, UY, UZ, VX, VY, VZ
+    | ReaderRegistry    : .grpd, .inp
+    | StabilizerRegistry: Mechanical_Silling, Mechanical_Wan, Mechanical_Zhang, Thermal_Silling,
+    | Thermal_Wan, Thermal_Zhang
+    | ContactRegistry   : [Type] General, [ForceLaw] KinematicNormal, [ForceLaw] Nonlinear, [ForceLaw]
+    | Penalty, [ForceLaw] Silling, [ForceLaw] Viscous, [Evaluator] NTC, [Evaluator] NTN, [Evaluator] NTS,
+    | [FrictionLaw] ElasticStickSlip, [FrictionLaw] ExplicitImpulse, [FrictionLaw] TanhRegularized
+    | MaterialRegistry  : FourierThermalMat, J2PlasticityMat, J2VoceLemaitre, JCPlasticityMat,
+    | LinearElasticMat, NortonBaileyCreepMat, StrainHardeningCreepMat, TimeHardeningCreepMat
+    | KernelRegistry    : NOSB_Axis, NOSB_M, NOSB_T
+    | EngineRegistry    : PD
+    | ===============================================
+
+[11:47:19] [INFO ] [EngineManager]
+    | Initializing solver: PD
+
+[11:47:19] [INFO ] [PDEngine]
+    | Initializing PD simulation context...
+
+[11:47:19] [INFO ] [InitModel]
+    | ==================================================
+    | Model pre-processing...
+    | ==================================================
+    | grpd path: D:\C++pro\GRPD\Examples\Thermal_Validation_5x10\Thermal_Validation_5x10.grpd
+    | model name: Thermal_Validation_5x10
+    | Found existing .grpd mesh file at:
+    | D:\C++pro\GRPD\Examples\Thermal_Validation_5x10\Thermal_Validation_5x10.grpd. Skipping generation.
+
+[11:47:19] [INFO ] [Context Manager]
+    | Formalized model name to: Thermal_Validation_5x10
+    | Model dimension set to: 2D
+    | 2D thickness set to: 1.000000
+
+[11:47:19] [INFO ] [ReaderRegistry]
+    | Creating reader for: .grpd (name: Thermal_Validation_5x10)
+
+[11:47:19] [INFO ] [InitModel]
+    | Reading mesh file: D:\C++pro\GRPD\Examples\Thermal_Validation_5x10\Thermal_Validation_5x10.grpd
+    | (reader: .grpd)
+
+[11:47:19] [INFO ] [GrpdMeshReader]
+    | Reading file: D:\C++pro\GRPD\Examples\Thermal_Validation_5x10\Thermal_Validation_5x10.grpd
+    | Entering *PARTICLE section (Line 1)
+    | Pre-allocated memory for 5000 particles (Zero-Reallocation)
+    | Entering *LOAD section (Line 5004)
+    | ============================================
+    | File reading complete!
+    | Total particles: 5000
+    | Total load entries: 200
+    | ============================================
+
+[11:47:19] [INFO ] [ParticleManager]
+    | Pre-allocated memory for 5000 particles
+
+[11:47:19] [INFO ] [InitModel]
+    | Total particles loaded for model Thermal_Validation_5x10: 5000
+
+[11:47:19] [INFO ] [InitMaterial]
+    | ==================================================
+    | Entering Material Initialization Phase...
+    | ==================================================
+    | Instantiating material [1] of type: FourierThermalMat
+
+[11:47:19] [INFO ] [MaterialRegistry]
+    | Using factory to create material: Stable_Thermal_Mat (type: FourierThermalMat)
+
+[11:47:19] [INFO ] [FourierThermalMat]
+    | Material 'Stable_Thermal_Mat' is initialized. Conductivity = 1.000000, HeatCapacity = 1.000000,
+    | Density = 1.000000
+
+[11:47:19] [INFO ] [MaterialManager]
+    | Successfully added material instance: Stable_Thermal_Mat
+
+[11:47:19] [INFO ] [InitMaterial]
+    | Successfully registered material ID 1 (Stable_Thermal_Mat)
+    | Assigning material pointers to particles...
+    | Successfully assigned materials to 5000 particles.
+
+[11:47:19] [INFO ] [InitFields]
+    | ==================================================
+    | Entering Field Registration Phase...
+    | ==================================================
+
+[11:47:19] [INFO ] [FieldManager]
+    | Added field 'Temperature'.
+    | Added field 'TempRate'.
+    | Added field 'HeatFlux'.
+
+[11:47:19] [INFO ] [ThermalFields]
+    | Core fields registered: Temperature, TempRate, HeatFlux.
+
+[11:47:19] [INFO ] [InitFields]
+    | Auto-registered PhysicsFields module: Thermal
+
+[11:47:19] [INFO ] [FieldManager]
+    | Added field 'ID'.
+    | Added field 'PartID'.
+    | Added field 'MatID'.
+    | Added field 'Coords'.
+    | Added field 'Volume'.
+    | Added field 'ActiveStatus'.
+
+[11:47:19] [INFO ] [InitFields]
+    | Global ActiveStatus field registered.
+
+[11:47:19] [INFO ] [FieldManager]
+    | Resized all 9 fields for 5000 particles.
+
+[11:47:19] [INFO ] [InitFields]
+    | ActiveStatus initialized to 1 for all particles.
+    | Binding high-speed material state pointers...
+
+[11:47:19] [INFO ] [MeshData]
+    | Populated particle geometry fields into FieldManager for 5000 particles.
+
+[11:47:19] [INFO ] [InitFields]
+    | All fields allocated for 5000 particles. Total fields: 9.
+
+[11:47:19] [INFO ] [InitConditions]
+    | ==================================================
+    | Entering Conditions Initialization Phase...
+    | ==================================================
+
+[11:47:19] [INFO ] [ReaderRegistry]
+    | Creating reader for: .grpd (name: LoadReader)
+
+[11:47:19] [INFO ] [GrpdMeshReader]
+    | Reading file: D:\C++pro\GRPD\Examples\Thermal_Validation_5x10\Thermal_Validation_5x10.grpd
+    | Entering *PARTICLE section (Line 1)
+    | Pre-allocated memory for 5000 particles (Zero-Reallocation)
+    | Entering *LOAD section (Line 5004)
+    | ============================================
+    | File reading complete!
+    | Total particles: 5000
+    | Total load entries: 200
+    | ============================================
+
+[11:47:19] [INFO ] [InitConditions]
+    | Load statistics:
+    | - FLUX : 100
+    | - T : 100
+    | Boundary conditions initialization complete.
+
+[11:47:19] [INFO ] [InitNeighbors]
+    | ==================================================
+    | Entering Neighbor Search Phase...
+    | ==================================================
+    | Horizon radius: 0.301500
+
+[11:47:19] [INFO ] [NeighborList]
+    | Starting full-flat CSR search for 5000 particles, horizon = 0.301500
+    | Cell grid: 17 x 33 x 1 = 561 cells
+    | Flat cell list built in 0.000000 ms
+    | Pass 1 (count) done in 0.000000 ms
+    | Total bonds: 134636, Memory: 1 MB
+    | Pass 2 (fill) done in 9.999990 ms
+    | Max neighbors: 28
+    | Total time: 9.999990 ms
+
+[11:47:19] [INFO ] [FieldManager]
+    | Added field 'NeighborCount'.
+
+[11:47:19] [INFO ] [InitNeighbors]
+    | NeighborCount field populated for 5000 particles.
+
+[11:47:19] [INFO ] [FieldManager]
+    | Added field 'BondIntegrity'.
+
+[11:47:19] [INFO ] [InitNeighbors]
+    | Global BondIntegrity scalar field properly initialized to 0.0
+
+[11:47:19] [INFO ] [FieldManager]
+    | Added field 'IsSurface'.
+
+[11:47:19] [INFO ] [SurfaceDetector]
+    | Volume Deficit check complete. Identified 308 surface particles out of 5000 (Threshold: 0.750000).
+
+[11:47:19] [INFO ] [InitNeighbors]
+    | Neighbor search phase complete.
+
+[11:47:19] [INFO ] [InitContact]
+    | ==================================================
+    | Entering Contact Initialization Phase...
+    | ==================================================
+    | No explicit ContactPairs defined in YAML. Contact engine skipping.
+    | Initializing Material-specific BondIntegrity Models...
+    | Material BondIntegrity Models initialized. Total Active Models: 0
+
+[11:47:19] [INFO ] [InitSolverComponents]
+    | ==================================================
+    | Entering Solver Components Assembly Phase...
+    | ==================================================
+    | Building Time Integrator: Explicit
+
+[11:47:19] [INFO ] [TimeIntegrator]
+    | Explicitly set OMP Threads to: 16
+
+[11:47:19] [INFO ] [InitSolverComponents]
+    | Time Integrator configured.
+    | Building Space Kernel: NOSB_T
+
+[11:47:19] [INFO ] [NOSB_Base]
+    | Applied KernelWeightType: Linear
+    | Applied ZeroEnergyG0: 1.000000
+    | Applied ZeroEnergyMethod string: Zhang
+
+[11:47:19] [INFO ] [InitSolverComponents]
+    | Space Kernel 'NOSB_T' configured.
+    | Total kernels assembled: 1
+
+[11:47:19] [INFO ] [PDEngine]
+    | PD simulation context initialized successfully.
+
+[11:47:19] [INFO ] [EngineManager]
+    | All solvers initialized. Total: 1
+    | ==================================================
+    | Entering Main Solver Phase
+    | ==================================================
+    | Solving: PD
+
+[11:47:19] [INFO ] [PDEngine]
+    | Starting PD Engine Solve Phase...
+
+[11:47:19] [INFO ] [ExplicitEuler]
+    | Identified 1st-order ODE integration target: Temperature <- TempRate
+
+[11:47:19] [INFO ] [FieldManager]
+    | Added field 'ShapeTensorInv'.
+    | Added field 'VHorizon'.
+    | Added field 'SumFac'.
+    | Added field 'SumOmegaRaw'.
+
+[11:47:19] [INFO ] [NOSB_Base]
+    | Computing InfluenceWeight + Shape Tensor Inverse (K^-1)...
+    | All NOSB base fields registered and Shape Tensor Inverse computed.
+
+[11:47:19] [INFO ] [FieldManager]
+    | Added field 'TempGradient'.
+    | Added field 'HeatFluxVec'.
+
+[11:47:19] [INFO ] [NOSB_T]
+    | Instantiated ThermalStabilizer globally in Phase 0 using strategy: Zhang
+
+[11:47:19] [INFO ] [ExplicitEuler]
+    | Computed safe Thermal limit dt: 1.333333e-03 (dx = 1.000000e-01, minDt = 1.666667e-03)
+    | Starting Explicit Loop with 1 LoadStep(s). Default dt = 5.000000e-04
+    | === Load Step 1 / 1 | TargetTime: 1.000000e+01 | dt: 5.000000e-04 | KBC: 0 ===
+    | --- Step 0 | Time: 0.000000e+00  |  Pure Compute: 0.000000e+00s  |  Total: 0.000000e+00s  |  Speed:
+    | 0 steps/s
+    | --- Step 4000 | Time: 2.000000e+00  |  Pure Compute: 4.367963e+00s  |  Total: 4.367963e+00s  | 
+    | Speed: 915 steps/s
+    | --- Step 8000 | Time: 4.000000e+00  |  Pure Compute: 8.895901e+00s  |  Total: 8.895901e+00s  | 
+    | Speed: 899 steps/s
+    | --- Step 12000 | Time: 6.000000e+00  |  Pure Compute: 1.350899e+01s  |  Total: 1.351901e+01s  | 
+    | Speed: 888 steps/s
+    | --- Step 16000 | Time: 8.000000e+00  |  Pure Compute: 1.793221e+01s  |  Total: 1.795278e+01s  | 
+    | Speed: 892 steps/s
+    | --- Step 20000 | Time: 1.000000e+01  |  Pure Compute: 2.257368e+01s  |  Total: 2.259425e+01s  | 
+    | Speed: 885 steps/s
+    | Finished. Total: 22.594248s  |  Pure Compute avg: 0.001129 s/step
+
+[11:47:42] [INFO ] [PDEngine]
+    | PD Engine Solve Phase Finished.
+
+[11:47:42] [INFO ] [EngineManager]
+    | Main Solver Phase finished.
+    | ==================================================
+    | Entering Post-processing Phase
+    | ==================================================
+    | Outputting: PD
+    | Post-processing Phase finished.
+
+[11:49:18] [INFO ] [EngineManager]
+    | ==================================================
+    | GRPD Solver Engine Initialized                 
+    | ==================================================
+
+[11:49:18] [INFO ] [EngineRegistry]
+    | Creating Engine instance: PD
+
+[11:49:18] [INFO ] [PDEngine]
+    | PD Engine instance created.
+    | ===============================================
+    | ========== Registered Types Summary ===========
+    | TimeIntegrator    : ADR, CentralDifference, Explicit, MatrixFreeImplicit, Staggered
+    | FieldRegistry     : DoubleField, IntField
+    | PhysicsFields     : Mechanical, Thermal
+    | BCRegistry        : AX, AY, AZ, CONV, FLUX, PX, PY, PZ, T, UX, UY, UZ, VX, VY, VZ
+    | ReaderRegistry    : .grpd, .inp
+    | StabilizerRegistry: Mechanical_Silling, Mechanical_Wan, Mechanical_Zhang, Thermal_Silling,
+    | Thermal_Wan, Thermal_Zhang
+    | ContactRegistry   : [Type] General, [ForceLaw] KinematicNormal, [ForceLaw] Nonlinear, [ForceLaw]
+    | Penalty, [ForceLaw] Silling, [ForceLaw] Viscous, [Evaluator] NTC, [Evaluator] NTN, [Evaluator] NTS,
+    | [FrictionLaw] ElasticStickSlip, [FrictionLaw] ExplicitImpulse, [FrictionLaw] TanhRegularized
+    | MaterialRegistry  : FourierThermalMat, J2PlasticityMat, J2VoceLemaitre, JCPlasticityMat,
+    | LinearElasticMat, NortonBaileyCreepMat, StrainHardeningCreepMat, TimeHardeningCreepMat
+    | KernelRegistry    : NOSB_Axis, NOSB_M, NOSB_T
+    | EngineRegistry    : PD
+    | ===============================================
+
+[11:49:18] [INFO ] [EngineManager]
+    | Initializing solver: PD
+
+[11:49:18] [INFO ] [PDEngine]
+    | Initializing PD simulation context...
+
+[11:49:18] [INFO ] [InitModel]
+    | ==================================================
+    | Model pre-processing...
+    | ==================================================
+    | grpd path: D:\C++pro\GRPD\Examples\Thermal_Validation_5x10\Thermal_Validation_5x10.grpd
+    | model name: Thermal_Validation_5x10
+    | Found existing .grpd mesh file at:
+    | D:\C++pro\GRPD\Examples\Thermal_Validation_5x10\Thermal_Validation_5x10.grpd. Skipping generation.
+
+[11:49:18] [INFO ] [Context Manager]
+    | Formalized model name to: Thermal_Validation_5x10
+    | Model dimension set to: 2D
+    | 2D thickness set to: 1.000000
+
+[11:49:18] [INFO ] [ReaderRegistry]
+    | Creating reader for: .grpd (name: Thermal_Validation_5x10)
+
+[11:49:18] [INFO ] [InitModel]
+    | Reading mesh file: D:\C++pro\GRPD\Examples\Thermal_Validation_5x10\Thermal_Validation_5x10.grpd
+    | (reader: .grpd)
+
+[11:49:18] [INFO ] [GrpdMeshReader]
+    | Reading file: D:\C++pro\GRPD\Examples\Thermal_Validation_5x10\Thermal_Validation_5x10.grpd
+    | Entering *PARTICLE section (Line 1)
+    | Pre-allocated memory for 5000 particles (Zero-Reallocation)
+    | Entering *LOAD section (Line 5004)
+    | ============================================
+    | File reading complete!
+    | Total particles: 5000
+    | Total load entries: 200
+    | ============================================
+
+[11:49:18] [INFO ] [ParticleManager]
+    | Pre-allocated memory for 5000 particles
+
+[11:49:18] [INFO ] [InitModel]
+    | Total particles loaded for model Thermal_Validation_5x10: 5000
+
+[11:49:18] [INFO ] [InitMaterial]
+    | ==================================================
+    | Entering Material Initialization Phase...
+    | ==================================================
+    | Instantiating material [1] of type: FourierThermalMat
+
+[11:49:18] [INFO ] [MaterialRegistry]
+    | Using factory to create material: Stable_Thermal_Mat (type: FourierThermalMat)
+
+[11:49:18] [INFO ] [FourierThermalMat]
+    | Material 'Stable_Thermal_Mat' is initialized. Conductivity = 1.000000, HeatCapacity = 1.000000,
+    | Density = 1.000000
+
+[11:49:18] [INFO ] [MaterialManager]
+    | Successfully added material instance: Stable_Thermal_Mat
+
+[11:49:18] [INFO ] [InitMaterial]
+    | Successfully registered material ID 1 (Stable_Thermal_Mat)
+    | Assigning material pointers to particles...
+    | Successfully assigned materials to 5000 particles.
+
+[11:49:18] [INFO ] [InitFields]
+    | ==================================================
+    | Entering Field Registration Phase...
+    | ==================================================
+
+[11:49:18] [INFO ] [FieldManager]
+    | Added field 'Temperature'.
+    | Added field 'TempRate'.
+    | Added field 'HeatFlux'.
+
+[11:49:18] [INFO ] [ThermalFields]
+    | Core fields registered: Temperature, TempRate, HeatFlux.
+
+[11:49:18] [INFO ] [InitFields]
+    | Auto-registered PhysicsFields module: Thermal
+
+[11:49:18] [INFO ] [FieldManager]
+    | Added field 'ID'.
+    | Added field 'PartID'.
+    | Added field 'MatID'.
+    | Added field 'Coords'.
+    | Added field 'Volume'.
+    | Added field 'ActiveStatus'.
+
+[11:49:18] [INFO ] [InitFields]
+    | Global ActiveStatus field registered.
+
+[11:49:18] [INFO ] [FieldManager]
+    | Resized all 9 fields for 5000 particles.
+
+[11:49:18] [INFO ] [InitFields]
+    | ActiveStatus initialized to 1 for all particles.
+    | Binding high-speed material state pointers...
+
+[11:49:18] [INFO ] [MeshData]
+    | Populated particle geometry fields into FieldManager for 5000 particles.
+
+[11:49:18] [INFO ] [InitFields]
+    | All fields allocated for 5000 particles. Total fields: 9.
+
+[11:49:18] [INFO ] [InitConditions]
+    | ==================================================
+    | Entering Conditions Initialization Phase...
+    | ==================================================
+
+[11:49:18] [INFO ] [ReaderRegistry]
+    | Creating reader for: .grpd (name: LoadReader)
+
+[11:49:18] [INFO ] [GrpdMeshReader]
+    | Reading file: D:\C++pro\GRPD\Examples\Thermal_Validation_5x10\Thermal_Validation_5x10.grpd
+    | Entering *PARTICLE section (Line 1)
+    | Pre-allocated memory for 5000 particles (Zero-Reallocation)
+    | Entering *LOAD section (Line 5004)
+    | ============================================
+    | File reading complete!
+    | Total particles: 5000
+    | Total load entries: 200
+    | ============================================
+
+[11:49:18] [INFO ] [InitConditions]
+    | Load statistics:
+    | - FLUX : 100
+    | - T : 100
+    | Boundary conditions initialization complete.
+
+[11:49:18] [INFO ] [InitNeighbors]
+    | ==================================================
+    | Entering Neighbor Search Phase...
+    | ==================================================
+    | Horizon radius: 0.301500
+
+[11:49:18] [INFO ] [NeighborList]
+    | Starting full-flat CSR search for 5000 particles, horizon = 0.301500
+    | Cell grid: 17 x 33 x 1 = 561 cells
+    | Flat cell list built in 0.000000 ms
+    | Pass 1 (count) done in 0.000000 ms
+    | Total bonds: 134636, Memory: 1 MB
+    | Pass 2 (fill) done in 0.000000 ms
+    | Max neighbors: 28
+    | Total time: 0.000000 ms
+
+[11:49:18] [INFO ] [FieldManager]
+    | Added field 'NeighborCount'.
+
+[11:49:18] [INFO ] [InitNeighbors]
+    | NeighborCount field populated for 5000 particles.
+
+[11:49:18] [INFO ] [FieldManager]
+    | Added field 'BondIntegrity'.
+
+[11:49:18] [INFO ] [InitNeighbors]
+    | Global BondIntegrity scalar field properly initialized to 0.0
+
+[11:49:18] [INFO ] [FieldManager]
+    | Added field 'IsSurface'.
+
+[11:49:18] [INFO ] [SurfaceDetector]
+    | Volume Deficit check complete. Identified 308 surface particles out of 5000 (Threshold: 0.750000).
+
+[11:49:18] [INFO ] [InitNeighbors]
+    | Neighbor search phase complete.
+
+[11:49:18] [INFO ] [InitContact]
+    | ==================================================
+    | Entering Contact Initialization Phase...
+    | ==================================================
+    | No explicit ContactPairs defined in YAML. Contact engine skipping.
+    | Initializing Material-specific BondIntegrity Models...
+    | Material BondIntegrity Models initialized. Total Active Models: 0
+
+[11:49:18] [INFO ] [InitSolverComponents]
+    | ==================================================
+    | Entering Solver Components Assembly Phase...
+    | ==================================================
+    | Building Time Integrator: Explicit
+
+[11:49:18] [INFO ] [TimeIntegrator]
+    | Explicitly set OMP Threads to: 16
+
+[11:49:18] [INFO ] [InitSolverComponents]
+    | Time Integrator configured.
+    | Building Space Kernel: NOSB_T
+
+[11:49:18] [INFO ] [NOSB_Base]
+    | Applied KernelWeightType: Linear
+    | Applied ZeroEnergyG0: 1.000000
+    | Applied ZeroEnergyMethod string: Zhang
+
+[11:49:18] [INFO ] [InitSolverComponents]
+    | Space Kernel 'NOSB_T' configured.
+    | Total kernels assembled: 1
+
+[11:49:18] [INFO ] [PDEngine]
+    | PD simulation context initialized successfully.
+
+[11:49:18] [INFO ] [EngineManager]
+    | All solvers initialized. Total: 1
+    | ==================================================
+    | Entering Main Solver Phase
+    | ==================================================
+    | Solving: PD
+
+[11:49:18] [INFO ] [PDEngine]
+    | Starting PD Engine Solve Phase...
+
+[11:49:18] [INFO ] [ExplicitEuler]
+    | Identified 1st-order ODE integration target: Temperature <- TempRate
+
+[11:49:18] [INFO ] [FieldManager]
+    | Added field 'ShapeTensorInv'.
+    | Added field 'VHorizon'.
+    | Added field 'SumFac'.
+    | Added field 'SumOmegaRaw'.
+
+[11:49:18] [INFO ] [NOSB_Base]
+    | Computing InfluenceWeight + Shape Tensor Inverse (K^-1)...
+    | All NOSB base fields registered and Shape Tensor Inverse computed.
+
+[11:49:18] [INFO ] [FieldManager]
+    | Added field 'TempGradient'.
+    | Added field 'HeatFluxVec'.
+
+[11:49:18] [INFO ] [NOSB_T]
+    | Instantiated ThermalStabilizer globally in Phase 0 using strategy: Zhang
+
+[11:49:18] [INFO ] [ExplicitEuler]
+    | Computed safe Thermal limit dt: 1.333333e-03 (dx = 1.000000e-01, minDt = 1.666667e-03)
+    | Starting Explicit Loop with 1 LoadStep(s). Default dt = 1.000000e-04
+    | === Load Step 1 / 1 | TargetTime: 1.000000e+01 | dt: 1.000000e-04 | KBC: 0 ===
+    | --- Step 0 | Time: 0.000000e+00  |  Pure Compute: 0.000000e+00s  |  Total: 0.000000e+00s  |  Speed:
+    | 0 steps/s
+    | --- Step 4000 | Time: 4.000000e-01  |  Pure Compute: 4.306407e+00s  |  Total: 4.306407e+00s  | 
+    | Speed: 928 steps/s
+    | --- Step 8000 | Time: 8.000000e-01  |  Pure Compute: 8.963998e+00s  |  Total: 8.974088e+00s  | 
+    | Speed: 892 steps/s
+    | --- Step 12000 | Time: 1.200000e+00  |  Pure Compute: 1.371588e+01s  |  Total: 1.372597e+01s  | 
+    | Speed: 874 steps/s
+    | --- Step 16000 | Time: 1.600000e+00  |  Pure Compute: 1.849127e+01s  |  Total: 1.851139e+01s  | 
+    | Speed: 865 steps/s
+    | --- Step 20000 | Time: 2.000000e+00  |  Pure Compute: 2.308630e+01s  |  Total: 2.310642e+01s  | 
+    | Speed: 866 steps/s
+    | --- Step 24000 | Time: 2.400000e+00  |  Pure Compute: 2.778805e+01s  |  Total: 2.780817e+01s  | 
+    | Speed: 863 steps/s
+    | --- Step 28000 | Time: 2.800000e+00  |  Pure Compute: 3.256401e+01s  |  Total: 3.258413e+01s  | 
+    | Speed: 859 steps/s
+    | --- Step 32000 | Time: 3.200000e+00  |  Pure Compute: 3.747492e+01s  |  Total: 3.750506e+01s  | 
+    | Speed: 853 steps/s
+    | --- Step 36000 | Time: 3.600000e+00  |  Pure Compute: 4.240167e+01s  |  Total: 4.243182e+01s  | 
+    | Speed: 849 steps/s
+    | --- Step 40000 | Time: 4.000000e+00  |  Pure Compute: 4.717807e+01s  |  Total: 4.720822e+01s  | 
+    | Speed: 847 steps/s
+    | --- Step 44000 | Time: 4.400000e+00  |  Pure Compute: 5.193801e+01s  |  Total: 5.196815e+01s  | 
+    | Speed: 847 steps/s
+    | --- Step 48000 | Time: 4.800000e+00  |  Pure Compute: 5.665380e+01s  |  Total: 5.668394e+01s  | 
+    | Speed: 847 steps/s
+    | --- Step 52000 | Time: 5.200000e+00  |  Pure Compute: 6.134865e+01s  |  Total: 6.137880e+01s  | 
+    | Speed: 847 steps/s
+    | --- Step 56000 | Time: 5.600000e+00  |  Pure Compute: 6.613896e+01s  |  Total: 6.616911e+01s  | 
+    | Speed: 846 steps/s
+    | --- Step 60000 | Time: 6.000000e+00  |  Pure Compute: 7.103285e+01s  |  Total: 7.106300e+01s  | 
+    | Speed: 844 steps/s
+    | --- Step 64000 | Time: 6.400000e+00  |  Pure Compute: 7.575778e+01s  |  Total: 7.578793e+01s  | 
+    | Speed: 844 steps/s
+    | --- Step 68000 | Time: 6.800000e+00  |  Pure Compute: 8.062580e+01s  |  Total: 8.065594e+01s  | 
+    | Speed: 843 steps/s
+
+[12:05:18] [INFO ] [EngineManager]
+    | ==================================================
+    | GRPD Solver Engine Initialized                 
+    | ==================================================
+
+[12:05:18] [INFO ] [EngineRegistry]
+    | Creating Engine instance: PD
+
+[12:05:18] [INFO ] [PDEngine]
+    | PD Engine instance created.
+    | ===============================================
+    | ========== Registered Types Summary ===========
+    | TimeIntegrator    : ADR, CentralDifference, Explicit, MatrixFreeImplicit, Staggered
+    | FieldRegistry     : DoubleField, IntField
+    | PhysicsFields     : Mechanical, Thermal
+    | BCRegistry        : AX, AY, AZ, CONV, FLUX, PX, PY, PZ, T, UX, UY, UZ, VX, VY, VZ
+    | ReaderRegistry    : .grpd, .inp
+    | StabilizerRegistry: Mechanical_Silling, Mechanical_Wan, Mechanical_Zhang, Thermal_Silling,
+    | Thermal_Wan, Thermal_Zhang
+    | ContactRegistry   : [Type] General, [ForceLaw] KinematicNormal, [ForceLaw] Nonlinear, [ForceLaw]
+    | Penalty, [ForceLaw] Silling, [ForceLaw] Viscous, [Evaluator] NTC, [Evaluator] NTN, [Evaluator] NTS,
+    | [FrictionLaw] ElasticStickSlip, [FrictionLaw] ExplicitImpulse, [FrictionLaw] TanhRegularized
+    | MaterialRegistry  : FourierThermalMat, J2PlasticityMat, J2VoceLemaitre, JCPlasticityMat,
+    | LinearElasticMat, NortonBaileyCreepMat, StrainHardeningCreepMat, TimeHardeningCreepMat
+    | KernelRegistry    : NOSB_Axis, NOSB_M, NOSB_T
+    | EngineRegistry    : PD
+    | ===============================================
+
+[12:05:18] [INFO ] [EngineManager]
+    | Initializing solver: PD
+
+[12:05:18] [INFO ] [PDEngine]
+    | Initializing PD simulation context...
+
+[12:05:18] [INFO ] [InitModel]
+    | ==================================================
+    | Model pre-processing...
+    | ==================================================
+    | grpd path: d:\C++pro\GRPD\Examples\Thermal_Validation_5x10\Thermal_Validation_5x10.grpd
+    | model name: Thermal_Validation_5x10
+    | Found existing .grpd mesh file at:
+    | d:\C++pro\GRPD\Examples\Thermal_Validation_5x10\Thermal_Validation_5x10.grpd. Skipping generation.
+
+[12:05:18] [INFO ] [Context Manager]
+    | Formalized model name to: Thermal_Validation_5x10
+    | Model dimension set to: 2D
+    | 2D thickness set to: 1.000000
+
+[12:05:18] [INFO ] [ReaderRegistry]
+    | Creating reader for: .grpd (name: Thermal_Validation_5x10)
+
+[12:05:18] [INFO ] [InitModel]
+    | Reading mesh file: d:\C++pro\GRPD\Examples\Thermal_Validation_5x10\Thermal_Validation_5x10.grpd
+    | (reader: .grpd)
+
+[12:05:18] [INFO ] [GrpdMeshReader]
+    | Reading file: d:\C++pro\GRPD\Examples\Thermal_Validation_5x10\Thermal_Validation_5x10.grpd
+    | Entering *PARTICLE section (Line 1)
+    | Pre-allocated memory for 5000 particles (Zero-Reallocation)
+    | Entering *LOAD section (Line 5004)
+    | ============================================
+    | File reading complete!
+    | Total particles: 5000
+    | Total load entries: 200
+    | ============================================
+
+[12:05:18] [INFO ] [ParticleManager]
+    | Pre-allocated memory for 5000 particles
+
+[12:05:18] [INFO ] [InitModel]
+    | Total particles loaded for model Thermal_Validation_5x10: 5000
+
+[12:05:18] [INFO ] [InitMaterial]
+    | ==================================================
+    | Entering Material Initialization Phase...
+    | ==================================================
+    | Instantiating material [1] of type: FourierThermalMat
+
+[12:05:18] [INFO ] [MaterialRegistry]
+    | Using factory to create material: Steel (type: FourierThermalMat)
+
+[12:05:18] [INFO ] [FourierThermalMat]
+    | Material 'Steel' is initialized. Conductivity = 45.000000, HeatCapacity = 460000000.000000, Density
+    | = 0.000000
+
+[12:05:18] [INFO ] [MaterialManager]
+    | Successfully added material instance: Steel
+
+[12:05:18] [INFO ] [InitMaterial]
+    | Successfully registered material ID 1 (Steel)
+    | Assigning material pointers to particles...
+    | Successfully assigned materials to 5000 particles.
+
+[12:05:18] [INFO ] [InitFields]
+    | ==================================================
+    | Entering Field Registration Phase...
+    | ==================================================
+
+[12:05:18] [INFO ] [FieldManager]
+    | Added field 'Temperature'.
+    | Added field 'TempRate'.
+    | Added field 'HeatFlux'.
+
+[12:05:18] [INFO ] [ThermalFields]
+    | Core fields registered: Temperature, TempRate, HeatFlux.
+
+[12:05:18] [INFO ] [InitFields]
+    | Auto-registered PhysicsFields module: Thermal
+
+[12:05:18] [INFO ] [FieldManager]
+    | Added field 'ID'.
+    | Added field 'PartID'.
+    | Added field 'MatID'.
+    | Added field 'Coords'.
+    | Added field 'Volume'.
+    | Added field 'ActiveStatus'.
+
+[12:05:18] [INFO ] [InitFields]
+    | Global ActiveStatus field registered.
+
+[12:05:18] [INFO ] [FieldManager]
+    | Resized all 9 fields for 5000 particles.
+
+[12:05:18] [INFO ] [InitFields]
+    | ActiveStatus initialized to 1 for all particles.
+    | Binding high-speed material state pointers...
+
+[12:05:18] [INFO ] [MeshData]
+    | Populated particle geometry fields into FieldManager for 5000 particles.
+
+[12:05:18] [INFO ] [InitFields]
+    | All fields allocated for 5000 particles. Total fields: 9.
+
+[12:05:18] [INFO ] [InitConditions]
+    | ==================================================
+    | Entering Conditions Initialization Phase...
+    | ==================================================
+
+[12:05:18] [INFO ] [ReaderRegistry]
+    | Creating reader for: .grpd (name: LoadReader)
+
+[12:05:18] [INFO ] [GrpdMeshReader]
+    | Reading file: d:\C++pro\GRPD\Examples\Thermal_Validation_5x10\Thermal_Validation_5x10.grpd
+    | Entering *PARTICLE section (Line 1)
+    | Pre-allocated memory for 5000 particles (Zero-Reallocation)
+    | Entering *LOAD section (Line 5004)
+    | ============================================
+    | File reading complete!
+    | Total particles: 5000
+    | Total load entries: 200
+    | ============================================
+
+[12:05:18] [INFO ] [InitConditions]
+    | Load statistics:
+    | - FLUX : 100
+    | - T : 100
+    | Boundary conditions initialization complete.
+
+[12:05:18] [INFO ] [InitNeighbors]
+    | ==================================================
+    | Entering Neighbor Search Phase...
+    | ==================================================
+    | Horizon radius: 0.301500
+
+[12:05:18] [INFO ] [NeighborList]
+    | Starting full-flat CSR search for 5000 particles, horizon = 0.301500
+    | Cell grid: 17 x 33 x 1 = 561 cells
+    | Flat cell list built in 0.000000 ms
+    | Pass 1 (count) done in 0.000000 ms
+    | Total bonds: 134636, Memory: 1 MB
+    | Pass 2 (fill) done in 0.999928 ms
+    | Max neighbors: 28
+    | Total time: 0.999928 ms
+
+[12:05:18] [INFO ] [FieldManager]
+    | Added field 'NeighborCount'.
+
+[12:05:18] [INFO ] [InitNeighbors]
+    | NeighborCount field populated for 5000 particles.
+
+[12:05:18] [INFO ] [FieldManager]
+    | Added field 'BondIntegrity'.
+
+[12:05:18] [INFO ] [InitNeighbors]
+    | Global BondIntegrity scalar field properly initialized to 0.0
+
+[12:05:18] [INFO ] [FieldManager]
+    | Added field 'IsSurface'.
+
+[12:05:18] [INFO ] [SurfaceDetector]
+    | Volume Deficit check complete. Identified 308 surface particles out of 5000 (Threshold: 0.750000).
+
+[12:05:18] [INFO ] [InitNeighbors]
+    | Neighbor search phase complete.
+
+[12:05:18] [INFO ] [InitContact]
+    | ==================================================
+    | Entering Contact Initialization Phase...
+    | ==================================================
+    | No explicit ContactPairs defined in YAML. Contact engine skipping.
+    | Initializing Material-specific BondIntegrity Models...
+    | Material BondIntegrity Models initialized. Total Active Models: 0
+
+[12:05:18] [INFO ] [InitSolverComponents]
+    | ==================================================
+    | Entering Solver Components Assembly Phase...
+    | ==================================================
+    | Building Time Integrator: Explicit
+
+[12:05:18] [INFO ] [TimeIntegrator]
+    | Explicitly set OMP Threads to: 16
+
+[12:05:18] [INFO ] [InitSolverComponents]
+    | Time Integrator configured.
+    | Building Space Kernel: NOSB_T
+
+[12:05:18] [INFO ] [NOSB_Base]
+    | Applied KernelWeightType: Linear
+    | Applied ZeroEnergyG0: 0.100000
+    | Applied ZeroEnergyMethod string: Zhang
+
+[12:05:18] [INFO ] [InitSolverComponents]
+    | Space Kernel 'NOSB_T' configured.
+    | Total kernels assembled: 1
+
+[12:05:18] [INFO ] [PDEngine]
+    | PD simulation context initialized successfully.
+
+[12:05:18] [INFO ] [EngineManager]
+    | All solvers initialized. Total: 1
+    | ==================================================
+    | Entering Main Solver Phase
+    | ==================================================
+    | Solving: PD
+
+[12:05:18] [INFO ] [PDEngine]
+    | Starting PD Engine Solve Phase...
+
+[12:05:18] [INFO ] [ExplicitEuler]
+    | Identified 1st-order ODE integration target: Temperature <- TempRate
+
+[12:05:18] [INFO ] [FieldManager]
+    | Added field 'ShapeTensorInv'.
+    | Added field 'VHorizon'.
+    | Added field 'SumFac'.
+    | Added field 'SumOmegaRaw'.
+
+[12:05:18] [INFO ] [NOSB_Base]
+    | Computing InfluenceWeight + Shape Tensor Inverse (K^-1)...
+    | All NOSB base fields registered and Shape Tensor Inverse computed.
+
+[12:05:18] [INFO ] [FieldManager]
+    | Added field 'TempGradient'.
+    | Added field 'HeatFluxVec'.
+
+[12:05:18] [INFO ] [NOSB_T]
+    | Instantiated ThermalStabilizer globally in Phase 0 using strategy: Zhang
+
+[12:05:18] [INFO ] [ExplicitEuler]
+    | Computed safe Thermal limit dt: 1.069926e-04 (dx = 1.000000e-01, minDt = 1.337407e-04)
+    | Starting Explicit Loop with 2 LoadStep(s). Default dt = 1.000000e-04
+    | === Load Step 1 / 2 | TargetTime: 1.000000e+00 | dt: 1.000000e-04 | KBC: 0 ===
+    | --- Step 0 | Time: 0.000000e+00  |  Pure Compute: 0.000000e+00s  |  Total: 0.000000e+00s  |  Speed:
+    | 0 steps/s
+    | === Load Step 2 / 2 | TargetTime: 1.000000e+01 | dt: 1.000000e-04 | KBC: 1 ===
+    | --- Step 10000 | Time: 1.000000e+00  |  Pure Compute: 1.550964e+01s  |  Total: 1.551372e+01s  | 
+    | Speed: 644 steps/s
+    | --- Step 20000 | Time: 2.000000e+00  |  Pure Compute: 3.017169e+01s  |  Total: 3.018000e+01s  | 
+    | Speed: 662 steps/s
+    | --- Step 30000 | Time: 3.000000e+00  |  Pure Compute: 4.732762e+01s  |  Total: 4.734091e+01s  | 
+    | Speed: 633 steps/s
+    | --- Step 40000 | Time: 4.000000e+00  |  Pure Compute: 6.408078e+01s  |  Total: 6.409906e+01s  | 
+    | Speed: 624 steps/s
+    | --- Step 50000 | Time: 5.000000e+00  |  Pure Compute: 8.020627e+01s  |  Total: 8.022654e+01s  | 
+    | Speed: 623 steps/s
+    | --- Step 60000 | Time: 6.000000e+00  |  Pure Compute: 9.659110e+01s  |  Total: 9.661735e+01s  | 
+    | Speed: 621 steps/s
+    | --- Step 70000 | Time: 7.000000e+00  |  Pure Compute: 1.131660e+02s  |  Total: 1.131972e+02s  | 
+    | Speed: 618 steps/s
+    | --- Step 80000 | Time: 8.000000e+00  |  Pure Compute: 1.302218e+02s  |  Total: 1.302652e+02s  | 
+    | Speed: 614 steps/s
+    | --- Step 90000 | Time: 9.000000e+00  |  Pure Compute: 1.478062e+02s  |  Total: 1.478594e+02s  | 
+    | Speed: 608 steps/s
+    | --- Step 100000 | Time: 1.000000e+01  |  Pure Compute: 1.646523e+02s  |  Total: 1.647105e+02s  | 
+    | Speed: 607 steps/s
+    | Finished. Total: 164.714791s  |  Pure Compute avg: 0.001647 s/step
+
+[12:08:03] [INFO ] [PDEngine]
+    | PD Engine Solve Phase Finished.
+
+[12:08:03] [INFO ] [EngineManager]
+    | Main Solver Phase finished.
+    | ==================================================
+    | Entering Post-processing Phase
+    | ==================================================
+    | Outputting: PD
+    | Post-processing Phase finished.
+
+[12:13:25] [INFO ] [EngineManager]
+    | ==================================================
+    | GRPD Solver Engine Initialized                 
+    | ==================================================
+
+[12:13:25] [INFO ] [EngineRegistry]
+    | Creating Engine instance: PD
+
+[12:13:25] [INFO ] [PDEngine]
+    | PD Engine instance created.
+    | ===============================================
+    | ========== Registered Types Summary ===========
+    | TimeIntegrator    : ADR, CentralDifference, Explicit, MatrixFreeImplicit, Staggered
+    | FieldRegistry     : DoubleField, IntField
+    | PhysicsFields     : Mechanical, Thermal
+    | BCRegistry        : AX, AY, AZ, CONV, FLUX, PX, PY, PZ, T, UX, UY, UZ, VX, VY, VZ
+    | ReaderRegistry    : .grpd, .inp
+    | StabilizerRegistry: Mechanical_Silling, Mechanical_Wan, Mechanical_Zhang, Thermal_Silling,
+    | Thermal_Wan, Thermal_Zhang
+    | ContactRegistry   : [Type] General, [ForceLaw] KinematicNormal, [ForceLaw] Nonlinear, [ForceLaw]
+    | Penalty, [ForceLaw] Silling, [ForceLaw] Viscous, [Evaluator] NTC, [Evaluator] NTN, [Evaluator] NTS,
+    | [FrictionLaw] ElasticStickSlip, [FrictionLaw] ExplicitImpulse, [FrictionLaw] TanhRegularized
+    | MaterialRegistry  : FourierThermalMat, J2PlasticityMat, J2VoceLemaitre, JCPlasticityMat,
+    | LinearElasticMat, NortonBaileyCreepMat, StrainHardeningCreepMat, TimeHardeningCreepMat
+    | KernelRegistry    : NOSB_Axis, NOSB_M, NOSB_T
+    | EngineRegistry    : PD
+    | ===============================================
+
+[12:13:25] [INFO ] [EngineManager]
+    | Initializing solver: PD
+
+[12:13:25] [INFO ] [PDEngine]
+    | Initializing PD simulation context...
+
+[12:13:25] [INFO ] [InitModel]
+    | ==================================================
+    | Model pre-processing...
+    | ==================================================
+    | grpd path: d:\C++pro\GRPD\Examples\Thermal_Validation_5x10\Thermal_Validation_5x10.grpd
+    | model name: Thermal_Validation_5x10
+    | Found existing .grpd mesh file at:
+    | d:\C++pro\GRPD\Examples\Thermal_Validation_5x10\Thermal_Validation_5x10.grpd. Skipping generation.
+
+[12:13:25] [INFO ] [Context Manager]
+    | Formalized model name to: Thermal_Validation_5x10
+    | Model dimension set to: 2D
+    | 2D thickness set to: 1.000000
+
+[12:13:25] [INFO ] [ReaderRegistry]
+    | Creating reader for: .grpd (name: Thermal_Validation_5x10)
+
+[12:13:25] [INFO ] [InitModel]
+    | Reading mesh file: d:\C++pro\GRPD\Examples\Thermal_Validation_5x10\Thermal_Validation_5x10.grpd
+    | (reader: .grpd)
+
+[12:13:25] [INFO ] [GrpdMeshReader]
+    | Reading file: d:\C++pro\GRPD\Examples\Thermal_Validation_5x10\Thermal_Validation_5x10.grpd
+    | Entering *PARTICLE section (Line 1)
+    | Pre-allocated memory for 5000 particles (Zero-Reallocation)
+    | Entering *LOAD section (Line 5004)
+    | ============================================
+    | File reading complete!
+    | Total particles: 5000
+    | Total load entries: 200
+    | ============================================
+
+[12:13:25] [INFO ] [ParticleManager]
+    | Pre-allocated memory for 5000 particles
+
+[12:13:25] [INFO ] [InitModel]
+    | Total particles loaded for model Thermal_Validation_5x10: 5000
+
+[12:13:25] [INFO ] [InitMaterial]
+    | ==================================================
+    | Entering Material Initialization Phase...
+    | ==================================================
+    | Instantiating material [1] of type: FourierThermalMat
+
+[12:13:25] [INFO ] [MaterialRegistry]
+    | Using factory to create material: Steel (type: FourierThermalMat)
+
+[12:13:25] [INFO ] [FourierThermalMat]
+    | Material 'Steel' is initialized. Conductivity = 45.000000, HeatCapacity = 460000000.000000, Density
+    | = 0.000000
+
+[12:13:25] [INFO ] [MaterialManager]
+    | Successfully added material instance: Steel
+
+[12:13:25] [INFO ] [InitMaterial]
+    | Successfully registered material ID 1 (Steel)
+    | Assigning material pointers to particles...
+    | Successfully assigned materials to 5000 particles.
+
+[12:13:25] [INFO ] [InitFields]
+    | ==================================================
+    | Entering Field Registration Phase...
+    | ==================================================
+
+[12:13:25] [INFO ] [FieldManager]
+    | Added field 'Temperature'.
+    | Added field 'TempRate'.
+    | Added field 'HeatFlux'.
+
+[12:13:25] [INFO ] [ThermalFields]
+    | Core fields registered: Temperature, TempRate, HeatFlux.
+
+[12:13:25] [INFO ] [InitFields]
+    | Auto-registered PhysicsFields module: Thermal
+
+[12:13:25] [INFO ] [FieldManager]
+    | Added field 'ID'.
+    | Added field 'PartID'.
+    | Added field 'MatID'.
+    | Added field 'Coords'.
+    | Added field 'Volume'.
+    | Added field 'ActiveStatus'.
+
+[12:13:25] [INFO ] [InitFields]
+    | Global ActiveStatus field registered.
+
+[12:13:25] [INFO ] [FieldManager]
+    | Resized all 9 fields for 5000 particles.
+
+[12:13:25] [INFO ] [InitFields]
+    | ActiveStatus initialized to 1 for all particles.
+    | Binding high-speed material state pointers...
+
+[12:13:25] [INFO ] [MeshData]
+    | Populated particle geometry fields into FieldManager for 5000 particles.
+
+[12:13:25] [INFO ] [InitFields]
+    | All fields allocated for 5000 particles. Total fields: 9.
+
+[12:13:25] [INFO ] [InitConditions]
+    | ==================================================
+    | Entering Conditions Initialization Phase...
+    | ==================================================
+
+[12:13:25] [INFO ] [ReaderRegistry]
+    | Creating reader for: .grpd (name: LoadReader)
+
+[12:13:25] [INFO ] [GrpdMeshReader]
+    | Reading file: d:\C++pro\GRPD\Examples\Thermal_Validation_5x10\Thermal_Validation_5x10.grpd
+    | Entering *PARTICLE section (Line 1)
+    | Pre-allocated memory for 5000 particles (Zero-Reallocation)
+    | Entering *LOAD section (Line 5004)
+    | ============================================
+    | File reading complete!
+    | Total particles: 5000
+    | Total load entries: 200
+    | ============================================
+
+[12:13:25] [INFO ] [InitConditions]
+    | Load statistics:
+    | - FLUX : 100
+    | - T : 100
+    | Boundary conditions initialization complete.
+
+[12:13:25] [INFO ] [InitNeighbors]
+    | ==================================================
+    | Entering Neighbor Search Phase...
+    | ==================================================
+    | Horizon radius: 0.301500
+
+[12:13:25] [INFO ] [NeighborList]
+    | Starting full-flat CSR search for 5000 particles, horizon = 0.301500
+    | Cell grid: 17 x 33 x 1 = 561 cells
+    | Flat cell list built in 1.000166 ms
+    | Pass 1 (count) done in 3.000021 ms
+    | Total bonds: 134636, Memory: 1 MB
+    | Pass 2 (fill) done in 6.000042 ms
+    | Max neighbors: 28
+    | Total time: 10.000229 ms
+
+[12:13:25] [INFO ] [FieldManager]
+    | Added field 'NeighborCount'.
+
+[12:13:25] [INFO ] [InitNeighbors]
+    | NeighborCount field populated for 5000 particles.
+
+[12:13:25] [INFO ] [FieldManager]
+    | Added field 'BondIntegrity'.
+
+[12:13:25] [INFO ] [InitNeighbors]
+    | Global BondIntegrity scalar field properly initialized to 0.0
+
+[12:13:25] [INFO ] [FieldManager]
+    | Added field 'IsSurface'.
+
+[12:13:25] [INFO ] [SurfaceDetector]
+    | Volume Deficit check complete. Identified 308 surface particles out of 5000 (Threshold: 0.750000).
+
+[12:13:25] [INFO ] [InitNeighbors]
+    | Neighbor search phase complete.
+
+[12:13:25] [INFO ] [InitContact]
+    | ==================================================
+    | Entering Contact Initialization Phase...
+    | ==================================================
+    | No explicit ContactPairs defined in YAML. Contact engine skipping.
+    | Initializing Material-specific BondIntegrity Models...
+    | Material BondIntegrity Models initialized. Total Active Models: 0
+
+[12:13:25] [INFO ] [InitSolverComponents]
+    | ==================================================
+    | Entering Solver Components Assembly Phase...
+    | ==================================================
+    | Building Time Integrator: Explicit
+
+[12:13:25] [INFO ] [TimeIntegrator]
+    | Explicitly set OMP Threads to: 16
+
+[12:13:25] [INFO ] [InitSolverComponents]
+    | Time Integrator configured.
+    | Building Space Kernel: NOSB_T
+
+[12:13:25] [INFO ] [NOSB_Base]
+    | Applied KernelWeightType: Linear
+    | Applied ZeroEnergyG0: 0.100000
+    | Applied ZeroEnergyMethod string: Zhang
+
+[12:13:25] [INFO ] [InitSolverComponents]
+    | Space Kernel 'NOSB_T' configured.
+    | Total kernels assembled: 1
+
+[12:13:25] [INFO ] [PDEngine]
+    | PD simulation context initialized successfully.
+
+[12:13:25] [INFO ] [EngineManager]
+    | All solvers initialized. Total: 1
+    | ==================================================
+    | Entering Main Solver Phase
+    | ==================================================
+    | Solving: PD
+
+[12:13:25] [INFO ] [PDEngine]
+    | Starting PD Engine Solve Phase...
+
+[12:13:25] [INFO ] [ExplicitEuler]
+    | Identified 1st-order ODE integration target: Temperature <- TempRate
+
+[12:13:25] [INFO ] [FieldManager]
+    | Added field 'ShapeTensorInv'.
+    | Added field 'VHorizon'.
+    | Added field 'SumFac'.
+    | Added field 'SumOmegaRaw'.
+
+[12:13:25] [INFO ] [NOSB_Base]
+    | Computing InfluenceWeight + Shape Tensor Inverse (K^-1)...
+    | All NOSB base fields registered and Shape Tensor Inverse computed.
+
+[12:13:25] [INFO ] [FieldManager]
+    | Added field 'TempGradient'.
+    | Added field 'HeatFluxVec'.
+
+[12:13:25] [INFO ] [NOSB_T]
+    | Instantiated ThermalStabilizer globally in Phase 0 using strategy: Zhang
+
+[12:13:25] [INFO ] [ExplicitEuler]
+    | Computed safe Thermal limit dt: 1.069926e-04 (dx = 1.000000e-01, minDt = 1.337407e-04)
+    | Starting Explicit Loop with 2 LoadStep(s). Default dt = 1.000000e-04
+    | === Load Step 1 / 2 | TargetTime: 1.000000e+00 | dt: 1.000000e-04 | KBC: 0 ===
+    | --- Step 0 | Time: 0.000000e+00  |  Pure Compute: 0.000000e+00s  |  Total: 0.000000e+00s  |  Speed:
+    | 0 steps/s
+    | === Load Step 2 / 2 | TargetTime: 1.000000e+01 | dt: 1.000000e-04 | KBC: 1 ===
+    | --- Step 10000 | Time: 1.000000e+00  |  Pure Compute: 1.682934e+01s  |  Total: 1.683333e+01s  | 
+    | Speed: 594 steps/s
+    | --- Step 20000 | Time: 2.000000e+00  |  Pure Compute: 3.417719e+01s  |  Total: 3.418606e+01s  | 
+    | Speed: 585 steps/s
+    | --- Step 30000 | Time: 3.000000e+00  |  Pure Compute: 5.179297e+01s  |  Total: 5.180781e+01s  | 
+    | Speed: 579 steps/s
+    | --- Step 40000 | Time: 4.000000e+00  |  Pure Compute: 6.869572e+01s  |  Total: 6.871267e+01s  | 
+    | Speed: 582 steps/s
+    | --- Step 50000 | Time: 5.000000e+00  |  Pure Compute: 8.520813e+01s  |  Total: 8.522858e+01s  | 
+    | Speed: 586 steps/s
+    | --- Step 60000 | Time: 6.000000e+00  |  Pure Compute: 1.017772e+02s  |  Total: 1.018056e+02s  | 
+    | Speed: 589 steps/s
+    | --- Step 70000 | Time: 7.000000e+00  |  Pure Compute: 1.179472e+02s  |  Total: 1.179777e+02s  | 
+    | Speed: 593 steps/s
+    | --- Step 80000 | Time: 8.000000e+00  |  Pure Compute: 1.343927e+02s  |  Total: 1.344281e+02s  | 
+    | Speed: 595 steps/s
+    | --- Step 90000 | Time: 9.000000e+00  |  Pure Compute: 1.517084e+02s  |  Total: 1.517468e+02s  | 
+    | Speed: 593 steps/s
+    | --- Step 100000 | Time: 1.000000e+01  |  Pure Compute: 1.694361e+02s  |  Total: 1.695039e+02s  | 
+    | Speed: 590 steps/s
+    | Finished. Total: 169.506936s  |  Pure Compute avg: 0.001694 s/step
+
+[12:16:14] [INFO ] [PDEngine]
+    | PD Engine Solve Phase Finished.
+
+[12:16:14] [INFO ] [EngineManager]
+    | Main Solver Phase finished.
+    | ==================================================
+    | Entering Post-processing Phase
+    | ==================================================
+    | Outputting: PD
+    | Post-processing Phase finished.
+
+[12:19:29] [INFO ] [EngineManager]
+    | ==================================================
+    | GRPD Solver Engine Initialized                 
+    | ==================================================
+
+[12:19:29] [INFO ] [EngineRegistry]
+    | Creating Engine instance: PD
+
+[12:19:29] [INFO ] [PDEngine]
+    | PD Engine instance created.
+    | ===============================================
+    | ========== Registered Types Summary ===========
+    | TimeIntegrator    : ADR, CentralDifference, Explicit, MatrixFreeImplicit, Staggered
+    | FieldRegistry     : DoubleField, IntField
+    | PhysicsFields     : Mechanical, Thermal
+    | BCRegistry        : AX, AY, AZ, CONV, FLUX, PX, PY, PZ, T, UX, UY, UZ, VX, VY, VZ
+    | ReaderRegistry    : .grpd, .inp
+    | StabilizerRegistry: Mechanical_Silling, Mechanical_Wan, Mechanical_Zhang, Thermal_Silling,
+    | Thermal_Wan, Thermal_Zhang
+    | ContactRegistry   : [Type] General, [ForceLaw] KinematicNormal, [ForceLaw] Nonlinear, [ForceLaw]
+    | Penalty, [ForceLaw] Silling, [ForceLaw] Viscous, [Evaluator] NTC, [Evaluator] NTN, [Evaluator] NTS,
+    | [FrictionLaw] ElasticStickSlip, [FrictionLaw] ExplicitImpulse, [FrictionLaw] TanhRegularized
+    | MaterialRegistry  : FourierThermalMat, J2PlasticityMat, J2VoceLemaitre, JCPlasticityMat,
+    | LinearElasticMat, NortonBaileyCreepMat, StrainHardeningCreepMat, TimeHardeningCreepMat
+    | KernelRegistry    : NOSB_Axis, NOSB_M, NOSB_T
+    | EngineRegistry    : PD
+    | ===============================================
+
+[12:19:29] [INFO ] [EngineManager]
+    | Initializing solver: PD
+
+[12:19:29] [INFO ] [PDEngine]
+    | Initializing PD simulation context...
+
+[12:19:29] [INFO ] [InitModel]
+    | ==================================================
+    | Model pre-processing...
+    | ==================================================
+    | grpd path: d:\C++pro\GRPD\Examples\Thermal_Validation_5x10\Thermal_Validation_5x10.grpd
+    | model name: Thermal_Validation_5x10
+    | Found existing .grpd mesh file at:
+    | d:\C++pro\GRPD\Examples\Thermal_Validation_5x10\Thermal_Validation_5x10.grpd. Skipping generation.
+
+[12:19:29] [INFO ] [Context Manager]
+    | Formalized model name to: Thermal_Validation_5x10
+    | Model dimension set to: 2D
+    | 2D thickness set to: 1.000000
+
+[12:19:29] [INFO ] [ReaderRegistry]
+    | Creating reader for: .grpd (name: Thermal_Validation_5x10)
+
+[12:19:29] [INFO ] [InitModel]
+    | Reading mesh file: d:\C++pro\GRPD\Examples\Thermal_Validation_5x10\Thermal_Validation_5x10.grpd
+    | (reader: .grpd)
+
+[12:19:29] [INFO ] [GrpdMeshReader]
+    | Reading file: d:\C++pro\GRPD\Examples\Thermal_Validation_5x10\Thermal_Validation_5x10.grpd
+    | Entering *PARTICLE section (Line 1)
+    | Pre-allocated memory for 5000 particles (Zero-Reallocation)
+    | Entering *LOAD section (Line 5004)
+    | ============================================
+    | File reading complete!
+    | Total particles: 5000
+    | Total load entries: 200
+    | ============================================
+
+[12:19:29] [INFO ] [ParticleManager]
+    | Pre-allocated memory for 5000 particles
+
+[12:19:29] [INFO ] [InitModel]
+    | Total particles loaded for model Thermal_Validation_5x10: 5000
+
+[12:19:29] [INFO ] [InitMaterial]
+    | ==================================================
+    | Entering Material Initialization Phase...
+    | ==================================================
+    | Instantiating material [1] of type: FourierThermalMat
+
+[12:19:29] [INFO ] [MaterialRegistry]
+    | Using factory to create material: Steel (type: FourierThermalMat)
+
+[12:19:29] [INFO ] [FourierThermalMat]
+    | Material 'Steel' is initialized. Conductivity = 45.000000, HeatCapacity = 460000000.000000, Density
+    | = 0.000000
+
+[12:19:29] [INFO ] [MaterialManager]
+    | Successfully added material instance: Steel
+
+[12:19:29] [INFO ] [InitMaterial]
+    | Successfully registered material ID 1 (Steel)
+    | Assigning material pointers to particles...
+    | Successfully assigned materials to 5000 particles.
+
+[12:19:29] [INFO ] [InitFields]
+    | ==================================================
+    | Entering Field Registration Phase...
+    | ==================================================
+
+[12:19:29] [INFO ] [FieldManager]
+    | Added field 'Temperature'.
+    | Added field 'TempRate'.
+    | Added field 'HeatFlux'.
+
+[12:19:29] [INFO ] [ThermalFields]
+    | Core fields registered: Temperature, TempRate, HeatFlux.
+
+[12:19:29] [INFO ] [InitFields]
+    | Auto-registered PhysicsFields module: Thermal
+
+[12:19:29] [INFO ] [FieldManager]
+    | Added field 'ID'.
+    | Added field 'PartID'.
+    | Added field 'MatID'.
+    | Added field 'Coords'.
+    | Added field 'Volume'.
+    | Added field 'ActiveStatus'.
+
+[12:19:29] [INFO ] [InitFields]
+    | Global ActiveStatus field registered.
+
+[12:19:29] [INFO ] [FieldManager]
+    | Resized all 9 fields for 5000 particles.
+
+[12:19:29] [INFO ] [InitFields]
+    | ActiveStatus initialized to 1 for all particles.
+    | Binding high-speed material state pointers...
+
+[12:19:29] [INFO ] [MeshData]
+    | Populated particle geometry fields into FieldManager for 5000 particles.
+
+[12:19:29] [INFO ] [InitFields]
+    | All fields allocated for 5000 particles. Total fields: 9.
+
+[12:19:29] [INFO ] [InitConditions]
+    | ==================================================
+    | Entering Conditions Initialization Phase...
+    | ==================================================
+
+[12:19:29] [INFO ] [ReaderRegistry]
+    | Creating reader for: .grpd (name: LoadReader)
+
+[12:19:29] [INFO ] [GrpdMeshReader]
+    | Reading file: d:\C++pro\GRPD\Examples\Thermal_Validation_5x10\Thermal_Validation_5x10.grpd
+    | Entering *PARTICLE section (Line 1)
+    | Pre-allocated memory for 5000 particles (Zero-Reallocation)
+    | Entering *LOAD section (Line 5004)
+    | ============================================
+    | File reading complete!
+    | Total particles: 5000
+    | Total load entries: 200
+    | ============================================
+
+[12:19:29] [INFO ] [InitConditions]
+    | Load statistics:
+    | - FLUX : 100
+    | - T : 100
+    | Boundary conditions initialization complete.
+
+[12:19:29] [INFO ] [InitNeighbors]
+    | ==================================================
+    | Entering Neighbor Search Phase...
+    | ==================================================
+    | Horizon radius: 0.301500
+
+[12:19:29] [INFO ] [NeighborList]
+    | Starting full-flat CSR search for 5000 particles, horizon = 0.301500
+    | Cell grid: 17 x 33 x 1 = 561 cells
+    | Flat cell list built in 0.000000 ms
+    | Pass 1 (count) done in 0.999928 ms
+    | Total bonds: 134636, Memory: 1 MB
+    | Pass 2 (fill) done in 0.999928 ms
+    | Max neighbors: 28
+    | Total time: 1.999855 ms
+
+[12:19:29] [INFO ] [FieldManager]
+    | Added field 'NeighborCount'.
+
+[12:19:29] [INFO ] [InitNeighbors]
+    | NeighborCount field populated for 5000 particles.
+
+[12:19:29] [INFO ] [FieldManager]
+    | Added field 'BondIntegrity'.
+
+[12:19:29] [INFO ] [InitNeighbors]
+    | Global BondIntegrity scalar field properly initialized to 0.0
+
+[12:19:29] [INFO ] [FieldManager]
+    | Added field 'IsSurface'.
+
+[12:19:29] [INFO ] [SurfaceDetector]
+    | Volume Deficit check complete. Identified 308 surface particles out of 5000 (Threshold: 0.750000).
+
+[12:19:29] [INFO ] [InitNeighbors]
+    | Neighbor search phase complete.
+
+[12:19:29] [INFO ] [InitContact]
+    | ==================================================
+    | Entering Contact Initialization Phase...
+    | ==================================================
+    | No explicit ContactPairs defined in YAML. Contact engine skipping.
+    | Initializing Material-specific BondIntegrity Models...
+    | Material BondIntegrity Models initialized. Total Active Models: 0
+
+[12:19:29] [INFO ] [InitSolverComponents]
+    | ==================================================
+    | Entering Solver Components Assembly Phase...
+    | ==================================================
+    | Building Time Integrator: Explicit
+
+[12:19:29] [INFO ] [TimeIntegrator]
+    | Explicitly set OMP Threads to: 16
+
+[12:19:29] [INFO ] [InitSolverComponents]
+    | Time Integrator configured.
+    | Building Space Kernel: NOSB_T
+
+[12:19:29] [INFO ] [NOSB_Base]
+    | Applied KernelWeightType: Linear
+    | Applied ZeroEnergyG0: 0.100000
+    | Applied ZeroEnergyMethod string: Zhang
+
+[12:19:29] [INFO ] [InitSolverComponents]
+    | Space Kernel 'NOSB_T' configured.
+    | Total kernels assembled: 1
+
+[12:19:29] [INFO ] [PDEngine]
+    | PD simulation context initialized successfully.
+
+[12:19:29] [INFO ] [EngineManager]
+    | All solvers initialized. Total: 1
+    | ==================================================
+    | Entering Main Solver Phase
+    | ==================================================
+    | Solving: PD
+
+[12:19:29] [INFO ] [PDEngine]
+    | Starting PD Engine Solve Phase...
+
+[12:19:29] [INFO ] [ExplicitEuler]
+    | Identified 1st-order ODE integration target: Temperature <- TempRate
+
+[12:19:29] [INFO ] [FieldManager]
+    | Added field 'ShapeTensorInv'.
+    | Added field 'VHorizon'.
+    | Added field 'SumFac'.
+    | Added field 'SumOmegaRaw'.
+
+[12:19:29] [INFO ] [NOSB_Base]
+    | Computing InfluenceWeight + Shape Tensor Inverse (K^-1)...
+    | All NOSB base fields registered and Shape Tensor Inverse computed.
+
+[12:19:29] [INFO ] [FieldManager]
+    | Added field 'TempGradient'.
+    | Added field 'HeatFluxVec'.
+
+[12:19:29] [INFO ] [NOSB_T]
+    | Instantiated ThermalStabilizer globally in Phase 0 using strategy: Zhang
+
+[12:19:29] [INFO ] [ExplicitEuler]
+    | Computed safe Thermal limit dt: 1.069926e-04 (dx = 1.000000e-01, minDt = 1.337407e-04)
+    | Starting Explicit Loop with 2 LoadStep(s). Default dt = 1.000000e-04
+    | === Load Step 1 / 2 | TargetTime: 1.000000e+00 | dt: 1.000000e-04 | KBC: 0 ===
+    | --- Step 0 | Time: 0.000000e+00  |  Pure Compute: 0.000000e+00s  |  Total: 0.000000e+00s  |  Speed:
+    | 0 steps/s
+    | === Load Step 2 / 2 | TargetTime: 1.000000e+01 | dt: 1.000000e-04 | KBC: 1 ===
+    | --- Step 10000 | Time: 1.000000e+00  |  Pure Compute: 1.546167e+01s  |  Total: 1.546369e+01s  | 
+    | Speed: 646 steps/s
+    | --- Step 20000 | Time: 2.000000e+00  |  Pure Compute: 3.198799e+01s  |  Total: 3.199598e+01s  | 
+    | Speed: 625 steps/s
+    | --- Step 30000 | Time: 3.000000e+00  |  Pure Compute: 4.852786e+01s  |  Total: 4.854211e+01s  | 
+    | Speed: 618 steps/s
+    | --- Step 40000 | Time: 4.000000e+00  |  Pure Compute: 6.528257e+01s  |  Total: 6.530182e+01s  | 
+    | Speed: 612 steps/s
+    | --- Step 50000 | Time: 5.000000e+00  |  Pure Compute: 8.186524e+01s  |  Total: 8.188946e+01s  | 
+    | Speed: 610 steps/s
+    | --- Step 60000 | Time: 6.000000e+00  |  Pure Compute: 9.869290e+01s  |  Total: 9.872069e+01s  | 
+    | Speed: 607 steps/s
+    | --- Step 70000 | Time: 7.000000e+00  |  Pure Compute: 1.151619e+02s  |  Total: 1.152077e+02s  | 
+    | Speed: 607 steps/s
+    | --- Step 80000 | Time: 8.000000e+00  |  Pure Compute: 1.316082e+02s  |  Total: 1.316572e+02s  | 
+    | Speed: 607 steps/s
+    | --- Step 90000 | Time: 9.000000e+00  |  Pure Compute: 1.481549e+02s  |  Total: 1.482059e+02s  | 
+    | Speed: 607 steps/s
+    | --- Step 100000 | Time: 1.000000e+01  |  Pure Compute: 1.645641e+02s  |  Total: 1.646220e+02s  | 
+    | Speed: 607 steps/s
+    | Finished. Total: 164.625994s  |  Pure Compute avg: 0.001646 s/step
+
+[12:22:14] [INFO ] [PDEngine]
+    | PD Engine Solve Phase Finished.
+
+[12:22:14] [INFO ] [EngineManager]
+    | Main Solver Phase finished.
+    | ==================================================
+    | Entering Post-processing Phase
+    | ==================================================
+    | Outputting: PD
+    | Post-processing Phase finished.
+
+[13:09:19] [INFO ] [EngineManager]
+    | ==================================================
+    | GRPD Solver Engine Initialized                 
+    | ==================================================
+
+[13:09:19] [INFO ] [EngineRegistry]
+    | Creating Engine instance: PD
+
+[13:09:19] [INFO ] [PDEngine]
+    | PD Engine instance created.
+    | ===============================================
+    | ========== Registered Types Summary ===========
+    | TimeIntegrator    : ADR, CentralDifference, Explicit, MatrixFreeImplicit, Staggered
+    | FieldRegistry     : DoubleField, IntField
+    | PhysicsFields     : Mechanical, Thermal
+    | BCRegistry        : AX, AY, AZ, CONV, FLUX, PX, PY, PZ, T, UX, UY, UZ, VX, VY, VZ
+    | ReaderRegistry    : .grpd, .inp
+    | StabilizerRegistry: Mechanical_Silling, Mechanical_Wan, Mechanical_Zhang, Thermal_Silling,
+    | Thermal_Wan, Thermal_Zhang
+    | ContactRegistry   : [Type] General, [ForceLaw] KinematicNormal, [ForceLaw] Nonlinear, [ForceLaw]
+    | Penalty, [ForceLaw] Silling, [ForceLaw] Viscous, [Evaluator] NTC, [Evaluator] NTN, [Evaluator] NTS,
+    | [FrictionLaw] ElasticStickSlip, [FrictionLaw] ExplicitImpulse, [FrictionLaw] TanhRegularized
+    | MaterialRegistry  : FourierThermalMat, J2PlasticityMat, J2VoceLemaitre, JCPlasticityMat,
+    | LinearElasticMat, NortonBaileyCreepMat, StrainHardeningCreepMat, TimeHardeningCreepMat
+    | KernelRegistry    : NOSB_Axis, NOSB_M, NOSB_T
+    | EngineRegistry    : PD
+    | ===============================================
+
+[13:09:19] [INFO ] [EngineManager]
+    | Initializing solver: PD
+
+[13:09:19] [INFO ] [PDEngine]
+    | Initializing PD simulation context...
+
+[13:09:19] [INFO ] [InitModel]
+    | ==================================================
+    | Model pre-processing...
+    | ==================================================
+    | grpd path: d:\C++pro\GRPD\Examples\Thermal_Validation_5x10\Thermal_Validation_5x10.grpd
+    | model name: Thermal_Validation_5x10
+    | Found existing .grpd mesh file at:
+    | d:\C++pro\GRPD\Examples\Thermal_Validation_5x10\Thermal_Validation_5x10.grpd. Skipping generation.
+
+[13:09:19] [INFO ] [Context Manager]
+    | Formalized model name to: Thermal_Validation_5x10
+    | Model dimension set to: 2D
+    | 2D thickness set to: 1.000000
+
+[13:09:19] [INFO ] [ReaderRegistry]
+    | Creating reader for: .grpd (name: Thermal_Validation_5x10)
+
+[13:09:19] [INFO ] [InitModel]
+    | Reading mesh file: d:\C++pro\GRPD\Examples\Thermal_Validation_5x10\Thermal_Validation_5x10.grpd
+    | (reader: .grpd)
+
+[13:09:19] [INFO ] [GrpdMeshReader]
+    | Reading file: d:\C++pro\GRPD\Examples\Thermal_Validation_5x10\Thermal_Validation_5x10.grpd
+    | Entering *PARTICLE section (Line 1)
+    | Pre-allocated memory for 5000 particles (Zero-Reallocation)
+    | Entering *LOAD section (Line 5004)
+    | ============================================
+    | File reading complete!
+    | Total particles: 5000
+    | Total load entries: 200
+    | ============================================
+
+[13:09:19] [INFO ] [ParticleManager]
+    | Pre-allocated memory for 5000 particles
+
+[13:09:19] [INFO ] [InitModel]
+    | Total particles loaded for model Thermal_Validation_5x10: 5000
+
+[13:09:19] [INFO ] [InitMaterial]
+    | ==================================================
+    | Entering Material Initialization Phase...
+    | ==================================================
+    | Instantiating material [1] of type: FourierThermalMat
+
+[13:09:19] [INFO ] [MaterialRegistry]
+    | Using factory to create material: Steel (type: FourierThermalMat)
+
+[13:09:19] [INFO ] [FourierThermalMat]
+    | Material 'Steel' is initialized. Conductivity = 45.000000, HeatCapacity = 460000000.000000, Density
+    | = 0.000000
+
+[13:09:19] [INFO ] [MaterialManager]
+    | Successfully added material instance: Steel
+
+[13:09:19] [INFO ] [InitMaterial]
+    | Successfully registered material ID 1 (Steel)
+    | Assigning material pointers to particles...
+    | Successfully assigned materials to 5000 particles.
+
+[13:09:19] [INFO ] [InitFields]
+    | ==================================================
+    | Entering Field Registration Phase...
+    | ==================================================
+
+[13:09:19] [INFO ] [FieldManager]
+    | Added field 'Temperature'.
+    | Added field 'TempRate'.
+    | Added field 'HeatFlux'.
+
+[13:09:19] [INFO ] [ThermalFields]
+    | Core fields registered: Temperature, TempRate, HeatFlux.
+
+[13:09:19] [INFO ] [InitFields]
+    | Auto-registered PhysicsFields module: Thermal
+
+[13:09:19] [INFO ] [FieldManager]
+    | Added field 'ID'.
+    | Added field 'PartID'.
+    | Added field 'MatID'.
+    | Added field 'Coords'.
+    | Added field 'Volume'.
+    | Added field 'ActiveStatus'.
+
+[13:09:19] [INFO ] [InitFields]
+    | Global ActiveStatus field registered.
+
+[13:09:19] [INFO ] [FieldManager]
+    | Resized all 9 fields for 5000 particles.
+
+[13:09:19] [INFO ] [InitFields]
+    | ActiveStatus initialized to 1 for all particles.
+    | Binding high-speed material state pointers...
+
+[13:09:19] [INFO ] [MeshData]
+    | Populated particle geometry fields into FieldManager for 5000 particles.
+
+[13:09:19] [INFO ] [InitFields]
+    | All fields allocated for 5000 particles. Total fields: 9.
+
+[13:09:19] [INFO ] [InitConditions]
+    | ==================================================
+    | Entering Conditions Initialization Phase...
+    | ==================================================
+
+[13:09:19] [INFO ] [ReaderRegistry]
+    | Creating reader for: .grpd (name: LoadReader)
+
+[13:09:19] [INFO ] [GrpdMeshReader]
+    | Reading file: d:\C++pro\GRPD\Examples\Thermal_Validation_5x10\Thermal_Validation_5x10.grpd
+    | Entering *PARTICLE section (Line 1)
+    | Pre-allocated memory for 5000 particles (Zero-Reallocation)
+    | Entering *LOAD section (Line 5004)
+    | ============================================
+    | File reading complete!
+    | Total particles: 5000
+    | Total load entries: 200
+    | ============================================
+
+[13:09:19] [INFO ] [InitConditions]
+    | Load statistics:
+    | - FLUX : 100
+    | - T : 100
+    | Boundary conditions initialization complete.
+
+[13:09:19] [INFO ] [InitNeighbors]
+    | ==================================================
+    | Entering Neighbor Search Phase...
+    | ==================================================
+    | Horizon radius: 0.301500
+
+[13:09:19] [INFO ] [NeighborList]
+    | Starting full-flat CSR search for 5000 particles, horizon = 0.301500
+    | Cell grid: 17 x 33 x 1 = 561 cells
+    | Flat cell list built in 0.000000 ms
+    | Pass 1 (count) done in 1.000166 ms
+    | Total bonds: 134636, Memory: 1 MB
+    | Pass 2 (fill) done in 0.999928 ms
+    | Max neighbors: 28
+    | Total time: 2.000093 ms
+
+[13:09:19] [INFO ] [FieldManager]
+    | Added field 'NeighborCount'.
+
+[13:09:19] [INFO ] [InitNeighbors]
+    | NeighborCount field populated for 5000 particles.
+
+[13:09:19] [INFO ] [FieldManager]
+    | Added field 'BondIntegrity'.
+
+[13:09:19] [INFO ] [InitNeighbors]
+    | Global BondIntegrity scalar field properly initialized to 0.0
+
+[13:09:19] [INFO ] [FieldManager]
+    | Added field 'IsSurface'.
+
+[13:09:19] [INFO ] [SurfaceDetector]
+    | Volume Deficit check complete. Identified 308 surface particles out of 5000 (Threshold: 0.750000).
+
+[13:09:19] [INFO ] [InitNeighbors]
+    | Neighbor search phase complete.
+
+[13:09:19] [INFO ] [InitContact]
+    | ==================================================
+    | Entering Contact Initialization Phase...
+    | ==================================================
+    | No explicit ContactPairs defined in YAML. Contact engine skipping.
+    | Initializing Material-specific BondIntegrity Models...
+    | Material BondIntegrity Models initialized. Total Active Models: 0
+
+[13:09:19] [INFO ] [InitSolverComponents]
+    | ==================================================
+    | Entering Solver Components Assembly Phase...
+    | ==================================================
+    | Building Time Integrator: Explicit
+
+[13:09:19] [INFO ] [TimeIntegrator]
+    | Explicitly set OMP Threads to: 16
+
+[13:09:19] [INFO ] [InitSolverComponents]
+    | Time Integrator configured.
+    | Building Space Kernel: NOSB_T
+
+[13:09:19] [INFO ] [NOSB_Base]
+    | Applied KernelWeightType: Linear
+    | Applied ZeroEnergyG0: 0.100000
+    | Applied ZeroEnergyMethod string: Zhang
+
+[13:09:19] [INFO ] [InitSolverComponents]
+    | Space Kernel 'NOSB_T' configured.
+    | Total kernels assembled: 1
+
+[13:09:19] [INFO ] [PDEngine]
+    | PD simulation context initialized successfully.
+
+[13:09:19] [INFO ] [EngineManager]
+    | All solvers initialized. Total: 1
+    | ==================================================
+    | Entering Main Solver Phase
+    | ==================================================
+    | Solving: PD
+
+[13:09:19] [INFO ] [PDEngine]
+    | Starting PD Engine Solve Phase...
+
+[13:09:19] [INFO ] [ExplicitEuler]
+    | Identified 1st-order ODE integration target: Temperature <- TempRate
+
+[13:09:19] [INFO ] [FieldManager]
+    | Added field 'ShapeTensorInv'.
+    | Added field 'VHorizon'.
+    | Added field 'SumFac'.
+    | Added field 'SumOmegaRaw'.
+
+[13:09:19] [INFO ] [NOSB_Base]
+    | Computing InfluenceWeight + Shape Tensor Inverse (K^-1)...
+    | All NOSB base fields registered and Shape Tensor Inverse computed.
+
+[13:09:19] [INFO ] [FieldManager]
+    | Added field 'TempGradient'.
+    | Added field 'HeatFluxVec'.
+
+[13:09:19] [INFO ] [NOSB_T]
+    | Instantiated ThermalStabilizer globally in Phase 0 using strategy: Zhang
+
+[13:09:19] [INFO ] [ExplicitEuler]
+    | Computed safe Thermal limit dt: 1.069926e-04 (dx = 1.000000e-01, minDt = 1.337407e-04)
+    | Starting Explicit Loop with 2 LoadStep(s). Default dt = 1.000000e-04
+    | === Load Step 1 / 2 | TargetTime: 1.000000e+00 | dt: 1.000000e-04 | KBC: 0 ===
+    | --- Step 0 | Time: 0.000000e+00  |  Pure Compute: 0.000000e+00s  |  Total: 0.000000e+00s  |  Speed:
+    | 0 steps/s
+    | === Load Step 2 / 2 | TargetTime: 1.000000e+01 | dt: 1.000000e-04 | KBC: 1 ===
+    | --- Step 10000 | Time: 1.000000e+00  |  Pure Compute: 1.839875e+01s  |  Total: 1.840125e+01s  | 
+    | Speed: 543 steps/s
+    | --- Step 20000 | Time: 2.000000e+00  |  Pure Compute: 3.526223e+01s  |  Total: 3.526960e+01s  | 
+    | Speed: 567 steps/s
+    | --- Step 30000 | Time: 3.000000e+00  |  Pure Compute: 5.196735e+01s  |  Total: 5.197871e+01s  | 
+    | Speed: 577 steps/s
+    | --- Step 40000 | Time: 4.000000e+00  |  Pure Compute: 6.882810e+01s  |  Total: 6.884655e+01s  | 
+    | Speed: 581 steps/s
+    | --- Step 50000 | Time: 5.000000e+00  |  Pure Compute: 8.561646e+01s  |  Total: 8.563790e+01s  | 
+    | Speed: 583 steps/s
+    | --- Step 60000 | Time: 6.000000e+00  |  Pure Compute: 1.019725e+02s  |  Total: 1.019959e+02s  | 
+    | Speed: 588 steps/s
+    | --- Step 70000 | Time: 7.000000e+00  |  Pure Compute: 1.183540e+02s  |  Total: 1.183814e+02s  | 
+    | Speed: 591 steps/s
+    | --- Step 80000 | Time: 8.000000e+00  |  Pure Compute: 1.344800e+02s  |  Total: 1.345134e+02s  | 
+    | Speed: 594 steps/s
+    | --- Step 90000 | Time: 9.000000e+00  |  Pure Compute: 1.506341e+02s  |  Total: 1.506715e+02s  | 
+    | Speed: 597 steps/s
+    | --- Step 100000 | Time: 1.000000e+01  |  Pure Compute: 1.671085e+02s  |  Total: 1.671514e+02s  | 
+    | Speed: 598 steps/s
+    | Finished. Total: 167.154001s  |  Pure Compute avg: 0.001671 s/step
+
+[13:12:06] [INFO ] [PDEngine]
+    | PD Engine Solve Phase Finished.
+
+[13:12:06] [INFO ] [EngineManager]
+    | Main Solver Phase finished.
+    | ==================================================
+    | Entering Post-processing Phase
+    | ==================================================
+    | Outputting: PD
+    | Post-processing Phase finished.
+
+[14:21:20] [INFO ] [EngineManager]
+    | ==================================================
+    | GRPD Solver Engine Initialized                 
+    | ==================================================
+
+[14:21:20] [INFO ] [EngineRegistry]
+    | Creating Engine instance: PD
+
+[14:21:20] [INFO ] [PDEngine]
+    | PD Engine instance created.
+    | ===============================================
+    | ========== Registered Types Summary ===========
+    | TimeIntegrator    : ADR, CentralDifference, Explicit, MatrixFreeImplicit, Staggered
+    | FieldRegistry     : DoubleField, IntField
+    | PhysicsFields     : Mechanical, Thermal
+    | BCRegistry        : AX, AY, AZ, CONV, FLUX, PX, PY, PZ, T, UX, UY, UZ, VX, VY, VZ
+    | ReaderRegistry    : .grpd, .inp
+    | StabilizerRegistry: Mechanical_Silling, Mechanical_Wan, Mechanical_Zhang, Thermal_Silling,
+    | Thermal_Wan, Thermal_Zhang
+    | ContactRegistry   : [Type] General, [ForceLaw] KinematicNormal, [ForceLaw] Nonlinear, [ForceLaw]
+    | Penalty, [ForceLaw] Silling, [ForceLaw] Viscous, [Evaluator] NTC, [Evaluator] NTN, [Evaluator] NTS,
+    | [FrictionLaw] ElasticStickSlip, [FrictionLaw] ExplicitImpulse, [FrictionLaw] TanhRegularized
+    | MaterialRegistry  : FourierThermalMat, J2PlasticityMat, J2VoceLemaitre, JCPlasticityMat,
+    | LinearElasticMat, NortonBaileyCreepMat, StrainHardeningCreepMat, TimeHardeningCreepMat
+    | KernelRegistry    : NOSB_Axis, NOSB_M, NOSB_T
+    | EngineRegistry    : PD
+    | ===============================================
+
+[14:21:20] [INFO ] [EngineManager]
+    | Initializing solver: PD
+
+[14:21:20] [INFO ] [PDEngine]
+    | Initializing PD simulation context...
+
+[14:21:20] [INFO ] [InitModel]
+    | ==================================================
+    | Model pre-processing...
+    | ==================================================
+    | grpd path: d:\C++pro\GRPD\Examples\Thermal_Validation_5x10\Thermal_Validation_5x10.grpd
+    | model name: Thermal_Validation_5x10
+    | Found existing .grpd mesh file at:
+    | d:\C++pro\GRPD\Examples\Thermal_Validation_5x10\Thermal_Validation_5x10.grpd. Skipping generation.
+
+[14:21:20] [INFO ] [Context Manager]
+    | Formalized model name to: Thermal_Validation_5x10
+    | Model dimension set to: 2D
+    | 2D thickness set to: 1.000000
+
+[14:21:20] [INFO ] [ReaderRegistry]
+    | Creating reader for: .grpd (name: Thermal_Validation_5x10)
+
+[14:21:20] [INFO ] [InitModel]
+    | Reading mesh file: d:\C++pro\GRPD\Examples\Thermal_Validation_5x10\Thermal_Validation_5x10.grpd
+    | (reader: .grpd)
+
+[14:21:20] [INFO ] [GrpdMeshReader]
+    | Reading file: d:\C++pro\GRPD\Examples\Thermal_Validation_5x10\Thermal_Validation_5x10.grpd
+    | Entering *PARTICLE section (Line 1)
+    | Pre-allocated memory for 5000 particles (Zero-Reallocation)
+    | Entering *LOAD section (Line 5004)
+    | ============================================
+    | File reading complete!
+    | Total particles: 5000
+    | Total load entries: 200
+    | ============================================
+
+[14:21:20] [INFO ] [ParticleManager]
+    | Pre-allocated memory for 5000 particles
+
+[14:21:20] [INFO ] [InitModel]
+    | Total particles loaded for model Thermal_Validation_5x10: 5000
+
+[14:21:20] [INFO ] [InitMaterial]
+    | ==================================================
+    | Entering Material Initialization Phase...
+    | ==================================================
+    | Instantiating material [1] of type: FourierThermalMat
+
+[14:21:20] [INFO ] [MaterialRegistry]
+    | Using factory to create material: Steel (type: FourierThermalMat)
+
+[14:21:20] [INFO ] [FourierThermalMat]
+    | Material 'Steel' is initialized. Conductivity = 45.000000, HeatCapacity = 460000000.000000, Density
+    | = 0.000000
+
+[14:21:20] [INFO ] [MaterialManager]
+    | Successfully added material instance: Steel
+
+[14:21:20] [INFO ] [InitMaterial]
+    | Successfully registered material ID 1 (Steel)
+    | Assigning material pointers to particles...
+    | Successfully assigned materials to 5000 particles.
+
+[14:21:20] [INFO ] [InitFields]
+    | ==================================================
+    | Entering Field Registration Phase...
+    | ==================================================
+
+[14:21:20] [INFO ] [FieldManager]
+    | Added field 'Temperature'.
+    | Added field 'TempRate'.
+    | Added field 'HeatFlux'.
+
+[14:21:20] [INFO ] [ThermalFields]
+    | Core fields registered: Temperature, TempRate, HeatFlux.
+
+[14:21:20] [INFO ] [InitFields]
+    | Auto-registered PhysicsFields module: Thermal
+
+[14:21:20] [INFO ] [FieldManager]
+    | Added field 'ID'.
+    | Added field 'PartID'.
+    | Added field 'MatID'.
+    | Added field 'Coords'.
+    | Added field 'Volume'.
+    | Added field 'ActiveStatus'.
+
+[14:21:20] [INFO ] [InitFields]
+    | Global ActiveStatus field registered.
+
+[14:21:20] [INFO ] [FieldManager]
+    | Resized all 9 fields for 5000 particles.
+
+[14:21:20] [INFO ] [InitFields]
+    | ActiveStatus initialized to 1 for all particles.
+    | Binding high-speed material state pointers...
+
+[14:21:20] [INFO ] [MeshData]
+    | Populated particle geometry fields into FieldManager for 5000 particles.
+
+[14:21:20] [INFO ] [InitFields]
+    | All fields allocated for 5000 particles. Total fields: 9.
+
+[14:21:20] [INFO ] [InitConditions]
+    | ==================================================
+    | Entering Conditions Initialization Phase...
+    | ==================================================
+
+[14:21:20] [INFO ] [ReaderRegistry]
+    | Creating reader for: .grpd (name: LoadReader)
+
+[14:21:20] [INFO ] [GrpdMeshReader]
+    | Reading file: d:\C++pro\GRPD\Examples\Thermal_Validation_5x10\Thermal_Validation_5x10.grpd
+    | Entering *PARTICLE section (Line 1)
+    | Pre-allocated memory for 5000 particles (Zero-Reallocation)
+    | Entering *LOAD section (Line 5004)
+    | ============================================
+    | File reading complete!
+    | Total particles: 5000
+    | Total load entries: 200
+    | ============================================
+
+[14:21:20] [INFO ] [InitConditions]
+    | Load statistics:
+    | - FLUX : 100
+    | - T : 100
+    | Boundary conditions initialization complete.
+
+[14:21:20] [INFO ] [InitNeighbors]
+    | ==================================================
+    | Entering Neighbor Search Phase...
+    | ==================================================
+    | Horizon radius: 0.301500
+
+[14:21:20] [INFO ] [NeighborList]
+    | Starting full-flat CSR search for 5000 particles, horizon = 0.301500
+    | Cell grid: 17 x 33 x 1 = 561 cells
+    | Flat cell list built in 0.000000 ms
+    | Pass 1 (count) done in 0.000000 ms
+    | Total bonds: 134636, Memory: 1 MB
+    | Pass 2 (fill) done in 2.000093 ms
+    | Max neighbors: 28
+    | Total time: 2.000093 ms
+
+[14:21:20] [INFO ] [FieldManager]
+    | Added field 'NeighborCount'.
+
+[14:21:20] [INFO ] [InitNeighbors]
+    | NeighborCount field populated for 5000 particles.
+
+[14:21:20] [INFO ] [FieldManager]
+    | Added field 'BondIntegrity'.
+
+[14:21:20] [INFO ] [InitNeighbors]
+    | Global BondIntegrity scalar field properly initialized to 0.0
+
+[14:21:20] [INFO ] [FieldManager]
+    | Added field 'IsSurface'.
+
+[14:21:20] [INFO ] [SurfaceDetector]
+    | Volume Deficit check complete. Identified 308 surface particles out of 5000 (Threshold: 0.750000).
+
+[14:21:20] [INFO ] [InitNeighbors]
+    | Neighbor search phase complete.
+
+[14:21:20] [INFO ] [InitContact]
+    | ==================================================
+    | Entering Contact Initialization Phase...
+    | ==================================================
+    | No explicit ContactPairs defined in YAML. Contact engine skipping.
+    | Initializing Material-specific BondIntegrity Models...
+    | Material BondIntegrity Models initialized. Total Active Models: 0
+
+[14:21:20] [INFO ] [InitSolverComponents]
+    | ==================================================
+    | Entering Solver Components Assembly Phase...
+    | ==================================================
+    | Building Time Integrator: Explicit
+
+[14:21:20] [INFO ] [TimeIntegrator]
+    | Explicitly set OMP Threads to: 16
+
+[14:21:20] [INFO ] [InitSolverComponents]
+    | Time Integrator configured.
+    | Building Space Kernel: NOSB_T
+
+[14:21:20] [INFO ] [NOSB_Base]
+    | Applied KernelWeightType: Linear
+    | Applied ZeroEnergyG0: 0.100000
+    | Applied ZeroEnergyMethod string: Zhang
+
+[14:21:20] [INFO ] [InitSolverComponents]
+    | Space Kernel 'NOSB_T' configured.
+    | Total kernels assembled: 1
+
+[14:21:20] [INFO ] [PDEngine]
+    | PD simulation context initialized successfully.
+
+[14:21:20] [INFO ] [EngineManager]
+    | All solvers initialized. Total: 1
+    | ==================================================
+    | Entering Main Solver Phase
+    | ==================================================
+    | Solving: PD
+
+[14:21:20] [INFO ] [PDEngine]
+    | Starting PD Engine Solve Phase...
+
+[14:21:20] [INFO ] [ExplicitEuler]
+    | Identified 1st-order ODE integration target: Temperature <- TempRate
+
+[14:21:20] [INFO ] [FieldManager]
+    | Added field 'ShapeTensorInv'.
+    | Added field 'VHorizon'.
+    | Added field 'SumFac'.
+    | Added field 'SumOmegaRaw'.
+
+[14:21:20] [INFO ] [NOSB_Base]
+    | Computing InfluenceWeight + Shape Tensor Inverse (K^-1)...
+    | All NOSB base fields registered and Shape Tensor Inverse computed.
+
+[14:21:20] [INFO ] [FieldManager]
+    | Added field 'TempGradient'.
+    | Added field 'HeatFluxVec'.
+
+[14:21:20] [INFO ] [NOSB_T]
+    | Instantiated ThermalStabilizer globally in Phase 0 using strategy: Zhang
+
+[14:21:20] [INFO ] [ExplicitEuler]
+    | Computed safe Thermal limit dt: 1.069926e-04 (dx = 1.000000e-01, minDt = 1.337407e-04)
+    | Starting Explicit Loop with 2 LoadStep(s). Default dt = 1.000000e-05
+    | === Load Step 1 / 2 | TargetTime: 1.000000e-03 | dt: 1.000000e-05 | KBC: 0 ===
+    | --- Step 0 | Time: 0.000000e+00  |  Pure Compute: 0.000000e+00s  |  Total: 0.000000e+00s  |  Speed:
+    | 0 steps/s
+    | --- Step 10 | Time: 1.000000e-04  |  Pure Compute: 1.922020e-02s  |  Total: 2.121390e-02s  | 
+    | Speed: 520 steps/s
+    | --- Step 20 | Time: 2.000000e-04  |  Pure Compute: 3.557820e-02s  |  Total: 4.002210e-02s  | 
+    | Speed: 562 steps/s
+    | --- Step 30 | Time: 3.000000e-04  |  Pure Compute: 5.237280e-02s  |  Total: 5.883970e-02s  | 
+    | Speed: 572 steps/s
+    | --- Step 40 | Time: 4.000000e-04  |  Pure Compute: 7.030810e-02s  |  Total: 8.011010e-02s  | 
+    | Speed: 568 steps/s
+    | --- Step 50 | Time: 5.000000e-04  |  Pure Compute: 8.677930e-02s  |  Total: 9.857400e-02s  | 
+    | Speed: 576 steps/s
+    | --- Step 60 | Time: 6.000000e-04  |  Pure Compute: 1.040455e-01s  |  Total: 1.185612e-01s  | 
+    | Speed: 576 steps/s
+    | --- Step 70 | Time: 7.000000e-04  |  Pure Compute: 1.213766e-01s  |  Total: 1.378867e-01s  | 
+    | Speed: 576 steps/s
+    | --- Step 80 | Time: 8.000000e-04  |  Pure Compute: 1.387948e-01s  |  Total: 1.576172e-01s  | 
+    | Speed: 576 steps/s
+    | --- Step 90 | Time: 9.000000e-04  |  Pure Compute: 1.550021e-01s  |  Total: 1.758197e-01s  | 
+    | Speed: 580 steps/s
+    | === Load Step 2 / 2 | TargetTime: 2.000000e-03 | dt: 1.000000e-05 | KBC: 1 ===
+    | --- Step 100 | Time: 1.000000e-03  |  Pure Compute: 1.716746e-01s  |  Total: 1.944875e-01s  | 
+    | Speed: 582 steps/s
+    | --- Step 110 | Time: 1.100000e-03  |  Pure Compute: 1.884735e-01s  |  Total: 2.138234e-01s  | 
+    | Speed: 583 steps/s
+    | --- Step 120 | Time: 1.200000e-03  |  Pure Compute: 2.039672e-01s  |  Total: 2.323113e-01s  | 
+    | Speed: 588 steps/s
+    | --- Step 130 | Time: 1.300000e-03  |  Pure Compute: 2.211764e-01s  |  Total: 2.518332e-01s  | 
+    | Speed: 587 steps/s
+    | --- Step 140 | Time: 1.400000e-03  |  Pure Compute: 2.385811e-01s  |  Total: 2.712331e-01s  | 
+    | Speed: 586 steps/s
+    | --- Step 150 | Time: 1.500000e-03  |  Pure Compute: 2.554842e-01s  |  Total: 2.915274e-01s  | 
+    | Speed: 587 steps/s
+    | --- Step 160 | Time: 1.600000e-03  |  Pure Compute: 2.732416e-01s  |  Total: 3.122766e-01s  | 
+    | Speed: 585 steps/s
+    | --- Step 170 | Time: 1.700000e-03  |  Pure Compute: 2.896137e-01s  |  Total: 3.319726e-01s  | 
+    | Speed: 586 steps/s
+    | --- Step 180 | Time: 1.800000e-03  |  Pure Compute: 3.064878e-01s  |  Total: 3.508415e-01s  | 
+    | Speed: 587 steps/s
+    | --- Step 190 | Time: 1.900000e-03  |  Pure Compute: 3.248091e-01s  |  Total: 3.719855e-01s  | 
+    | Speed: 584 steps/s
+    | --- Step 200 | Time: 2.000000e-03  |  Pure Compute: 3.400520e-01s  |  Total: 3.892215e-01s  | 
+    | Speed: 588 steps/s
+    | Finished. Total: 0.391216s  |  Pure Compute avg: 0.001700 s/step
+
+[14:21:20] [INFO ] [PDEngine]
+    | PD Engine Solve Phase Finished.
+
+[14:21:20] [INFO ] [EngineManager]
+    | Main Solver Phase finished.
+    | ==================================================
+    | Entering Post-processing Phase
+    | ==================================================
+    | Outputting: PD
+    | Post-processing Phase finished.
+
+[14:25:29] [INFO ] [EngineManager]
+    | ==================================================
+    | GRPD Solver Engine Initialized                 
+    | ==================================================
+
+[14:25:29] [INFO ] [EngineRegistry]
+    | Creating Engine instance: PD
+
+[14:25:29] [INFO ] [PDEngine]
+    | PD Engine instance created.
+    | ===============================================
+    | ========== Registered Types Summary ===========
+    | TimeIntegrator    : ADR, CentralDifference, Explicit, MatrixFreeImplicit, Staggered
+    | FieldRegistry     : DoubleField, IntField
+    | PhysicsFields     : Mechanical, Thermal
+    | BCRegistry        : AX, AY, AZ, CONV, FLUX, PX, PY, PZ, T, UX, UY, UZ, VX, VY, VZ
+    | ReaderRegistry    : .grpd, .inp
+    | StabilizerRegistry: Mechanical_Silling, Mechanical_Wan, Mechanical_Zhang, Thermal_Silling,
+    | Thermal_Wan, Thermal_Zhang
+    | ContactRegistry   : [Type] General, [ForceLaw] KinematicNormal, [ForceLaw] Nonlinear, [ForceLaw]
+    | Penalty, [ForceLaw] Silling, [ForceLaw] Viscous, [Evaluator] NTC, [Evaluator] NTN, [Evaluator] NTS,
+    | [FrictionLaw] ElasticStickSlip, [FrictionLaw] ExplicitImpulse, [FrictionLaw] TanhRegularized
+    | MaterialRegistry  : FourierThermalMat, J2PlasticityMat, J2VoceLemaitre, JCPlasticityMat,
+    | LinearElasticMat, NortonBaileyCreepMat, StrainHardeningCreepMat, TimeHardeningCreepMat
+    | KernelRegistry    : NOSB_Axis, NOSB_M, NOSB_T
+    | EngineRegistry    : PD
+    | ===============================================
+
+[14:25:29] [INFO ] [EngineManager]
+    | Initializing solver: PD
+
+[14:25:29] [INFO ] [PDEngine]
+    | Initializing PD simulation context...
+
+[14:25:29] [INFO ] [InitModel]
+    | ==================================================
+    | Model pre-processing...
+    | ==================================================
+    | grpd path: d:\C++pro\GRPD\Examples\Thermal_Validation_5x10\Thermal_Validation_5x10.grpd
+    | model name: Thermal_Validation_5x10
+    | Found existing .grpd mesh file at:
+    | d:\C++pro\GRPD\Examples\Thermal_Validation_5x10\Thermal_Validation_5x10.grpd. Skipping generation.
+
+[14:25:29] [INFO ] [Context Manager]
+    | Formalized model name to: Thermal_Validation_5x10
+    | Model dimension set to: 2D
+    | 2D thickness set to: 1.000000
+
+[14:25:29] [INFO ] [ReaderRegistry]
+    | Creating reader for: .grpd (name: Thermal_Validation_5x10)
+
+[14:25:29] [INFO ] [InitModel]
+    | Reading mesh file: d:\C++pro\GRPD\Examples\Thermal_Validation_5x10\Thermal_Validation_5x10.grpd
+    | (reader: .grpd)
+
+[14:25:29] [INFO ] [GrpdMeshReader]
+    | Reading file: d:\C++pro\GRPD\Examples\Thermal_Validation_5x10\Thermal_Validation_5x10.grpd
+    | Entering *PARTICLE section (Line 1)
+    | Pre-allocated memory for 5000 particles (Zero-Reallocation)
+    | Entering *LOAD section (Line 5004)
+    | ============================================
+    | File reading complete!
+    | Total particles: 5000
+    | Total load entries: 200
+    | ============================================
+
+[14:25:29] [INFO ] [ParticleManager]
+    | Pre-allocated memory for 5000 particles
+
+[14:25:29] [INFO ] [InitModel]
+    | Total particles loaded for model Thermal_Validation_5x10: 5000
+
+[14:25:29] [INFO ] [InitMaterial]
+    | ==================================================
+    | Entering Material Initialization Phase...
+    | ==================================================
+    | Instantiating material [1] of type: FourierThermalMat
+
+[14:25:29] [INFO ] [MaterialRegistry]
+    | Using factory to create material: Steel (type: FourierThermalMat)
+
+[14:25:29] [INFO ] [FourierThermalMat]
+    | Material 'Steel' is initialized. Conductivity = 45.000000, HeatCapacity = 460000000.000000, Density
+    | = 0.000000
+
+[14:25:29] [INFO ] [MaterialManager]
+    | Successfully added material instance: Steel
+
+[14:25:29] [INFO ] [InitMaterial]
+    | Successfully registered material ID 1 (Steel)
+    | Assigning material pointers to particles...
+    | Successfully assigned materials to 5000 particles.
+
+[14:25:29] [INFO ] [InitFields]
+    | ==================================================
+    | Entering Field Registration Phase...
+    | ==================================================
+
+[14:25:29] [INFO ] [FieldManager]
+    | Added field 'Temperature'.
+    | Added field 'TempRate'.
+    | Added field 'HeatFlux'.
+
+[14:25:29] [INFO ] [ThermalFields]
+    | Core fields registered: Temperature, TempRate, HeatFlux.
+
+[14:25:29] [INFO ] [InitFields]
+    | Auto-registered PhysicsFields module: Thermal
+
+[14:25:29] [INFO ] [FieldManager]
+    | Added field 'ID'.
+    | Added field 'PartID'.
+    | Added field 'MatID'.
+    | Added field 'Coords'.
+    | Added field 'Volume'.
+    | Added field 'ActiveStatus'.
+
+[14:25:29] [INFO ] [InitFields]
+    | Global ActiveStatus field registered.
+
+[14:25:29] [INFO ] [FieldManager]
+    | Resized all 9 fields for 5000 particles.
+
+[14:25:29] [INFO ] [InitFields]
+    | ActiveStatus initialized to 1 for all particles.
+    | Binding high-speed material state pointers...
+
+[14:25:29] [INFO ] [MeshData]
+    | Populated particle geometry fields into FieldManager for 5000 particles.
+
+[14:25:29] [INFO ] [InitFields]
+    | All fields allocated for 5000 particles. Total fields: 9.
+
+[14:25:29] [INFO ] [InitConditions]
+    | ==================================================
+    | Entering Conditions Initialization Phase...
+    | ==================================================
+
+[14:25:29] [INFO ] [ReaderRegistry]
+    | Creating reader for: .grpd (name: LoadReader)
+
+[14:25:29] [INFO ] [GrpdMeshReader]
+    | Reading file: d:\C++pro\GRPD\Examples\Thermal_Validation_5x10\Thermal_Validation_5x10.grpd
+    | Entering *PARTICLE section (Line 1)
+    | Pre-allocated memory for 5000 particles (Zero-Reallocation)
+    | Entering *LOAD section (Line 5004)
+    | ============================================
+    | File reading complete!
+    | Total particles: 5000
+    | Total load entries: 200
+    | ============================================
+
+[14:25:29] [INFO ] [InitConditions]
+    | Load statistics:
+    | - FLUX : 100
+    | - T : 100
+    | Boundary conditions initialization complete.
+
+[14:25:29] [INFO ] [InitNeighbors]
+    | ==================================================
+    | Entering Neighbor Search Phase...
+    | ==================================================
+    | Horizon radius: 0.301500
+
+[14:25:29] [INFO ] [NeighborList]
+    | Starting full-flat CSR search for 5000 particles, horizon = 0.301500
+    | Cell grid: 17 x 33 x 1 = 561 cells
+    | Flat cell list built in 0.000000 ms
+    | Pass 1 (count) done in 0.000000 ms
+    | Total bonds: 134636, Memory: 1 MB
+    | Pass 2 (fill) done in 1.000166 ms
+    | Max neighbors: 28
+    | Total time: 1.000166 ms
+
+[14:25:29] [INFO ] [FieldManager]
+    | Added field 'NeighborCount'.
+
+[14:25:29] [INFO ] [InitNeighbors]
+    | NeighborCount field populated for 5000 particles.
+
+[14:25:29] [INFO ] [FieldManager]
+    | Added field 'BondIntegrity'.
+
+[14:25:29] [INFO ] [InitNeighbors]
+    | Global BondIntegrity scalar field properly initialized to 0.0
+
+[14:25:29] [INFO ] [FieldManager]
+    | Added field 'IsSurface'.
+
+[14:25:29] [INFO ] [SurfaceDetector]
+    | Volume Deficit check complete. Identified 308 surface particles out of 5000 (Threshold: 0.750000).
+
+[14:25:29] [INFO ] [InitNeighbors]
+    | Neighbor search phase complete.
+
+[14:25:29] [INFO ] [InitContact]
+    | ==================================================
+    | Entering Contact Initialization Phase...
+    | ==================================================
+    | No explicit ContactPairs defined in YAML. Contact engine skipping.
+    | Initializing Material-specific BondIntegrity Models...
+    | Material BondIntegrity Models initialized. Total Active Models: 0
+
+[14:25:29] [INFO ] [InitSolverComponents]
+    | ==================================================
+    | Entering Solver Components Assembly Phase...
+    | ==================================================
+    | Building Time Integrator: Explicit
+
+[14:25:29] [INFO ] [TimeIntegrator]
+    | Explicitly set OMP Threads to: 16
+
+[14:25:29] [INFO ] [InitSolverComponents]
+    | Time Integrator configured.
+    | Building Space Kernel: NOSB_T
+
+[14:25:29] [INFO ] [NOSB_Base]
+    | Applied KernelWeightType: Linear
+    | Applied ZeroEnergyG0: 0.100000
+    | Applied ZeroEnergyMethod string: Zhang
+
+[14:25:29] [INFO ] [InitSolverComponents]
+    | Space Kernel 'NOSB_T' configured.
+    | Total kernels assembled: 1
+
+[14:25:29] [INFO ] [PDEngine]
+    | PD simulation context initialized successfully.
+
+[14:25:29] [INFO ] [EngineManager]
+    | All solvers initialized. Total: 1
+    | ==================================================
+    | Entering Main Solver Phase
+    | ==================================================
+    | Solving: PD
+
+[14:25:29] [INFO ] [PDEngine]
+    | Starting PD Engine Solve Phase...
+
+[14:25:29] [INFO ] [ExplicitEuler]
+    | Identified 1st-order ODE integration target: Temperature <- TempRate
+
+[14:25:29] [INFO ] [FieldManager]
+    | Added field 'ShapeTensorInv'.
+    | Added field 'VHorizon'.
+    | Added field 'SumFac'.
+    | Added field 'SumOmegaRaw'.
+
+[14:25:29] [INFO ] [NOSB_Base]
+    | Computing InfluenceWeight + Shape Tensor Inverse (K^-1)...
+    | All NOSB base fields registered and Shape Tensor Inverse computed.
+
+[14:25:29] [INFO ] [FieldManager]
+    | Added field 'TempGradient'.
+    | Added field 'HeatFluxVec'.
+
+[14:25:29] [INFO ] [NOSB_T]
+    | Instantiated ThermalStabilizer globally in Phase 0 using strategy: Zhang
+
+[14:25:29] [INFO ] [ExplicitEuler]
+    | Computed safe Thermal limit dt: 1.069926e-04 (dx = 1.000000e-01, minDt = 1.337407e-04)
+    | Starting Explicit Loop with 2 LoadStep(s). Default dt = 1.000000e-05
+    | === Load Step 1 / 2 | TargetTime: 1.000000e-02 | dt: 1.000000e-05 | KBC: 0 ===
+    | --- Step 0 | Time: 0.000000e+00  |  Pure Compute: 0.000000e+00s  |  Total: 0.000000e+00s  |  Speed:
+    | 0 steps/s
+    | --- Step 100 | Time: 1.000000e-03  |  Pure Compute: 2.204542e-01s  |  Total: 2.259614e-01s  | 
+    | Speed: 453 steps/s
+    | --- Step 200 | Time: 2.000000e-03  |  Pure Compute: 3.643300e-01s  |  Total: 3.728296e-01s  | 
+    | Speed: 548 steps/s
+    | --- Step 300 | Time: 3.000000e-03  |  Pure Compute: 5.039045e-01s  |  Total: 5.154124e-01s  | 
+    | Speed: 595 steps/s
+    | --- Step 400 | Time: 4.000000e-03  |  Pure Compute: 6.576051e-01s  |  Total: 6.750910e-01s  | 
+    | Speed: 608 steps/s
+    | --- Step 500 | Time: 5.000000e-03  |  Pure Compute: 8.036770e-01s  |  Total: 8.231571e-01s  | 
+    | Speed: 622 steps/s
+    | --- Step 600 | Time: 6.000000e-03  |  Pure Compute: 9.827654e-01s  |  Total: 1.005235e+00s  | 
+    | Speed: 610 steps/s
+    | --- Step 700 | Time: 7.000000e-03  |  Pure Compute: 1.137577e+00s  |  Total: 1.164610e+00s  | 
+    | Speed: 615 steps/s
+    | --- Step 800 | Time: 8.000000e-03  |  Pure Compute: 1.275972e+00s  |  Total: 1.306197e+00s  | 
+    | Speed: 626 steps/s
+    | --- Step 900 | Time: 9.000000e-03  |  Pure Compute: 1.445420e+00s  |  Total: 1.478637e+00s  | 
+    | Speed: 622 steps/s
+    | === Load Step 2 / 2 | TargetTime: 2.000000e-02 | dt: 1.000000e-05 | KBC: 1 ===
+    | --- Step 1000 | Time: 1.000000e-02  |  Pure Compute: 1.600818e+00s  |  Total: 1.638023e+00s  | 
+    | Speed: 624 steps/s
+    | --- Step 1100 | Time: 1.100000e-02  |  Pure Compute: 1.751235e+00s  |  Total: 1.791432e+00s  | 
+    | Speed: 628 steps/s
+    | --- Step 1200 | Time: 1.200000e-02  |  Pure Compute: 1.895579e+00s  |  Total: 1.938768e+00s  | 
+    | Speed: 633 steps/s
+    | --- Step 1300 | Time: 1.300000e-02  |  Pure Compute: 2.056603e+00s  |  Total: 2.101662e+00s  | 
+    | Speed: 632 steps/s
+    | --- Step 1400 | Time: 1.400000e-02  |  Pure Compute: 2.200523e+00s  |  Total: 2.248573e+00s  | 
+    | Speed: 636 steps/s
+    | --- Step 1500 | Time: 1.500000e-02  |  Pure Compute: 2.348454e+00s  |  Total: 2.399496e+00s  | 
+    | Speed: 638 steps/s
+    | --- Step 1600 | Time: 1.600000e-02  |  Pure Compute: 2.496805e+00s  |  Total: 2.549842e+00s  | 
+    | Speed: 640 steps/s
+    | --- Step 1700 | Time: 1.700000e-02  |  Pure Compute: 2.662891e+00s  |  Total: 2.719553e+00s  | 
+    | Speed: 638 steps/s
+    | --- Step 1800 | Time: 1.800000e-02  |  Pure Compute: 2.811923e+00s  |  Total: 2.870579e+00s  | 
+    | Speed: 640 steps/s
+    | --- Step 1900 | Time: 1.900000e-02  |  Pure Compute: 2.970467e+00s  |  Total: 3.030121e+00s  | 
+    | Speed: 639 steps/s
+    | --- Step 2000 | Time: 2.000000e-02  |  Pure Compute: 3.110082e+00s  |  Total: 3.171796e+00s  | 
+    | Speed: 643 steps/s
+    | Finished. Total: 3.174787s  |  Pure Compute avg: 0.001555 s/step
+
+[14:25:33] [INFO ] [PDEngine]
+    | PD Engine Solve Phase Finished.
+
+[14:25:33] [INFO ] [EngineManager]
+    | Main Solver Phase finished.
+    | ==================================================
+    | Entering Post-processing Phase
+    | ==================================================
+    | Outputting: PD
+    | Post-processing Phase finished.
+
+[17:05:05] [INFO ] [EngineManager]
+    | ==================================================
+    | GRPD Solver Engine Initialized                 
+    | ==================================================
+
+[17:05:05] [INFO ] [EngineRegistry]
+    | Creating Engine instance: PD
+
+[17:05:05] [INFO ] [PDEngine]
+    | PD Engine instance created.
+    | ===============================================
+    | ========== Registered Types Summary ===========
+    | TimeIntegrator    : ADR, CentralDifference, Explicit, MatrixFreeImplicit, Staggered
+    | FieldRegistry     : DoubleField, IntField
+    | PhysicsFields     : Mechanical, Thermal
+    | BCRegistry        : AX, AY, AZ, CONV, FLUX, PX, PY, PZ, T, UX, UY, UZ, VX, VY, VZ
+    | ReaderRegistry    : .grpd, .inp
+    | StabilizerRegistry: Mechanical_Silling, Mechanical_Wan, Mechanical_Zhang, Thermal_Silling,
+    | Thermal_Wan, Thermal_Zhang
+    | ContactRegistry   : [Type] General, [ForceLaw] KinematicNormal, [ForceLaw] Nonlinear, [ForceLaw]
+    | Penalty, [ForceLaw] Silling, [ForceLaw] Viscous, [Evaluator] NTC, [Evaluator] NTN, [Evaluator] NTS,
+    | [FrictionLaw] ElasticStickSlip, [FrictionLaw] ExplicitImpulse, [FrictionLaw] TanhRegularized
+    | MaterialRegistry  : FourierThermalMat, J2PlasticityMat, J2VoceLemaitre, JCPlasticityMat,
+    | LinearElasticMat, NortonBaileyCreepMat, StrainHardeningCreepMat, TimeHardeningCreepMat
+    | KernelRegistry    : NOSB_Axis, NOSB_M, NOSB_T
+    | EngineRegistry    : PD
+    | ===============================================
+
+[17:05:05] [INFO ] [EngineManager]
+    | Initializing solver: PD
+
+[17:05:05] [INFO ] [PDEngine]
+    | Initializing PD simulation context...
+
+[17:05:05] [INFO ] [InitModel]
+    | ==================================================
+    | Model pre-processing...
+    | ==================================================
+    | grpd path: d:\C++pro\GRPD\Examples\Thermal_Validation_5x10\Thermal_Validation_5x10.grpd
+    | model name: Thermal_Validation_5x10
+    | Found existing .grpd mesh file at:
+    | d:\C++pro\GRPD\Examples\Thermal_Validation_5x10\Thermal_Validation_5x10.grpd. Skipping generation.
+
+[17:05:05] [INFO ] [Context Manager]
+    | Formalized model name to: Thermal_Validation_5x10
+    | Model dimension set to: 2D
+    | 2D thickness set to: 1.000000
+
+[17:05:05] [INFO ] [ReaderRegistry]
+    | Creating reader for: .grpd (name: Thermal_Validation_5x10)
+
+[17:05:05] [INFO ] [InitModel]
+    | Reading mesh file: d:\C++pro\GRPD\Examples\Thermal_Validation_5x10\Thermal_Validation_5x10.grpd
+    | (reader: .grpd)
+
+[17:05:05] [INFO ] [GrpdMeshReader]
+    | Reading file: d:\C++pro\GRPD\Examples\Thermal_Validation_5x10\Thermal_Validation_5x10.grpd
+    | Entering *PARTICLE section (Line 1)
+    | Pre-allocated memory for 5000 particles (Zero-Reallocation)
+    | Entering *LOAD section (Line 5004)
+    | ============================================
+    | File reading complete!
+    | Total particles: 5000
+    | Total load entries: 200
+    | ============================================
+
+[17:05:05] [INFO ] [ParticleManager]
+    | Pre-allocated memory for 5000 particles
+
+[17:05:05] [INFO ] [InitModel]
+    | Total particles loaded for model Thermal_Validation_5x10: 5000
+
+[17:05:05] [INFO ] [InitMaterial]
+    | ==================================================
+    | Entering Material Initialization Phase...
+    | ==================================================
+    | Instantiating material [1] of type: FourierThermalMat
+
+[17:05:05] [INFO ] [MaterialRegistry]
+    | Using factory to create material: Steel (type: FourierThermalMat)
+
+[17:05:05] [INFO ] [FourierThermalMat]
+    | Material 'Steel' is initialized. Conductivity = 45.000000, HeatCapacity = 460000000.000000, Density
+    | = 0.000000
+
+[17:05:05] [INFO ] [MaterialManager]
+    | Successfully added material instance: Steel
+
+[17:05:05] [INFO ] [InitMaterial]
+    | Successfully registered material ID 1 (Steel)
+    | Assigning material pointers to particles...
+    | Successfully assigned materials to 5000 particles.
+
+[17:05:05] [INFO ] [InitFields]
+    | ==================================================
+    | Entering Field Registration Phase...
+    | ==================================================
+
+[17:05:05] [INFO ] [FieldManager]
+    | Added field 'Temperature'.
+    | Added field 'TempRate'.
+    | Added field 'HeatFlux'.
+
+[17:05:05] [INFO ] [ThermalFields]
+    | Core fields registered: Temperature, TempRate, HeatFlux.
+
+[17:05:05] [INFO ] [InitFields]
+    | Auto-registered PhysicsFields module: Thermal
+
+[17:05:05] [INFO ] [FieldManager]
+    | Added field 'ID'.
+    | Added field 'PartID'.
+    | Added field 'MatID'.
+    | Added field 'Coords'.
+    | Added field 'Volume'.
+    | Added field 'ActiveStatus'.
+
+[17:05:05] [INFO ] [InitFields]
+    | Global ActiveStatus field registered.
+
+[17:05:05] [INFO ] [FieldManager]
+    | Resized all 9 fields for 5000 particles.
+
+[17:05:05] [INFO ] [InitFields]
+    | ActiveStatus initialized to 1 for all particles.
+    | Binding high-speed material state pointers...
+
+[17:05:05] [INFO ] [MeshData]
+    | Populated particle geometry fields into FieldManager for 5000 particles.
+
+[17:05:05] [INFO ] [InitFields]
+    | All fields allocated for 5000 particles. Total fields: 9.
+
+[17:05:05] [INFO ] [InitConditions]
+    | ==================================================
+    | Entering Conditions Initialization Phase...
+    | ==================================================
+
+[17:05:05] [INFO ] [ReaderRegistry]
+    | Creating reader for: .grpd (name: LoadReader)
+
+[17:05:05] [INFO ] [GrpdMeshReader]
+    | Reading file: d:\C++pro\GRPD\Examples\Thermal_Validation_5x10\Thermal_Validation_5x10.grpd
+    | Entering *PARTICLE section (Line 1)
+    | Pre-allocated memory for 5000 particles (Zero-Reallocation)
+    | Entering *LOAD section (Line 5004)
+    | ============================================
+    | File reading complete!
+    | Total particles: 5000
+    | Total load entries: 200
+    | ============================================
+
+[17:05:05] [INFO ] [InitConditions]
+    | Load statistics:
+    | - FLUX : 100
+    | - T : 100
+    | Boundary conditions initialization complete.
+
+[17:05:05] [INFO ] [InitNeighbors]
+    | ==================================================
+    | Entering Neighbor Search Phase...
+    | ==================================================
+    | Horizon radius: 0.301500
+
+[17:05:05] [INFO ] [NeighborList]
+    | Starting full-flat CSR search for 5000 particles, horizon = 0.301500
+    | Cell grid: 17 x 33 x 1 = 561 cells
+    | Flat cell list built in 0.999928 ms
+    | Pass 1 (count) done in 0.000000 ms
+    | Total bonds: 134636, Memory: 1 MB
+    | Pass 2 (fill) done in 1.000166 ms
+    | Max neighbors: 28
+    | Total time: 2.000093 ms
+
+[17:05:05] [INFO ] [FieldManager]
+    | Added field 'NeighborCount'.
+
+[17:05:05] [INFO ] [InitNeighbors]
+    | NeighborCount field populated for 5000 particles.
+
+[17:05:05] [INFO ] [FieldManager]
+    | Added field 'BondIntegrity'.
+
+[17:05:05] [INFO ] [InitNeighbors]
+    | Global BondIntegrity scalar field properly initialized to 0.0
+
+[17:05:05] [INFO ] [FieldManager]
+    | Added field 'IsSurface'.
+
+[17:05:05] [INFO ] [SurfaceDetector]
+    | Volume Deficit check complete. Identified 308 surface particles out of 5000 (Threshold: 0.750000).
+
+[17:05:05] [INFO ] [InitNeighbors]
+    | Neighbor search phase complete.
+
+[17:05:05] [INFO ] [InitContact]
+    | ==================================================
+    | Entering Contact Initialization Phase...
+    | ==================================================
+    | No explicit ContactPairs defined in YAML. Contact engine skipping.
+    | Initializing Material-specific BondIntegrity Models...
+    | Material BondIntegrity Models initialized. Total Active Models: 0
+
+[17:05:05] [INFO ] [InitSolverComponents]
+    | ==================================================
+    | Entering Solver Components Assembly Phase...
+    | ==================================================
+    | Building Time Integrator: Explicit
+
+[17:05:05] [INFO ] [TimeIntegrator]
+    | Explicitly set OMP Threads to: 16
+
+[17:05:05] [INFO ] [InitSolverComponents]
+    | Time Integrator configured.
+    | Building Space Kernel: NOSB_T
+
+[17:05:05] [INFO ] [NOSB_Base]
+    | Applied KernelWeightType: Linear
+    | Applied ZeroEnergyG0: 0.100000
+    | Applied ZeroEnergyMethod string: Zhang
+
+[17:05:05] [INFO ] [InitSolverComponents]
+    | Space Kernel 'NOSB_T' configured.
+    | Total kernels assembled: 1
+
+[17:05:05] [INFO ] [PDEngine]
+    | PD simulation context initialized successfully.
+
+[17:05:05] [INFO ] [EngineManager]
+    | All solvers initialized. Total: 1
+    | ==================================================
+    | Entering Main Solver Phase
+    | ==================================================
+    | Solving: PD
+
+[17:05:05] [INFO ] [PDEngine]
+    | Starting PD Engine Solve Phase...
+
+[17:05:05] [INFO ] [ExplicitEuler]
+    | Identified 1st-order ODE integration target: Temperature <- TempRate
+
+[17:05:05] [INFO ] [FieldManager]
+    | Added field 'ShapeTensorInv'.
+    | Added field 'VHorizon'.
+    | Added field 'SumFac'.
+    | Added field 'SumOmegaRaw'.
+
+[17:05:05] [INFO ] [NOSB_Base]
+    | Computing InfluenceWeight + Shape Tensor Inverse (K^-1)...
+    | All NOSB base fields registered and Shape Tensor Inverse computed.
+
+[17:05:05] [INFO ] [FieldManager]
+    | Added field 'TempGradient'.
+    | Added field 'HeatFluxVec'.
+
+[17:05:05] [INFO ] [NOSB_T]
+    | Instantiated ThermalStabilizer globally in Phase 0 using strategy: Zhang
+
+[17:05:05] [INFO ] [ExplicitEuler]
+    | Computed safe Thermal limit dt: 1.069926e-04 (dx = 1.000000e-01, minDt = 1.337407e-04)
+    | Starting Explicit Loop with 2 LoadStep(s). Default dt = 1.000000e-04
+    | === Load Step 1 / 2 | TargetTime: 1.000000e+00 | dt: 1.000000e-04 | KBC: 0 ===
+    | --- Step 0 | Time: 0.000000e+00  |  Pure Compute: 0.000000e+00s  |  Total: 0.000000e+00s  |  Speed:
+    | 0 steps/s
+    | --- Step 1000 | Time: 1.000000e-01  |  Pure Compute: 1.554433e+00s  |  Total: 1.556427e+00s  | 
+    | Speed: 643 steps/s
+    | --- Step 2000 | Time: 2.000000e-01  |  Pure Compute: 3.280005e+00s  |  Total: 3.284992e+00s  | 
+    | Speed: 609 steps/s
+    | --- Step 3000 | Time: 3.000000e-01  |  Pure Compute: 4.828842e+00s  |  Total: 4.839813e+00s  | 
+    | Speed: 621 steps/s
+    | --- Step 4000 | Time: 4.000000e-01  |  Pure Compute: 6.374313e+00s  |  Total: 6.388909e+00s  | 
+    | Speed: 627 steps/s
+    | --- Step 5000 | Time: 5.000000e-01  |  Pure Compute: 8.030352e+00s  |  Total: 8.049936e+00s  | 
+    | Speed: 622 steps/s
+    | --- Step 6000 | Time: 6.000000e-01  |  Pure Compute: 9.684431e+00s  |  Total: 9.707006e+00s  | 
+    | Speed: 619 steps/s
+    | --- Step 7000 | Time: 7.000000e-01  |  Pure Compute: 1.129898e+01s  |  Total: 1.132355e+01s  | 
+    | Speed: 619 steps/s
+    | --- Step 8000 | Time: 8.000000e-01  |  Pure Compute: 1.290367e+01s  |  Total: 1.293232e+01s  | 
+    | Speed: 619 steps/s
+    | --- Step 9000 | Time: 9.000000e-01  |  Pure Compute: 1.451532e+01s  |  Total: 1.454596e+01s  | 
+    | Speed: 620 steps/s
+    | === Load Step 2 / 2 | TargetTime: 2.000000e+00 | dt: 1.000000e-04 | KBC: 1 ===
+    | --- Step 10000 | Time: 1.000000e+00  |  Pure Compute: 1.607349e+01s  |  Total: 1.610912e+01s  | 
+    | Speed: 622 steps/s
+    | --- Step 11000 | Time: 1.100000e+00  |  Pure Compute: 1.771957e+01s  |  Total: 1.776018e+01s  | 
+    | Speed: 620 steps/s
+    | --- Step 12000 | Time: 1.200000e+00  |  Pure Compute: 1.943496e+01s  |  Total: 1.947856e+01s  | 
+    | Speed: 617 steps/s
+    | --- Step 13000 | Time: 1.300000e+00  |  Pure Compute: 2.100865e+01s  |  Total: 2.105425e+01s  | 
+    | Speed: 618 steps/s
+    | --- Step 14000 | Time: 1.400000e+00  |  Pure Compute: 2.258482e+01s  |  Total: 2.263201e+01s  | 
+    | Speed: 619 steps/s
+    | --- Step 15000 | Time: 1.500000e+00  |  Pure Compute: 2.433017e+01s  |  Total: 2.438056e+01s  | 
+    | Speed: 616 steps/s
+    | --- Step 16000 | Time: 1.600000e+00  |  Pure Compute: 2.590379e+01s  |  Total: 2.595618e+01s  | 
+    | Speed: 617 steps/s
+    | --- Step 17000 | Time: 1.700000e+00  |  Pure Compute: 2.745218e+01s  |  Total: 2.750756e+01s  | 
+    | Speed: 619 steps/s
+    | --- Step 18000 | Time: 1.800000e+00  |  Pure Compute: 2.903507e+01s  |  Total: 2.910671e+01s  | 
+    | Speed: 619 steps/s
+    | --- Step 19000 | Time: 1.900000e+00  |  Pure Compute: 3.068239e+01s  |  Total: 3.076774e+01s  | 
+    | Speed: 619 steps/s
+    | --- Step 20000 | Time: 2.000000e+00  |  Pure Compute: 3.228905e+01s  |  Total: 3.237739e+01s  | 
+    | Speed: 619 steps/s
+    | Finished. Total: 32.379380s  |  Pure Compute avg: 0.001614 s/step
+
+[17:05:37] [INFO ] [PDEngine]
+    | PD Engine Solve Phase Finished.
+
+[17:05:37] [INFO ] [EngineManager]
+    | Main Solver Phase finished.
+    | ==================================================
+    | Entering Post-processing Phase
+    | ==================================================
+    | Outputting: PD
+    | Post-processing Phase finished.

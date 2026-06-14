@@ -50,3 +50,7 @@ docs/superpowers/task.md
 *.prproj
 Adobe Premiere Pro Audio Previews/
 Adobe Premiere Pro Auto-Save/
+
+# Temporary directories
+scratch/
+test_debug/

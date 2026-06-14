@@ -5,7 +5,7 @@
 # ANSYS MAPDL 可执行文件的完整路径
 # 请根据你的本地安装版本修改此路径
 # 常见路径格式: C:\Program Files\ANSYS Inc\v251\ANSYS\bin\winx64\ansys251.exe
-ansys_executable: "D:\\Software\\ANSYS\\ANSYS Inc\\v251\\ANSYS\\bin\\winx64\\ansys251.exe"
+ansys_executable: "D:\\\\software\\\\ANSYS\\\\ANSYS Inc\\\\v251\\\\ANSYS\\\\bin\\\\winx64\\\\ANSYS251.exe"
 
 # 默认求解器设置
 defaults:
@@ -18,9 +18,7 @@ defaults:
   # 是否在求解完成后自动清理临时文件
   auto_cleanup: false
 
-# 允许的工作目录 (安全白名单，防止意外操作到系统目录)
-# 工作目录默认为本 MCP 服务器下的 work_dir/ 子目录，自动创建递增编号 run_XXXX
 allowed_directories:
-  - "D:\\Project_C++\\GRPD\\tools\\ansys-mcp-server"
-  - "D:\\Project_C++\\GRPD\\Examples"
-  - "D:\\Project_C++\\GRPD\\build"
+  - "D:/C++pro/GRPD/tools/ansys-mcp-server"
+  - "D:/C++pro/GRPD/Examples"
+  - "D:/C++pro/GRPD/build"

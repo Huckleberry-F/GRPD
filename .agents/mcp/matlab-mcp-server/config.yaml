@@ -1,14 +1,19 @@
-# Point Integration MATLAB MCP Server configuration.
+# ==============================================================================
+# MATLAB MCP Server 配置文件
+# ==============================================================================
 
-# Use "matlab" when MATLAB is available on PATH, or set an absolute path such as:
-# C:\Program Files\MATLAB\R2024b\bin\matlab.exe
+# MATLAB 可执行文件路径
+# 如果 MATLAB 已在 PATH 中，可直接填 "matlab"，否则填绝对路径
 matlab_executable: "matlab"
 
 defaults:
+  # 任务超时时间（秒）
   timeout_seconds: 300
+  # 是否在运行结束后保留临时文件
   keep_temp_files: false
 
+# 允许的工作目录
 allowed_work_dirs:
-  - "D:\\Project_C++\\GRPD\\tools\\matlab-mcp-server"
-  - "D:\\Project_C++\\GRPD\\Examples"
-  - "D:\\Project_C++\\GRPD\\build"
+  - "D:\\\\C++pro\\\\GRPD\\tools\\matlab-mcp-server"
+  - "D:\\\\C++pro\\\\GRPD\\Examples"
+  - "D:\\\\C++pro\\\\GRPD\\build"

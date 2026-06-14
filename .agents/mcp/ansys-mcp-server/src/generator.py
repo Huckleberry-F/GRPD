@@ -65,6 +65,11 @@ def generate_apdl_from_yaml(
     fallback_start_y = y1 if default_start_y is None else float(default_start_y)
     fallback_end_y = y2 if default_end_y is None else float(default_end_y)
 
+    if result_time <= 0.0 and result_substep > 0:
+        dt = float(solver.get("TimeStep_dt", 0.0))
+        if dt > 0.0:
+            result_time = result_substep * dt
+
     if result_time > 0.0:
         output_stem = f"ansys_val_results_t{result_time}"
     else:
@@ -176,6 +181,10 @@ def generate_apdl_from_yaml(
             "ANTYPE, TRANS",      # 瞬态分析
             "TIMINT, ON",         # 开启时间积分
         ]
+        if is_thermal:
+            apdl += [
+                "TINTP, , 0.5",   # 启用 Crank-Nicolson 二阶无阻尼积分
+            ]
     else:
         apdl += [
             "ANTYPE, STATIC",     # 静力学/稳态分析
@@ -195,6 +204,8 @@ def generate_apdl_from_yaml(
         step_time = float(step.get("Time", 1.0))
         step_kbc = int(step.get("KBC", 0))
         step_substeps = int(step.get("NumSubsteps", num_substeps))
+        # 限制隐式求解步数，避免跟随 GRPD 显式细密步长
+        step_substeps = min(100, step_substeps) if step_substeps > 100 else step_substeps
 
         if is_transient:
             apdl += [

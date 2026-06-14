@@ -81,10 +81,9 @@ Solver:
       KBC: 0
       NumSubsteps: 130
 
-  MaxPseudoSteps: 10000
-  MassScaleFactor: 1.25e8
+  MaxPseudoSteps: 20000
+  MassScaleFactor: 1.0e8
   RampWaveRatio: 10.0
-  RampIters: 5000
   DampingMethod: "HybridKinetic"
   Fracture_Strategy: "SimpleNRFracture"
   NRStiffnessType: "Initial"
@@ -99,11 +98,8 @@ Solver:
   OMP_Threads: 22
   Horizon: 0.3015 # 3.015 * 0.1
   KernelWeightType: "Linear"
-  ZeroEnergyG0: 0.5
+  ZeroEnergyG0: 1.0
   ZeroEnergyMethod: "Wan"
-  ZeroEnergyPlasticFloor: 0.1
-  ZeroEnergyPlasticRate: 10.0
-  ZeroEnergyDamageCoupling: true
 
 # 8. IO 输出设置 (Writer)
 Writer:
