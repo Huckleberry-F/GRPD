@@ -5,13 +5,52 @@ echo GRPD One-Click Setup and Build Script (Windows)
 echo ==============================================================
 
 echo.
-echo [1/4] Checking Python Dependencies for High-Performance Voxelization...
-python -m pip install open3d numpy pyyaml pydantic
+echo [1/4] Setting up Python Virtual Environment ^& Dependencies...
+
+REM ---- 1a. 探测系统 Python 解释器 ----
+where python >nul 2>nul
 if %ERRORLEVEL% neq 0 (
-    echo [ERROR] Failed to install Python dependencies. Please make sure Python 3.10-3.12 is installed and added to PATH.
+    echo [ERROR] Python not found in PATH!
+    echo =^> Please install Python 3.10-3.12 and ensure it is added to PATH.
     pause
     exit /b 1
 )
+
+for /f "delims=" %%V in ('python --version 2^>^&1') do set PYVER=%%V
+echo Detected system Python: %PYVER%
+
+REM ---- 1b. 自动创建虚拟环境（如果尚不存在） ----
+if not exist ".venv" (
+    echo Creating virtual environment in .venv ...
+    python -m venv .venv
+    if %ERRORLEVEL% neq 0 (
+        echo [ERROR] Failed to create virtual environment!
+        echo =^> Please ensure the 'venv' module is available.
+        pause
+        exit /b 1
+    )
+    echo Virtual environment created successfully.
+) else (
+    echo Virtual environment already exists at .venv, reusing it.
+)
+
+REM ---- 1c. 激活虚拟环境 ----
+call .venv\Scripts\activate.bat
+echo Activated virtual environment: .venv
+
+REM ---- 1d. 升级 pip 并安装依赖 ----
+echo Upgrading pip...
+python -m pip install --upgrade pip --quiet
+
+echo Installing Python dependencies from requirements.txt...
+python -m pip install -r requirements.txt
+if %ERRORLEVEL% neq 0 (
+    echo [ERROR] Failed to install Python dependencies.
+    pause
+    exit /b 1
+)
+
+echo All Python dependencies installed successfully.
 
 echo.
 echo [2/4] Checking C++ Compiler (GCC) and CMake...

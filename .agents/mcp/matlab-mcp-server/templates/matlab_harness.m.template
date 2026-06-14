@@ -1,4 +1,4 @@
-﻿% GRPD Elastoplastic Constitutive Point-Integration Verification Harness
+% GRPD Elastoplastic Constitutive Point-Integration Verification Harness
 %
 % This Harness uses a modular layout:
 % 1. Dynamically load all material parameters from input JSON via reflection.

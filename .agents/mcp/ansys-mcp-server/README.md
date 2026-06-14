@@ -1,4 +1,4 @@
-﻿# ANSYS MCP Server
+# ANSYS MCP Server
 
 鏈湇鍔℃槸 GRPD 楠岃瘉閾句腑鐨?ANSYS 渚?MCP銆傚畠鍙礋璐ｇ敓鎴?APDL銆佽皟鐢?MAPDL銆佽В鏋?ANSYS 杈撳嚭鏂囦欢锛屽苟鎶?`.txt/.db/.out/.err` 绛夎矾寰勮繑鍥炵粰涓婂眰浠ｇ悊銆?
 GRPD VTK 涓?ANSYS TXT 鐨勮宸姣斿凡缁忚縼绉诲埌 `.agents/mcp/grpd-validation-mcp-server`锛屾湰鏈嶅姟涓嶅啀鍏紑 VTK/TXT 瀵规瘮 tool銆?

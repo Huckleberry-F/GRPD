@@ -1,43 +1,49 @@
-﻿# GRPD Validation MCP Server
+# GRPD Validation MCP Server
 
-鏈湇鍔¤礋璐ｈ法姹傝В鍣ㄩ獙璇佸悗澶勭悊锛氳鍙?GRPD VTK 涓?ANSYS TXT锛屾部鎸囧畾涓夌淮閲囨牱绾胯繘琛岀偣浜戣繃婊ゃ€佹姇褰卞榻愩€佹彃鍊笺€佽宸粺璁★紝骞跺鍑?Excel銆丳NG銆丣SON 涓?ZIP 鎶ュ憡銆?
-## 鑱岃矗杈圭晫
+本服务负责跨求解器验证后处理：读取 GRPD VTK 与 ANSYS TXT，沿指定三维采样线进行点云过滤、投影对齐、插值、误差统计，并导出 Excel、PNG、JSON 与 ZIP 报告。
 
-- 涓嶈繍琛?GRPD銆?- 涓嶈繍琛?ANSYS銆?- 涓嶅啓鍏ュ疄楠屽巻鍙叉暟鎹簱銆?- 瀹為獙璁板綍鐢?`grpd-experiment-mcp-server` 璐熻矗銆?
-## 鐩綍缁撴瀯
+## 职责边界
+
+- 不运行 GRPD。
+- 不运行 ANSYS。
+- 不写入实验历史数据库。
+- 实验记录由 `grpd-experiment-mcp-server` 负责。
+
+## 目录结构
 
 ```text
 grpd-validation-mcp-server/
-鈹溾攢鈹€ requirements.txt
-鈹溾攢鈹€ README.md
-鈹溾攢鈹€ server.py
-鈹溾攢鈹€ src/
-鈹?  鈹溾攢鈹€ __init__.py
-鈹?  鈹溾攢鈹€ service.py
-鈹?  鈹溾攢鈹€ comparison.py
-鈹?  鈹溾攢鈹€ paths.py
-鈹?  鈹斺攢鈹€ result_parser.py
-鈹溾攢鈹€ templates/
-鈹?  鈹斺攢鈹€ README.md
-鈹斺攢鈹€ tests/
-    鈹溾攢鈹€ __init__.py
-    鈹溾攢鈹€ conftest.py
-    鈹溾攢鈹€ test_compare_grpd_ansys.py
-    鈹斺攢鈹€ test_standard_layout.py
+├── requirements.txt
+├── README.md
+├── server.py
+├── src/
+│   ├── __init__.py
+│   ├── service.py
+│   ├── comparison.py
+│   ├── paths.py
+│   └── result_parser.py
+├── templates/
+│   └── README.md
+└── tests/
+    ├── __init__.py
+    ├── conftest.py
+    ├── test_compare_grpd_ansys.py
+    └── test_standard_layout.py
 ```
 
-`server.py` 鏄?FastMCP facade锛屽彧璐熻矗娉ㄥ唽鍏紑 tool 骞惰矾鐢卞埌 `src.service`銆倂alidation MCP 涓嶉渶瑕?`runner.py` 鎴?`generator.py`锛屽洜涓哄畠涓嶆媺璧峰閮ㄦ眰瑙ｅ櫒锛屼篃涓嶇敓鎴愭眰瑙ｈ剼鏈€?
+`server.py` 是 FastMCP facade，只负责注册公开 tool 并路由到 `src.service`。validation MCP 不需要 `runner.py` 或 `generator.py`，因为它不拉起外部求解器，也不生成求解脚本。
+
 ## MCP Tool
 
 ```text
 compare_grpd_vtk_with_ansys_txt(...)
 ```
 
-## 娴嬭瘯
+## 测试
 
 ```powershell
 cd D:\Project_C++\GRPD
 python -m pytest .agents/mcp/grpd-validation-mcp-server/tests -q
 ```
 
-娴嬭瘯浣跨敤涓存椂 mock VTK/TXT锛屼笉鐪熷疄鍚姩 GRPD 鎴?ANSYS銆?
+测试使用临时 mock VTK/TXT，不真实启动 GRPD 或 ANSYS。

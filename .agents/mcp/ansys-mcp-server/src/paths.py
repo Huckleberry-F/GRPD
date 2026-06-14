@@ -1,4 +1,4 @@
-﻿"""Path and configuration helpers for the ANSYS MCP server."""
+"""Path and configuration helpers for the ANSYS MCP server."""
 
 from __future__ import annotations
 

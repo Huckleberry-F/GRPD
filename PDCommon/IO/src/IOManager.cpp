@@ -11,6 +11,8 @@
 
 #ifdef _WIN32
 #include <windows.h>
+#elif defined(__APPLE__)
+#include <mach-o/dyld.h>
 #endif
 
 namespace PDCommon::IO {
@@ -48,10 +50,20 @@ void IOManager::initialize() {
   wchar_t exeBuf[MAX_PATH];
   GetModuleFileNameW(nullptr, exeBuf, MAX_PATH);
   fs::path exePath(exeBuf);
+  installDir_ = exePath.parent_path().parent_path().parent_path();
+#elif defined(__APPLE__)
+  char path[1024];
+  uint32_t size = sizeof(path);
+  if (_NSGetExecutablePath(path, &size) == 0) {
+    fs::path exePath(path);
+    installDir_ = exePath.parent_path().parent_path().parent_path();
+  } else {
+    installDir_ = fs::current_path();
+  }
 #else
   fs::path exePath = fs::read_symlink("/proc/self/exe");
-#endif
   installDir_ = exePath.parent_path().parent_path().parent_path();
+#endif
   LOG_INFO("[IOManager] Install directory: " + installDir_.string());
 
   // ===========================================================
@@ -82,8 +94,11 @@ void IOManager::initialize() {
   std::time_t now_time = std::chrono::system_clock::to_time_t(now);
   std::tm local_tm{};
 
-  // Windows 安全版本的 localtime
+#ifdef _WIN32
   localtime_s(&local_tm, &now_time);
+#else
+  localtime_r(&now_time, &local_tm);
+#endif
 
   char timeBuffer[64];
   std::snprintf(timeBuffer, sizeof(timeBuffer), "Result_%04d%02d%02d_%02d%02d%02d",

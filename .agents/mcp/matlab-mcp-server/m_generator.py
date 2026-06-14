@@ -8,7 +8,9 @@ from symbolic_generator import derive_constitutive_elements
 
 def generate_local_functions(sy_expr_str: str, slope_expr_str: str) -> str:
     """
-    �?SymPy 导出的原始公式替换为 params 结构体的属性读取形式，并生成供主驱动调用的局部函数�?    由于 MATLAB 局部函数无法直接访问主脚本的上下文局部变量，因此在局部函数内通过 params 直接获取参数�?    """
+    将 SymPy 导出的原始公式替换为 params 结构体的属性读取形式，并生成供主驱动调用的局部函数。
+    由于 MATLAB 局部函数无法直接访问主脚本的上下文局部变量，因此在局部函数内通过 params 直接获取参数。
+    """
     mapping = {
         "sigma0": "params.YieldStress",
         "K1": "params.LinearHardening",
@@ -91,7 +93,8 @@ end
 
 def generate_matlab_constitutive_script(parameters: dict, input_json_name: str = "input.json", output_json_name: str = "output.json") -> str:
     """
-    根据本构参数和材�?Spec YAML 动态生�?MATLAB 单点积分校验脚本�?    """
+    根据本构参数和材料 Spec YAML 动态生成 MATLAB 单点积分校验脚本。
+    """
     # 1. 优先检测人为指定的m文件拦截逻辑
     if "custom_m_file" in parameters and parameters["custom_m_file"]:
         custom_file_path = parameters["custom_m_file"]
@@ -108,7 +111,7 @@ def generate_matlab_constitutive_script(parameters: dict, input_json_name: str =
         with open(spec_file, "r", encoding="utf-8") as f:
             spec_dict = yaml.safe_load(f)
     else:
-        # 如果没有指定 spec_file，根�?model 参数动态选择
+        # 如果没有指定 spec_file，根据 model 参数动态选择
         model_type = parameters.get("model", "J2VoceLemaitre")
         server_dir = os.path.dirname(os.path.abspath(__file__))
 

@@ -290,19 +290,17 @@ def generate_from_yaml(yaml_path):
                 # 邻居数 < 4 的视为孤立粒子并剔除
                 # ===========================================================
                 pts_arr = np.column_stack([x_flat, y_flat, z_flat])
-                pcd_filter = o3d.geometry.PointCloud()
-                pcd_filter.points = o3d.utility.Vector3dVector(pts_arr)
-                kdtree = o3d.geometry.KDTreeFlann(pcd_filter)
+                
+                # 使用成熟稳定的 scipy cKDTree 替代 o3d.geometry.KDTreeFlann，避免 macOS 上的崩溃并大幅度提升效率
+                from scipy.spatial import cKDTree
+                kdtree = cKDTree(pts_arr)
                 
                 min_neighbors = 4 if dim == 3 else 3
                 search_radius = dx * 1.5
-                keep_mask = np.ones(len(pts_arr), dtype=bool)
                 
-                for idx in range(len(pts_arr)):
-                    [count, _, _] = kdtree.search_radius_vector_3d(pcd_filter.points[idx], search_radius)
-                    # count 包含自身，所以实际邻居数 = count - 1
-                    if (count - 1) < min_neighbors:
-                        keep_mask[idx] = False
+                # 批量查询半径范围内的邻居数（注意 counts 包含粒子自身）
+                counts = kdtree.query_ball_point(pts_arr, search_radius, return_length=True)
+                keep_mask = (counts - 1) >= min_neighbors
                 
                 n_removed = np.sum(~keep_mask)
                 if n_removed > 0:

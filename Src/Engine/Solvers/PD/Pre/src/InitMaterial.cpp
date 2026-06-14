@@ -1,8 +1,8 @@
-#include "PDEnginePre.h"
 #include "Logger.h"
 #include "Material.h"
 #include "MaterialManager.h"
 #include "MaterialRegistry.h"
+#include "PDEnginePre.h"
 #include "Particle.h"
 #include "ParticleManager.h"
 #include <string>
@@ -16,8 +16,7 @@ namespace Src::Engine::Solvers::PD::Init {
 // 依次读取 YAML 内所有 Material 对象信息，创建对应的注册表内多态实例。
 // 然后将其安全且去重地指针化赋予每个对应的 Particle。
 // ============================================================================
-void InitMaterial(PDCommon::Core::PDContext &ctx,
-                  const YAML::Node &config) {
+void InitMaterial(PDCommon::Core::PDContext &ctx, const YAML::Node &config) {
   LOG_INFO("[InitMaterial] ==================================================");
   LOG_INFO("[InitMaterial] Entering Material Initialization Phase...");
   LOG_INFO("[InitMaterial] ==================================================");
@@ -49,8 +48,8 @@ void InitMaterial(PDCommon::Core::PDContext &ctx,
         std::string name =
             matNode["Name"] ? matNode["Name"].as<std::string>() : "";
 
-        LOG_INFO("[InitMaterial] Instantiating material [" + std::to_string(matId) +
-                 "] of type: " + type);
+        LOG_INFO("[InitMaterial] Instantiating material [" +
+                 std::to_string(matId) + "] of type: " + type);
         std::string keyName =
             name.empty() ? "Mat_" + std::to_string(matId) : name;
 
@@ -99,8 +98,8 @@ void InitMaterial(PDCommon::Core::PDContext &ctx,
     }
   }
 
-  LOG_INFO("[InitMaterial] Successfully assigned materials to " + std::to_string(assignCount) +
-           " particles.");
+  LOG_INFO("[InitMaterial] Successfully assigned materials to " +
+           std::to_string(assignCount) + " particles.");
 }
 
 } // namespace Src::Engine::Solvers::PD::Init

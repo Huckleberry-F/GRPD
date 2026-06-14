@@ -1,4 +1,4 @@
-﻿"""SQLite history helpers for ANSYS MCP validation runs."""
+"""SQLite history helpers for ANSYS MCP validation runs."""
 
 from __future__ import annotations
 

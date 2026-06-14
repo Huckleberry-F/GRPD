@@ -1,4 +1,5 @@
-﻿# GRPD Validation MCP Templates
+# GRPD Validation MCP Templates
 
-褰撳墠 validation MCP 涓嶇敓鎴愭眰瑙ｈ剼鏈紝涔熶笉浣跨敤闈欐€佹ā鏉裤€?
-淇濈暀鏈洰褰曟槸涓轰簡璁?MCP 鏈嶅姟鐩綍缁撴瀯缁熶竴锛涘鏋滃悗缁渶瑕佹姤鍛婃牱寮忔ā鏉匡紝搴斿彧鍦ㄨ繖閲屾斁缃潤鎬佹ā鏉挎枃浠讹紝鎶ュ憡鐢熸垚閫昏緫浠嶆斁鍦?`src/comparison.py`銆?
+当前 validation MCP 不生成求解脚本，也不使用静态模板。
+
+保留本目录是为了让 MCP 服务目录结构统一；如果后续需要报告样式模板，应只在这里放置静态模板文件，报告生成逻辑仍放在 `src/comparison.py`。
