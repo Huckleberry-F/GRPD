@@ -57,45 +57,46 @@ _原生库仑摩擦接触算法验证 (Coulomb Friction)：大变形接触下精
 
 ## 🚀 快速上手 (Quick Start)
 
-让引擎跑起来只需简单几步！我们的计算管线通过 `PD.yaml` 灵活调度。
+为了降低多平台下环境搭建和编译的门槛，我们设计了**一键式多平台（Windows / macOS / Linux）环境配置与构建系统**。
 
-### 1. 基本依赖准备
+脚本存放在 `setup/` 物理目录下，通过根目录下的统一路由脚本执行。
 
-- **C++17 编译器**（需支持 OpenMP）：例如 TDM-GCC 或 Visual Studio 2019/2022+。
-- **CMake** (3.15+) 及 **Python** (3.10+)。Python 端依赖库请通过以下命令装载：
+### 一键脚本能为您做什么？
+每个平台都以原生命令行（PowerShell/Bash）实现了以下三个阶段的完全自动化：
+1. **🔍 平台环境检测 (`check_env`)**：自动探测当前系统是否安装 CMake、支持 OpenMP 的 C++ 编译器和 Python，并自适应探测本地 `MATLAB` 与 `ANSYS MAPDL` 物理路径。
+2. **📦 依赖补全与虚拟环境配置 (`install_deps`)**：
+   - 自动检测并提示/安装系统工具（如 Windows 下通过 `winget` 静默装载编译器；Unix 类系统给出 `brew` 或 `apt` 指导命令）。
+   - 在本地自动创建独立的 `.venv` 虚拟环境并安装所有 Python 科学计算库（`open3d`、`numpy`、`pyyaml`、`pydantic`）。
+   - **自动注册本地与全局 IDE MCP 服务**（将 `ansys-server`、`matlab-server` 等自动写入 `~/.gemini/` 的 `mcp_config.json`），实现开箱即用的 Agent CAE 交互能力。
+3. **🛠️ 自动编译与构建测试 (`build_project`)**：自动配置 CMake，在 Release 模式下根据 CPU 物理核心数进行多线程并行编译，并在成功后拉起 GRPD 引擎。
 
-  ```bash
-  pip install open3d numpy pyyaml pydantic
-  ```
+---
 
-### 2. 获取源码与编译
+### 使用方法
 
 务必使用 `--recurse-submodules` 拉取第三方子模块（如 yaml-cpp）：
 
 ```bash
 git clone -b v4.5 --recurse-submodules https://github.com/Huckleberry-F/GRPD.git
 cd GRPD
-mkdir build && cd build
-# 生成工程 (Windows 环境使用 VS 则可以直接 cmake ..)
-cmake -G "MinGW Makefiles" ..
-# 执行最终多线程构建
-cmake --build . --config Release -j 12
 ```
 
-### 3. 执行第一个算例
+#### 💻 Windows 平台
+直接双击运行根目录下的一键构建脚本（或在终端执行）：
+```cmd
+setup_build.cmd
+```
+*（提示：如果需要单独配置 Python 虚拟环境及 MCP 依赖，可以直接双击运行 `setup_env.cmd`）*
 
-程序编译生成至 `bin/release/` 下。让我们以自带的 Box 测试用例为例：
-
+#### 🍎 macOS / 🐧 Linux 平台
+在终端执行根目录下的一键构建脚本即可：
 ```bash
-# 1. 移步业务运行目录
-cd Examples\Box
-
-# 2. 调用 Python 前处理脚本引擎，根据 YAML 将 STL 立体离散化生成初始节点网络
-python ..\..\Generate_py\generate_model.py PD.yaml
-
-# 3. 轰鸣起动机，调用 C++ 引擎（它会自动拾取本目录的 PD.yaml）
-..\..\bin\release\GRPD.exe
+./setup_build.sh
 ```
+
+---
+
+### 执行算例
 
 计算结束后，当前目录下将自动生成形如 `Result_YYYYMMDD_HHMMSS/` 的时间戳数据包，直接向 ParaView 中一拉，即可探索分析您的模拟数据。
 

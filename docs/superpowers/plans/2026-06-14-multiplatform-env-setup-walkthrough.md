@@ -13,6 +13,8 @@
    - `setup_and_build`：作为各平台的总控制脚本。
 3. **兼容性入口重定向**：
    - 覆写了根目录下的 `setup_build.sh`、`setup_build.cmd` 和 `setup_env.cmd`，自动根据当前平台路由到对应的 `setup/` 物理子脚本中，既保证了原有使用习惯，又彻底保洁了根目录。
+4. **更新 `README.md` 使用指南**：
+   - 移除原本繁琐的手工配置与依赖命令，写入了全新多平台一键构建系统能实现的自动化功能清单（环境检查、依赖补全、MCP 自动绑定、多线程 CMake 构建与引擎拉起）以及各平台下的运行命令。
 
 ---
 
@@ -34,6 +36,8 @@
 *   [setup_build.sh](file:///Users/hanbozhang/C++/GRPD/setup_build.sh) (路由更新)
 *   [setup_build.cmd](file:///Users/hanbozhang/C++/GRPD/setup_build.cmd) (路由更新)
 *   [setup_env.cmd](file:///Users/hanbozhang/C++/GRPD/setup_env.cmd) (路由更新)
+*   [README.md](file:///Users/hanbozhang/C++/GRPD/README.md) (Quick Start 使用手册更新)
+
 
 ---
 
