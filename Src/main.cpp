@@ -30,7 +30,8 @@ int main(int argc, char *argv[]) {
 
   GRSIM.ExportAll();
 
-  system("pause");
+  // 注释掉 system("pause")，防止后台自动化回归测试及 CI 挂起
+  // system("pause");
 
   return 0;
 }

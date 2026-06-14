@@ -1,0 +1,445 @@
+% GRPD Elastoplastic Constitutive Point-Integration Verification Harness
+%
+% This Harness uses a modular layout:
+% 1. Dynamically load all material parameters from input JSON via reflection.
+% 2. Decouple specific hardening laws and damage evolution from the main loop via local functions.
+% 3. Keep only continuum mechanics and deformation metric calculations in the loop body.
+
+inputPath = '{INPUT_JSON_NAME}';
+outputPath = '{OUTPUT_JSON_NAME}';
+payload = jsondecode(fileread(inputPath));
+params = payload.parameters;
+F_path = payload.F_path;
+
+% 1. Default initialization of basic elastic parameters to prevent undefined variables
+LinearHardening = 0.0;
+VoceR = 0.0;
+VoceB = 0.0;
+LemaitreS = 1.0;
+Lemaitre_s = 1.0;
+DamageThreshold = 0.0;
+CriticalDamage = 0.99;
+DamageAccelThreshold = 1.0;
+DamageAccelFactor = 1.0;
+
+% 2. Execute dynamic parameter field reflection
+fields = fieldnames(params);
+for i = 1:numel(fields)
+    eval(sprintf('%s = params.%s;', fields{i}, fields{i}));
+end
+
+E = params.YoungsModulus;
+nu = params.PoissonsRatio;
+sigma0 = params.YieldStress;
+isLarge = params.LargeDeformation;
+
+hasDamage = {HAS_DAMAGE};
+if hasDamage
+    S = params.LemaitreS;
+    s = params.Lemaitre_s;
+    p_D = params.DamageThreshold;
+    Dc = params.CriticalDamage;
+    damageAccelThreshold = params.DamageAccelThreshold;
+    damageAccelFactor = params.DamageAccelFactor;
+end
+
+% Lame constants calculation
+G = E / (2.0 * (1.0 + nu));
+lambda = E * nu / ((1.0 + nu) * (1.0 - 2.0 * nu));
+bulk = E / (3.0 * (1.0 - 2.0 * nu));
+
+% Initialize output
+eqp = 0.0;
+real_eq = 0.0;
+damage = 0.0;
+epsP = zeros(3, 3);
+rows = struct([]);
+
+% Initialize explicit variables
+eqp_exp = 0.0;
+real_eq_exp = 0.0;
+damage_exp = 0.0;
+epsP_exp = zeros(3, 3);
+
+for k = 1:size(F_path, 1)
+    F_flat = F_path(k, :);
+    F = [F_flat(1), F_flat(2), F_flat(3);
+         F_flat(4), F_flat(5), F_flat(6);
+         F_flat(7), F_flat(8), F_flat(9)];
+
+    if isLarge
+        epsMat = 0.5 * (F' * F - eye(3));
+    else
+        epsMat = 0.5 * (F + F' - 2.0 * eye(3));
+    end
+    strain = epsMat;
+    % 9-component strain tensor for JSON output (row-major)
+    strain9 = [epsMat(1,1), epsMat(1,2), epsMat(1,3), ...
+               epsMat(2,1), epsMat(2,2), epsMat(2,3), ...
+               epsMat(3,1), epsMat(3,2), epsMat(3,3)];
+
+    epsE = strain - epsP;
+    trE = trace(epsE);
+    sTrial = lambda * trE * eye(3) + 2.0 * G * epsE;
+
+    sM = trace(sTrial) / 3.0;
+    sDevTrial = sTrial - sM * eye(3);
+    devNorm2 = sum(sum(sDevTrial .* sDevTrial));
+    J2 = sqrt(max(0.0, 1.5 * devNorm2));
+
+    if hasDamage
+        Wn = max(1.0 - damage, 0.001);
+    else
+        Wn = 1.0;
+    end
+
+    % Failure truncation
+    if hasDamage && damage >= Dc
+        p = sM;
+        if sM >= 0
+            p = Wn * sM;
+        end
+        sigma_cauchy = Wn * sDevTrial + p * eye(3);
+    else
+        gamma = 0.0;
+        alphaNew = eqp;
+        if hasDamage
+            realEqNew = real_eq;
+        end
+        W = Wn;
+        SY = eval_yield_stress(eqp, params);
+
+        if J2 > 1e-16
+            f = J2 - SY;
+            if f > 1e-8
+                % Call local Newton-Raphson solver for dgamma
+                [dgamma, converged] = solve_plastic_multiplier(J2, eqp, Wn, G, params);
+                if ~converged
+                    warning('Plastic multiplier Newton-Raphson failed to converge at step %d', k);
+                end
+
+                gamma = dgamma;
+                alphaNew = eqp + gamma;
+
+                SY = eval_yield_stress(alphaNew, params);
+                if hasDamage
+                    realEqNew = real_eq + gamma / Wn;
+                    q = Wn * SY;
+                    p = sM;
+                    if sM >= 0
+                        p = Wn * sM;
+                    end
+                else
+                    q = SY;
+                    p = sM;
+                end
+
+                sDevNew = (q / J2) * sDevTrial;
+                sigma_cauchy = sDevNew + p * eye(3);
+
+                if hasDamage
+                    if sM >= 0
+                        volFactor = p / (3.0 * Wn * bulk);
+                    else
+                        volFactor = sM / (3.0 * bulk);
+                    end
+                    epsENew = sDevNew / (2.0 * G * Wn) + volFactor * eye(3);
+                else
+                    volFactor = sM / (3.0 * bulk);
+                    epsENew = sDevNew / (2.0 * G) + volFactor * eye(3);
+                end
+                epsP = strain - epsENew;
+
+                if hasDamage && realEqNew > p_D
+                    Y = -(q^2 / (6.0 * G * Wn * Wn));
+                    if sM >= 0.0
+                        Y = Y - sM^2 / (2.0 * bulk);
+                    end
+                    if damage >= damageAccelThreshold
+                        Y = Y * damageAccelFactor;
+                    end
+
+                    f2 = -Y / S;
+                    f2s = f2^s;
+
+                    % Call local Newton-Raphson solver for damage factor W
+                    [W, converged_dmg] = solve_damage_factor(Wn, f2s, dgamma, params);
+                    if ~converged_dmg
+                        warning('Damage Newton-Raphson failed to converge at step %d', k);
+                    end
+                end
+            else
+                % Elastic state
+                if hasDamage
+                    p = sM;
+                    if sM >= 0
+                        p = Wn * sM;
+                    end
+                    sigma_cauchy = Wn * sDevTrial + p * eye(3);
+                else
+                    p = sM;
+                    sigma_cauchy = sDevTrial + p * eye(3);
+                end
+            end
+        else
+            % Pure hydrostatic trial
+            if hasDamage
+                p = sM;
+                if sM >= 0
+                    p = Wn * sM;
+                end
+                sigma_cauchy = Wn * sDevTrial + p * eye(3);
+            else
+                p = sM;
+                sigma_cauchy = sDevTrial + p * eye(3);
+            end
+        end
+
+        eqp = alphaNew;
+        if hasDamage
+            real_eq = realEqNew;
+            damage = max(damage, 1.0 - W);
+        end
+    end
+
+    sDev_cauchy = sigma_cauchy - trace(sigma_cauchy)/3.0 * eye(3);
+    mises = sqrt(1.5 * sum(sum(sDev_cauchy .* sDev_cauchy)));
+
+    if isLarge
+        PK1 = F * sigma_cauchy;
+        stress9 = [PK1(1,1), PK1(1,2), PK1(1,3), ...
+                   PK1(2,1), PK1(2,2), PK1(2,3), ...
+                   PK1(3,1), PK1(3,2), PK1(3,3)];
+    else
+        stress9 = [sigma_cauchy(1,1), sigma_cauchy(1,2), sigma_cauchy(1,3), ...
+                   sigma_cauchy(2,1), sigma_cauchy(2,2), sigma_cauchy(2,3), ...
+                   sigma_cauchy(3,1), sigma_cauchy(3,2), sigma_cauchy(3,3)];
+    end
+
+    % ----------------- Explicit Euler Integration (Forward Euler) -----------------
+    if hasDamage
+        Wn_exp = max(1.0 - damage_exp, 0.001);
+    else
+        Wn_exp = 1.0;
+    end
+
+    epsE_exp = strain - epsP_exp;
+    trE_exp = trace(epsE_exp);
+    sTrial_exp = lambda * trE_exp * eye(3) + 2.0 * G * epsE_exp;
+
+    sM_exp = trace(sTrial_exp) / 3.0;
+    sDevTrial_exp = sTrial_exp - sM_exp * eye(3);
+    devNorm2_exp = sum(sum(sDevTrial_exp .* sDevTrial_exp));
+    J2_exp = sqrt(max(0.0, 1.5 * devNorm2_exp));
+
+    if hasDamage && damage_exp >= Dc
+        p_exp = sM_exp;
+        if sM_exp >= 0
+            p_exp = Wn_exp * sM_exp;
+        end
+        sigma_cauchy_exp = Wn_exp * sDevTrial_exp + p_exp * eye(3);
+    else
+        gamma_exp = 0.0;
+        alphaNew_exp = eqp_exp;
+        if hasDamage
+            realEqNew_exp = real_eq_exp;
+        end
+        W_exp = Wn_exp;
+        SY_exp = eval_yield_stress(eqp_exp, params);
+
+        if J2_exp > 1e-16
+            f_exp = J2_exp - SY_exp;
+            if f_exp > 1e-8
+                H_exp = eval_hardening_slope(eqp_exp, params);
+                dgamma_exp = f_exp / (3.0 * G / Wn_exp + H_exp);
+                dgamma_exp = max(0.0, dgamma_exp);
+
+                gamma_exp = dgamma_exp;
+                alphaNew_exp = eqp_exp + gamma_exp;
+
+                if hasDamage
+                    realEqNew_exp = real_eq_exp + gamma_exp / Wn_exp;
+                    q_exp = Wn_exp * eval_yield_stress(alphaNew_exp, params);
+                    p_exp = sM_exp;
+                    if sM_exp >= 0
+                        p_exp = Wn_exp * sM_exp;
+                    end
+                else
+                    q_exp = eval_yield_stress(alphaNew_exp, params);
+                    p_exp = sM_exp;
+                end
+
+                sDevNew_exp = (q_exp / J2_exp) * sDevTrial_exp;
+                sigma_cauchy_exp = sDevNew_exp + p_exp * eye(3);
+
+                if hasDamage
+                    if sM_exp >= 0
+                        volFactor_exp = p_exp / (3.0 * Wn_exp * bulk);
+                    else
+                        volFactor_exp = sM_exp / (3.0 * bulk);
+                    end
+                    epsENew_exp = sDevNew_exp / (2.0 * G * Wn_exp) + volFactor_exp * eye(3);
+                else
+                    volFactor_exp = sM_exp / (3.0 * bulk);
+                    epsENew_exp = sDevNew_exp / (2.0 * G) + volFactor_exp * eye(3);
+                end
+                epsP_exp = strain - epsENew_exp;
+
+                if hasDamage && realEqNew_exp > p_D
+                    Y_exp = -(q_exp^2 / (6.0 * G * Wn_exp * Wn_exp));
+                    if sM_exp >= 0.0
+                        Y_exp = Y_exp - sM_exp^2 / (2.0 * bulk);
+                    end
+                    if damage_exp >= damageAccelThreshold
+                        Y_exp = Y_exp * damageAccelFactor;
+                    end
+
+                    f2_exp = -Y_exp / S;
+                    f2s_exp = f2_exp^s;
+
+                    dW_exp = f2s_exp * dgamma_exp / Wn_exp;
+                    W_exp = Wn_exp - dW_exp;
+                    if W_exp < 0.001
+                        W_exp = 0.001;
+                    end
+                end
+            else
+                if hasDamage
+                    p_exp = sM_exp;
+                    if sM_exp >= 0
+                        p_exp = Wn_exp * sM_exp;
+                    end
+                    sigma_cauchy_exp = Wn_exp * sDevTrial_exp + p_exp * eye(3);
+                else
+                    p_exp = sM_exp;
+                    sigma_cauchy_exp = sDevTrial_exp + p_exp * eye(3);
+                end
+            end
+        else
+            if hasDamage
+                p_exp = sM_exp;
+                if sM_exp >= 0
+                    p_exp = Wn_exp * sM_exp;
+                end
+                sigma_cauchy_exp = Wn_exp * sDevTrial_exp + p_exp * eye(3);
+            else
+                p_exp = sM_exp;
+                sigma_cauchy_exp = sDevTrial_exp + p_exp * eye(3);
+            end
+        end
+
+        eqp_exp = alphaNew_exp;
+        if hasDamage
+            real_eq_exp = realEqNew_exp;
+            damage_exp = max(damage_exp, 1.0 - W_exp);
+        end
+    end
+
+    sDev_cauchy_exp = sigma_cauchy_exp - trace(sigma_cauchy_exp)/3.0 * eye(3);
+    mises_exp = sqrt(1.5 * sum(sum(sDev_cauchy_exp .* sDev_cauchy_exp)));
+
+    if isLarge
+        PK1_exp = F * sigma_cauchy_exp;
+        stress9_exp = [PK1_exp(1,1), PK1_exp(1,2), PK1_exp(1,3), ...
+                       PK1_exp(2,1), PK1_exp(2,2), PK1_exp(2,3), ...
+                       PK1_exp(3,1), PK1_exp(3,2), PK1_exp(3,3)];
+    else
+        stress9_exp = [sigma_cauchy_exp(1,1), sigma_cauchy_exp(1,2), sigma_cauchy_exp(1,3), ...
+                       sigma_cauchy_exp(2,1), sigma_cauchy_exp(2,2), sigma_cauchy_exp(2,3), ...
+                       sigma_cauchy_exp(3,1), sigma_cauchy_exp(3,2), sigma_cauchy_exp(3,3)];
+    end
+    % ----------------- Explicit Euler Integration End -----------------
+
+    rows(k).step = k - 1;
+    rows(k).strain = strain9;
+    rows(k).stress = stress9;
+    rows(k).von_mises = mises;
+    rows(k).eqp = eqp;
+    rows(k).damage = damage;
+    rows(k).von_mises_explicit = mises_exp;
+    rows(k).eqp_explicit = eqp_exp;
+    rows(k).damage_explicit = damage_exp;
+    rows(k).stress_explicit = stress9_exp;
+end
+
+steps = [rows.step]';
+strains = reshape([rows.strain], 9, [])';
+stresses = reshape([rows.stress], 9, [])';
+von_mises = [rows.von_mises]';
+eqps = [rows.eqp]';
+damages = [rows.damage]';
+von_mises_explicit = [rows.von_mises_explicit]';
+eqps_explicit = [rows.eqp_explicit]';
+damages_explicit = [rows.damage_explicit]';
+
+T = table(steps, ...
+          strains(:,1), strains(:,2), strains(:,3), strains(:,4), strains(:,5), strains(:,6), strains(:,7), strains(:,8), strains(:,9), ...
+          stresses(:,1), stresses(:,2), stresses(:,3), stresses(:,4), stresses(:,5), stresses(:,6), stresses(:,7), stresses(:,8), stresses(:,9), ...
+          von_mises, eqps, damages, ...
+          von_mises_explicit, eqps_explicit, damages_explicit, ...
+          'VariableNames', {'Step', ...
+                            'Strain_11', 'Strain_12', 'Strain_13', 'Strain_21', 'Strain_22', 'Strain_23', 'Strain_31', 'Strain_32', 'Strain_33', ...
+                            'Stress_11', 'Stress_12', 'Stress_13', 'Stress_21', 'Stress_22', 'Stress_23', 'Stress_31', 'Stress_32', 'Stress_33', ...
+                            'VonMises', 'EqPS', 'Damage', ...
+                            'VonMises_Explicit', 'EqPS_Explicit', 'Damage_Explicit'});
+
+xlsxPath = fullfile(fileparts(outputPath), 'constitutive_results.xlsx');
+writetable(T, xlsxPath);
+
+fig = figure('Visible', 'off');
+subplot(2,1,1);
+plot(strains(:,1), von_mises, 'r-^', 'LineWidth', 1.5, 'MarkerSize', 4); % strains(:,1) = eps_xx
+hold on;
+plot(strains(:,1), von_mises_explicit, 'b--x', 'LineWidth', 1.2, 'MarkerSize', 4);
+grid on;
+if isLarge
+    title('PK1 Stress - Strain Relationship');
+else
+    title('Cauchy Stress - Strain Relationship');
+end
+xlabel('Strain \epsilon_{xx}');
+ylabel('Stress (MPa)');
+legend('Implicit Euler (Radial Return)', 'Explicit Euler (Forward Euler)');
+
+subplot(2,1,2);
+if hasDamage
+    yyaxis left;
+    plot(steps, eqps, 'b-o', 'LineWidth', 1.5, 'MarkerSize', 4);
+    hold on;
+    plot(steps, eqps_explicit, 'c--x', 'LineWidth', 1.2, 'MarkerSize', 4);
+    ylabel('EqPS \epsilon_p');
+
+    yyaxis right;
+    plot(steps, damages, 'm-s', 'LineWidth', 1.5, 'MarkerSize', 4);
+    hold on;
+    plot(steps, damages_explicit, 'r--d', 'LineWidth', 1.2, 'MarkerSize', 4);
+    ylabel('Lemaitre Damage D');
+    title('Equivalent Plastic Strain & Damage Evolution');
+else
+    plot(steps, eqps, 'b-o', 'LineWidth', 1.5, 'MarkerSize', 4);
+    hold on;
+    plot(steps, eqps_explicit, 'c--x', 'LineWidth', 1.2, 'MarkerSize', 4);
+    ylabel('EqPS \epsilon_p');
+    title('Equivalent Plastic Strain Evolution');
+end
+grid on;
+xlabel('Step');
+
+pngPath = fullfile(fileparts(outputPath), 'constitutive_plot.png');
+saveas(fig, pngPath);
+close(fig);
+
+result.success = true;
+result.backend = 'matlab-custom-script';
+result.model = 'J2Voce';
+result.parameters = params;
+result.rows = rows;
+
+fid = fopen(outputPath, 'w');
+fprintf(fid, '%s', jsonencode(result));
+fclose(fid);
+
+% ==========================================================
+% Local function placeholder
+% ==========================================================
+{LOCAL_FUNCTIONS_PLACEHOLDER}

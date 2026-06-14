@@ -1,12 +1,22 @@
+# ==============================================================================
+# Clangd 通用配置文件（全平台零配置可用）
+# ==============================================================================
+# 工作原理：
+#   clangd 优先从 build/ 目录读取 CMake 生成的 compile_commands.json，
+#   自动获取当前平台完整的编译器路径、头文件搜索路径和编译选项。
+#   下方 Add 中的通用参数仅作为 fallback 基线，确保在首次构建前也能
+#   提供基本的 C++17 语法提示和 Eigen 兼容性。
+#
+# 使用方法：
+#   1. 克隆项目后，先运行一次构建脚本（macOS: setup_build.sh / Windows: setup_build.cmd）
+#      或手动执行 cmake .. 生成 compile_commands.json。
+#   2. 之后 clangd 将自动读取 compile_commands.json，无需手动修改本文件。
+# ==============================================================================
+
 CompileFlags:
-  Compiler: C:/TDM-GCC-64/bin/g++.exe
-  Add: 
-    - "--target=x86_64-w64-mingw32"  # 【核心】强制告诉 Clangd 使用 MinGW 目标平台
-    - "-D_GCC_MAX_ALIGN_T" # 【修复】防止 clangd 内置头文件和 MinGW 冲突
+  CompilationDatabase: build
+  Add:
     - "-std=c++17"
-    - "-fopenmp"
-    - "-I"
-    - "C:/TDM-GCC-64/lib/gcc/x86_64-w64-mingw32/10.3.0/include" # 强制包含 TDM-GCC 的 omp.h 路径
     - "-DEIGEN_DONT_VECTORIZE"
-  Remove: 
-    - "-fms-*" # 移除所有可能导致误判的 MSVC 兼容性宏
+  Remove:
+    - "-W*"

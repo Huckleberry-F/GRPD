@@ -1,8 +1,33 @@
 # ==============================================================================
 # PDCommon/CMakeLists.txt
 # ==============================================================================
-# 1. Find OpenMP package (REQUIRED means error if not found)
-find_package(OpenMP REQUIRED)
+# 1. For macOS (Apple) with AppleClang, try to find Homebrew's libomp to satisfy OpenMP dependency
+if(APPLE AND CMAKE_CXX_COMPILER_ID MATCHES "AppleClang")
+    # Search for omp.h in standard Homebrew paths
+    find_path(OpenMP_INCLUDES omp.h HINTS "/opt/homebrew/opt/libomp/include" "/usr/local/opt/libomp/include")
+    # Search for libomp in standard Homebrew paths
+    find_library(OpenMP_LIBRARIES omp HINTS "/opt/homebrew/opt/libomp/lib" "/usr/local/opt/libomp/lib")
+    
+    if(OpenMP_INCLUDES AND OpenMP_LIBRARIES)
+        set(OpenMP_CXX_FLAGS "-Xpreprocessor -fopenmp")
+        set(OpenMP_CXX_FOUND TRUE)
+        set(OpenMP_FOUND TRUE)
+        if(NOT TARGET OpenMP::OpenMP_CXX)
+            add_library(OpenMP::OpenMP_CXX IMPORTED INTERFACE)
+            set_target_properties(OpenMP::OpenMP_CXX PROPERTIES
+                INTERFACE_COMPILE_OPTIONS "-Xpreprocessor;-fopenmp"
+                INTERFACE_INCLUDE_DIRECTORIES "${OpenMP_INCLUDES}"
+                INTERFACE_LINK_LIBRARIES "${OpenMP_LIBRARIES}"
+            )
+        endif()
+        message(STATUS "macOS AppleClang: Found Homebrew OpenMP at ${OpenMP_INCLUDES}")
+    endif()
+endif()
+
+# Find OpenMP package (if not already found via our custom AppleClang helper)
+if(NOT OpenMP_FOUND)
+    find_package(OpenMP REQUIRED)
+endif()
 
 # 2. OpenMP::OpenMP_CXX target exists only if found
 if(OpenMP_CXX_FOUND)

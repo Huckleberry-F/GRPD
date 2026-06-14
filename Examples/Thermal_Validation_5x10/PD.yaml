@@ -1,0 +1,80 @@
+#==============================================================================
+# GRPD 以前设置的瞬态热传导 5x10 对标算例 (恢复版)
+#==============================================================================
+System:
+  Dimension: 2
+  SavePath: "output"
+
+Assembly: {}
+
+Parts:
+  - PartID: 1
+    MatID: 1
+    Dimension: 2
+    Shape: "Box"
+    Length: 5.0
+    Width: 10.0
+    dx: 0.1
+    Thickness: 1.0
+    Offset: [0.0, 0.0, 0.0]
+
+BoundaryConditions:
+  - BcID: 1
+    Name: "Left_HeatFlux_100"
+    PartID: 1
+    Box: [-0.01, 0.10, -999.0, 999.0, -999.0, 999.0]
+    Type: "FLUX"
+    Value: 100.0
+    Step: 0
+
+  - BcID: 2
+    Name: "Right_Fixed_Temp_100"
+    PartID: 1
+    Box: [4.9, 5.01, -999.0, 999.0, -999.0, 999.0]
+    Type: "T"
+    Value: 100.0
+    Step: 0
+
+Materials:
+  - MatID: 1
+    Name: "Steel"
+    Type: "FourierThermalMat"
+    Density: 7.85e-9
+    Conductivity: 45.0
+    HeatCapacity: 4.6e8
+
+Solver:
+  Engine: "PD"
+  Type: "Thermal"
+  TimeIntegrator: "Explicit"
+  Kernel: "NOSB_T"
+  LoadSteps:
+    - Step: 1
+      Time: 1.0
+      KBC: 0
+      NumSubsteps: 10000
+    - Step: 2
+      Time: 2.0
+      KBC: 1
+      NumSubsteps: 10000
+  TimeStep_dt: 0.0001
+  OutputInterval: 1000
+  OMP_Threads: 16
+  Horizon: 0.3015
+  KernelWeightType: "Linear"
+  ZeroEnergyG0: 0.1
+  ZeroEnergyMethod: "Zhang"
+
+Writer:
+  Type: "binary"
+  Variables:
+    - Name: "PartID"
+      Dimension: 1
+    - Name: "Volume"
+      Dimension: 1
+    - Name: "Temperature"
+      Dimension: 1
+    - Name: "ID"
+      Dimension: 1
+    - Name: "HeatFlux"
+      Dimension: 1

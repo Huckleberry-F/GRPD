@@ -51,7 +51,7 @@ void LinearElasticMat::computeLameParameters() {
 }
 
 Eigen::Matrix3d
-LinearElasticMat::ComputeEngineeringStress(const Eigen::Matrix3d &F) const {
+LinearElasticMat::ComputeEngineeringStress(const Eigen::Matrix3d &F, PDCommon::Core::PDContext *ctx) const {
   // 广义胡克定律: \sigma = \lambda * tr(\varepsilon) * I + 2 * \mu *
   // \varepsilon
   Eigen::Matrix3d strain =
@@ -61,7 +61,7 @@ LinearElasticMat::ComputeEngineeringStress(const Eigen::Matrix3d &F) const {
 }
 
 Eigen::Matrix3d
-LinearElasticMat::ComputePK1Stress(const Eigen::Matrix3d &F, int particleId, int stateMode) const {
+LinearElasticMat::ComputePK1Stress(const Eigen::Matrix3d &F, int particleId, int stateMode, PDCommon::Core::PDContext *ctx) const {
   // 按照工程要求，小应变假设下直接回退到工程应力（柯西应力）
   return ComputeEngineeringStress(F);
 }

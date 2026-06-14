@@ -1,0 +1,12 @@
+# GRPD Python Dependencies
+# Usage: pip install -r requirements.txt
+
+numpy
+pyyaml
+open3d
+pyvista
+pymeshfix
+matplotlib
+pandas
+scipy
+pydantic

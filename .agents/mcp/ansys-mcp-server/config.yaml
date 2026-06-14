@@ -1,0 +1,24 @@
+# ==============================================================================
+# ANSYS MCP Server 配置文件
+# ==============================================================================
+
+# ANSYS MAPDL 可执行文件的完整路径
+# 请根据你的本地安装版本修改此路径
+# 常见路径格式: C:\Program Files\ANSYS Inc\v251\ANSYS\bin\winx64\ansys251.exe
+ansys_executable: "D:\\\\software\\\\ANSYS\\\\ANSYS Inc\\\\v251\\\\ANSYS\\\\bin\\\\winx64\\\\ANSYS251.exe"
+
+# 默认求解器设置
+defaults:
+  # 求解器使用的 CPU 核心数
+  num_processors: 4
+  # 求解器使用的内存 (MB)
+  memory_mb: 2048
+  # 任务超时时间 (秒)
+  timeout_seconds: 3600
+  # 是否在求解完成后自动清理临时文件
+  auto_cleanup: false
+
+allowed_directories:
+  - "D:/C++pro/GRPD/tools/ansys-mcp-server"
+  - "D:/C++pro/GRPD/Examples"
+  - "D:/C++pro/GRPD/build"

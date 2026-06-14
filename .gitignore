@@ -1,13 +1,60 @@
-﻿build/
+# === 构建产物 ===
+build/
 bin/
 lib/
+Output/
+outputs/
+
+# === IDE 与编辑器 ===
 .cache/
 .qtcreator/
 .vscode/
-Output/
+
+# === Python 虚拟环境 ===
+.venv/
+.venv.symlink-backup/
+__pycache__/
+*.py[cod]
+
+# === 操作系统生成文件 ===
+.DS_Store
+
+# === 数据库与临时文件 ===
+*.sqlite
+*.sqlite-shm
+*.sqlite-wal
+*.db
+
+# === 仿真结果与媒体 ===
 *.avi
 *.vtu
-Result_*
 *.grpd
 *.pvd
 *.vtk
+Result_*
+*.png
+*.gif
+*.mp4
+
+# === Adobe 项目文件 ===
+*.prproj
+Adobe Premiere Pro Audio Previews/
+Adobe Premiere Pro Auto-Save/
+
+# === Agents 本地配置 ===
+.agent/
+.agents/settings.json
+.agents/**/*.sqlite
+.agents/**/*.sqlite-shm
+.agents/**/*.sqlite-wal
+.agents/mcp/*/work_dir/
+docs/superpowers/task.md
+
+# === Agents 白名单（不忽略） ===
+!.agents/mcp/**/result_parser.py
+!.agents/mcp/**/src/result_parser.py
+!.agents/mcp/path-comparison-mcp-server/result_parser.py
+
+# === 临时测试目录 ===
+scratch/
+test_debug/

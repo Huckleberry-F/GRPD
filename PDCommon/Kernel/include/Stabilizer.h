@@ -31,6 +31,15 @@ public:
   /// @brief 设置质量缩放因子（与主 Kernel 保持一致）
   void setMassScaleFactor(double factor) { massScaleFactor_ = factor; }
 
+  /// @brief 设置塑性软化系数的底限（Floor），-1.0表示回落至稳定器默认值
+  void setPlasticSofteningFloor(double floor) { plasticSofteningFloor_ = floor; }
+
+  /// @brief 设置塑性软化的指数衰减率（Rate），-1.0表示回落至默认值100.0
+  void setPlasticSofteningRate(double rate) { plasticSofteningRate_ = rate; }
+
+  /// @brief 设置是否开启零能模式与粒子损伤的耦合软化
+  void setDamageCoupling(bool enabled) { damageCoupling_ = enabled; }
+
   void setAxisymmetricIntegration(bool enabled) {
     axisymmetricIntegration_ = enabled;
   }
@@ -43,6 +52,9 @@ protected:
   std::string name_;              ///< 稳定器注册名
   double g0_{1.0};                ///< 零能修正缩放系数 G0
   double massScaleFactor_{1.0};   ///< 质量缩放因子（与主 Kernel 同步）
+  double plasticSofteningFloor_{-1.0}; ///< 塑性软化缩放底限，-1.0 表示未配置
+  double plasticSofteningRate_{-1.0};  ///< 塑性软化衰减速率，-1.0 表示未配置
+  bool damageCoupling_{true};          ///< 是否开启零能模式与粒子损伤的耦合软化，默认开启
   bool axisymmetricIntegration_{false};
 };
 

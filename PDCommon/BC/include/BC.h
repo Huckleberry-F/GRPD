@@ -15,7 +15,8 @@
 #include <string>
 #include <vector>
 
-// 前置声明，避免在基类头文件引入具体依赖
+// 前置声明，避免在基类头文件引入具体依赖。
+
 namespace PDCommon::Field {
 class FieldManager;
 }
@@ -58,7 +59,7 @@ public:
                           const std::vector<double> &values) = 0;
 
   /// @brief 传入底层缩放相关的参数供高级边界条件（如压强转体力）使用
-  virtual void setScalingFactors(double dx, double density, double massScale) {}
+  virtual void setScalingFactors(double dx, double density, double massScale, int dim = 3, double thickness = 1.0) {}
 
   /// @brief 手动注入该 BC 在起始时的初始值（用于跨步载荷继承）
   virtual void setPrevVal(double val) {}

@@ -1,0 +1,81 @@
+!==============================================================================
+! 自动生成的 ANSYS APDL 验证文件 (参数化扫频)
+!==============================================================================
+FINISH
+/CLEAR, NOSTART
+/PREP7
+
+! 普通2D面单元热学配置 (PLANE55 - 平面)
+ET, 1, 55
+KEYOPT, 1, 3, 0
+
+MP, KXX, 1, 45.0
+MP, DENS, 1, 7.85e-09
+MP, C, 1, 460000000.0
+
+! 建立二维截面几何
+RECTNG, 0.0, 5.0, 0.0, 10.0
+ESIZE, 0.1
+MSHAPE, 0, 2D
+MSHKEY, 1
+AMESH, ALL
+
+! 施加常驻边界条件
+LSEL, S, LOC, X, -0.01, 0.1
+SFL, ALL, HFLUX, 100.0
+LSEL, ALL
+NSEL, S, LOC, X, 4.9, 5.01
+NSEL, R, LOC, Y, -999.0, 999.0
+D, ALL, TEMP, 100.0
+ALLSEL, ALL
+
+! 施加多级载荷条件
+/SOLU
+ANTYPE, TRANS
+TIMINT, ON
+TINTP, , 0.5
+NLGEOM, OFF
+OUTRES, ALL, ALL
+TIME, 1.0
+KBC, 0
+NSUBST, SUB_N, SUB_N, SUB_N
+SOLVE
+TIME, 2.0
+KBC, 1
+NSUBST, SUB_N, SUB_N, SUB_N
+SOLVE
+SAVE, ansys_smoke_test, db
+FINISH
+
+! Automatic post-processing data extraction
+/POST1
+SUBSTEP = 0
+TARGET_TIME = 2.0
+START_X = 0.0
+END_X = 5.0
+START_Y = 5.0
+END_Y = 5.0
+SET, , , , , TARGET_TIME
+
+PATH, MyPath, 2, 30, 10
+PPATH, 1, 0, START_X, START_Y, 0.0
+PPATH, 2, 0, END_X, END_Y, 0.0
+
+PDEF, TEMPVAL, TEMP
+
+*IF, SUB_N, EQ, 100, THEN
+  /OUTPUT, ansys_val_results_t2.0_n100, txt
+*ELSEIF, SUB_N, EQ, 500, THEN
+  /OUTPUT, ansys_val_results_t2.0_n500, txt
+*ELSEIF, SUB_N, EQ, 1000, THEN
+  /OUTPUT, ansys_val_results_t2.0_n1000, txt
+*ELSEIF, SUB_N, EQ, 2000, THEN
+  /OUTPUT, ansys_val_results_t2.0_n2000, txt
+*ELSEIF, SUB_N, EQ, 5000, THEN
+  /OUTPUT, ansys_val_results_t2.0_n5000, txt
+*ELSE
+  /OUTPUT, ansys_val_results_t2.0_default, txt
+*ENDIF
+
+PRPATH, TEMPVAL
+/OUTPUT

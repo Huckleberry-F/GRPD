@@ -6,7 +6,7 @@
 #include "ReaderRegistry.h"
 #include <cstdlib>
 #include <filesystem>
-
+#include <string>
 
 namespace Src::Engine::Solvers::PD::Init {
 
@@ -34,11 +34,43 @@ void InitModel(PDCommon::Core::PDContext &ctx, const YAML::Node &config,
     LOG_INFO(
         "[InitModel] Calling Python pre-processor to generate .grpd mesh...");
 
-    auto &ioMgr = PDCommon::IO::IOManager::getInstance();
     std::filesystem::path scriptPath = ioMgr.getScriptPath("generate_model.py");
 
+    // 直接使用裸命令 python，从 PATH 自然发现解释器。
+    // 由于命令不以双引号开头，Windows cmd.exe 不会触发引号剥离，
+    // 路径参数用简单双引号即可安全处理空格。
+    // 探测系统可用的 Python 解释器。优先从当前环境变量 PATH 中寻找
+    // python3（例如用户激活的虚拟环境）， 其次尝试系统常见绝对路径，最后回退。
+    std::string pythonExe = "python";
+    const std::string candidates[] = {"python3",
+#ifndef _WIN32
+                                      "/opt/homebrew/bin/python3.12",
+                                      "/opt/homebrew/bin/python3",
+                                      "/usr/local/bin/python3",
+#endif
+                                      "python"};
+
+    for (const auto &path : candidates) {
+      if (path[0] == '/') { // 绝对路径优先使用 std::filesystem::exists 检测
+        if (std::filesystem::exists(path)) {
+          pythonExe = path;
+          break;
+        }
+      } else { // 裸命令，通过 std::system 进行版本测试探测
+#ifdef _WIN32
+        if (std::system((path + " --version > nul 2>&1").c_str()) == 0) {
+#else
+        if (std::system((path + " --version > /dev/null 2>&1").c_str()) == 0) {
+#endif
+          pythonExe = path;
+          break;
+        }
+      }
+    }
+
     std::string pythonCommand =
-        "python \"" + scriptPath.string() + "\" \"" + yamlPath + "\"";
+        pythonExe + " \"" + scriptPath.string() + "\" \"" + yamlPath + "\"";
+    LOG_INFO("[InitModel] Executing: " + pythonCommand);
     int pyStatus = std::system(pythonCommand.c_str());
 
     if (pyStatus != 0) {

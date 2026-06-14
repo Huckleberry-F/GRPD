@@ -27,11 +27,11 @@ public:
   // 实现 MechanicalMaterial 纯虚接口
   // -----------------------------------------------------------------------
   Eigen::Matrix3d
-  ComputeEngineeringStress(const Eigen::Matrix3d &strain) const override;
+  ComputeEngineeringStress(const Eigen::Matrix3d &strain, PDCommon::Core::PDContext *ctx = nullptr) const override;
 
   Eigen::Matrix3d ComputePK1Stress(const Eigen::Matrix3d &F,
                                    int particleId = -1,
-                                   int stateMode = 0) const override;
+                                   int stateMode = 0, PDCommon::Core::PDContext *ctx = nullptr) const override;
 
   // -----------------------------------------------------------------------
   // 实现 Material 基类虚函数
@@ -81,6 +81,8 @@ protected:
   // 1. 等效塑性应变 (EqPlasticStrain, 维数 1)
   double *eqPSOld_{nullptr};
   double *eqPSTrial_{nullptr};
+  double *realEqPSOld_{nullptr};
+  double *realEqPSTrial_{nullptr};
 
   // 2. 塑性应变张量 (PlasticStrain, 维数 9)
   double *pSOld_{nullptr};
@@ -96,6 +98,8 @@ protected:
   // 面向 O(1) 交换的 TypedField 原生指针句柄缓存
   PDCommon::Field::TypedField<double> *fieldEqPSOld_{nullptr};
   PDCommon::Field::TypedField<double> *fieldEqPSTrial_{nullptr};
+  PDCommon::Field::TypedField<double> *fieldRealEqPSOld_{nullptr};
+  PDCommon::Field::TypedField<double> *fieldRealEqPSTrial_{nullptr};
   PDCommon::Field::TypedField<double> *fieldPSOld_{nullptr};
   PDCommon::Field::TypedField<double> *fieldPSTrial_{nullptr};
   PDCommon::Field::TypedField<double> *fieldDamageOld_{nullptr};

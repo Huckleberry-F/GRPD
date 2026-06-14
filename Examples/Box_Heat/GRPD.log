@@ -3302,3 +3302,514 @@
 [INFO] Output format set to BINARY.
 [INFO] Successfully exported data for model: Box
 [INFO] [EngineManager] Post-processing Phase finished.
+
+[22:32:27] [INFO ] [EngineManager]
+    | ==================================================
+    | GRPD Solver Engine Initialized                 
+    | ==================================================
+
+[22:32:27] [INFO ] [EngineRegistry]
+    | Creating Engine instance: PD
+
+[22:32:27] [INFO ] [PDEngine]
+    | PD Engine instance created.
+    | ===============================================
+    | ========== Registered Types Summary ===========
+    | TimeIntegrator    : ADR, CentralDifference, Explicit, MatrixFreeImplicit, Staggered
+    | FieldRegistry     : DoubleField, IntField
+    | PhysicsFields     : Mechanical, Thermal
+    | BCRegistry        : AX, AY, AZ, CONV, FLUX, PX, PY, PZ, T, UX, UY, UZ, VX, VY, VZ
+    | ReaderRegistry    : .grpd, .inp
+    | StabilizerRegistry: Mechanical_Silling, Mechanical_Wan, Mechanical_Zhang, Thermal_Silling,
+    | Thermal_Wan, Thermal_Zhang
+    | ContactRegistry   : [Type] General, [ForceLaw] KinematicNormal, [ForceLaw] Nonlinear, [ForceLaw]
+    | Penalty, [ForceLaw] Silling, [ForceLaw] Viscous, [Evaluator] NTC, [Evaluator] NTN, [Evaluator] NTS,
+    | [FrictionLaw] ElasticStickSlip, [FrictionLaw] ExplicitImpulse, [FrictionLaw] TanhRegularized
+    | MaterialRegistry  : FourierThermalMat, J2PlasticityMat, J2VoceLemaitre, JCPlasticityMat,
+    | LinearElasticMat, NortonBaileyCreepMat, StrainHardeningCreepMat, TimeHardeningCreepMat
+    | KernelRegistry    : NOSB_Axis, NOSB_M, NOSB_T
+    | EngineRegistry    : PD
+    | ===============================================
+
+[22:32:27] [INFO ] [EngineManager]
+    | Initializing solver: PD
+
+[22:32:27] [INFO ] [PDEngine]
+    | Initializing PD simulation context...
+
+[22:32:27] [INFO ] [InitModel]
+    | ==================================================
+    | Model pre-processing...
+    | ==================================================
+    | grpd path: /Users/hanbozhang/C++/GRPD/Examples/Box_Heat/Box_Heat.grpd
+    | model name: Box_Heat
+    | Calling Python pre-processor to generate .grpd mesh...
+    | Executing: python3
+    | "/Users/hanbozhang/C++/GRPD/Examples/Box_Heat/../../Generate_py/generate_model.py"
+    | "/Users/hanbozhang/C++/GRPD/Examples/Box_Heat/PD.yaml"
+[22:32:27] [ERROR] [InitModel]
+    | Python pre-processor failed! Please check if python is installed and paths are correct.
+    | Exit code: 256
+
+[22:33:36] [INFO ] [EngineManager]
+    | ==================================================
+    | GRPD Solver Engine Initialized                 
+    | ==================================================
+
+[22:33:36] [INFO ] [EngineRegistry]
+    | Creating Engine instance: PD
+
+[22:33:36] [INFO ] [PDEngine]
+    | PD Engine instance created.
+    | ===============================================
+    | ========== Registered Types Summary ===========
+    | TimeIntegrator    : ADR, CentralDifference, Explicit, MatrixFreeImplicit, Staggered
+    | FieldRegistry     : DoubleField, IntField
+    | PhysicsFields     : Mechanical, Thermal
+    | BCRegistry        : AX, AY, AZ, CONV, FLUX, PX, PY, PZ, T, UX, UY, UZ, VX, VY, VZ
+    | ReaderRegistry    : .grpd, .inp
+    | StabilizerRegistry: Mechanical_Silling, Mechanical_Wan, Mechanical_Zhang, Thermal_Silling,
+    | Thermal_Wan, Thermal_Zhang
+    | ContactRegistry   : [Type] General, [ForceLaw] KinematicNormal, [ForceLaw] Nonlinear, [ForceLaw]
+    | Penalty, [ForceLaw] Silling, [ForceLaw] Viscous, [Evaluator] NTC, [Evaluator] NTN, [Evaluator] NTS,
+    | [FrictionLaw] ElasticStickSlip, [FrictionLaw] ExplicitImpulse, [FrictionLaw] TanhRegularized
+    | MaterialRegistry  : FourierThermalMat, J2PlasticityMat, J2VoceLemaitre, JCPlasticityMat,
+    | LinearElasticMat, NortonBaileyCreepMat, StrainHardeningCreepMat, TimeHardeningCreepMat
+    | KernelRegistry    : NOSB_Axis, NOSB_M, NOSB_T
+    | EngineRegistry    : PD
+    | ===============================================
+
+[22:33:36] [INFO ] [EngineManager]
+    | Initializing solver: PD
+
+[22:33:36] [INFO ] [PDEngine]
+    | Initializing PD simulation context...
+
+[22:33:36] [INFO ] [InitModel]
+    | ==================================================
+    | Model pre-processing...
+    | ==================================================
+    | grpd path: /Users/hanbozhang/C++/GRPD/Examples/Box_Heat/Box_Heat.grpd
+    | model name: Box_Heat
+    | Calling Python pre-processor to generate .grpd mesh...
+    | Executing: python3
+    | "/Users/hanbozhang/C++/GRPD/Examples/Box_Heat/../../Generate_py/generate_model.py"
+    | "/Users/hanbozhang/C++/GRPD/Examples/Box_Heat/PD.yaml"
+[22:34:00] [ERROR] [InitModel]
+    | Python pre-processor failed! Please check if python is installed and paths are correct.
+    | Exit code: 11
+
+[22:37:37] [INFO ] [EngineManager]
+    | ==================================================
+    | GRPD Solver Engine Initialized                 
+    | ==================================================
+
+[22:37:37] [INFO ] [EngineRegistry]
+    | Creating Engine instance: PD
+
+[22:37:37] [INFO ] [PDEngine]
+    | PD Engine instance created.
+    | ===============================================
+    | ========== Registered Types Summary ===========
+    | TimeIntegrator    : ADR, CentralDifference, Explicit, MatrixFreeImplicit, Staggered
+    | FieldRegistry     : DoubleField, IntField
+    | PhysicsFields     : Mechanical, Thermal
+    | BCRegistry        : AX, AY, AZ, CONV, FLUX, PX, PY, PZ, T, UX, UY, UZ, VX, VY, VZ
+    | ReaderRegistry    : .grpd, .inp
+    | StabilizerRegistry: Mechanical_Silling, Mechanical_Wan, Mechanical_Zhang, Thermal_Silling,
+    | Thermal_Wan, Thermal_Zhang
+    | ContactRegistry   : [Type] General, [ForceLaw] KinematicNormal, [ForceLaw] Nonlinear, [ForceLaw]
+    | Penalty, [ForceLaw] Silling, [ForceLaw] Viscous, [Evaluator] NTC, [Evaluator] NTN, [Evaluator] NTS,
+    | [FrictionLaw] ElasticStickSlip, [FrictionLaw] ExplicitImpulse, [FrictionLaw] TanhRegularized
+    | MaterialRegistry  : FourierThermalMat, J2PlasticityMat, J2VoceLemaitre, JCPlasticityMat,
+    | LinearElasticMat, NortonBaileyCreepMat, StrainHardeningCreepMat, TimeHardeningCreepMat
+    | KernelRegistry    : NOSB_Axis, NOSB_M, NOSB_T
+    | EngineRegistry    : PD
+    | ===============================================
+
+[22:37:37] [INFO ] [EngineManager]
+    | Initializing solver: PD
+
+[22:37:37] [INFO ] [PDEngine]
+    | Initializing PD simulation context...
+
+[22:37:37] [INFO ] [InitModel]
+    | ==================================================
+    | Model pre-processing...
+    | ==================================================
+    | grpd path: /Users/hanbozhang/C++/GRPD/Examples/Box_Heat/Box_Heat.grpd
+    | model name: Box_Heat
+    | Calling Python pre-processor to generate .grpd mesh...
+    | Executing: python3
+    | "/Users/hanbozhang/C++/GRPD/Examples/Box_Heat/../../Generate_py/generate_model.py"
+    | "/Users/hanbozhang/C++/GRPD/Examples/Box_Heat/PD.yaml"
+[22:37:37] [ERROR] [InitModel]
+    | Python pre-processor failed! Please check if python is installed and paths are correct.
+    | Exit code: 256
+
+[22:40:27] [INFO ] [EngineManager]
+    | ==================================================
+    | GRPD Solver Engine Initialized                 
+    | ==================================================
+
+[22:40:27] [INFO ] [EngineRegistry]
+    | Creating Engine instance: PD
+
+[22:40:27] [INFO ] [PDEngine]
+    | PD Engine instance created.
+    | ===============================================
+    | ========== Registered Types Summary ===========
+    | TimeIntegrator    : ADR, CentralDifference, Explicit, MatrixFreeImplicit, Staggered
+    | FieldRegistry     : DoubleField, IntField
+    | PhysicsFields     : Mechanical, Thermal
+    | BCRegistry        : AX, AY, AZ, CONV, FLUX, PX, PY, PZ, T, UX, UY, UZ, VX, VY, VZ
+    | ReaderRegistry    : .grpd, .inp
+    | StabilizerRegistry: Mechanical_Silling, Mechanical_Wan, Mechanical_Zhang, Thermal_Silling,
+    | Thermal_Wan, Thermal_Zhang
+    | ContactRegistry   : [Type] General, [ForceLaw] KinematicNormal, [ForceLaw] Nonlinear, [ForceLaw]
+    | Penalty, [ForceLaw] Silling, [ForceLaw] Viscous, [Evaluator] NTC, [Evaluator] NTN, [Evaluator] NTS,
+    | [FrictionLaw] ElasticStickSlip, [FrictionLaw] ExplicitImpulse, [FrictionLaw] TanhRegularized
+    | MaterialRegistry  : FourierThermalMat, J2PlasticityMat, J2VoceLemaitre, JCPlasticityMat,
+    | LinearElasticMat, NortonBaileyCreepMat, StrainHardeningCreepMat, TimeHardeningCreepMat
+    | KernelRegistry    : NOSB_Axis, NOSB_M, NOSB_T
+    | EngineRegistry    : PD
+    | ===============================================
+
+[22:40:27] [INFO ] [EngineManager]
+    | Initializing solver: PD
+
+[22:40:27] [INFO ] [PDEngine]
+    | Initializing PD simulation context...
+
+[22:40:27] [INFO ] [InitModel]
+    | ==================================================
+    | Model pre-processing...
+    | ==================================================
+    | grpd path: /Users/hanbozhang/C++/GRPD/Examples/Box_Heat/Box_Heat.grpd
+    | model name: Box_Heat
+    | Calling Python pre-processor to generate .grpd mesh...
+    | Executing: /opt/homebrew/bin/python3.12
+    | "/Users/hanbozhang/C++/GRPD/Examples/Box_Heat/../../Generate_py/generate_model.py"
+    | "/Users/hanbozhang/C++/GRPD/Examples/Box_Heat/PD.yaml"
+    | Mesh generated successfully by Python.
+
+[22:41:13] [INFO ] [Context Manager]
+    | Formalized model name to: Box_Heat
+    | Model dimension set to: 2D
+    | 2D thickness set to: 1.000000
+
+[22:41:13] [INFO ] [ReaderRegistry]
+    | Creating reader for: .grpd (name: Box_Heat)
+
+[22:41:13] [INFO ] [InitModel]
+    | Reading mesh file: /Users/hanbozhang/C++/GRPD/Examples/Box_Heat/Box_Heat.grpd (reader: .grpd)
+
+[22:41:13] [INFO ] [GrpdMeshReader]
+    | Reading file: /Users/hanbozhang/C++/GRPD/Examples/Box_Heat/Box_Heat.grpd
+    | Entering *PARTICLE section (Line 1)
+    | Pre-allocated memory for 10000 particles (Zero-Reallocation)
+    | Entering *LOAD section (Line 10004)
+    | ============================================
+    | File reading complete!
+    | Total particles: 10000
+    | Total load entries: 100
+    | ============================================
+
+[22:41:13] [INFO ] [ParticleManager]
+    | Pre-allocated memory for 10000 particles
+
+[22:41:13] [INFO ] [InitModel]
+    | Total particles loaded for model Box_Heat: 10000
+
+[22:41:13] [INFO ] [InitMaterial]
+    | ==================================================
+    | Entering Material Initialization Phase...
+    | ==================================================
+    | Instantiating material [1] of type: FourierThermalMat
+
+[22:41:13] [INFO ] [MaterialRegistry]
+    | Using factory to create material: Steel_NmmTonne (type: FourierThermalMat)
+
+[22:41:13] [INFO ] [FourierThermalMat]
+    | Material 'Steel_NmmTonne' is initialized. Conductivity = 45.000000, HeatCapacity =
+    | 460000000.000000, Density = 0.000000
+
+[22:41:13] [INFO ] [MaterialManager]
+    | Successfully added material instance: Steel_NmmTonne
+
+[22:41:13] [INFO ] [InitMaterial]
+    | Successfully registered material ID 1 (Steel_NmmTonne)
+    | Assigning material pointers to particles...
+    | Successfully assigned materials to 10000 particles.
+
+[22:41:13] [INFO ] [InitFields]
+    | ==================================================
+    | Entering Field Registration Phase...
+    | ==================================================
+
+[22:41:13] [INFO ] [FieldManager]
+    | Added field 'Temperature'.
+    | Added field 'TempRate'.
+    | Added field 'HeatFlux'.
+
+[22:41:13] [INFO ] [ThermalFields]
+    | Core fields registered: Temperature, TempRate, HeatFlux.
+
+[22:41:13] [INFO ] [InitFields]
+    | Auto-registered PhysicsFields module: Thermal
+
+[22:41:13] [INFO ] [FieldManager]
+    | Added field 'ID'.
+    | Added field 'PartID'.
+    | Added field 'MatID'.
+    | Added field 'Coords'.
+    | Added field 'Volume'.
+    | Added field 'ActiveStatus'.
+
+[22:41:13] [INFO ] [InitFields]
+    | Global ActiveStatus field registered.
+
+[22:41:13] [INFO ] [FieldManager]
+    | Resized all 9 fields for 10000 particles.
+
+[22:41:13] [INFO ] [InitFields]
+    | ActiveStatus initialized to 1 for all particles.
+    | Binding high-speed material state pointers...
+
+[22:41:13] [INFO ] [MeshData]
+    | Populated particle geometry fields into FieldManager for 10000 particles.
+
+[22:41:13] [INFO ] [InitFields]
+    | All fields allocated for 10000 particles. Total fields: 9.
+
+[22:41:13] [INFO ] [InitConditions]
+    | ==================================================
+    | Entering Conditions Initialization Phase...
+    | ==================================================
+
+[22:41:13] [INFO ] [ReaderRegistry]
+    | Creating reader for: .grpd (name: LoadReader)
+
+[22:41:13] [INFO ] [GrpdMeshReader]
+    | Reading file: /Users/hanbozhang/C++/GRPD/Examples/Box_Heat/Box_Heat.grpd
+    | Entering *PARTICLE section (Line 1)
+    | Pre-allocated memory for 10000 particles (Zero-Reallocation)
+    | Entering *LOAD section (Line 10004)
+    | ============================================
+    | File reading complete!
+    | Total particles: 10000
+    | Total load entries: 100
+    | ============================================
+
+[22:41:13] [INFO ] [InitConditions]
+    | Load statistics:
+    | - FLUX : 100
+    | Boundary conditions initialization complete.
+
+[22:41:13] [INFO ] [InitNeighbors]
+    | ==================================================
+    | Entering Neighbor Search Phase...
+    | ==================================================
+    | Horizon radius: 1.605000
+
+[22:41:13] [INFO ] [NeighborList]
+    | Starting full-flat CSR search for 10000 particles, horizon = 1.605000
+    | Cell grid: 31 x 31 x 1 = 961 cells
+    | Flat cell list built in 0.061035 ms
+    | Pass 1 (count) done in 0.231981 ms
+    | Total bonds: 349660, Memory: 4 MB
+    | Pass 2 (fill) done in 0.510931 ms
+    | Max neighbors: 36
+    | Total time: 0.803947 ms
+
+[22:41:13] [INFO ] [FieldManager]
+    | Added field 'NeighborCount'.
+
+[22:41:13] [INFO ] [InitNeighbors]
+    | NeighborCount field populated for 10000 particles.
+
+[22:41:13] [INFO ] [FieldManager]
+    | Added field 'BondIntegrity'.
+
+[22:41:13] [INFO ] [InitNeighbors]
+    | Global BondIntegrity scalar field properly initialized to 0.0
+
+[22:41:13] [INFO ] [FieldManager]
+    | Added field 'IsSurface'.
+
+[22:41:13] [INFO ] [SurfaceDetector]
+    | Volume Deficit check complete. Identified 408 surface particles out of 10000 (Threshold: 0.750000).
+
+[22:41:13] [INFO ] [InitNeighbors]
+    | Neighbor search phase complete.
+
+[22:41:13] [INFO ] [InitContact]
+    | ==================================================
+    | Entering Contact Initialization Phase...
+    | ==================================================
+    | No explicit ContactPairs defined in YAML. Contact engine skipping.
+    | Initializing Material-specific BondIntegrity Models...
+    | Material BondIntegrity Models initialized. Total Active Models: 0
+
+[22:41:13] [INFO ] [InitSolverComponents]
+    | ==================================================
+    | Entering Solver Components Assembly Phase...
+    | ==================================================
+    | Building Time Integrator: Explicit
+
+[22:41:13] [INFO ] [TimeIntegrator]
+    | Explicitly set OMP Threads to: 8
+
+[22:41:13] [INFO ] [InitSolverComponents]
+    | Time Integrator configured.
+    | Building Space Kernel: NOSB_T
+
+[22:41:13] [INFO ] [NOSB_Base]
+    | Applied KernelWeightType: Linear
+    | Applied ZeroEnergyG0: 0.100000
+    | Applied ZeroEnergyMethod string: Zhang
+
+[22:41:13] [INFO ] [InitSolverComponents]
+    | Space Kernel 'NOSB_T' configured.
+    | Total kernels assembled: 1
+
+[22:41:13] [INFO ] [PDEngine]
+    | PD simulation context initialized successfully.
+
+[22:41:13] [INFO ] [EngineManager]
+    | All solvers initialized. Total: 1
+    | ==================================================
+    | Entering Main Solver Phase
+    | ==================================================
+    | Solving: PD
+
+[22:41:13] [INFO ] [PDEngine]
+    | Starting PD Engine Solve Phase...
+
+[22:41:13] [INFO ] [ExplicitEuler]
+    | Identified 1st-order ODE integration target: Temperature <- TempRate
+
+[22:41:13] [INFO ] [FieldManager]
+    | Added field 'ShapeTensorInv'.
+    | Added field 'VHorizon'.
+    | Added field 'SumFac'.
+    | Added field 'SumOmegaRaw'.
+
+[22:41:13] [INFO ] [NOSB_Base]
+    | Computing InfluenceWeight + Shape Tensor Inverse (K^-1)...
+    | All NOSB base fields registered and Shape Tensor Inverse computed.
+
+[22:41:13] [INFO ] [FieldManager]
+    | Added field 'TempGradient'.
+    | Added field 'HeatFluxVec'.
+
+[22:41:13] [INFO ] [NOSB_T]
+    | Instantiated ThermalStabilizer globally in Phase 0 using strategy: Zhang
+
+[22:41:13] [INFO ] [ExplicitEuler]
+    | Computed safe Thermal limit dt: 2.674815e-03 (dx = 5.000000e-01, minDt = 3.343519e-03)
+[22:41:13] [WARNING] [ExplicitEuler]
+    | Global TimeStep_dt (1.000000e-02) EXCEEDS safe CFL limit (2.674815e-03)! Auto-clamping global dt to
+    | the safe limit.
+[22:41:13] [INFO ] [ExplicitEuler]
+    | Starting Explicit Loop with 10 LoadStep(s). Default dt = 2.674815e-03
+    | === Load Step 1 / 10 | TargetTime: 1.000000e+00 | dt: 2.674815e-03 | KBC: 0 ===
+    | --- Step 0 | Time: 0.000000e+00  |  Pure Compute: 0.000000e+00s  |  Total: 5.875000e-06s  |  Speed:
+    | 0 steps/s
+    | --- Step 100 | Time: 2.674815e-01  |  Pure Compute: 6.951508e-02s  |  Total: 7.030179e-02s  | 
+    | Speed: 1438 steps/s
+    | --- Step 200 | Time: 5.349630e-01  |  Pure Compute: 1.376567e-01s  |  Total: 1.393552e-01s  | 
+    | Speed: 1452 steps/s
+    | --- Step 300 | Time: 8.024444e-01  |  Pure Compute: 2.064141e-01s  |  Total: 2.090220e-01s  | 
+    | Speed: 1453 steps/s
+    | === Load Step 2 / 10 | TargetTime: 2.000000e+00 | dt: 2.674815e-03 | KBC: 0 ===
+    | --- Step 400 | Time: 1.069545e+00  |  Pure Compute: 2.780336e-01s  |  Total: 2.819175e-01s  | 
+    | Speed: 1438 steps/s
+    | --- Step 500 | Time: 1.337027e+00  |  Pure Compute: 3.494233e-01s  |  Total: 3.543122e-01s  | 
+    | Speed: 1430 steps/s
+    | --- Step 600 | Time: 1.604508e+00  |  Pure Compute: 4.199930e-01s  |  Total: 4.258231e-01s  | 
+    | Speed: 1428 steps/s
+    | --- Step 700 | Time: 1.871990e+00  |  Pure Compute: 4.943025e-01s  |  Total: 5.010967e-01s  | 
+    | Speed: 1416 steps/s
+    | === Load Step 3 / 10 | TargetTime: 3.000000e+00 | dt: 2.674815e-03 | KBC: 0 ===
+    | --- Step 800 | Time: 2.139090e+00  |  Pure Compute: 5.737097e-01s  |  Total: 5.814894e-01s  | 
+    | Speed: 1394 steps/s
+    | --- Step 900 | Time: 2.406572e+00  |  Pure Compute: 6.464096e-01s  |  Total: 6.551834e-01s  | 
+    | Speed: 1392 steps/s
+    | --- Step 1000 | Time: 2.674053e+00  |  Pure Compute: 7.179907e-01s  |  Total: 7.276813e-01s  | 
+    | Speed: 1392 steps/s
+    | --- Step 1100 | Time: 2.941535e+00  |  Pure Compute: 7.887758e-01s  |  Total: 7.994308e-01s  | 
+    | Speed: 1394 steps/s
+    | === Load Step 4 / 10 | TargetTime: 4.000000e+00 | dt: 2.674815e-03 | KBC: 0 ===
+    | --- Step 1200 | Time: 3.208636e+00  |  Pure Compute: 8.599911e-01s  |  Total: 8.716274e-01s  | 
+    | Speed: 1395 steps/s
+    | --- Step 1300 | Time: 3.476117e+00  |  Pure Compute: 9.295426e-01s  |  Total: 9.421230e-01s  | 
+    | Speed: 1398 steps/s
+    | --- Step 1400 | Time: 3.743599e+00  |  Pure Compute: 9.987103e-01s  |  Total: 1.012186e+00s  | 
+    | Speed: 1401 steps/s
+    | === Load Step 5 / 10 | TargetTime: 5.000000e+00 | dt: 2.674815e-03 | KBC: 0 ===
+    | --- Step 1500 | Time: 4.010699e+00  |  Pure Compute: 1.067548e+00s  |  Total: 1.081936e+00s  | 
+    | Speed: 1405 steps/s
+    | --- Step 1600 | Time: 4.278181e+00  |  Pure Compute: 1.137187e+00s  |  Total: 1.152496e+00s  | 
+    | Speed: 1406 steps/s
+    | --- Step 1700 | Time: 4.545662e+00  |  Pure Compute: 1.207949e+00s  |  Total: 1.224179e+00s  | 
+    | Speed: 1407 steps/s
+    | --- Step 1800 | Time: 4.813144e+00  |  Pure Compute: 1.277779e+00s  |  Total: 1.294934e+00s  | 
+    | Speed: 1408 steps/s
+    | === Load Step 6 / 10 | TargetTime: 6.000000e+00 | dt: 2.674815e-03 | KBC: 0 ===
+    | --- Step 1900 | Time: 5.080244e+00  |  Pure Compute: 1.347101e+00s  |  Total: 1.365256e+00s  | 
+    | Speed: 1410 steps/s
+    | --- Step 2000 | Time: 5.347726e+00  |  Pure Compute: 1.415030e+00s  |  Total: 1.434055e+00s  | 
+    | Speed: 1413 steps/s
+    | --- Step 2100 | Time: 5.615207e+00  |  Pure Compute: 1.482308e+00s  |  Total: 1.502213e+00s  | 
+    | Speed: 1416 steps/s
+    | --- Step 2200 | Time: 5.882689e+00  |  Pure Compute: 1.549538e+00s  |  Total: 1.570316e+00s  | 
+    | Speed: 1419 steps/s
+    | === Load Step 7 / 10 | TargetTime: 7.000000e+00 | dt: 2.674815e-03 | KBC: 0 ===
+    | --- Step 2300 | Time: 6.149790e+00  |  Pure Compute: 1.618393e+00s  |  Total: 1.640094e+00s  | 
+    | Speed: 1421 steps/s
+    | --- Step 2400 | Time: 6.417271e+00  |  Pure Compute: 1.688119e+00s  |  Total: 1.710743e+00s  | 
+    | Speed: 1421 steps/s
+    | --- Step 2500 | Time: 6.684753e+00  |  Pure Compute: 1.757172e+00s  |  Total: 1.780692e+00s  | 
+    | Speed: 1422 steps/s
+    | --- Step 2600 | Time: 6.952234e+00  |  Pure Compute: 1.824820e+00s  |  Total: 1.849298e+00s  | 
+    | Speed: 1424 steps/s
+    | === Load Step 8 / 10 | TargetTime: 8.000000e+00 | dt: 2.674815e-03 | KBC: 0 ===
+    | --- Step 2700 | Time: 7.219335e+00  |  Pure Compute: 1.893019e+00s  |  Total: 1.918508e+00s  | 
+    | Speed: 1426 steps/s
+    | --- Step 2800 | Time: 7.486816e+00  |  Pure Compute: 1.961794e+00s  |  Total: 1.988235e+00s  | 
+    | Speed: 1427 steps/s
+    | --- Step 2900 | Time: 7.754298e+00  |  Pure Compute: 2.030735e+00s  |  Total: 2.058072e+00s  | 
+    | Speed: 1428 steps/s
+    | === Load Step 9 / 10 | TargetTime: 9.000000e+00 | dt: 2.674815e-03 | KBC: 0 ===
+    | --- Step 3000 | Time: 8.021399e+00  |  Pure Compute: 2.099005e+00s  |  Total: 2.127259e+00s  | 
+    | Speed: 1429 steps/s
+    | --- Step 3100 | Time: 8.288880e+00  |  Pure Compute: 2.167078e+00s  |  Total: 2.196263e+00s  | 
+    | Speed: 1430 steps/s
+    | --- Step 3200 | Time: 8.556361e+00  |  Pure Compute: 2.234984e+00s  |  Total: 2.265061e+00s  | 
+    | Speed: 1431 steps/s
+    | --- Step 3300 | Time: 8.823843e+00  |  Pure Compute: 2.302907e+00s  |  Total: 2.333897e+00s  | 
+    | Speed: 1432 steps/s
+    | === Load Step 10 / 10 | TargetTime: 1.000000e+01 | dt: 2.674815e-03 | KBC: 0 ===
+    | --- Step 3400 | Time: 9.090944e+00  |  Pure Compute: 2.371221e+00s  |  Total: 2.403151e+00s  | 
+    | Speed: 1433 steps/s
+    | --- Step 3500 | Time: 9.358425e+00  |  Pure Compute: 2.442498e+00s  |  Total: 2.475259e+00s  | 
+    | Speed: 1432 steps/s
+    | --- Step 3600 | Time: 9.625907e+00  |  Pure Compute: 2.511576e+00s  |  Total: 2.545247e+00s  | 
+    | Speed: 1433 steps/s
+    | --- Step 3700 | Time: 9.893388e+00  |  Pure Compute: 2.580735e+00s  |  Total: 2.615395e+00s  | 
+    | Speed: 1433 steps/s
+    | --- Step 3740 | Time: 1.000000e+01  |  Pure Compute: 2.607595e+00s  |  Total: 2.643169e+00s  | 
+    | Speed: 1434 steps/s
+    | Finished. Total: 2.644103s  |  Pure Compute avg: 0.000697 s/step
+
+[22:41:15] [INFO ] [PDEngine]
+    | PD Engine Solve Phase Finished.
+
+[22:41:15] [INFO ] [EngineManager]
+    | Main Solver Phase finished.
+    | ==================================================
+    | Entering Post-processing Phase
+    | ==================================================
+    | Outputting: PD
+    | Post-processing Phase finished.

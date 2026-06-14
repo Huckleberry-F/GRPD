@@ -114,6 +114,8 @@ void MechanicalSillingStabilizer::applyPenalty(PDContext &ctx) {
   // [新增] 获取塑性应变场用于动态软化
   auto *eqPSField = fieldManager.getFieldAs<double>("EqPlasticStrain_Trial");
   const double *eqPSPtr = eqPSField ? eqPSField->dataPtr() : nullptr;
+  auto *damageField = fieldManager.getFieldAs<double>("Damage_Trial");
+  const double *damagePtr = damageField ? damageField->dataPtr() : nullptr;
 
 #pragma omp parallel for schedule(guided)
   for (int i = 0; i < static_cast<int>(numParticles); ++i) {
@@ -175,16 +177,21 @@ void MechanicalSillingStabilizer::applyPenalty(PDContext &ctx) {
       force_z += omega * vj / horizon * (coeff_i * z_iz - coeff_j * z_jz);
     }
 
-    // [新增] 动态塑性惩罚力软化
+    // [新增] 动态塑性惩罚力软化与损伤软化耦合
     double plastic_softening = 1.0;
     if (eqPSPtr) {
-      plastic_softening = std::exp(-100.0 * eqPSPtr[i]);
-      plastic_softening = std::max(plastic_softening, 0.01);
+      double rate = plasticSofteningRate_ > 0.0 ? plasticSofteningRate_ : 100.0;
+      double floor = plasticSofteningFloor_ >= 0.0 ? plasticSofteningFloor_ : 0.01;
+      plastic_softening = std::exp(-rate * eqPSPtr[i]);
+      plastic_softening = std::max(plastic_softening, floor);
     }
+    double damage_val = (damageCoupling_ && damagePtr) ? damagePtr[i] : 0.0;
+    double damage_softening = std::max(0.0, 1.0 - damage_val);
+    double final_softening = plastic_softening * damage_softening;
 
-    accPtr[i * 3] += (force_x * plastic_softening) / rho_i;
-    accPtr[i * 3 + 1] += (force_y * plastic_softening) / rho_i;
-    accPtr[i * 3 + 2] += (force_z * plastic_softening) / rho_i;
+    accPtr[i * 3] += (force_x * final_softening) / rho_i;
+    accPtr[i * 3 + 1] += (force_y * final_softening) / rho_i;
+    accPtr[i * 3 + 2] += (force_z * final_softening) / rho_i;
   }
 }
 
@@ -262,6 +269,8 @@ void MechanicalWanStabilizer::applyPenalty(PDContext &ctx) {
   // [新增] 获取塑性应变场用于动态软化
   auto *eqPSField = fieldManager.getFieldAs<double>("EqPlasticStrain_Trial");
   const double *eqPSPtr = eqPSField ? eqPSField->dataPtr() : nullptr;
+  auto *damageField = fieldManager.getFieldAs<double>("Damage_Trial");
+  const double *damagePtr = damageField ? damageField->dataPtr() : nullptr;
 
 #pragma omp parallel for schedule(guided)
   for (int i = 0; i < static_cast<int>(numParticles); ++i) {
@@ -335,16 +344,21 @@ void MechanicalWanStabilizer::applyPenalty(PDContext &ctx) {
       force_z += omega * vj * (Ti_z - Tj_z);
     }
 
-    // [新增] 动态塑性惩罚力软化
+    // [新增] 动态塑性惩罚力软化与损伤软化耦合
     double plastic_softening = 1.0;
     if (eqPSPtr) {
-      plastic_softening = std::exp(-100.0 * eqPSPtr[i]);
-      plastic_softening = std::max(plastic_softening, 0.01);
+      double rate = plasticSofteningRate_ > 0.0 ? plasticSofteningRate_ : 100.0;
+      double floor = plasticSofteningFloor_ >= 0.0 ? plasticSofteningFloor_ : 0.01;
+      plastic_softening = std::exp(-rate * eqPSPtr[i]);
+      plastic_softening = std::max(plastic_softening, floor);
     }
+    double damage_val = (damageCoupling_ && damagePtr) ? damagePtr[i] : 0.0;
+    double damage_softening = std::max(0.0, 1.0 - damage_val);
+    double final_softening = plastic_softening * damage_softening;
 
-    accPtr[i * 3] += (force_x * plastic_softening) / rho_i;
-    accPtr[i * 3 + 1] += (force_y * plastic_softening) / rho_i;
-    accPtr[i * 3 + 2] += (force_z * plastic_softening) / rho_i;
+    accPtr[i * 3] += (force_x * final_softening) / rho_i;
+    accPtr[i * 3 + 1] += (force_y * final_softening) / rho_i;
+    accPtr[i * 3 + 2] += (force_z * final_softening) / rho_i;
   }
 }
 
@@ -396,6 +410,8 @@ void MechanicalZhangStabilizer::applyPenalty(PDContext &ctx) {
   // [新增] 获取塑性应变场用于动态软化
   auto *eqPSField = fieldManager.getFieldAs<double>("EqPlasticStrain_Trial");
   const double *eqPSPtr = eqPSField ? eqPSField->dataPtr() : nullptr;
+  auto *damageField = fieldManager.getFieldAs<double>("Damage_Trial");
+  const double *damagePtr = damageField ? damageField->dataPtr() : nullptr;
 
   // [维度修复]
   // 无需猜测系统维度以及厚度(由于厚度并未全局存储，导致 dx 解析报错)
@@ -520,14 +536,17 @@ void MechanicalZhangStabilizer::applyPenalty(PDContext &ctx) {
       }
     }
 
-    // [新增] 动态塑性惩罚力软化
+    // [新增] 动态塑性惩罚力软化与损伤软化耦合
     double plastic_softening = 1.0;
     if (eqPSPtr) {
-      plastic_softening = std::exp(-100.0 * eqPSPtr[i]);
-      plastic_softening = std::max(plastic_softening, 0.5);
+      double rate = plasticSofteningRate_ > 0.0 ? plasticSofteningRate_ : 100.0;
+      double floor = plasticSofteningFloor_ >= 0.0 ? plasticSofteningFloor_ : 0.5;
+      plastic_softening = std::exp(-rate * eqPSPtr[i]);
+      plastic_softening = std::max(plastic_softening, floor);
     }
-
-    double final_reduction = reduction_factor * plastic_softening;
+    double damage_val = (damageCoupling_ && damagePtr) ? damagePtr[i] : 0.0;
+    double damage_softening = std::max(0.0, 1.0 - damage_val);
+    double final_reduction = reduction_factor * plastic_softening * damage_softening;
 
     accPtr[i * 3] += (force_x * final_reduction) / rho_i;
     accPtr[i * 3 + 1] += (force_y * final_reduction) / rho_i;

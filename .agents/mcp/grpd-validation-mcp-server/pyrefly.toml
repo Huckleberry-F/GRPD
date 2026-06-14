@@ -1,0 +1,17 @@
+project-includes = [
+    "server.py",
+    "src",
+    "tests",
+]
+
+project-excludes = [
+    "work_dir",
+    "__pycache__",
+    ".pytest_cache",
+]
+
+search-path = [
+    ".",
+]
+
+python-version = "3.12"

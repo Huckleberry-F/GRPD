@@ -21,7 +21,7 @@ Parts:
 BoundaryConditions:
   - BcID: 1
     Name: "Bottom_Fixed"
-    Box: [0.4, 2.6, -0.05, 0.05, -1.0, 1.0]
+    Box: [0.4, 2.6, -0.01, 0.01, -1.0, 1.0]
     Type: "UY"
     Value: 0.0
 
@@ -31,7 +31,7 @@ LoadStep_Conditions:
     BoundaryConditions:
       - BcID: 2
         Name: "Top_Tension"
-        Box: [0.4, 2.6, 4.95, 5.05, -1.0, 1.0]
+        Box: [0.4, 2.6, 4.99, 5.01, -1.0, 1.0]
         Type: "UY"
         Value: 0.5 # 相对高度 5.0 拉伸 10%
 

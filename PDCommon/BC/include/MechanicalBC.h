@@ -11,6 +11,7 @@
 
 #include "BC.h"
 #include "TypedField.h"
+#include <cmath>
 
 namespace PDCommon::BC {
 
@@ -141,10 +142,10 @@ public:
   void commitEndStep() override;
   void setPrevVal(double val) override { prevVal_ = val; }
 
-  void setScalingFactors(double dx, double density, double massScale) override {
-    dx_ = dx;
+  void setScalingFactors(double dx, double density, double massScale, int dim = 3, double thickness = 1.0) override {
     density_ = density;
     massScale_ = massScale;
+    local_dx_ = (dim == 2) ? std::sqrt(vol_ / thickness) : std::cbrt(vol_);
   }
 
   bool isConstraint() const override {
@@ -156,9 +157,10 @@ private:
   int axis_;         // 工作轴 (0=X, 1=Y, 2=Z)
   double pressVal_;  // 面压值 (MPa)
   double prevVal_;   // 历史最终态值
-  double dx_ = 1.0;
   double density_ = 1.0;
   double massScale_ = 1.0;
+  double vol_ = 1.0;
+  double local_dx_ = 1.0;
 };
 
 } // namespace PDCommon::BC

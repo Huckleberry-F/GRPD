@@ -48,6 +48,24 @@ void NOSB_Base::configure(const YAML::Node &solverNode) {
     LOG_INFO("[NOSB_Base] Applied ZeroEnergyMethod string: " +
              zeroEnergyMethodStr_);
   }
+  // 3b. 零能修正塑性软化底限系数
+  if (solverNode["ZeroEnergyPlasticFloor"]) {
+    zeroEnergyPlasticFloor_ = solverNode["ZeroEnergyPlasticFloor"].as<double>();
+    LOG_INFO("[NOSB_Base] Applied ZeroEnergyPlasticFloor: " +
+             std::to_string(zeroEnergyPlasticFloor_));
+  }
+  // 3c. 零能修正塑性衰减率
+  if (solverNode["ZeroEnergyPlasticRate"]) {
+    zeroEnergyPlasticRate_ = solverNode["ZeroEnergyPlasticRate"].as<double>();
+    LOG_INFO("[NOSB_Base] Applied ZeroEnergyPlasticRate: " +
+             std::to_string(zeroEnergyPlasticRate_));
+  }
+  // 3d. 是否开启稳定器与粒子损伤耦合
+  if (solverNode["ZeroEnergyDamageCoupling"]) {
+    zeroEnergyDamageCoupling_ = solverNode["ZeroEnergyDamageCoupling"].as<bool>();
+    LOG_INFO("[NOSB_Base] Applied ZeroEnergyDamageCoupling: " +
+             std::to_string(zeroEnergyDamageCoupling_));
+  }
   // 4. 是否动态刷新形状张量
   if (solverNode["DynamicShapeTensor"]) {
     dynamicShapeTensor_ = solverNode["DynamicShapeTensor"].as<bool>();

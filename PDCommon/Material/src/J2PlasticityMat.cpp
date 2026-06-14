@@ -146,7 +146,7 @@ void J2PlasticityMat::commitState() {
 // 纯无状态辅助函数：计算工程应力
 // ---------------------------------------------------------------------------
 Eigen::Matrix3d
-J2PlasticityMat::ComputeEngineeringStress(const Eigen::Matrix3d &strain) const {
+J2PlasticityMat::ComputeEngineeringStress(const Eigen::Matrix3d &strain, PDCommon::Core::PDContext *ctx) const {
   // 这里属于纯线性胡克定律回退
   double e_trace = strain.trace();
   Eigen::Matrix3d stress =
@@ -158,7 +158,8 @@ J2PlasticityMat::ComputeEngineeringStress(const Eigen::Matrix3d &strain) const {
 // 核心状态相关本构算法：包含小变形下的径向返回
 // ---------------------------------------------------------------------------
 Eigen::Matrix3d J2PlasticityMat::ComputePK1Stress(const Eigen::Matrix3d &F,
-                                                  int particleId, int stateMode) const {
+                                                  int particleId,
+                                                  int stateMode, PDCommon::Core::PDContext *ctx) const {
   if (particleId < 0 || eqPSOld_ == nullptr) {
     // 降级为纯弹性
     Eigen::Matrix3d strain =
@@ -173,7 +174,7 @@ Eigen::Matrix3d J2PlasticityMat::ComputePK1Stress(const Eigen::Matrix3d &F,
     // [大变形修复]：采用 Green-Lagrange 应变 E = 0.5 * (F^T * F - I)
     // 此公式计算极快（无需极分解），且具有绝对的旋转客观性！
     // 能够彻底消除在巨大应力（大硬化模量）下，裂纹尖端因刚体大转动引发的虚假畸变应变！
-    eps = 0.5 * (F.transpose() * F) - I;
+    eps = 0.5 * (F.transpose() * F - I);
   } else {
     // 小变形情况（近似非线性截断）
     eps = 0.5 * (F + F.transpose()) - I;
@@ -183,45 +184,45 @@ Eigen::Matrix3d J2PlasticityMat::ComputePK1Stress(const Eigen::Matrix3d &F,
 
   if (stateMode == 1 || stateMode == 2) {
     // [ADR 初始刚度法核心逻辑]
-    // stateMode == 1: outerIter=0的冻结态，读取Old场(上一个载荷子步的塑性历史)
-    // stateMode == 2: outerIter>0的冻结态，读取Trial场(上一次外循环本构试探更新后的最新塑性场)
+    // stateMode == 1: outerIter=0的冻结态，读取Old（上一个载荷子步的塑性历史）
+    // stateMode == 2: outerIter>0的冻结态，读取Trial（上一次外循环本构试探更新后的最新塑性场）
     Eigen::Matrix3d eps_p_fixed = Eigen::Matrix3d::Zero();
     const double* ps_ptr = (stateMode == 1) ? pSOld_ : pSTrial_;
-    
+
     eps_p_fixed << ps_ptr[idx9], ps_ptr[idx9 + 1], ps_ptr[idx9 + 2],
         ps_ptr[idx9 + 3], ps_ptr[idx9 + 4], ps_ptr[idx9 + 5], ps_ptr[idx9 + 6],
         ps_ptr[idx9 + 7], ps_ptr[idx9 + 8];
-        
+
     Eigen::Matrix3d eps_e = eps - eps_p_fixed;
-    
-    // [智能标量切线预测法 (Scalar Tangent Predictor)]
+
+    // [智能标量切线预测器 (Scalar Tangent Predictor)]
     // 当 stateMode == 2 且当前粒子发生过塑性流动时，大幅削弱剪切刚度，以近似一致切线刚度矩阵的效果，极大地加速外层 NR 迭代。
     double current_mu = mu_;
     double current_lambda = lambda_;
-    
+
     if (stateMode == 2) {
-       // 如果 Trial 塑性应变大于 Old 塑性应变，说明上一个 NR 迭代步发生了活跃的塑性屈服
+       // 如果 Trial 塑性应变大于 Old 塑性应变，说明上一轮 NR 迭代步发生了活跃的塑性屈服
        if (eqPSTrial_[particleId] > eqPSOld_[particleId] + 1.0e-12) {
            double H = hardeningModulus_;
            // 剪切模量折减系数 (基于 1D 弹塑性切线近似)
            double beta = H / (H + 3.0 * mu_);
            // 为了防止刚度矩阵奇异导致内循环除零或发散，保留至少 5% 的剪切刚度
-           beta = std::max(beta, 0.05); 
-           
+           beta = std::max(beta, 0.05);
+
            current_mu = mu_ * beta;
            // 为了保持体积刚度 (Bulk Modulus) K 不变（塑性是纯偏斜的，不影响体积变形），反推等效的 lambda
            double K_bulk = lambda_ + (2.0 / 3.0) * mu_;
            current_lambda = K_bulk - (2.0 / 3.0) * current_mu;
        }
     }
-    
+
     double e_trace = eps_e.trace();
     Eigen::Matrix3d S_pred = 2.0 * current_mu * eps_e + current_lambda * e_trace * I;
 
     if (largeDeformation_) {
-      return F * S_pred; // 将 PK2 应力推回 PK1 应力
+      return F * S_pred; // 从 PK2 应力推回 PK1 应力
     }
-    return S_pred; // 直接返回刚度预测，不更新塑性参量
+    return S_pred; // 直接返回刚度预测，不更新塑性参数
   }
 
   // 以下为正常本构计算 (stateMode == 0)

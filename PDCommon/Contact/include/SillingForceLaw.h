@@ -20,8 +20,9 @@ public:
   void onPreContact(PDCommon::Core::PDContext &ctx, double maxDx) override;
   ForceResult computeForce(const ContactContext &pair) override;
 
+  /// @brief 设置主从面粒子 ID（重写基类虚函数，用于获取接触对范围内的粒子ID）
   void setContactParticleIds(const std::vector<int> &masterIds,
-                             const std::vector<int> &slaveIds) {
+                             const std::vector<int> &slaveIds) override {
     masterIds_ = masterIds;
     slaveIds_ = slaveIds;
   }
