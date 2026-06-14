@@ -55,11 +55,11 @@ class AnsysRunner:
 
     def _validate_path(self, path: str) -> bool:
         """检查路径是否在安全白名单内"""
-        abs_path = os.path.abspath(path)
+        abs_path = os.path.normcase(os.path.abspath(path))
         if not self.allowed_directories:
             return True
         return any(
-            abs_path.startswith(os.path.abspath(d))
+            abs_path.startswith(os.path.normcase(os.path.abspath(d)))
             for d in self.allowed_directories
         )
 
@@ -291,8 +291,11 @@ class AnsysRunner:
         if extra_args:
             cmd.extend(extra_args)
 
-        # 设置环境变量：防止弹出对话框
+        # 设置环境变量：防止弹出对话框，并注入 PATH 防止 DLL 找不到
         env = os.environ.copy()
+        ansys_bin_dir = os.path.dirname(self.executable)
+        if ansys_bin_dir and ansys_bin_dir not in env.get("PATH", ""):
+            env["PATH"] = ansys_bin_dir + os.pathsep + env.get("PATH", "")
         env["ANS_CONSEC"] = "YES"
 
         start_time = time.time()

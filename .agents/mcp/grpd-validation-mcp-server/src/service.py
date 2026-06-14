@@ -21,6 +21,7 @@ def compare_grpd_vtk_with_ansys_txt(
     physics_type: str = "Mechanical",
     components: list | None = None,
     tol: float | None = None,
+    x_axis_mode: str = "auto",
 ) -> dict:
     """Create a GRPD/ANSYS comparison report from VTK and TXT result files."""
     report_dir = os.path.abspath(output_dir) if output_dir else get_next_work_dir()
@@ -35,4 +36,5 @@ def compare_grpd_vtk_with_ansys_txt(
         physics_type=physics_type,
         components=components,
         tol=tol,
+        x_axis_mode=x_axis_mode,
     )

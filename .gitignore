@@ -54,3 +54,7 @@ docs/superpowers/task.md
 !.agents/mcp/**/result_parser.py
 !.agents/mcp/**/src/result_parser.py
 !.agents/mcp/path-comparison-mcp-server/result_parser.py
+
+# === 临时测试目录 ===
+scratch/
+test_debug/

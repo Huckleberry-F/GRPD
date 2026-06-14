@@ -50,6 +50,7 @@ def compare_grpd_vtk_with_ansys_txt(
     physics_type: str = "Mechanical",
     components: list | None = None,
     tol: float | None = None,
+    x_axis_mode: str = "auto",
 ) -> dict:
     """
     读取 GRPD VTK 与 ANSYS TXT，沿三维采样线对齐并生成误差报告。
@@ -68,6 +69,7 @@ def compare_grpd_vtk_with_ansys_txt(
         physics_type,
         components,
         tol,
+        x_axis_mode,
     )
 
 

@@ -44,6 +44,7 @@ def compare_grpd_and_ansys(
     physics_type: str = "Mechanical",
     components: list[str] | None = None,
     tol: float | None = None,
+    x_axis_mode: str = "auto",
 ) -> dict:
     """Compare GRPD VTK point data with ANSYS text results along a 3D sampling line."""
     os.makedirs(output_dir, exist_ok=True)
@@ -141,13 +142,45 @@ def compare_grpd_and_ansys(
         excel_data[f"Error {component} (%)"] = rel_err
 
         summary_data[f"max_error_{component.lower()}_percent"] = float(np.max(rel_err))
+        ansys_x_coords = ansys_coords[:, 0]
+        ansys_y_coords = ansys_coords[:, 1]
+        ansys_z_coords = ansys_coords[:, 2]
+
+        mode = x_axis_mode.lower() if x_axis_mode else "auto"
+        if mode == "x":
+            plot_x = ansys_x_coords
+            x_label = "X coordinate (mm)"
+        elif mode == "y":
+            plot_x = ansys_y_coords
+            x_label = "Y coordinate (mm)"
+        elif mode == "z":
+            plot_x = ansys_z_coords
+            x_label = "Z coordinate (mm)"
+        elif mode == "distance":
+            plot_x = ansys_dist
+            x_label = "Distance along path (mm)"
+        else:  # "auto"
+            if (np.max(ansys_x_coords) - np.min(ansys_x_coords)) > 1.0e-5:
+                plot_x = ansys_x_coords
+                x_label = "X coordinate (mm)"
+            elif (np.max(ansys_y_coords) - np.min(ansys_y_coords)) > 1.0e-5:
+                plot_x = ansys_y_coords
+                x_label = "Y coordinate (mm)"
+            elif (np.max(ansys_z_coords) - np.min(ansys_z_coords)) > 1.0e-5:
+                plot_x = ansys_z_coords
+                x_label = "Z coordinate (mm)"
+            else:
+                plot_x = ansys_dist
+                x_label = "Distance along path (mm)"
+
         plot_data[component] = (
-            ansys_dist,
+            plot_x,
             grpd_aligned,
-            ansys_dist,
+            plot_x,
             ansys_values,
             label,
             unit,
+            x_label,
         )
 
     excel_path = os.path.join(output_dir, "Comparison_Report.xlsx")
@@ -157,10 +190,10 @@ def compare_grpd_and_ansys(
     if len(components) == 1:
         axes = [axes]
     for ax, component in zip(axes, components):
-        gr_x, gr_y, an_x, an_y, label, unit = plot_data[component]
+        gr_x, gr_y, an_x, an_y, label, unit, x_label = plot_data[component]
         ax.plot(gr_x, gr_y, "r-", linewidth=2, label="GRPD (Peridynamics)")
         ax.plot(an_x, an_y, "ko", markersize=5, label="ANSYS (FEM)")
-        ax.set_xlabel("Distance along path (mm)")
+        ax.set_xlabel(x_label)
         ax.set_ylabel(f"{label} ({unit})")
         ax.set_title(f"{component} Comparison")
         ax.legend()
