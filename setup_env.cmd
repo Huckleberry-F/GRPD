@@ -1,6 +1,4 @@
 @echo off
 cd /d "%~dp0"
-echo Launching environment configuration script...
-powershell -NoProfile -ExecutionPolicy Bypass -File ".\setup_env.ps1"
-echo.
+powershell -NoProfile -ExecutionPolicy Bypass -File ".\setup\win\install_deps.ps1"
 pause

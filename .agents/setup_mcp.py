@@ -10,10 +10,21 @@ def main():
     # 1. 自动检测项目根目录与 Python 解释器
     script_dir = os.path.dirname(os.path.abspath(__file__))
     project_root = os.path.abspath(os.path.join(script_dir, ".."))
-    python_exe = sys.executable
+    
+    # 优先探测项目内的虚拟环境 Python 解释器，以确保其包含 mcp 等所有已安装的第三方依赖
+    if os.name == "nt":
+        venv_python = os.path.join(project_root, ".venv", "Scripts", "python.exe")
+    else:
+        venv_python = os.path.join(project_root, ".venv", "bin", "python")
+        
+    if os.path.exists(venv_python):
+        python_exe = venv_python
+        print(f"[+] 优先使用项目虚拟环境 Python 解释器: {python_exe}")
+    else:
+        python_exe = sys.executable
+        print(f"[+] 未检测到项目虚拟环境，使用当前 Python 解释器: {python_exe}")
 
     print(f"[+] 检测到项目根目录: {project_root}")
-    print(f"[+] 检测到当前 Python 解释器: {python_exe}")
 
     # 2. 检查依赖
     try:
@@ -48,8 +59,23 @@ def main():
         # 复制配置并替换占位符
         new_cfg = server_cfg.copy()
         new_cfg["command"] = python_exe
-        new_cfg["args"] = [arg.replace("<GRPD_PROJECT_ROOT_PATH>", project_root) for arg in server_cfg.get("args", [])]
-        new_cfg["cwd"] = server_cfg.get("cwd", "").replace("<GRPD_PROJECT_ROOT_PATH>", project_root)
+        
+        # 统一处理参数中的路径分隔符
+        new_args = []
+        for arg in server_cfg.get("args", []):
+            replaced = arg.replace("<GRPD_PROJECT_ROOT_PATH>", project_root)
+            # 在非 Windows 系统下，统一将 Windows 的 "\\" 替换为 "/"
+            if os.name != "nt":
+                replaced = replaced.replace("\\", "/")
+            new_args.append(os.path.normpath(replaced))
+        new_cfg["args"] = new_args
+        
+        # 统一处理 cwd 路径中的分隔符
+        raw_cwd = server_cfg.get("cwd", "").replace("<GRPD_PROJECT_ROOT_PATH>", project_root)
+        if os.name != "nt":
+            raw_cwd = raw_cwd.replace("\\", "/")
+        new_cfg["cwd"] = os.path.normpath(raw_cwd)
+        
         updated_servers[server_name] = new_cfg
 
     local_settings = {"mcpServers": updated_servers}
