@@ -36,6 +36,25 @@
 +        step_substeps = min(1000, step_substeps) if step_substeps > 1000 else step_substeps
 ```
 
+### 3.2. 修复外层解析与 APDL 生成时文件名后缀不一致的缺陷
+在 `ansys-mcp-server` 的服务层中实现了统一的 `_get_effective_suffix` 辅助函数。当外部只传入 `substep` 而未传入 `time` 时，外层拼写解析文件名时同样会读取 `PD.yaml` 并基于 `TimeStep_dt * substep` 转换出真实的物理时刻，从而将两端的文件名对齐逻辑强行绑定与约束，消除了 `File not found` 的潜在缺陷。
+文件修改：[.agents/mcp/ansys-mcp-server/src/service.py](file:///d:/C++pro/GRPD/.agents/mcp/ansys-mcp-server/src/service.py)
+```diff
++def _get_effective_suffix(yaml_file: str, substep: int, time: float) -> str:
++    effective_time = time
++    if effective_time <= 0.0 and substep > 0:
++        try:
++            import yaml
++            with open(yaml_file, "r", encoding="utf-8") as f:
++                y_data = yaml.safe_load(f) or {}
++            dt = float(y_data.get("Solver", {}).get("TimeStep_dt", 0.0))
++            if dt > 0.0:
++                effective_time = substep * dt
++        except Exception:
++            pass
++    return f"_t{effective_time}" if effective_time > 0.0 else (f"_sub{substep}" if substep else "")
+```
+
 ---
 
 ## 4. 实验记录与附件链接

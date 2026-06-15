@@ -29,6 +29,21 @@ RUNNER = AnsysRunner(
 )
 
 
+def _get_effective_suffix(yaml_file: str, substep: int, time: float) -> str:
+    effective_time = time
+    if effective_time <= 0.0 and substep > 0:
+        try:
+            import yaml
+            with open(yaml_file, "r", encoding="utf-8") as f:
+                y_data = yaml.safe_load(f) or {}
+            dt = float(y_data.get("Solver", {}).get("TimeStep_dt", 0.0))
+            if dt > 0.0:
+                effective_time = substep * dt
+        except Exception:
+            pass
+    return f"_t{effective_time}" if effective_time > 0.0 else (f"_sub{substep}" if substep else "")
+
+
 def run_ansys_mac(
     mac_file: str,
     work_dir: str = "",
@@ -77,7 +92,7 @@ def generate_ansys_apdl_from_yaml(
         default_start_y=start_y,
         default_end_y=end_y if end_y != 0.0 else None,
     )
-    suffix = f"_t{time}" if time > 0.0 else (f"_sub{substep}" if substep else "")
+    suffix = _get_effective_suffix(yaml_file, substep, time)
     result["ansys_txt_file"] = os.path.join(
         os.path.dirname(os.path.abspath(output_mac)),
         f"ansys_val_results{suffix}.txt",
@@ -195,7 +210,7 @@ def run_ansys_yaml_case(
         parameters["TIME"] = time
 
     result = RUNNER.run_mac_file(mac_file, work_dir, job_name, parameters=parameters)
-    suffix = f"_t{time}" if time > 0.0 else (f"_sub{substep}" if substep else "")
+    suffix = _get_effective_suffix(yaml_file, substep, time)
     ansys_txt_file = os.path.join(work_dir, f"ansys_val_results{suffix}.txt")
     db_file = os.path.join(work_dir, f"{job_name}.db")
     out_file = os.path.join(work_dir, f"{job_name}.out")
