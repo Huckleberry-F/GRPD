@@ -6,6 +6,7 @@
 aux_source_directory(${CMAKE_CURRENT_SOURCE_DIR} DIR_SRCS)
 list(REMOVE_ITEM DIR_SRCS "${CMAKE_CURRENT_SOURCE_DIR}/test_constitutive.cpp")
 list(REMOVE_ITEM DIR_SRCS "${CMAKE_CURRENT_SOURCE_DIR}/test_math_utils.cpp")
+list(REMOVE_ITEM DIR_SRCS "${CMAKE_CURRENT_SOURCE_DIR}/test_io_manager_vtk_path.cpp")
 add_executable(${PROJECT_NAME} ${DIR_SRCS})
 
 # Add include directories for PDCommon components
@@ -81,6 +82,35 @@ target_include_directories(test_math_utils PRIVATE
     ${PROJECT_SOURCE_DIR}/Src/Engine/include
 )
 target_link_libraries(test_math_utils PRIVATE
+    PDCommon
+    Engine_Obj
+    PDSolve_Obj
+    Material_Obj
+    BC_Obj
+    IO_Obj
+    Model_Obj
+    Neighbor_Obj
+    Core_Obj
+    Field_Obj
+    Kernel_Obj
+    Integration_Obj
+    Fracture_Obj
+    Contact_Obj
+    PostProcessing_Obj
+)
+
+# 6. Add test_io_manager_vtk_path target
+add_executable(test_io_manager_vtk_path test_io_manager_vtk_path.cpp)
+target_include_directories(test_io_manager_vtk_path PRIVATE
+    ${PROJECT_SOURCE_DIR}/PDCommon/Utils/include
+    ${PROJECT_SOURCE_DIR}/PDCommon/IO/include
+    ${PROJECT_SOURCE_DIR}/PDCommon/Material/include
+    ${PROJECT_SOURCE_DIR}/PDCommon/BC/include
+    ${PROJECT_SOURCE_DIR}/PDCommon/Core/include
+    ${PROJECT_SOURCE_DIR}/Src
+    ${PROJECT_SOURCE_DIR}/Src/Engine/include
+)
+target_link_libraries(test_io_manager_vtk_path PRIVATE
     PDCommon
     Engine_Obj
     PDSolve_Obj

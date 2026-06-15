@@ -73,10 +73,10 @@ public:
 
   // ---- 输出路径生成 ----
 
-  /// @brief 根据步数和物理时间，生成 VTK 文件的完整路径
+  /// @brief 根据物理时间生成 VTK 文件的完整路径
   /// @param baseName 文件基础名（通常为模型名）
-  /// @param step 时间步编号
-  /// @param time 物理时间
+  /// @param step 当前保留为兼容参数；文件名不再使用步号序列
+  /// @param time 物理时间，作为 VTK 序列文件唯一变化后缀
   /// @return 完整的 VTK 文件路径字符串
   std::string buildVtkPath(const std::string &baseName, int step,
                            double time) const;

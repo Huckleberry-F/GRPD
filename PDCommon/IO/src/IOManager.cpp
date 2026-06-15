@@ -178,10 +178,13 @@ bool IOManager::isInitialized() const { return initialized_; }
 // ---------------------------------------------------------------------------
 std::string IOManager::buildVtkPath(const std::string &baseName, int step,
                                     double time) const {
-  // 生成格式：Result_时间戳/baseName_step00100_t0.0100.vtk
+  // 生成格式：Result_时间戳/baseName_t0.0100.vtk。
+  // step 参数保留在接口中，用于兼容 PDEnginePost 与各积分器输出回调。
+  (void)step;
+
   char buffer[256];
-  std::snprintf(buffer, sizeof(buffer), "%s_step%05d_t%.4f.vtk",
-                baseName.c_str(), step, time);
+  std::snprintf(buffer, sizeof(buffer), "%s_t%.4f.vtk", baseName.c_str(),
+                time);
   return (resultDir_ / std::string(buffer)).string();
 }
 
