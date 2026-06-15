@@ -8,6 +8,10 @@
 #include <chrono>
 #include <cstdio>
 #include <cstdlib>
+#include <fstream>
+#include <cmath>
+#include <algorithm>
+#include <vector>
 
 #ifdef _WIN32
 #include <windows.h>
@@ -173,6 +177,61 @@ fs::path IOManager::findMeshFile() const {
 
 bool IOManager::isInitialized() const { return initialized_; }
 
+static void updatePvdFile(const fs::path &resultDir, const std::string &baseName, double time, const std::string &vtkFilename) {
+  fs::path pvdPath = resultDir / (baseName + ".pvd");
+  std::vector<std::pair<double, std::string>> entries;
+
+  if (fs::exists(pvdPath)) {
+    std::ifstream infile(pvdPath);
+    std::string line;
+    while (std::getline(infile, line)) {
+      size_t tsPos = line.find("timestep=\"");
+      size_t filePos = line.find("file=\"");
+      if (tsPos != std::string::npos && filePos != std::string::npos) {
+        tsPos += 10;
+        size_t tsEnd = line.find("\"", tsPos);
+        filePos += 6;
+        size_t fileEnd = line.find("\"", filePos);
+        if (tsEnd != std::string::npos && fileEnd != std::string::npos) {
+          try {
+            double ts = std::stod(line.substr(tsPos, tsEnd - tsPos));
+            std::string f = line.substr(filePos, fileEnd - filePos);
+            entries.push_back({ts, f});
+          } catch (...) {
+            // ignore malformed lines
+          }
+        }
+      }
+    }
+  }
+
+  bool exists = false;
+  for (const auto &entry : entries) {
+    if (std::abs(entry.first - time) < 1e-9) {
+      exists = true;
+      break;
+    }
+  }
+  if (!exists) {
+    entries.push_back({time, vtkFilename});
+  }
+
+  std::sort(entries.begin(), entries.end(), [](const auto &a, const auto &b) {
+    return a.first < b.first;
+  });
+
+  std::ofstream outfile(pvdPath);
+  outfile << "<?xml version=\"1.0\"?>\n";
+  outfile << "<VTKFile type=\"Collection\" version=\"0.1\" byte_order=\"LittleEndian\">\n";
+  outfile << "  <Collection>\n";
+  for (const auto &entry : entries) {
+    outfile << "    <DataSet timestep=\"" << entry.first 
+            << "\" group=\"\" part=\"0\" file=\"" << entry.second << "\"/>\n";
+  }
+  outfile << "  </Collection>\n";
+  outfile << "</VTKFile>\n";
+}
+
 // ---------------------------------------------------------------------------
 // 输出路径生成
 // ---------------------------------------------------------------------------
@@ -185,7 +244,11 @@ std::string IOManager::buildVtkPath(const std::string &baseName, int step,
   char buffer[256];
   std::snprintf(buffer, sizeof(buffer), "%s_t%.4f.vtk", baseName.c_str(),
                 time);
-  return (resultDir_ / std::string(buffer)).string();
+  std::string vtkFilename(buffer);
+
+  updatePvdFile(resultDir_, baseName, time, vtkFilename);
+
+  return (resultDir_ / vtkFilename).string();
 }
 
 std::string IOManager::buildResultPath(const std::string &filename) const {
