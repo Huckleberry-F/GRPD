@@ -205,7 +205,7 @@ def generate_apdl_from_yaml(
         step_kbc = int(step.get("KBC", 0))
         step_substeps = int(step.get("NumSubsteps", num_substeps))
         # 限制隐式求解步数，避免跟随 GRPD 显式细密步长
-        step_substeps = min(100, step_substeps) if step_substeps > 100 else step_substeps
+        step_substeps = min(1000, step_substeps) if step_substeps > 1000 else step_substeps
 
         if is_transient:
             apdl += [
