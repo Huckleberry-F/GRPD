@@ -116,16 +116,45 @@ def compare_grpd_and_ansys(
         diff = ansys_coords[:, np.newaxis, :] - grpd_pts_filtered[np.newaxis, :, :]
         dists = np.linalg.norm(diff, axis=2)
 
-        # 对每个采样点，取最近的 K 个邻近粒子进行空间反距离加权插值 (IDW)
+        # 对每个采样点，进行空间反距离加权插值 (IDW) 并对边界外拓区域采用 1D 线性外插
         M, N = dists.shape
         K = min(4, N)
         grpd_aligned = np.zeros(M)
+        
+        # 提取 GRPD 投影范围并确定外插特征长度
+        x_min = float(np.min(grpd_proj_dist))
+        x_max = float(np.max(grpd_proj_dist))
+        delta = min(0.05 * line_length, 0.5, (x_max - x_min) * 0.5) if x_max > x_min else 0.1
+        
+        def get_idw_value(coord):
+            d = np.linalg.norm(grpd_pts_filtered - coord, axis=1)
+            idx = np.argsort(d)[:K]
+            d_k = d[idx]
+            val_k = grpd_values_filtered[idx]
+            w = 1.0 / (d_k + 1e-6) ** 2
+            return np.sum(w * val_k) / np.sum(w)
+
         for j in range(M):
-            idx = np.argsort(dists[j])[:K]
-            d = dists[j, idx]
-            val = grpd_values_filtered[idx]
-            w = 1.0 / (d + 1e-6) ** 2
-            grpd_aligned[j] = np.sum(w * val) / np.sum(w)
+            s_j = ansys_dist[j]
+            if s_j < x_min:
+                # 左边界外插
+                coord_A = p_start + x_min * u_line
+                coord_B = p_start + (x_min + delta) * u_line
+                y_A = get_idw_value(coord_A)
+                y_B = get_idw_value(coord_B)
+                slope = (y_B - y_A) / delta
+                grpd_aligned[j] = y_A + slope * (s_j - x_min)
+            elif s_j > x_max:
+                # 右边界外插
+                coord_A = p_start + x_max * u_line
+                coord_B = p_start + (x_max - delta) * u_line
+                y_A = get_idw_value(coord_A)
+                y_B = get_idw_value(coord_B)
+                slope = (y_A - y_B) / delta
+                grpd_aligned[j] = y_A + slope * (s_j - x_max)
+            else:
+                # 内部内插
+                grpd_aligned[j] = get_idw_value(ansys_coords[j])
 
         ansys_col_idx = _ansys_column_index(component, physics_type, raw_ansys.shape[1])
         ansys_values = raw_ansys[:, ansys_col_idx]
