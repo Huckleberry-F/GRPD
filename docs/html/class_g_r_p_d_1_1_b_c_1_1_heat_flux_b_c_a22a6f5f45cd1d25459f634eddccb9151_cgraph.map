@@ -1,5 +1,0 @@
-<map id="GRPD::BC::HeatFluxBC::initialize" name="GRPD::BC::HeatFluxBC::initialize">
-<area shape="rect" id="Node000001" title="初始化：从 FieldManager 获取场指针，设置粒子 ID 和热流密度" alt="" coords="5,5,228,32"/>
-<area shape="rect" id="Node000002" href="$class_g_r_p_d_1_1_field_1_1_field_manager.html#ac8aeec83b40283031970fdeaa8552a84" title="获取带类型安全的物理场指针（不存在或类型不匹配返回 nullptr）" alt="" coords="276,5,528,32"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="228,16,260,16,260,21,228,21"/>
-</map>

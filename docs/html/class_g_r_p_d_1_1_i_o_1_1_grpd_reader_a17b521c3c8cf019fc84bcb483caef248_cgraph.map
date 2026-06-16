@@ -1,5 +1,0 @@
-<map id="GRPD::IO::GrpdReader::tokenizeCsv" name="GRPD::IO::GrpdReader::tokenizeCsv">
-<area shape="rect" id="Node000001" title="将逗号分隔的一行文本分割为修剪后的字段数组" alt="" coords="5,5,247,32"/>
-<area shape="rect" id="Node000002" href="$class_g_r_p_d_1_1_i_o_1_1_grpd_reader.html#ad1d8c861446c6db8b22cec01bb971aef" title="去除字符串首尾空白字符" alt="" coords="295,5,485,32"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="247,16,279,16,279,21,247,21"/>
-</map>

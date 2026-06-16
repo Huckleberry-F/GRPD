@@ -1,5 +1,0 @@
-<map id="GRPD::Model::ParticleManager::getParticle" name="GRPD::Model::ParticleManager::getParticle">
-<area shape="rect" id="Node000001" title="O(1) indexed access &#45; const version." alt="" coords="328,5,603,32"/>
-<area shape="rect" id="Node000002" href="$class_g_r_p_d_1_1_initial_1_1_neighbor_list.html#a61c461d888f8da057e3fa42a50427ae8" title="构建近邻列表 (暴力搜索版本 O(N^2))" alt="" coords="5,5,280,32"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="312,21,280,21,280,16,312,16"/>
-</map>

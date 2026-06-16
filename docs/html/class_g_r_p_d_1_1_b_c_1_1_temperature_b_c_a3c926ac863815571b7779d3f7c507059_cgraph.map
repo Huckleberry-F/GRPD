@@ -1,5 +1,0 @@
-<map id="GRPD::BC::TemperatureBC::initialize" name="GRPD::BC::TemperatureBC::initialize">
-<area shape="rect" id="Node000001" title="初始化：从 FieldManager 获取场指针，设置粒子 ID 和温度值" alt="" coords="5,5,247,32"/>
-<area shape="rect" id="Node000002" href="$class_g_r_p_d_1_1_field_1_1_field_manager.html#ac8aeec83b40283031970fdeaa8552a84" title="获取带类型安全的物理场指针（不存在或类型不匹配返回 nullptr）" alt="" coords="295,5,547,32"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="247,16,279,16,279,21,247,21"/>
-</map>

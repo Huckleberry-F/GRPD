@@ -1,7 +1,0 @@
-<map id="GRPD::BC::TemperatureBC" name="GRPD::BC::TemperatureBC">
-<area shape="rect" id="Node000001" title="温度边界条件 (Dirichlet) T(x, t) = T_fixed" alt="" coords="5,155,192,181"/>
-<area shape="rect" id="Node000002" href="$class_g_r_p_d_1_1_b_c_1_1_thermal_b_c.html" title="热边界条件抽象中间类 持有三个 TypedField&lt;double&gt; 指针（温度、温度变化率、热流密度）， 所有热相关 BC 均从此类派生。 使用指针而非引用以支持工厂模式的两阶段构造。" alt="" coords="18,80,179,107"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="101,122,101,154,96,154,96,122"/>
-<area shape="rect" id="Node000003" href="$class_g_r_p_d_1_1_b_c_1_1_b_c.html" title=" " alt="" coords="41,5,156,32"/>
-<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="101,48,101,80,96,80,96,48"/>
-</map>

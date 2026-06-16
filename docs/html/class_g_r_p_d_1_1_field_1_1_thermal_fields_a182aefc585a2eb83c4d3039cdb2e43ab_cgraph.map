@@ -1,7 +1,0 @@
-<map id="GRPD::Field::ThermalFields::registerFields" name="GRPD::Field::ThermalFields::registerFields">
-<area shape="rect" id="Node000001" title="注册热传导核心场" alt="" coords="5,5,278,32"/>
-<area shape="rect" id="Node000002" href="$class_g_r_p_d_1_1_field_1_1_field_manager.html#a5c8d6e3009f683af77cf9dcc2c08842a" title="注册一个新的物理场 如果同名场已存在，直接返回已有场的指针（幂等操作）" alt="" coords="326,5,587,32"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="278,16,310,16,310,21,278,21"/>
-<area shape="rect" id="Node000003" href="$class_g_r_p_d_1_1_field_1_1_typed_field.html#aa1da3d12619e06366ced530a897bd12b" title="获取指定粒子、指定分量的值" alt="" coords="635,5,828,32"/>
-<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="588,16,619,16,619,21,588,21"/>
-</map>

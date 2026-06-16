@@ -1,7 +1,0 @@
-<map id="GRPD::IO::Writer::Writer" name="GRPD::IO::Writer::Writer">
-<area shape="rect" id="Node000001" title=" " alt="" coords="260,31,426,57"/>
-<area shape="rect" id="Node000002" href="$class_g_r_p_d_1_1_i_o_1_1_vtk_writer.html#a77c1bca1bb729e60864643fc0f8a308a" title=" " alt="" coords="5,5,212,32"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="244,36,212,33,212,27,244,31"/>
-<area shape="rect" id="Node000003" href="$class_g_r_p_d_1_1_i_o_1_1_vtk_writer.html#a147f86c999b865d9d962ebf8a8442d17" title=" " alt="" coords="5,56,212,83"/>
-<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="244,57,212,61,212,55,244,52"/>
-</map>

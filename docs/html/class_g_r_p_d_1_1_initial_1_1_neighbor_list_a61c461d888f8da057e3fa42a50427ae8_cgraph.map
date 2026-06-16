@@ -1,9 +1,0 @@
-<map id="GRPD::Initial::NeighborList::buildNeighbors" name="GRPD::Initial::NeighborList::buildNeighbors">
-<area shape="rect" id="Node000001" title="构建近邻列表 (暴力搜索版本 O(N^2))" alt="" coords="5,56,280,83"/>
-<area shape="rect" id="Node000002" href="$class_g_r_p_d_1_1_model_1_1_particle.html#acd624f1a69bc944040d64c7579baec2c" title="Get const reference to the 3D coordinate array [x, y, z]." alt="" coords="371,5,594,32"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="237,53,374,32,374,37,237,58"/>
-<area shape="rect" id="Node000003" href="$class_g_r_p_d_1_1_model_1_1_particle_manager.html#ae8144d3df45fb2f0be79b0dc7d3fbd0a" title="O(1) indexed access &#45; const version." alt="" coords="345,56,620,83"/>
-<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="280,67,330,67,330,72,280,72"/>
-<area shape="rect" id="Node000004" href="$class_g_r_p_d_1_1_model_1_1_particle_manager.html#a752c18898c5a2cac7b7fed29423d79f5" title="Get current total particle count." alt="" coords="328,107,638,133"/>
-<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="237,81,374,101,374,107,237,86"/>
-</map>

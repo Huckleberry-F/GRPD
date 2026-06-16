@@ -58,3 +58,7 @@ docs/superpowers/task.md
 # === 临时测试目录 ===
 scratch/
 test_debug/
+
+# === Doxygen 自动生成文档 ===
+docs/html/
+docs/latex/

@@ -1,7 +1,0 @@
-<map id="PDCommon/Material/include/ThermalMat.h" name="PDCommon/Material/include/ThermalMat.h">
-<area shape="rect" id="Node000001" title=" " alt="" coords="128,5,400,32"/>
-<area shape="rect" id="Node000002" href="$_thermal_mat_8cpp.html" title=" " alt="" coords="5,80,269,107"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="230,42,161,82,158,77,227,38"/>
-<area shape="rect" id="Node000003" href="$_s_e___solve_8cpp.html" title=" " alt="" coords="293,80,488,107"/>
-<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="300,38,369,77,367,82,297,42"/>
-</map>

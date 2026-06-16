@@ -1,7 +1,0 @@
-<map id="GRPD::Model::ParticleManager::getGeomDataPtr" name="GRPD::Model::ParticleManager::getGeomDataPtr">
-<area shape="rect" id="Node000001" title=" " alt="" coords="5,31,317,57"/>
-<area shape="rect" id="Node000002" href="$class_g_r_p_d_1_1_utils_1_1_data_extractor.html#a402caf071028e59b409019b5b1ec484a" title=" " alt="" coords="365,5,629,32"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="317,30,349,27,350,32,317,35"/>
-<area shape="rect" id="Node000003" href="$class_g_r_p_d_1_1_utils_1_1_data_extractor.html#af6560423aa764b84b8cd0be6f8ae40e2" title=" " alt="" coords="365,56,629,83"/>
-<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="317,53,350,56,349,61,317,58"/>
-</map>

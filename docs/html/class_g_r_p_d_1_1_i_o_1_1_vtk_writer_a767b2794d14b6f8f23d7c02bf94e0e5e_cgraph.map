@@ -1,9 +1,0 @@
-<map id="GRPD::IO::VtkWriter::writePoints" name="GRPD::IO::VtkWriter::writePoints">
-<area shape="rect" id="Node000001" title=" " alt="" coords="5,56,223,83"/>
-<area shape="rect" id="Node000002" href="$class_g_r_p_d_1_1_i_o_1_1_vtk_writer.html#a7c29560e76873133809fa2d245f6cb49" title=" " alt="" coords="271,5,506,32"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="190,53,297,33,298,38,191,58"/>
-<area shape="rect" id="Node000003" href="$class_g_r_p_d_1_1_i_o_1_1_vtk_writer.html#a7090e6a3309a6fb4565fd5636fd3873e" title=" " alt="" coords="284,56,493,83"/>
-<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="223,67,268,67,268,72,223,72"/>
-<area shape="rect" id="Node000004" href="$class_g_r_p_d_1_1_i_o_1_1_vtk_writer.html#a034983e7a530bf7f918eb7f1ddc5fac2" title=" " alt="" coords="280,107,497,133"/>
-<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="191,81,298,101,297,106,190,86"/>
-</map>

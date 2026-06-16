@@ -1,7 +1,0 @@
-<map id="GRPD::BC::HeatFluxBC::HeatFluxBC" name="GRPD::BC::HeatFluxBC::HeatFluxBC">
-<area shape="rect" id="Node000001" title="工厂构造函数" alt="" coords="5,5,253,32"/>
-<area shape="rect" id="Node000002" href="$class_g_r_p_d_1_1_b_c_1_1_thermal_b_c.html#af847070b8c53b98adaafbc6b4caa1dcb" title="工厂构造：仅传入名称，field 指针在 initialize() 中注入" alt="" coords="301,5,536,32"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="253,16,285,16,285,21,253,21"/>
-<area shape="rect" id="Node000003" href="$class_g_r_p_d_1_1_b_c_1_1_b_c.html#aa0211101f7efeec45e2029a3cd02b848" title="构造函数" alt="" coords="584,5,725,32"/>
-<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="536,16,569,16,569,21,536,21"/>
-</map>

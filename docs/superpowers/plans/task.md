@@ -1,14 +1,18 @@
-# GRPD 求解器自动映射与物理时间对标任务进度 (task.md)
+# 仓库清理与文档归类任务进度 (task.md)
 
-- [x] **Task 1: 升级 ansys-mcp-server 的 APDL 生成器**
-  - [x] 步骤 1：修改 `generator.py` 的 `generate_apdl_from_yaml`，支持 `result_time` 参数。
-  - [x] 步骤 2：在 `generator.py` 中解析 `TimeIntegrator` 动态生成 `ANTYPE`（瞬态 `TRANS`/静态 `STATIC`）和 `TIMINT`。
-  - [x] 步骤 3：在 `generator.py` 中遍历生成多载荷步 `SOLVE` 并输出。
-  - [x] 步骤 4：在后处理中使用 `result_time` 进行 `SET` 时间提取对标。
-
-- [x] **Task 2: 升级 ansys-mcp-server 服务与门面暴露**
-  - [x] 步骤 1：修改 `service.py`，升级 `generate_ansys_apdl_from_yaml` 和 `run_ansys_yaml_case` 支持 `time` 参数。
-  - [x] 步骤 2：修改 `server.py`，在 Tool 接口中暴露并透传 `time` 参数。
-
-- [x] **Task 3: 升级 grpd-mcp-server 对 VTK 物理时间提取的支持**
-  - [x] 步骤 1：修改 `grpd_runner.py` 的 `find_target_vtk`，正则解析并返回 `physical_time`。
+- [x] **Task 1: 创建归类所需的新文件夹**
+  - [x] 步骤 1：物理创建目标目录 `docs/references` 和 `docs/superpowers/plans/archive`
+- [x] **Task 2: 归类整理保留文件**
+  - [x] 步骤 1：移动文献 PDF `osti_2566435.pdf` 到 `docs/references/`
+  - [x] 步骤 2：移动 YAML 字段速查字典 `GRPD_YAML_Dictionary.md` 到 `docs/`
+  - [x] 步骤 3：移动架构说明 `架构说明_PPT.md` 到 `docs/`
+  - [x] 步骤 4：将历史开发计划 `Contact_V5_Architecture_Plan.md` 和 `Fracture_IMEX_Plan.md` 移动到 `docs/superpowers/plans/archive/`
+- [x] **Task 3: 彻底清理根目录下无用的脚本、冗余大文件与日志**
+  - [x] 步骤 1：使用 git rm 彻底清理并移除版本控制的脚本与文件
+  - [x] 步骤 2：物理删除未跟踪的临时日志与备份文件
+- [x] **Task 4: 清理 Doxygen 网页输出并更新忽略规则**
+  - [x] 步骤 1：从 Git 仓库中物理移除已跟踪 of Doxygen 生成文件目录 `docs/html` 和 `docs/latex`
+  - [x] 步骤 2：在 `.gitignore` 中追加对 Doxygen 自动生成路径的屏蔽
+- [x] **Task 5: 提交更改并验证状态**
+  - [x] 步骤 1：验证 git 状态，确认没有漏网或冲突文件
+  - [x] 步骤 2：提交清理与重构 Commit
