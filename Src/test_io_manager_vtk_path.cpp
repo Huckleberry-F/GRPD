@@ -42,23 +42,25 @@ int main() {
     return EXIT_FAILURE;
   }
 
-  // Check PVD file
-  fs::path pvdPath = ioManager.getResultDir() / "Beam.pvd";
-  if (!fs::exists(pvdPath)) {
-    std::cerr << "PVD file not created: " << pvdPath << std::endl;
+  // Check .vtk.series file (JSON format for Legacy VTK time series)
+  fs::path seriesPath = ioManager.getResultDir() / "Beam.vtk.series";
+  if (!fs::exists(seriesPath)) {
+    std::cerr << ".vtk.series file not created: " << seriesPath << std::endl;
     return EXIT_FAILURE;
   }
 
-  std::ifstream pvdFile(pvdPath);
-  std::string pvdContent((std::istreambuf_iterator<char>(pvdFile)),
-                         std::istreambuf_iterator<char>());
-  if (pvdContent.find("timestep=\"0.125\"") == std::string::npos ||
-      pvdContent.find("file=\"Beam_t0.1250.vtk\"") == std::string::npos) {
-    std::cerr << "PVD file content mismatch:\n" << pvdContent << std::endl;
+  std::ifstream seriesFile(seriesPath);
+  std::string seriesContent((std::istreambuf_iterator<char>(seriesFile)),
+                            std::istreambuf_iterator<char>());
+  if (seriesContent.find("\"file-series-version\"") == std::string::npos ||
+      seriesContent.find("Beam_t0.1250.vtk") == std::string::npos ||
+      seriesContent.find("0.125") == std::string::npos) {
+    std::cerr << ".vtk.series file content mismatch:\n"
+              << seriesContent << std::endl;
     return EXIT_FAILURE;
   }
 
   std::cout << "[OK] VTK filename uses time-only suffix: " << filename
-            << " and PVD file created successfully." << std::endl;
+            << " and .vtk.series file created successfully." << std::endl;
   return EXIT_SUCCESS;
 }

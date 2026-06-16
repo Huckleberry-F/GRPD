@@ -177,34 +177,55 @@ fs::path IOManager::findMeshFile() const {
 
 bool IOManager::isInitialized() const { return initialized_; }
 
-static void updatePvdFile(const fs::path &resultDir, const std::string &baseName, double time, const std::string &vtkFilename) {
-  fs::path pvdPath = resultDir / (baseName + ".pvd");
+// ---------------------------------------------------------------------------
+// VTK Series 索引文件生成（用于 ParaView 合并 Legacy VTK 时间步序列）
+// 格式为 .vtk.series JSON，ParaView 原生支持 Legacy VTK 格式的时间序列索引。
+// 注意：.pvd 格式仅支持 VTK XML 格式（.vtu/.vtp），不兼容 Legacy .vtk 文件。
+// ---------------------------------------------------------------------------
+static void updateVtkSeries(const fs::path &resultDir,
+                            const std::string &baseName, double time,
+                            const std::string &vtkFilename) {
+  fs::path seriesPath = resultDir / (baseName + ".vtk.series");
   std::vector<std::pair<double, std::string>> entries;
 
-  if (fs::exists(pvdPath)) {
-    std::ifstream infile(pvdPath);
+  // 读取已有的 .vtk.series 文件内容（如果存在）
+  if (fs::exists(seriesPath)) {
+    std::ifstream infile(seriesPath);
     std::string line;
     while (std::getline(infile, line)) {
-      size_t tsPos = line.find("timestep=\"");
-      size_t filePos = line.find("file=\"");
-      if (tsPos != std::string::npos && filePos != std::string::npos) {
-        tsPos += 10;
-        size_t tsEnd = line.find("\"", tsPos);
-        filePos += 6;
-        size_t fileEnd = line.find("\"", filePos);
-        if (tsEnd != std::string::npos && fileEnd != std::string::npos) {
+      // 解析 JSON 格式的 {"name": "xxx.vtk", "time": 0.1} 行
+      size_t namePos = line.find("\"name\"");
+      size_t timePos = line.find("\"time\"");
+      if (namePos != std::string::npos && timePos != std::string::npos) {
+        // 提取 name 值
+        size_t nameValStart = line.find("\"", line.find(":", namePos) + 1);
+        size_t nameValEnd = line.find("\"", nameValStart + 1);
+        // 提取 time 值
+        size_t timeValStart = line.find(":", timePos) + 1;
+        // 跳过空格
+        while (timeValStart < line.size() &&
+               (line[timeValStart] == ' ' || line[timeValStart] == '\t'))
+          timeValStart++;
+        size_t timeValEnd = line.find_first_of(",}", timeValStart);
+
+        if (nameValStart != std::string::npos &&
+            nameValEnd != std::string::npos &&
+            timeValEnd != std::string::npos) {
           try {
-            double ts = std::stod(line.substr(tsPos, tsEnd - tsPos));
-            std::string f = line.substr(filePos, fileEnd - filePos);
+            std::string f =
+                line.substr(nameValStart + 1, nameValEnd - nameValStart - 1);
+            double ts =
+                std::stod(line.substr(timeValStart, timeValEnd - timeValStart));
             entries.push_back({ts, f});
           } catch (...) {
-            // ignore malformed lines
+            // 忽略格式错误的行
           }
         }
       }
     }
   }
 
+  // 检查是否已存在相同时间的条目
   bool exists = false;
   for (const auto &entry : entries) {
     if (std::abs(entry.first - time) < 1e-9) {
@@ -216,20 +237,26 @@ static void updatePvdFile(const fs::path &resultDir, const std::string &baseName
     entries.push_back({time, vtkFilename});
   }
 
-  std::sort(entries.begin(), entries.end(), [](const auto &a, const auto &b) {
-    return a.first < b.first;
-  });
+  // 按时间排序
+  std::sort(entries.begin(), entries.end(),
+            [](const auto &a, const auto &b) { return a.first < b.first; });
 
-  std::ofstream outfile(pvdPath);
-  outfile << "<?xml version=\"1.0\"?>\n";
-  outfile << "<VTKFile type=\"Collection\" version=\"0.1\" byte_order=\"LittleEndian\">\n";
-  outfile << "  <Collection>\n";
-  for (const auto &entry : entries) {
-    outfile << "    <DataSet timestep=\"" << entry.first 
-            << "\" group=\"\" part=\"0\" file=\"" << entry.second << "\"/>\n";
+  // 写出 .vtk.series JSON 文件
+  std::ofstream outfile(seriesPath);
+  outfile << "{\n";
+  outfile << "  \"file-series-version\": \"1.0\",\n";
+  outfile << "  \"files\": [\n";
+  for (size_t i = 0; i < entries.size(); ++i) {
+    char timeBuf[64];
+    std::snprintf(timeBuf, sizeof(timeBuf), "%.6g", entries[i].first);
+    outfile << "    {\"name\": \"" << entries[i].second << "\", \"time\": "
+            << timeBuf << "}";
+    if (i + 1 < entries.size())
+      outfile << ",";
+    outfile << "\n";
   }
-  outfile << "  </Collection>\n";
-  outfile << "</VTKFile>\n";
+  outfile << "  ]\n";
+  outfile << "}\n";
 }
 
 // ---------------------------------------------------------------------------
@@ -246,7 +273,8 @@ std::string IOManager::buildVtkPath(const std::string &baseName, int step,
                 time);
   std::string vtkFilename(buffer);
 
-  updatePvdFile(resultDir_, baseName, time, vtkFilename);
+  // 自动维护 .vtk.series 索引文件，供 ParaView 一键加载全部时间步
+  updateVtkSeries(resultDir_, baseName, time, vtkFilename);
 
   return (resultDir_ / vtkFilename).string();
 }
