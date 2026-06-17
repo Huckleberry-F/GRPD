@@ -331,11 +331,9 @@ void MatrixFreeImplicitIntegrator::run(PDCommon::Core::PDContext &ctx,
       double stepTimeSpan = config.targetTime - prevTargetTime;
       double currentDt = stepTimeSpan / config.numSubsteps;
       if (kbc_ == 0) { // Ramp
-        double subFraction = static_cast<double>(sub) / config.numSubsteps;
-        double currentTime = prevTargetTime + subFraction * stepTimeSpan;
-        activeLF = currentTime / totalTime_; 
+        activeLF = static_cast<double>(sub) / config.numSubsteps; 
       } else { // Step
-        activeLF = config.targetTime / totalTime_;
+        activeLF = 1.0;
       }
       
       LOG_INFO("==========================================================");

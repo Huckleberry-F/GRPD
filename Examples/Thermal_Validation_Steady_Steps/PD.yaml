@@ -1,0 +1,100 @@
+#==============================================================================
+# GRPD 稳态隐式多载荷步对标算例 (KBC=0)
+# 单位制：N-mm-tonne-s-K
+#==============================================================================
+System:
+  Dimension: 2
+  SavePath: "output"
+
+Assembly: {}
+
+Parts:
+  - PartID: 1
+    MatID: 1
+    Dimension: 2
+    Shape: "Box"
+    Length: 5.0
+    Width: 10.0
+    dx: 0.1
+    Thickness: 1.0
+    Offset: [0.0, 0.0, 0.0]
+
+LoadStep_Conditions:
+  - Step: 1
+    BoundaryConditions:
+      - BcID: 1
+        Name: "Left_HeatFlux_50"
+        PartID: 1
+        Box: [-0.01, 0.10, -999.0, 999.0, -999.0, 999.0]
+        Type: "FLUX"
+        Value: 50.0
+
+      - BcID: 2
+        Name: "Right_Fixed_Temp_50"
+        PartID: 1
+        Box: [4.9, 5.01, -999.0, 999.0, -999.0, 999.0]
+        Type: "T"
+        Value: 50.0
+
+  - Step: 2
+    BoundaryConditions:
+      - BcID: 1
+        Name: "Left_HeatFlux_100"
+        PartID: 1
+        Box: [-0.01, 0.10, -999.0, 999.0, -999.0, 999.0]
+        Type: "FLUX"
+        Value: 100.0
+
+      - BcID: 2
+        Name: "Right_Fixed_Temp_100"
+        PartID: 1
+        Box: [4.9, 5.01, -999.0, 999.0, -999.0, 999.0]
+        Type: "T"
+        Value: 100.0
+
+Materials:
+  - MatID: 1
+    Name: "Steel"
+    Type: "FourierThermalMat"
+    Density: 7.85e-9
+    Conductivity: 45.0
+    HeatCapacity: 4.6e8
+
+Solver:
+  Engine: "PD"
+  Type: "Thermal"
+  TimeIntegrator: "MatrixFreeImplicit"
+  Algorithm: "JFNK"
+  MaxNRIters: 15
+  NRForceTol: 1.0e-5
+  GMRES_MaxIters: 30
+  Kernel: "NOSB_T"
+  TotalTime: 2.0
+  LoadSteps:
+    - Step: 1
+      Time: 1.0
+      KBC: 0
+      NumSubsteps: 5
+    - Step: 2
+      Time: 2.0
+      KBC: 0
+      NumSubsteps: 5
+  OMP_Threads: 16
+  Horizon: 0.3015
+  KernelWeightType: "Linear"
+  ZeroEnergyG0: 0.1
+  ZeroEnergyMethod: "Zhang"
+
+Writer:
+  Type: "binary"
+  Variables:
+    - Name: "PartID"
+      Dimension: 1
+    - Name: "Volume"
+      Dimension: 1
+    - Name: "Temperature"
+      Dimension: 1
+    - Name: "ID"
+      Dimension: 1
+    - Name: "HeatFlux"
+      Dimension: 1
