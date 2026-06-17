@@ -5,6 +5,7 @@
 #include "MatrixFreeImplicitIntegrator.h"
 #include "TimeIntegratorRegistry.h"
 #include "Logger.h"
+#include "PDKernel.h"
 #include <cmath>
 #include <iostream>
 
@@ -28,21 +29,39 @@ void MatrixFreeImplicitIntegrator::configure(const YAML::Node &solverNode) {
 
 std::vector<double> MatrixFreeImplicitIntegrator::flattenDisplacement() {
   size_t totalSize = 0;
-  for (const auto& so : soTargets_) totalSize += so.totalComponents;
-  std::vector<double> u(totalSize, 0.0);
-  size_t offset = 0;
-  for (const auto& so : soTargets_) {
-    std::copy(so.uPtr, so.uPtr + so.totalComponents, u.begin() + offset);
-    offset += so.totalComponents;
+  if (isFirstOrder_) {
+    for (const auto& fo : foTargets_) totalSize += fo.totalComponents;
+    std::vector<double> u(totalSize, 0.0);
+    size_t offset = 0;
+    for (const auto& fo : foTargets_) {
+      std::copy(fo.primaryPtr, fo.primaryPtr + fo.totalComponents, u.begin() + offset);
+      offset += fo.totalComponents;
+    }
+    return u;
+  } else {
+    for (const auto& so : soTargets_) totalSize += so.totalComponents;
+    std::vector<double> u(totalSize, 0.0);
+    size_t offset = 0;
+    for (const auto& so : soTargets_) {
+      std::copy(so.uPtr, so.uPtr + so.totalComponents, u.begin() + offset);
+      offset += so.totalComponents;
+    }
+    return u;
   }
-  return u;
 }
 
 void MatrixFreeImplicitIntegrator::unflattenDisplacement(const std::vector<double>& u) {
   size_t offset = 0;
-  for (auto& so : soTargets_) {
-    std::copy(u.begin() + offset, u.begin() + offset + so.totalComponents, so.uPtr);
-    offset += so.totalComponents;
+  if (isFirstOrder_) {
+    for (auto& fo : foTargets_) {
+      std::copy(u.begin() + offset, u.begin() + offset + fo.totalComponents, fo.primaryPtr);
+      offset += fo.totalComponents;
+    }
+  } else {
+    for (auto& so : soTargets_) {
+      std::copy(u.begin() + offset, u.begin() + offset + so.totalComponents, so.uPtr);
+      offset += so.totalComponents;
+    }
   }
 }
 
@@ -51,6 +70,7 @@ std::vector<double> MatrixFreeImplicitIntegrator::evaluateResidual(
     std::vector<std::unique_ptr<PDKernel>> &kernels, 
     const std::vector<double>& u,
     int currentStep, double activeLF,
+    double currentDt,
     bool frozen) {
   
   auto u_backup = flattenDisplacement();
@@ -63,16 +83,40 @@ std::vector<double> MatrixFreeImplicitIntegrator::evaluateResidual(
   } else {
     ctx.setOuterIter(0); // stateMode = 0 (真实返回映射更新状态)
   }
-  evaluateForces(ctx, kernels, accFieldNames_, currentStep, activeLF);
+  
+  if (isFirstOrder_) {
+    ctx.setCurrentDt(currentDt);
+    evaluateForces(ctx, kernels, rateFieldNames_, currentStep, activeLF);
+  } else {
+    evaluateForces(ctx, kernels, accFieldNames_, currentStep, activeLF);
+  }
   
   size_t totalSize = 0;
-  for (const auto& so : soTargets_) totalSize += so.totalComponents;
-  std::vector<double> R(totalSize, 0.0);
-  size_t offset = 0;
-  for (const auto& so : soTargets_) {
-    // aPtr 里存的是 F_int + F_ext (或类似组合)，它即是当前的不平衡力残差
-    std::copy(so.aPtr, so.aPtr + so.totalComponents, R.begin() + offset);
-    offset += so.totalComponents;
+  std::vector<double> R;
+  
+  if (isFirstOrder_) {
+    for (const auto& fo : foTargets_) totalSize += fo.totalComponents;
+    R.resize(totalSize, 0.0);
+    size_t offset = 0;
+    for (const auto& fo : foTargets_) {
+      for (size_t i = 0; i < fo.totalComponents; ++i) {
+        double t_curr = fo.primaryPtr[i];
+        double t_old = foHistory_[offset + i];
+        double t_rate = fo.ratePtr[i];
+        // 一阶瞬态扩散差分残差： R = (T^{n+1} - T^n) / dt - dT/dt
+        R[offset + i] = (t_curr - t_old) / currentDt - t_rate;
+      }
+      offset += fo.totalComponents;
+    }
+  } else {
+    for (const auto& so : soTargets_) totalSize += so.totalComponents;
+    R.resize(totalSize, 0.0);
+    size_t offset = 0;
+    for (const auto& so : soTargets_) {
+      // aPtr 里存的是 F_int + F_ext (或类似组合)，它即是当前的不平衡力残差
+      std::copy(so.aPtr, so.aPtr + so.totalComponents, R.begin() + offset);
+      offset += so.totalComponents;
+    }
   }
   
   unflattenDisplacement(u_backup);
@@ -84,7 +128,8 @@ std::vector<double> MatrixFreeImplicitIntegrator::solveJFNK(
     std::vector<std::unique_ptr<PDKernel>> &kernels, 
     const std::vector<double>& u_k, 
     const std::vector<double>& R_k,
-    int currentStep, double activeLF) {
+    int currentStep, double activeLF,
+    double currentDt) {
     
   size_t N = u_k.size();
   int m = std::min(gmresMaxIters_, static_cast<int>(N));
@@ -114,7 +159,7 @@ std::vector<double> MatrixFreeImplicitIntegrator::solveJFNK(
     std::vector<double> u_temp(N, 0.0);
     for (size_t i=0; i<N; ++i) u_temp[i] = u_k[i] + fdEpsilon_ * V[k][i];
     
-    std::vector<double> R_temp = evaluateResidual(ctx, kernels, u_temp, currentStep, activeLF, true);
+    std::vector<double> R_temp = evaluateResidual(ctx, kernels, u_temp, currentStep, activeLF, currentDt, true);
     
     std::vector<double> w(N, 0.0);
     for (size_t i=0; i<N; ++i) {
@@ -188,7 +233,8 @@ std::vector<double> MatrixFreeImplicitIntegrator::solveLBFGS(
     std::vector<std::unique_ptr<PDKernel>> &kernels, 
     const std::vector<double>& u_k, 
     const std::vector<double>& R_k,
-    int currentStep, double activeLF) {
+    int currentStep, double activeLF,
+    double currentDt) {
     
   size_t N = u_k.size();
   std::vector<double> q = R_k; 
@@ -237,8 +283,19 @@ void MatrixFreeImplicitIntegrator::run(PDCommon::Core::PDContext &ctx,
                                        std::function<void(int, double)> outputCallback) {
   extractSecondOrderTargets(kernels, ctx, soTargets_, accFieldNames_);
   if (soTargets_.empty()) {
-    LOG_ERROR("[MatrixFreeImplicit] No second-order targets found.");
-    return;
+    extractFirstOrderTargets(kernels, ctx, foTargets_, rateFieldNames_);
+    if (foTargets_.empty()) {
+      LOG_ERROR("[MatrixFreeImplicit] No implicit target fields found.");
+      return;
+    }
+    isFirstOrder_ = true;
+  } else {
+    isFirstOrder_ = false;
+  }
+
+  // 预计算阶段：遍历所有内核执行一次性初始化
+  for (auto &kernel : kernels) {
+    kernel->preCompute(ctx);
   }
 
   double prevTargetTime = 0.0;
@@ -246,9 +303,11 @@ void MatrixFreeImplicitIntegrator::run(PDCommon::Core::PDContext &ctx,
   for (const auto& config : loadStepConfigs_) {
     for (int sub = 1; sub <= config.numSubsteps; ++sub) {
       double activeLF = 1.0;
+      double stepTimeSpan = config.targetTime - prevTargetTime;
+      double currentDt = stepTimeSpan / config.numSubsteps;
       if (kbc_ == 0) { // Ramp
         double subFraction = static_cast<double>(sub) / config.numSubsteps;
-        double currentTime = prevTargetTime + subFraction * (config.targetTime - prevTargetTime);
+        double currentTime = prevTargetTime + subFraction * stepTimeSpan;
         activeLF = currentTime / totalTime_; 
       } else { // Step
         activeLF = config.targetTime / totalTime_;
@@ -262,10 +321,14 @@ void MatrixFreeImplicitIntegrator::run(PDCommon::Core::PDContext &ctx,
       y_history_.clear();
       rho_history_.clear();
 
+      if (isFirstOrder_) {
+        foHistory_ = flattenDisplacement();
+      }
+
       bool converged = false;
       for (int iter = 0; iter < maxNRIters_; ++iter) {
         auto u_k = flattenDisplacement();
-        auto R_k = evaluateResidual(ctx, kernels, u_k, config.stepId, activeLF);
+        auto R_k = evaluateResidual(ctx, kernels, u_k, config.stepId, activeLF, currentDt);
         
         // 简单 L2 范数收敛准则
         double normR = 0.0;
@@ -286,9 +349,9 @@ void MatrixFreeImplicitIntegrator::run(PDCommon::Core::PDContext &ctx,
 
         std::vector<double> delta_u;
         if (algorithm_ == "JFNK") {
-            delta_u = solveJFNK(ctx, kernels, u_k, R_k, config.stepId, activeLF);
+            delta_u = solveJFNK(ctx, kernels, u_k, R_k, config.stepId, activeLF, currentDt);
         } else {
-            delta_u = solveLBFGS(ctx, kernels, u_k, R_k, config.stepId, activeLF);
+            delta_u = solveLBFGS(ctx, kernels, u_k, R_k, config.stepId, activeLF, currentDt);
         }
 
         // 行搜索与位移更新
@@ -298,7 +361,7 @@ void MatrixFreeImplicitIntegrator::run(PDCommon::Core::PDContext &ctx,
         
         // 如果是 L-BFGS，准备计算 y_k
         if (algorithm_ == "L-BFGS") {
-          auto R_new = evaluateResidual(ctx, kernels, u_new, config.stepId, activeLF, true);
+          auto R_new = evaluateResidual(ctx, kernels, u_new, config.stepId, activeLF, currentDt, true);
           std::vector<double> s_k(u_k.size());
           std::vector<double> y_k(R_k.size());
           double dot_sy = 0.0;
