@@ -8,6 +8,12 @@ else
     echo -e "\033[33m[!] CMake missing\033[0m"
 fi
 
+if echo "#include <omp.h>" | g++ -E -x c++ - &>/dev/null || [ -f "/usr/include/omp.h" ] || [ -f "/usr/lib/gcc/x86_64-linux-gnu/11/include/omp.h" ]; then
+    echo -e "\033[32m[√] OpenMP detected\033[0m"
+else
+    echo -e "\033[33m[!] OpenMP (omp.h) missing. CMake build might fail.\033[0m"
+fi
+
 if command -v g++ &> /dev/null || command -v clang++ &> /dev/null; then
     echo -e "\033[32m[√] C++ Compiler detected\033[0m"
 else

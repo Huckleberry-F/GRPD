@@ -65,9 +65,9 @@ Solver:
   Type: "Thermal"
   TimeIntegrator: "MatrixFreeImplicit"
   Algorithm: "JFNK"
-  MaxNRIters: 15
+  MaxNRIters: 100
   NRForceTol: 1.0e-5
-  GMRES_MaxIters: 30
+  GMRES_MaxIters: 200
   Kernel: "NOSB_T"
   TotalTime: 2.0
   LoadSteps:
@@ -76,7 +76,7 @@ Solver:
       KBC: 0
       NumSubsteps: 5
     - Step: 2
-      Time: 2.0
+      Time: 5.0
       KBC: 0
       NumSubsteps: 5
   OMP_Threads: 16

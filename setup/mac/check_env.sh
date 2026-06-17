@@ -8,6 +8,12 @@ else
     echo -e "\033[33m[!] CMake missing\033[0m"
 fi
 
+if brew list libomp &> /dev/null || [ -d "/opt/homebrew/opt/libomp" ] || [ -d "/usr/local/opt/libomp" ]; then
+    echo -e "\033[32m[√] OpenMP (libomp) detected\033[0m"
+else
+    echo -e "\033[33m[!] OpenMP (libomp) missing. CMake build will fail.\033[0m"
+fi
+
 if command -v clang++ &> /dev/null || command -v g++ &> /dev/null; then
     echo -e "\033[32m[√] C++ Compiler detected\033[0m"
 else

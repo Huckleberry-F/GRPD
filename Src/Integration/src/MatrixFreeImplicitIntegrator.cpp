@@ -323,21 +323,35 @@ void MatrixFreeImplicitIntegrator::run(PDCommon::Core::PDContext &ctx,
     isFirstOrder_ = false;
   }
 
-  double prevTargetTime = 0.0;
+  // [初始状态输出] 开始迭代前，先输出一次初始未变形装配，便于后处理参考对比
+  int globalSubstepCounter = 0;
+  if (outputCallback) {
+    outputCallback(globalSubstepCounter, 0.0);
+  }
   
-  for (const auto& config : loadStepConfigs_) {
-    for (int sub = 1; sub <= config.numSubsteps; ++sub) {
+  for (size_t stepIdx = 0; stepIdx < loadStepConfigs_.size(); ++stepIdx) {
+    const auto &stepConfig = loadStepConfigs_[stepIdx];
+    int currentNumSubsteps = stepConfig.numSubsteps;
+    int currentKbc = (stepConfig.kbc >= 0) ? stepConfig.kbc : kbc_;
+
+    LOG_INFO("=== Load Step " + std::to_string(stepConfig.stepId) + " / " +
+             std::to_string(loadStepConfigs_.size()) +
+             " | NumSubsteps: " + std::to_string(currentNumSubsteps) +
+             " | KBC: " + std::to_string(currentKbc) + " ===");
+
+    for (int sub = 0; sub < currentNumSubsteps; ++sub) {
       double activeLF = 1.0;
-      double stepTimeSpan = config.targetTime - prevTargetTime;
-      double currentDt = stepTimeSpan / config.numSubsteps;
-      if (kbc_ == 0) { // Ramp
-        activeLF = static_cast<double>(sub) / config.numSubsteps; 
+      if (currentKbc == 0) { // Ramp
+        activeLF = static_cast<double>(sub + 1) / currentNumSubsteps; 
       } else { // Step
         activeLF = 1.0;
       }
       
       LOG_INFO("==========================================================");
-      LOG_INFO("[MatrixFreeImplicit] Step " + std::to_string(config.stepId) + " / Substep " + std::to_string(sub) + " | LF=" + std::to_string(activeLF));
+      LOG_INFO("[MatrixFreeImplicit] Step " + std::to_string(stepConfig.stepId) + " / Substep " + std::to_string(sub + 1) + " | LF=" + std::to_string(activeLF));
+
+      // 1. 在子步开始前，先执行边界施加，确保物理场初始值以及 flattenDisplacement() 提取的边界自由度为最新值
+      BC::applyConstraints(ctx.getBCManager(), activeLF, stepConfig.stepId);
 
       // 每一子步开始前清空 L-BFGS 历史，避免跨步的非连续状态污染
       s_history_.clear();
@@ -347,7 +361,7 @@ void MatrixFreeImplicitIntegrator::run(PDCommon::Core::PDContext &ctx,
       bool converged = false;
       for (int iter = 0; iter < maxNRIters_; ++iter) {
         auto u_k = flattenDisplacement();
-        auto R_k = evaluateResidual(ctx, kernels, u_k, config.stepId, activeLF);
+        auto R_k = evaluateResidual(ctx, kernels, u_k, stepConfig.stepId, activeLF);
         
         // 简单 L2 范数收敛准则
         double normR = 0.0;
@@ -368,9 +382,9 @@ void MatrixFreeImplicitIntegrator::run(PDCommon::Core::PDContext &ctx,
 
         std::vector<double> delta_u;
         if (algorithm_ == "JFNK") {
-            delta_u = solveJFNK(ctx, kernels, u_k, R_k, config.stepId, activeLF);
+            delta_u = solveJFNK(ctx, kernels, u_k, R_k, stepConfig.stepId, activeLF);
         } else {
-            delta_u = solveLBFGS(ctx, kernels, u_k, R_k, config.stepId, activeLF);
+            delta_u = solveLBFGS(ctx, kernels, u_k, R_k, stepConfig.stepId, activeLF);
         }
 
         // 行搜索与位移更新
@@ -380,15 +394,13 @@ void MatrixFreeImplicitIntegrator::run(PDCommon::Core::PDContext &ctx,
         
         // 如果是 L-BFGS，准备计算 y_k
         if (algorithm_ == "L-BFGS") {
-          auto R_new = evaluateResidual(ctx, kernels, u_new, config.stepId, activeLF, true);
+          auto R_new = evaluateResidual(ctx, kernels, u_new, stepConfig.stepId, activeLF, true);
           std::vector<double> s_k(u_k.size());
           std::vector<double> y_k(R_k.size());
           double dot_sy = 0.0;
           
           for(size_t i=0; i<u_k.size(); ++i) {
              s_k[i] = alpha * delta_u[i];
-             // y_k 是力的变化。由于 R_k 是剩余力，当移向平衡时，力应该发生变化。
-             // 如果残差定义为 F_int + F_ext，为了使逆矩阵正定，这里采用负残差变化。
              y_k[i] = -(R_new[i] - R_k[i]); 
              dot_sy += s_k[i] * y_k[i];
           }
@@ -420,11 +432,24 @@ void MatrixFreeImplicitIntegrator::run(PDCommon::Core::PDContext &ctx,
          }
       }
       
-      outputCallback(config.stepId, activeLF);
+      // 2. 迭代结束并写回物理场后，重新施加一次边界条件以进行“保底锁死”，确保输出和材料状态使用的是最新正确边界
+      BC::applyConstraints(ctx.getBCManager(), activeLF, stepConfig.stepId);
+
+      if (outputCallback) {
+        globalSubstepCounter++;
+        double prevPhysicalTime =
+            (stepIdx == 0) ? 0.0 : loadStepConfigs_[stepIdx - 1].targetTime;
+        double stepPhysicalTime = stepConfig.targetTime;
+        double substepFraction =
+            static_cast<double>(sub + 1) / currentNumSubsteps;
+        double currentPhysicalTime =
+            prevPhysicalTime +
+            substepFraction * (stepPhysicalTime - prevPhysicalTime);
+        outputCallback(globalSubstepCounter, currentPhysicalTime);
+      }
     }
-    // 载荷步结束，固化边界条件起点
-    BC::commitEndStep(ctx.getBCManager(), config.stepId);
-    prevTargetTime = config.targetTime;
+    // 宣告本 LoadStep 彻底结束，让 Boundary Conditions 记忆最终态
+    BC::commitEndStep(ctx.getBCManager(), stepConfig.stepId);
   }
 }
 

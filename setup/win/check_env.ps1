@@ -6,7 +6,19 @@ $cmake = Get-Command cmake -ErrorAction SilentlyContinue
 if ($cmake) { Write-Host "[√] CMake detected: $($cmake.Source)" -ForegroundColor Green } else { Write-Warning "[!] CMake missing" }
 
 $gcc = Get-Command gcc -ErrorAction SilentlyContinue
-if ($gcc) { Write-Host "[√] GCC detected: $($gcc.Source)" -ForegroundColor Green } else { Write-Warning "[!] GCC compiler missing" }
+if ($gcc) { 
+    Write-Host "[√] GCC detected: $($gcc.Source)" -ForegroundColor Green 
+    # Check if GCC has OpenMP support (omp.h exists)
+    $gccDir = Split-Path (Split-Path $gcc.Source -Parent) -Parent
+    $ompH = Get-ChildItem -Path $gccDir -Recurse -Filter "omp.h" -ErrorAction SilentlyContinue
+    if ($ompH) {
+        Write-Host "[√] OpenMP detected (TDM-GCC bundles OpenMP)" -ForegroundColor Green
+    } else {
+        Write-Warning "[!] OpenMP (omp.h) not found in GCC directory"
+    }
+} else { 
+    Write-Warning "[!] GCC compiler missing" 
+}
 
 $python = Get-Command python -ErrorAction SilentlyContinue
 if ($python) { Write-Host "[√] Python detected: $($python.Source)" -ForegroundColor Green } else { Write-Warning "[!] Python missing" }

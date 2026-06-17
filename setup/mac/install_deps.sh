@@ -9,6 +9,9 @@ fi
 if ! command -v brew &> /dev/null; then
     echo "[!] Homebrew is not installed. Please install it to manage packages."
 fi
+if ! brew list libomp &> /dev/null && [ ! -d "/opt/homebrew/opt/libomp" ] && [ ! -d "/usr/local/opt/libomp" ]; then
+    echo "[!] OpenMP (libomp) is required on macOS. Please install via Homebrew: brew install libomp"
+fi
 
 # 配置 Python 虚拟环境
 if [ ! -d ".venv" ]; then

@@ -14,3 +14,8 @@
 - [x] **Task 6: 重新验证多步稳态热传导收敛性并落盘 Walkthrough**
   - [x] 步骤 1：运行 `Thermal_Validation_Steady_Steps` 算例并捕获新的残差收敛历史
   - [x] 步骤 2：更新 Walkthrough 物理文档，并对比修复前后的收敛行为差异
+- [x] **Task 7: 修复输出文件命名中的时间戳计算与子步序号传递**
+  - [x] 步骤 1：在 `run()` 中引入 `globalSubstepCounter` 并在 `outputCallback` 中传递正确的物理时间 `currentTime`
+- [x] **Task 8: 修复隐式迭代后 Dirichlet 边界值被覆盖的 Bug**
+  - [x] 步骤 1：在牛顿迭代开始前和退出后，增加 `BC::applyConstraints` 调用进行边界“保底锁死”
+
