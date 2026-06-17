@@ -55,6 +55,7 @@ public:
   void apply(double loadFactor) override;
   void commitEndStep() override;
   bool isConstraint() const override { return true; }
+  int getParticleId() const override { return particleId_; }
 
 private:
   int particleId_;

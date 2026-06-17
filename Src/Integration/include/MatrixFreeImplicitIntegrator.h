@@ -59,7 +59,6 @@ private:
   std::vector<FirstOrderTarget> foTargets_;
   std::vector<std::string> rateFieldNames_;
   bool isFirstOrder_ = false;
-  std::vector<double> foHistory_; // 暂存子步开始前的历史收敛值 T^n
 
   // --- 辅助计算函数 ---
   
@@ -75,7 +74,6 @@ private:
                                        const std::vector<double>& u,
                                        int currentStep,
                                        double activeLF,
-                                       double currentDt,
                                        bool frozen = false);
 
   /// @brief 线搜索 (Backtracking Line Search)
@@ -94,16 +92,14 @@ private:
                                 const std::vector<double>& u_k, 
                                 const std::vector<double>& R_k,
                                 int currentStep,
-                                double activeLF,
-                                double currentDt);
+                                double activeLF);
 
   std::vector<double> solveLBFGS(PDCommon::Core::PDContext &ctx, 
                                  std::vector<std::unique_ptr<PDKernel>> &kernels, 
                                  const std::vector<double>& u_k, 
                                  const std::vector<double>& R_k,
                                  int currentStep,
-                                 double activeLF,
-                                 double currentDt);
+                                 double activeLF);
 
   // L-BFGS 的历史存储队列
   std::deque<std::vector<double>> s_history_;

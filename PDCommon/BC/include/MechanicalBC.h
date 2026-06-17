@@ -57,6 +57,8 @@ public:
   bool isConstraint() const override {
     return true;
   } // Dirichlet: 直接设定位移值
+  int getParticleId() const override { return particleId_; }
+  int getAxis() const override { return axis_; }
 
   void commitEndStep() override;
   void setPrevVal(double val) override { prevVal_ = val; }
@@ -117,6 +119,8 @@ public:
   bool isConstraint() const override {
     return true;
   } // Dirichlet: 强制覆盖速度值
+  int getParticleId() const override { return particleId_; }
+  int getAxis() const override { return axis_; }
 
 private:
   int particleId_;

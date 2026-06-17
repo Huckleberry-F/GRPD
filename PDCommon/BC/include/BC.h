@@ -85,6 +85,12 @@ public:
   /// Source    (false) 仅在力计算前由 applySources() 调用一次
   virtual bool isConstraint() const { return false; }
 
+  /// @brief 获取受约束粒子 ID，如无则返回 -1
+  virtual int getParticleId() const { return -1; }
+
+  /// @brief 获取受约束轴向，如无则返回 0
+  virtual int getAxis() const { return 0; }
+
   /// @brief 设置用于查表的 Table 名称。
   /// @param names 各维度对应的 Table 名称（如为空或 "None" 表示不用 Table）
   virtual void setTableNames(const std::vector<std::string> &names) {}
