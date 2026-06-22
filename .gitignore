@@ -7,6 +7,7 @@ outputs/
 
 # === IDE 与编辑器 ===
 .cache/
+.codegraph/
 .qtcreator/
 .vscode/
 

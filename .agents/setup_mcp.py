@@ -1,6 +1,61 @@
 import os
 import sys
 import json
+import glob
+try:
+    import yaml
+except ImportError:
+    print("[!] 警告: 未找到 yaml 库，请执行 pip install pyyaml")
+    sys.exit(1)
+
+def find_software_executable(software_type):
+    """跨平台寻找软件执行路径"""
+    if software_type == "matlab":
+        if os.name == "nt":
+            paths = glob.glob(r"C:\Program Files\MATLAB\R*\bin\matlab.exe")
+            return paths[-1] if paths else None  # 取最新版本
+        elif sys.platform == "darwin":
+            paths = glob.glob("/Applications/MATLAB_R*.app/bin/matlab")
+            return paths[-1] if paths else None
+        else:
+            paths = glob.glob("/usr/local/MATLAB/R*/bin/matlab")
+            return paths[-1] if paths else None
+    elif software_type == "ansys":
+        if os.name == "nt":
+            paths = glob.glob(r"C:\Program Files\ANSYS Inc\v*\ANSYS\bin\winx64\ansys*.exe")
+            return paths[-1] if paths else None
+        elif sys.platform == "darwin":
+            # Mac 通常没有 ANSYS APDL 原生版
+            return None
+        else:
+            paths = glob.glob("/usr/ansys_inc/v*/ansys/bin/ansys*")
+            return paths[-1] if paths else None
+    return None
+
+def update_yaml_config(yaml_path, exec_key, exec_val, project_root, dir_key):
+    """更新 YAML 配置文件"""
+    if not os.path.exists(yaml_path):
+        return
+    with open(yaml_path, 'r', encoding='utf-8') as f:
+        config = yaml.safe_load(f)
+    if config is None:
+        config = {}
+        
+    if exec_val:
+        config[exec_key] = exec_val
+    
+    # 将项目根目录统一替换分隔符
+    if os.name != "nt":
+        project_root = project_root.replace("\\", "/")
+        
+    if dir_key in config and isinstance(config[dir_key], list):
+        if project_root not in config[dir_key]:
+            config[dir_key].append(project_root)
+    else:
+        config[dir_key] = [project_root]
+        
+    with open(yaml_path, 'w', encoding='utf-8') as f:
+        yaml.dump(config, f, allow_unicode=True, default_flow_style=False)
 
 def main():
     print("==================================================")
@@ -127,6 +182,33 @@ def main():
             print(f"[+] 已成功创建默认的全局 IDE 配置文件: {default_path}")
         except Exception as e:
             print(f"[!] 创建全局配置文件失败: {e}")
+
+    # 6. 配置具体的 MCP 子服务 (YAML)
+    print("==================================================")
+    print("[*] 正在扫描并配置子服务依赖软件环境...")
+    
+    # MATLAB
+    matlab_exe = find_software_executable("matlab")
+    matlab_yaml = os.path.join(script_dir, "mcp", "matlab-mcp-server", "config.yaml")
+    if matlab_exe:
+        print(f"[+] 找到 MATLAB: {matlab_exe}")
+        update_yaml_config(matlab_yaml, "matlab_executable", matlab_exe, project_root, "allowed_work_dirs")
+    else:
+        print("[-] 未能在默认路径找到 MATLAB。MATLAB MCP 服务暂不可用，如需使用请自行安装。")
+        update_yaml_config(matlab_yaml, "matlab_executable", "matlab", project_root, "allowed_work_dirs")
+        
+    # ANSYS
+    ansys_exe = find_software_executable("ansys")
+    ansys_yaml = os.path.join(script_dir, "mcp", "ansys-mcp-server", "config.yaml")
+    if ansys_exe:
+        print(f"[+] 找到 ANSYS: {ansys_exe}")
+        update_yaml_config(ansys_yaml, "ansys_executable", ansys_exe, project_root, "allowed_directories")
+    else:
+        if sys.platform == "darwin":
+            print("[-] macOS 系统暂无原生 ANSYS APDL 支持，ANSYS MCP 需通过远程/Docker方式调用。")
+        else:
+            print("[-] 未能在默认路径找到 ANSYS。ANSYS MCP 服务暂不可用，如需使用请自行安装。")
+        update_yaml_config(ansys_yaml, "ansys_executable", "ansys", project_root, "allowed_directories")
 
     print("==================================================")
     print("[+] 配置完成！请重启您的 IDE 或重新加载 MCP 服务。")

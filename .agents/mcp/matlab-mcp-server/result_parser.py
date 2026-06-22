@@ -9,7 +9,10 @@ C++ 和 MATLAB 双端均输出 9 分量行主序应力/应变张量：
 import os
 import json
 import numpy as np
+import matplotlib
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
+
 
 # 9 分量行主序张量的分量名称
 TENSOR9_NAMES = ["11", "12", "13", "21", "22", "23", "31", "32", "33"]

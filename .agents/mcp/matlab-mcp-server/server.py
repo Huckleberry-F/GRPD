@@ -115,17 +115,18 @@ def compile_and_locate_cpp_test(root_dir: str) -> str:
     if res.returncode != 0:
         raise RuntimeError(f"C++ 校验程序编译失败!\nStdout: {res.stdout}\nStderr: {res.stderr}")
 
+    suffix = ".exe" if os.name == "nt" else ""
     possible_paths = [
-        os.path.join(root_dir, "bin", "Release", "test_constitutive.exe"),
-        os.path.join(root_dir, "bin", "release", "test_constitutive.exe"),
-        os.path.join(root_dir, "bin", "test_constitutive.exe"),
-        os.path.join(root_dir, "build", "bin", "Release", "test_constitutive.exe"),
-        os.path.join(root_dir, "build", "bin", "test_constitutive.exe"),
+        os.path.join(root_dir, "bin", "Release", f"test_constitutive{suffix}"),
+        os.path.join(root_dir, "bin", "release", f"test_constitutive{suffix}"),
+        os.path.join(root_dir, "bin", f"test_constitutive{suffix}"),
+        os.path.join(root_dir, "build", "bin", "Release", f"test_constitutive{suffix}"),
+        os.path.join(root_dir, "build", "bin", f"test_constitutive{suffix}"),
     ]
     for path in possible_paths:
         if os.path.exists(path):
             return path
-    raise FileNotFoundError("在编译成功后未找到 test_constitutive.exe 可执行文件！")
+    raise FileNotFoundError(f"在编译成功后未找到 test_constitutive{suffix} 可执行文件！")
 
 
 @mcp.tool()
