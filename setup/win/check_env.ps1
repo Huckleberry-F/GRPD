@@ -5,6 +5,10 @@ Write-Host "--- Windows Environment Checklist ---" -ForegroundColor Cyan
 $cmake = Get-Command cmake -ErrorAction SilentlyContinue
 if ($cmake) { Write-Host "[√] CMake detected: $($cmake.Source)" -ForegroundColor Green } else { Write-Warning "[!] CMake missing" }
 
+$ninja = Get-Command ninja -ErrorAction SilentlyContinue
+if ($ninja) { Write-Host "[√] Ninja detected: $($ninja.Source)" -ForegroundColor Green } else { Write-Warning "[!] Ninja missing" }
+
+
 $gcc = Get-Command gcc -ErrorAction SilentlyContinue
 if ($gcc) { 
     Write-Host "[√] GCC detected: $($gcc.Source)" -ForegroundColor Green 

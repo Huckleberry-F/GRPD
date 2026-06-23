@@ -10712,3 +10712,377 @@
     |     | ForceRatio: 9.439076e-09
     |     [35m[Explicit][0m Inner loop converged -> substep done. (No outer NR needed)
     |     [Substep 7] Computed RampIters: 539
+
+[15:05:29] [INFO ] [EngineManager]
+    | ==================================================
+    | GRPD Solver Engine Initialized                 
+    | ==================================================
+
+[15:05:29] [INFO ] [EngineRegistry]
+    | Creating Engine instance: PD
+
+[15:05:29] [INFO ] [PDEngine]
+    | PD Engine instance created.
+    | ===============================================
+    | ========== Registered Types Summary ===========
+    | TimeIntegrator    : ADR, CentralDifference, Explicit, MatrixFreeImplicit, Staggered
+    | FieldRegistry     : DoubleField, IntField
+    | PhysicsFields     : Mechanical, Thermal
+    | BCRegistry        : AX, AY, AZ, CONV, FLUX, PX, PY, PZ, T, UX, UY, UZ, VX, VY, VZ
+    | ReaderRegistry    : .grpd, .inp
+    | StabilizerRegistry: Mechanical_Silling, Mechanical_Wan, Mechanical_Zhang, Thermal_Silling,
+    | Thermal_Wan, Thermal_Zhang
+    | ContactRegistry   : [Type] General, [ForceLaw] KinematicNormal, [ForceLaw] Nonlinear, [ForceLaw]
+    | Penalty, [ForceLaw] Silling, [ForceLaw] Viscous, [Evaluator] NTC, [Evaluator] NTN, [Evaluator] NTS,
+    | [FrictionLaw] ElasticStickSlip, [FrictionLaw] ExplicitImpulse, [FrictionLaw] TanhRegularized
+    | MaterialRegistry  : FourierThermalMat, J2PlasticityMat, J2VoceLemaitre, JCPlasticityMat,
+    | LinearElasticMat, NortonBaileyCreepMat, StrainHardeningCreepMat, TimeHardeningCreepMat
+    | KernelRegistry    : NOSB_Axis, NOSB_M, NOSB_T
+    | EngineRegistry    : PD
+    | ===============================================
+
+[15:05:29] [INFO ] [EngineManager]
+    | Initializing solver: PD
+
+[15:05:29] [INFO ] [PDEngine]
+    | Initializing PD simulation context...
+
+[15:05:29] [INFO ] [InitModel]
+    | ==================================================
+    | Model pre-processing...
+    | ==================================================
+    | grpd path: c:\C++\GRPD\Examples\Axisymmetric_Ring\Axisymmetric_Ring.grpd
+    | model name: Axisymmetric_Ring
+    | Calling Python pre-processor to generate .grpd mesh...
+    | Executing: ..\..\.venv\Scripts\python.exe "c:\C++\GRPD\Generate_py\generate_model.py"
+    | "c:\C++\GRPD\Examples\Axisymmetric_Ring\PD.yaml"
+    | Mesh generated successfully by Python.
+
+[15:05:29] [INFO ] [Context Manager]
+    | Formalized model name to: Axisymmetric_Ring
+    | Model dimension set to: 2D
+    | 2D thickness set to: 1.000000
+
+[15:05:29] [INFO ] [ReaderRegistry]
+    | Creating reader for: .grpd (name: Axisymmetric_Ring)
+
+[15:05:29] [INFO ] [InitModel]
+    | Reading mesh file: c:\C++\GRPD\Examples\Axisymmetric_Ring\Axisymmetric_Ring.grpd (reader: .grpd)
+
+[15:05:29] [INFO ] [GrpdMeshReader]
+    | Reading file: c:\C++\GRPD\Examples\Axisymmetric_Ring\Axisymmetric_Ring.grpd
+    | Entering *PARTICLE section (Line 1)
+    | Pre-allocated memory for 4000 particles (Zero-Reallocation)
+    | Entering *LOAD section (Line 4004)
+    | ============================================
+    | File reading complete!
+    | Total particles: 4000
+    | Total load entries: 0
+    | ============================================
+
+[15:05:29] [INFO ] [ParticleManager]
+    | Pre-allocated memory for 4000 particles
+
+[15:05:29] [INFO ] [InitModel]
+    | Total particles loaded for model Axisymmetric_Ring: 4000
+
+[15:05:29] [INFO ] [InitMaterial]
+    | ==================================================
+    | Entering Material Initialization Phase...
+    | ==================================================
+    | Instantiating material [1] of type: J2VoceLemaitre
+
+[15:05:29] [INFO ] [MaterialRegistry]
+    | Using factory to create material: Steel_Axis (type: J2VoceLemaitre)
+
+[15:05:29] [INFO ] [DamageValueFracture]
+    | Configured Critical_Damage = 0.990000
+
+[15:05:29] [INFO ] [Material]
+    | Attached FractureModel 'DamageValueFracture' to material: Steel_Axis
+
+[15:05:29] [INFO ] [MaterialManager]
+    | Successfully added material instance: Steel_Axis
+
+[15:05:29] [INFO ] [InitMaterial]
+    | Successfully registered material ID 1 (Steel_Axis)
+    | Assigning material pointers to particles...
+    | Successfully assigned materials to 4000 particles.
+
+[15:05:29] [INFO ] [InitFields]
+    | ==================================================
+    | Entering Field Registration Phase...
+    | ==================================================
+
+[15:05:29] [INFO ] [FieldManager]
+    | Added field 'Displacement'.
+    | Added field 'Velocity'.
+    | Added field 'Acceleration'.
+    | Added field 'ContactNormal'.
+    | Added field 'ContactGap'.
+    | Added field 'VirtualSurfacePos'.
+
+[15:05:29] [INFO ] [MechanicalFields]
+    | Core fields registered: Displacement, Velocity, Acceleration, ContactNormal, ContactGap,
+    | VirtualSurfacePos.
+
+[15:05:29] [INFO ] [InitFields]
+    | Auto-registered PhysicsFields module: Mechanical
+
+[15:05:29] [INFO ] [FieldManager]
+    | Added field 'ID'.
+    | Added field 'PartID'.
+    | Added field 'MatID'.
+    | Added field 'Coords'.
+    | Added field 'Volume'.
+    | Added field 'ActiveStatus'.
+
+[15:05:29] [INFO ] [InitFields]
+    | Global ActiveStatus field registered.
+
+[15:05:29] [INFO ] [FieldManager]
+    | Added field 'EqPlasticStrain_Old'.
+    | Added field 'EqPlasticStrain_Trial'.
+    | Registered swap pair: EqPlasticStrain_Old <-> EqPlasticStrain_Trial
+    | Added field 'RealEqPlasticStrain_Old'.
+    | Added field 'RealEqPlasticStrain_Trial'.
+    | Registered swap pair: RealEqPlasticStrain_Old <-> RealEqPlasticStrain_Trial
+    | Added field 'PlasticStrain_Old'.
+    | Added field 'PlasticStrain_Trial'.
+    | Registered swap pair: PlasticStrain_Old <-> PlasticStrain_Trial
+    | Added field 'Damage_Old'.
+    | Added field 'Damage_Trial'.
+    | Registered swap pair: Damage_Old <-> Damage_Trial
+    | Added field 'VonMisesStress'.
+    | Resized all 21 fields for 4000 particles.
+
+[15:05:29] [INFO ] [InitFields]
+    | ActiveStatus initialized to 1 for all particles.
+    | Binding high-speed material state pointers...
+
+[15:05:29] [INFO ] [MeshData]
+    | Populated particle geometry fields into FieldManager for 4000 particles.
+
+[15:05:29] [INFO ] [InitFields]
+    | All fields allocated for 4000 particles. Total fields: 21.
+
+[15:05:29] [INFO ] [InitConditions]
+    | ==================================================
+    | Entering Conditions Initialization Phase...
+    | ==================================================
+
+[15:05:29] [INFO ] [ReaderRegistry]
+    | Creating reader for: .grpd (name: LoadReader)
+
+[15:05:29] [INFO ] [GrpdMeshReader]
+    | Reading file: c:\C++\GRPD\Examples\Axisymmetric_Ring\Axisymmetric_Ring.grpd
+    | Entering *PARTICLE section (Line 1)
+    | Pre-allocated memory for 4000 particles (Zero-Reallocation)
+    | Entering *LOAD section (Line 4004)
+    | ============================================
+    | File reading complete!
+    | Total particles: 4000
+    | Total load entries: 0
+    | ============================================
+
+[15:05:29] [INFO ] [InitConditions]
+    | Load statistics:
+    | Boundary conditions initialization complete.
+
+[15:05:29] [INFO ] [InitNeighbors]
+    | ==================================================
+    | Entering Neighbor Search Phase...
+    | ==================================================
+    | Horizon radius: 0.150750
+
+[15:05:29] [INFO ] [NeighborList]
+    | Starting full-flat CSR search for 4000 particles, horizon = 0.150750
+    | Cell grid: 13 x 33 x 1 = 429 cells
+    | Flat cell list built in 0.000000 ms
+    | Pass 1 (count) done in 0.000000 ms
+    | Total bonds: 106996, Memory: 1 MB
+    | Pass 2 (fill) done in 5.999804 ms
+    | Max neighbors: 28
+    | Total time: 5.999804 ms
+
+[15:05:29] [INFO ] [FieldManager]
+    | Added field 'NeighborCount'.
+
+[15:05:29] [INFO ] [InitNeighbors]
+    | NeighborCount field populated for 4000 particles.
+
+[15:05:29] [INFO ] [FieldManager]
+    | Added field 'BondIntegrity'.
+
+[15:05:29] [INFO ] [InitNeighbors]
+    | Global BondIntegrity scalar field properly initialized to 0.0
+
+[15:05:29] [INFO ] [FieldManager]
+    | Added field 'IsSurface'.
+
+[15:05:29] [INFO ] [SurfaceDetector]
+    | Volume Deficit check complete. Identified 288 surface particles out of 4000 (Threshold: 0.750000).
+
+[15:05:29] [INFO ] [InitNeighbors]
+    | Neighbor search phase complete.
+
+[15:05:29] [INFO ] [InitContact]
+    | ==================================================
+    | Entering Contact Initialization Phase...
+    | ==================================================
+    | No explicit ContactPairs defined in YAML. Contact engine skipping.
+    | Initializing Material-specific BondIntegrity Models...
+    | Material BondIntegrity Models initialized. Total Active Models: 1
+
+[15:05:29] [INFO ] [InitSolverComponents]
+    | ==================================================
+    | Entering Solver Components Assembly Phase...
+    | ==================================================
+    | Building Time Integrator: ADR
+
+[15:05:29] [INFO ] [TimeIntegrator]
+    | Explicitly set OMP Threads to: 8
+
+[15:05:29] [INFO ] [InitSolverComponents]
+    | Time Integrator configured.
+    | Building Space Kernel: NOSB_Axis
+
+[15:05:29] [INFO ] [NOSB_Base]
+    | Applied KernelWeightType: Linear
+    | Applied ZeroEnergyG0: 1.000000
+    | Applied ZeroEnergyMethod string: Silling
+
+[15:05:29] [INFO ] [InitSolverComponents]
+    | Space Kernel 'NOSB_Axis' configured.
+    | Total kernels assembled: 1
+
+[15:05:29] [INFO ] [PDEngine]
+    | PD simulation context initialized successfully.
+
+[15:05:29] [INFO ] [EngineManager]
+    | All solvers initialized. Total: 1
+    | ==================================================
+    | Entering Main Solver Phase
+    | ==================================================
+    | Solving: PD
+
+[15:05:29] [INFO ] [PDEngine]
+    | Starting PD Engine Solve Phase...
+
+[15:05:29] [INFO ] [ADR]
+    | Identified 2nd-order ODE coupling: Displacement <- Velocity <- Acceleration
+
+[15:05:29] [INFO ] [FieldManager]
+    | Added field 'ShapeTensorInv'.
+    | Added field 'VHorizon'.
+    | Added field 'SumFac'.
+    | Added field 'SumOmegaRaw'.
+    | Added field 'DeformationGradient'.
+    | Added field 'PK1Stress'.
+
+[15:05:29] [INFO ] [NOSB_Axis]
+    | Instantiated MechanicalStabilizer using strategy: Silling
+
+[15:05:29] [INFO ] [ADR]
+    | Material [Steel_Axis]: WaveSpeed c = 5.047545e+02, Safe CFL dt = 7.924645e-05
+    | Computed safe CFL limit dt: 7.924645e-05 (dx = 5.000000e-02, c = 5.047545e+02)
+
+[15:05:29] [INFO ] [ADR_Integrator]
+    | Auto CFL enabled. Setting dt = 7.924645e-05
+    | Starting Custom ADR: NumLoadSteps = 1, MassScale = 1.000000e+08, DampingMethod = HybridKinetic, dt
+    | = 7.924645e-05
+    | === Load Step 1 / 1 | NumSubsteps: 20 | KBC: 0 ===
+    |     [Substep 1] Computed RampIters: 539
+    |     [Step 1 / Sub 1] Converged. Iter: 561 | KineticRatio: 0.000000e+00 | DispRatio: 0.000000e+00 |
+    |     ForceRatio: 0.000000e+00
+    |     [35m[Explicit][0m Inner loop converged -> substep done. (No outer NR needed)
+    |     [Substep 2] Computed RampIters: 539
+    |     [Step 1 / Sub 2] Converged. Iter: 561 | KineticRatio: 0.000000e+00 | DispRatio: 0.000000e+00 |
+    |     ForceRatio: 0.000000e+00
+    |     [35m[Explicit][0m Inner loop converged -> substep done. (No outer NR needed)
+    |     [Substep 3] Computed RampIters: 539
+    |     [Step 1 / Sub 3] Converged. Iter: 561 | KineticRatio: 0.000000e+00 | DispRatio: 0.000000e+00 |
+    |     ForceRatio: 0.000000e+00
+    |     [35m[Explicit][0m Inner loop converged -> substep done. (No outer NR needed)
+    |     [Substep 4] Computed RampIters: 539
+    |     [Step 1 / Sub 4] Converged. Iter: 561 | KineticRatio: 0.000000e+00 | DispRatio: 0.000000e+00 |
+    |     ForceRatio: 0.000000e+00
+    |     [35m[Explicit][0m Inner loop converged -> substep done. (No outer NR needed)
+    |     [Substep 5] Computed RampIters: 539
+    |     [Step 1 / Sub 5] Converged. Iter: 561 | KineticRatio: 0.000000e+00 | DispRatio: 0.000000e+00 |
+    |     ForceRatio: 0.000000e+00
+    |     [35m[Explicit][0m Inner loop converged -> substep done. (No outer NR needed)
+    |     [Substep 6] Computed RampIters: 539
+    |     [Step 1 / Sub 6] Converged. Iter: 561 | KineticRatio: 0.000000e+00 | DispRatio: 0.000000e+00 |
+    |     ForceRatio: 0.000000e+00
+    |     [35m[Explicit][0m Inner loop converged -> substep done. (No outer NR needed)
+    |     [Substep 7] Computed RampIters: 539
+    |     [Step 1 / Sub 7] Converged. Iter: 561 | KineticRatio: 0.000000e+00 | DispRatio: 0.000000e+00 |
+    |     ForceRatio: 0.000000e+00
+    |     [35m[Explicit][0m Inner loop converged -> substep done. (No outer NR needed)
+    |     [Substep 8] Computed RampIters: 539
+    |     [Step 1 / Sub 8] Converged. Iter: 561 | KineticRatio: 0.000000e+00 | DispRatio: 0.000000e+00 |
+    |     ForceRatio: 0.000000e+00
+    |     [35m[Explicit][0m Inner loop converged -> substep done. (No outer NR needed)
+    |     [Substep 9] Computed RampIters: 539
+    |     [Step 1 / Sub 9] Converged. Iter: 561 | KineticRatio: 0.000000e+00 | DispRatio: 0.000000e+00 |
+    |     ForceRatio: 0.000000e+00
+    |     [35m[Explicit][0m Inner loop converged -> substep done. (No outer NR needed)
+    |     [Substep 10] Computed RampIters: 539
+    |     [Step 1 / Sub 10] Converged. Iter: 561 | KineticRatio: 0.000000e+00 | DispRatio: 0.000000e+00 |
+    |     ForceRatio: 0.000000e+00
+    |     [35m[Explicit][0m Inner loop converged -> substep done. (No outer NR needed)
+    |     [Substep 11] Computed RampIters: 539
+    |     [Step 1 / Sub 11] Converged. Iter: 561 | KineticRatio: 0.000000e+00 | DispRatio: 0.000000e+00 |
+    |     ForceRatio: 0.000000e+00
+    |     [35m[Explicit][0m Inner loop converged -> substep done. (No outer NR needed)
+    |     [Substep 12] Computed RampIters: 539
+    |     [Step 1 / Sub 12] Converged. Iter: 561 | KineticRatio: 0.000000e+00 | DispRatio: 0.000000e+00 |
+    |     ForceRatio: 0.000000e+00
+    |     [35m[Explicit][0m Inner loop converged -> substep done. (No outer NR needed)
+    |     [Substep 13] Computed RampIters: 539
+    |     [Step 1 / Sub 13] Converged. Iter: 561 | KineticRatio: 0.000000e+00 | DispRatio: 0.000000e+00 |
+    |     ForceRatio: 0.000000e+00
+    |     [35m[Explicit][0m Inner loop converged -> substep done. (No outer NR needed)
+    |     [Substep 14] Computed RampIters: 539
+    |     [Step 1 / Sub 14] Converged. Iter: 561 | KineticRatio: 0.000000e+00 | DispRatio: 0.000000e+00 |
+    |     ForceRatio: 0.000000e+00
+    |     [35m[Explicit][0m Inner loop converged -> substep done. (No outer NR needed)
+    |     [Substep 15] Computed RampIters: 539
+    |     [Step 1 / Sub 15] Converged. Iter: 561 | KineticRatio: 0.000000e+00 | DispRatio: 0.000000e+00 |
+    |     ForceRatio: 0.000000e+00
+    |     [35m[Explicit][0m Inner loop converged -> substep done. (No outer NR needed)
+    |     [Substep 16] Computed RampIters: 539
+    |     [Step 1 / Sub 16] Converged. Iter: 561 | KineticRatio: 0.000000e+00 | DispRatio: 0.000000e+00 |
+    |     ForceRatio: 0.000000e+00
+    |     [35m[Explicit][0m Inner loop converged -> substep done. (No outer NR needed)
+    |     [Substep 17] Computed RampIters: 539
+    |     [Step 1 / Sub 17] Converged. Iter: 561 | KineticRatio: 0.000000e+00 | DispRatio: 0.000000e+00 |
+    |     ForceRatio: 0.000000e+00
+    |     [35m[Explicit][0m Inner loop converged -> substep done. (No outer NR needed)
+    |     [Substep 18] Computed RampIters: 539
+    |     [Step 1 / Sub 18] Converged. Iter: 561 | KineticRatio: 0.000000e+00 | DispRatio: 0.000000e+00 |
+    |     ForceRatio: 0.000000e+00
+    |     [35m[Explicit][0m Inner loop converged -> substep done. (No outer NR needed)
+    |     [Substep 19] Computed RampIters: 539
+    |     [Step 1 / Sub 19] Converged. Iter: 561 | KineticRatio: 0.000000e+00 | DispRatio: 0.000000e+00 |
+    |     ForceRatio: 0.000000e+00
+    |     [35m[Explicit][0m Inner loop converged -> substep done. (No outer NR needed)
+    |     [Substep 20] Computed RampIters: 539
+    |     [Step 1 / Sub 20] Converged. Iter: 561 | KineticRatio: 0.000000e+00 | DispRatio: 0.000000e+00 |
+    |     ForceRatio: 0.000000e+00
+    |     [35m[Explicit][0m Inner loop converged -> substep done. (No outer NR needed)
+    | --- ADR Complete | Total Substeps: 20  |  Pure Compute: 8.588604e+00s  |  Total: 9.122721e+00s  | 
+    | Speed: 1306 steps/s
+    | Finished. Total: 9.122721s  |  Pure Compute avg: 0.000765 s/step
+
+[15:05:39] [INFO ] [PDEngine]
+    | PD Engine Solve Phase Finished.
+
+[15:05:39] [INFO ] [EngineManager]
+    | Main Solver Phase finished.
+    | ==================================================
+    | Entering Post-processing Phase
+    | ==================================================
+    | Outputting: PD
+    | Post-processing Phase finished.

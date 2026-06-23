@@ -11,6 +11,13 @@
 #   1. 克隆项目后，先运行一次构建脚本（macOS: setup_build.sh / Windows: setup_build.cmd）
 #      或手动执行 cmake .. 生成 compile_commands.json。
 #   2. 之后 clangd 将自动读取 compile_commands.json，无需手动修改本文件。
+#
+# Windows 特别说明：
+#   MinGW Makefiles 生成器会在 compile_commands.json 中使用 @*.rsp 响应文件
+#   引用来传递 -I 路径。clangd 无法展开这些 rsp 文件，导致所有 include 路径丢失。
+#   通过 Remove 规则移除 @*.rsp 引用。另外 --query-driver=** 需要作为 clangd 的
+#   服务器启动参数（而非编译器参数）传递，已配置在 .vscode/settings.json 的
+#   clangd.arguments 中，让 clangd 直接向 g++ 查询内置标准库路径。
 # ==============================================================================
 
 CompileFlags:
@@ -18,5 +25,30 @@ CompileFlags:
   Add:
     - "-std=c++17"
     - "-DEIGEN_DONT_VECTORIZE"
+    # 指定目标三元组，让 clangd 内置的 clang 前端以 MinGW 模式解析系统头文件
+    - "--target=x86_64-w64-mingw32"
+    # 显式指定 TDM-GCC 10.3.0 的 C++ 标准库头文件路径（用 -isystem 避免警告）
+    - "-isystem"
+    - "C:/TDM-GCC-64/lib/gcc/x86_64-w64-mingw32/10.3.0/include/c++"
+    - "-isystem"
+    - "C:/TDM-GCC-64/lib/gcc/x86_64-w64-mingw32/10.3.0/include/c++/x86_64-w64-mingw32"
+    - "-isystem"
+    - "C:/TDM-GCC-64/lib/gcc/x86_64-w64-mingw32/10.3.0/include/c++/backward"
+    # C 标准库与 GCC 内置头文件路径
+    - "-isystem"
+    - "C:/TDM-GCC-64/lib/gcc/x86_64-w64-mingw32/10.3.0/include"
+    - "-isystem"
+    - "C:/TDM-GCC-64/x86_64-w64-mingw32/include"
+    - "-isystem"
+    - "C:/TDM-GCC-64/include"
+    - "-isystem"
+    - "C:/TDM-GCC-64/lib/gcc/x86_64-w64-mingw32/10.3.0/include-fixed"
   Remove:
     - "-W*"
+    # 移除 MinGW Makefiles 生成的 @*.rsp 响应文件引用，clangd 无法解析它们
+    - "@*"
+
+Diagnostics:
+  Suppress:
+    # 抑制 MinGW 系统头文件中 clang 无法识别的 GCC 扩展导致的误报
+    - "pp_file_not_found"

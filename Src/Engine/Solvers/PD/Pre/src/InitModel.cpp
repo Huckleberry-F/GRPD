@@ -42,7 +42,17 @@ void InitModel(PDCommon::Core::PDContext &ctx, const YAML::Node &config,
     // 探测系统可用的 Python 解释器。优先从当前环境变量 PATH 中寻找
     // python3（例如用户激活的虚拟环境）， 其次尝试系统常见绝对路径，最后回退。
     std::string pythonExe = "python";
-    const std::string candidates[] = {"python3",
+    const std::string candidates[] = {
+#ifdef _WIN32
+                                      ".venv\\Scripts\\python.exe",
+                                      "..\\.venv\\Scripts\\python.exe",
+                                      "..\\..\\.venv\\Scripts\\python.exe",
+#else
+                                      ".venv/bin/python",
+                                      "../.venv/bin/python",
+                                      "../../.venv/bin/python",
+#endif
+                                      "python3",
 #ifndef _WIN32
                                       "/opt/homebrew/bin/python3.12",
                                       "/opt/homebrew/bin/python3",
@@ -51,11 +61,9 @@ void InitModel(PDCommon::Core::PDContext &ctx, const YAML::Node &config,
                                       "python"};
 
     for (const auto &path : candidates) {
-      if (path[0] == '/') { // 绝对路径优先使用 std::filesystem::exists 检测
-        if (std::filesystem::exists(path)) {
-          pythonExe = path;
-          break;
-        }
+      if (std::filesystem::exists(path)) { // 绝对或相对路径存在时直接采用
+        pythonExe = path;
+        break;
       } else { // 裸命令，通过 std::system 进行版本测试探测
 #ifdef _WIN32
         if (std::system((path + " --version > nul 2>&1").c_str()) == 0) {

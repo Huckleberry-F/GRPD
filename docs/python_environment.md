@@ -74,24 +74,31 @@ python -m pip install -r requirements.txt
 
 激活虚拟环境：
 
-```bash
-cd ~/C++/GRPD
-source .venv/bin/activate
-```
+- **macOS / Linux**:
+  ```bash
+  cd ~/C++/GRPD
+  source .venv/bin/activate
+  ```
+- **Windows (PowerShell)**:
+  ```powershell
+  cd c:\C++\GRPD
+  .\.venv\Scripts\Activate.ps1
+  ```
 
 激活后检查：
 
-```bash
-which python
-python --version
-```
+- **macOS / Linux**:
+  ```bash
+  which python
+  python --version
+  ```
+- **Windows (PowerShell)**:
+  ```powershell
+  Get-Command python
+  python --version
+  ```
 
-期望输出：
-
-```text
-/Users/hanbozhang/C++/GRPD/.venv/bin/python
-Python 3.12.13
-```
+期望输出包含当前项目 `.venv` 虚拟环境下的 python 路径。
 
 退出虚拟环境：
 
@@ -140,41 +147,44 @@ pydantic
 GRPD 工作区设置文件：
 
 ```text
-/Users/hanbozhang/C++/GRPD/.vscode/settings.json
+.vscode/settings.json
 ```
 
-当前设置指向项目虚拟环境：
+当前设置指向项目虚拟环境。针对不同操作系统，配置方式如下：
 
-```json
-{
-    "cmake.buildDirectory": "${workspaceFolder}/build",
-    "python.defaultInterpreterPath": "${workspaceFolder}/.venv/bin/python",
-    "python.interpreterPath": "${workspaceFolder}/.venv/bin/python",
-    "terminal.integrated.env.osx": {
-        "PATH": "${workspaceFolder}/.venv/bin:/opt/homebrew/opt/python@3.12/libexec/bin:/opt/homebrew/bin:${env:PATH}",
-        "VIRTUAL_ENV": "${workspaceFolder}/.venv"
-    }
-}
-```
+- **macOS (Homebrew + osx 终端环境变量)**:
+  ```json
+  {
+      "cmake.buildDirectory": "${workspaceFolder}/build",
+      "python.defaultInterpreterPath": "${workspaceFolder}/.venv/bin/python",
+      "python.interpreterPath": "${workspaceFolder}/.venv/bin/python",
+      "terminal.integrated.env.osx": {
+          "PATH": "${workspaceFolder}/.venv/bin:/opt/homebrew/opt/python@3.12/libexec/bin:/opt/homebrew/bin:${env:PATH}",
+          "VIRTUAL_ENV": "${workspaceFolder}/.venv"
+      }
+  }
+  ```
 
-如果 Antigravity 让你选择 Python 解释器，选择：
+- **Windows (MinGW + windows 终端环境变量)**:
+  ```json
+  {
+      "cmake.generator": "MinGW Makefiles",
+      "cmake.buildDirectory": "${workspaceFolder}/build",
+      "python.defaultInterpreterPath": "${workspaceFolder}/.venv/Scripts/python.exe",
+      "python.interpreterPath": "${workspaceFolder}/.venv/Scripts/python.exe",
+      "terminal.integrated.env.windows": {
+          "PATH": "${workspaceFolder}/.venv/Scripts;${env:PATH}",
+          "VIRTUAL_ENV": "${workspaceFolder}/.venv"
+      }
+  }
+  ```
 
-```text
-/Users/hanbozhang/C++/GRPD/.venv/bin/python
-```
-
-不要选择：
-
-```text
-/opt/homebrew/bin/python3.12
-/opt/homebrew/Cellar/python@3.12/...
-/usr/bin/python3
-```
+如果 Antigravity 让你选择 Python 解释器，选择项目内虚拟环境 `.venv` 下的解释器，不要选择全局系统解释器。
 
 如果 Antigravity 仍然使用旧解释器，执行：
 
 ```text
-Command + Shift + P
+Ctrl + Shift + P (Windows) 或 Cmd + Shift + P (macOS)
 Developer: Reload Window
 ```
 

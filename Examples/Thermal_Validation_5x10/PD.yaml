@@ -14,7 +14,7 @@ Parts:
     Shape: "Box"
     Length: 5.0
     Width: 10.0
-    dx: 0.1
+    dx: 0.01
     Thickness: 1.0
     Offset: [0.0, 0.0, 0.0]
 
@@ -60,7 +60,7 @@ Solver:
   TimeStep_dt: 0.0001
   OutputInterval: 1000
   OMP_Threads: 16
-  Horizon: 0.3015
+  Horizon: 0.03015
   KernelWeightType: "Linear"
   ZeroEnergyG0: 0.1
   ZeroEnergyMethod: "Zhang"

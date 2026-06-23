@@ -1,34 +1,37 @@
 # ANSYS MCP Server
 
-鏈湇鍔℃槸 GRPD 楠岃瘉閾句腑鐨?ANSYS 渚?MCP銆傚畠鍙礋璐ｇ敓鎴?APDL銆佽皟鐢?MAPDL銆佽В鏋?ANSYS 杈撳嚭鏂囦欢锛屽苟鎶?`.txt/.db/.out/.err` 绛夎矾寰勮繑鍥炵粰涓婂眰浠ｇ悊銆?
-GRPD VTK 涓?ANSYS TXT 鐨勮宸姣斿凡缁忚縼绉诲埌 `.agents/mcp/grpd-validation-mcp-server`锛屾湰鏈嶅姟涓嶅啀鍏紑 VTK/TXT 瀵规瘮 tool銆?
-## 鐩綍缁撴瀯
+本服务是 GRPD 验证链中的 ANSYS 侧 MCP。它只负责生成 APDL、调用 MAPDL、解析 ANSYS 输出文件，并将 `.txt/.db/.out/.err` 等路径返回给上层代理。
+
+GRPD VTK 与 ANSYS TXT 的误差对比已经迁移到 `.agents/mcp/grpd-validation-mcp-server`，本服务不再公开 VTK/TXT 对比 tool。
+
+## 目录结构
 
 ```text
 ansys-mcp-server/
-鈹溾攢鈹€ requirements.txt
-鈹溾攢鈹€ README.md
-鈹溾攢鈹€ server.py
-鈹溾攢鈹€ config.yaml
-鈹溾攢鈹€ src/
-鈹?  鈹溾攢鈹€ __init__.py
-鈹?  鈹溾攢鈹€ paths.py
-鈹?  鈹溾攢鈹€ runner.py
-鈹?  鈹溾攢鈹€ generator.py
-鈹?  鈹溾攢鈹€ result_parser.py
-鈹?  鈹溾攢鈹€ history.py
-鈹?  鈹斺攢鈹€ service.py
-鈹溾攢鈹€ templates/
-鈹?  鈹斺攢鈹€ README.md
-鈹斺攢鈹€ tests/
-    鈹溾攢鈹€ __init__.py
-    鈹溾攢鈹€ conftest.py
-    鈹溾攢鈹€ test_public_tools.py
-    鈹斺攢鈹€ test_standard_layout.py
+├── requirements.txt
+├── README.md
+├── server.py
+├── config.yaml
+├── src/
+│   ├── __init__.py
+│   ├── paths.py
+│   ├── runner.py
+│   ├── generator.py
+│   ├── result_parser.py
+│   ├── history.py
+│   └── service.py
+├── templates/
+│   └── README.md
+└── tests/
+    ├── __init__.py
+    ├── conftest.py
+    ├── test_public_tools.py
+    └── test_standard_layout.py
 ```
 
-`server.py` 鏄?FastMCP facade锛屽彧璐熻矗娉ㄥ唽鍏紑 tool 骞惰矾鐢卞埌 `src.service`銆傛牳蹇冮€昏緫蹇呴』鏀惧湪 `src/`銆?
-## 鍏紑 Tools
+`server.py` 是 FastMCP facade，只负责注册公开 tool 并路由到 `src.service`。核心逻辑必须放在 `src/`。
+
+## 公开 Tools
 
 - `run_ansys_mac(...)`
 - `generate_ansys_apdl_from_yaml(...)`
@@ -37,22 +40,26 @@ ansys-mcp-server/
 - `get_ansys_text_results(...)`
 - `list_ansys_files(...)`
 
-## 瀹夎
+## 安装
 
 ```powershell
 cd D:\Project_C++\GRPD\.agents\mcp\ansys-mcp-server
 python -m pip install -r requirements.txt
 ```
 
-## 閰嶇疆
+## 配置
 
-缂栬緫 `config.yaml`锛?
-- `ansys_executable`: ANSYS MAPDL 鍙墽琛屾枃浠惰矾寰勩€?- `allowed_directories`: 鍏佽 ANSYS MCP 璁块棶鐨勫伐浣滅洰褰曠櫧鍚嶅崟銆?- `defaults`: 榛樿 CPU銆佸唴瀛樺拰瓒呮椂璁剧疆銆?
-## 娴嬭瘯
+编辑 `config.yaml`：
+
+- `ansys_executable`: ANSYS MAPDL 可执行文件路径。
+- `allowed_directories`: 允许 ANSYS MCP 访问的工作目录白名单。
+- `defaults`: 默认 CPU、内存和超时设置。
+
+## 测试
 
 ```powershell
 cd D:\Project_C++\GRPD
 python -m pytest .agents/mcp/ansys-mcp-server/tests -q
 ```
 
-杩欎簺娴嬭瘯鍙獙璇佸鍏ャ€佸叕寮€ tool 杈圭晫鍜岀洰褰曠粨鏋勶紝涓嶇湡瀹炲惎鍔?ANSYS銆?
+这些测试只验证导入、公开 tool 边界和目录结构，不真实启动 ANSYS。

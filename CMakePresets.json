@@ -1,0 +1,60 @@
+{
+  "version": 3,
+  "cmakeMinimumRequired": {
+    "major": 3,
+    "minor": 21,
+    "patch": 0
+  },
+  "configurePresets": [
+    {
+      "name": "win-mingw",
+      "displayName": "MinGW Makefiles (Windows)",
+      "description": "Configure build with MinGW Makefiles using TDM-GCC-64 on Windows",
+      "generator": "MinGW Makefiles",
+      "binaryDir": "${sourceDir}/build",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release",
+        "CMAKE_EXPORT_COMPILE_COMMANDS": "ON"
+      }
+    },
+    {
+      "name": "win-ninja",
+      "displayName": "Ninja (Windows)",
+      "description": "Configure build with Ninja using TDM-GCC-64 on Windows",
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/build",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release",
+        "CMAKE_EXPORT_COMPILE_COMMANDS": "ON"
+      }
+    },
+    {
+      "name": "mac-release",
+      "displayName": "Release (macOS)",
+      "description": "Configure build on macOS",
+      "generator": "Unix Makefiles",
+      "binaryDir": "${sourceDir}/build",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release",
+        "CMAKE_EXPORT_COMPILE_COMMANDS": "ON"
+      }
+    }
+  ],
+  "buildPresets": [
+    {
+      "name": "win-mingw-build",
+      "displayName": "Build MinGW (Windows)",
+      "configurePreset": "win-mingw"
+    },
+    {
+      "name": "win-ninja-build",
+      "displayName": "Build Ninja (Windows)",
+      "configurePreset": "win-ninja"
+    },
+    {
+      "name": "mac-release-build",
+      "displayName": "Build (macOS)",
+      "configurePreset": "mac-release"
+    }
+  ]
+}

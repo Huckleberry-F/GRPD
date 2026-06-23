@@ -26,11 +26,6 @@ namespace PDCommon::BC {
 class BC;
 class BCManager;
 
-/// @brief 边界条件存储条目（附带载荷步 ID）
-struct BCEntry {
-    int step;                  ///< 隶属的载荷步 (0 = 全局，始终生效)
-    std::unique_ptr<BC> bc;    ///< 边界条件实例
-};
 
 class BC {
 public:
@@ -115,6 +110,12 @@ public:
 
 protected:
   std::string name_; // 边界条件实例名称
+};
+
+/// @brief 边界条件存储条目（附带载荷步 ID）
+struct BCEntry {
+    int step;                  ///< 隶属的载荷步 (0 = 全局，始终生效)
+    std::unique_ptr<BC> bc;    ///< 边界条件实例
 };
 
 } // namespace PDCommon::BC
